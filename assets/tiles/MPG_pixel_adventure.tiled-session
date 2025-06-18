@@ -1,0 +1,53 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "MPG_Start_low_res.tsx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "Level_0.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 349.33333333333326,
+                "y": 195.3333333333333
+            }
+        },
+        "MPG_Start_low_res.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 0.06,
+            "scaleInEditor": 0.75
+        },
+        "MPG_pixel_adventure.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "C:/Users/FlorianBoettinger/IdeaProjects/mpg_achievements/assets/tiles",
+    "map.height": 23,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 40,
+    "openFiles": [
+        "MPG_pixel_adventure.tsx",
+        "Level_0.tmx",
+        "MPG_Start_low_res.tsx"
+    ],
+    "project": "MPG_pixel_adventure.tiled-project",
+    "recentFiles": [
+        "MPG_pixel_adventure.tsx",
+        "Level_0.tmx",
+        "MPG_Start_low_res.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    },
+    "tileset.type": 1
+}
