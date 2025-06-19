@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:mpg_achievements_app/actors/player.dart';
 
 class Level extends World {
   late TiledComponent level;
@@ -14,6 +15,8 @@ class Level extends World {
     //16 is 16x16 of our tileset
      level = await TiledComponent.load('Level_0.tmx', Vector2.all(16));
      add(level);
+     add(Player());
+     //runs all the other onLoad-events the method is referring to, now not important
      return super.onLoad();
   }
 }
