@@ -7,6 +7,7 @@ import 'levels/level.dart';
 class PixelAdventure extends FlameGame {
 
   late final CameraComponent cam;
+  @override
   final world = Level();
   //Future is a value that is returned even thought a value of the method is not computed immediately, but later
   //FutureOr works same here either returns a Future or <void>

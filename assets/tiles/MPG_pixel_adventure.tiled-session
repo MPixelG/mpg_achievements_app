@@ -3,17 +3,17 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "MPG_Start_low_res.tsx",
+    "activeFile": "Level_0.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
         "Level_0.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 1,
+            "scale": 1,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 349.33333333333326,
-                "y": 195.3333333333333
+                "x": 233.5,
+                "y": 285.5
             }
         },
         "MPG_Start_low_res.tsx": {
@@ -35,8 +35,7 @@
     "map.width": 40,
     "openFiles": [
         "MPG_pixel_adventure.tsx",
-        "Level_0.tmx",
-        "MPG_Start_low_res.tsx"
+        "Level_0.tmx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
     "recentFiles": [

@@ -15,7 +15,21 @@ class Level extends World {
     //16 is 16x16 of our tileset
      level = await TiledComponent.load('Level_0.tmx', Vector2.all(16));
      add(level);
-     add(Player());
+     //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list
+     final spawnPointsLayer = level.tileMap.getLayer<ObjectGroup>('Spawnpoints');
+
+     //then we go through the list and check for the class Player, which was also defined as an object in the Óbjectlayer
+     //When we find that class we create our player and add it to the level in the defined spawnpoint - ! just says that it can be null
+    for(final spawnPoint in spawnPointsLayer!.objects){
+        switch(spawnPoint.class_){
+        case 'Player':
+           final player = Player(character:'Mask Dude', position: Vector2(spawnPoint.x, spawnPoint.y));
+           add(player);
+           break;
+         default:
+      }
+
+  }
      //runs all the other onLoad-events the method is referring to, now not important
      return super.onLoad();
   }

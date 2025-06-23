@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="7">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="16" tileheight="16" infinite="0" nextlayerid="20" nextobjectid="15">
  <tileset firstgid="1" source="MPG_pixel_adventure.tsx"/>
  <tileset firstgid="243" source="MPG_Start_low_res.tsx"/>
  <imagelayer id="16" name="Hintergrund">
   <image source="../images/MPG_low_resolution_640_368.png" width="640" height="368"/>
  </imagelayer>
- <layer id="9" name="Level" width="40" height="23" locked="1">
+ <layer id="9" name="Level" width="40" height="23">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -32,4 +32,8 @@
 7,8,9,7,8,9,101,102,103,101,102,103,101,102,103,101,102,103,101,102,103,101,102,103,101,102,103,101,102,103,101,102,103,46,46,46,46,46,46,46
 </data>
  </layer>
+ <objectgroup id="17" name="Spawnpoints">
+  <object id="12" name="Player" type="Player" x="297.667" y="319.333" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup id="19" name="Object"/>
 </map>
