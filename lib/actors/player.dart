@@ -12,7 +12,7 @@ class Player extends SpriteAnimationGroupComponent with HasGameReference<PixelAd
   //String character is required because we want to be able to change our character
   String character;
   //This call gives us the character that is used in the level.dart file
-  //super is reference to the Component above (SpriteAnimationGroupComponent)
+  //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.character, position}) : super(position: position);
   late final SpriteAnimation idleAnimation;
   late final SpriteAnimation runningAnimation;
