@@ -5,8 +5,8 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
-import 'package:mpg_achievements_app/actors/player.dart';
-import 'levels/level.dart';
+import 'package:mpg_achievements_app/components/player.dart';
+import 'components/level.dart';
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame with HasKeyboardHandlerComponents, DragCallbacks {
 
@@ -72,15 +72,18 @@ class PixelAdventure extends FlameGame with HasKeyboardHandlerComponents, DragCa
       case JoystickDirection.left:
       case JoystickDirection.upLeft:
       case JoystickDirection.downLeft:
-        player.playerDirection = PlayerDirection.left;
+
+        player.horizontalMovement = -1;
         break;
       case JoystickDirection.right:
       case JoystickDirection.downRight:
       case JoystickDirection.upRight:
-        player.playerDirection = PlayerDirection.right;
+
+        player.horizontalMovement = 1;
         break;
       default:
-        player.playerDirection = PlayerDirection.idle;
+
+        player.horizontalMovement = 0;
     }
   }
 
