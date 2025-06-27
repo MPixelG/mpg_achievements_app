@@ -68,6 +68,7 @@ flutter:
       - assets/images/Main Characters/Pink Man/
       - assets/images/Main Characters/Virtual Guy/
       - assets/images/Main Characters/Mask Dude/
+      - assets/images/HUD/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
