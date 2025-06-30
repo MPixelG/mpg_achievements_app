@@ -3,17 +3,17 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Level_1.tmx",
+    "activeFile": "Level_0.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
         "Level_0.tmx": {
             "scale": 1,
-            "selectedLayer": 3,
+            "selectedLayer": 2,
             "viewCenter": {
                 "x": 335.5,
-                "y": 184
+                "y": 218.5
             }
         },
         "Level_1.tmx": {
@@ -31,7 +31,7 @@
         },
         "MPG_pixel_adventure.tsx": {
             "dynamicWrapping": false,
-            "scaleInDock": 2,
+            "scaleInDock": 0.75,
             "scaleInEditor": 1
         }
     },
@@ -49,8 +49,8 @@
     "project": "MPG_pixel_adventure.tiled-project",
     "recentFiles": [
         "MPG_pixel_adventure.tsx",
-        "Level_0.tmx",
         "Level_1.tmx",
+        "Level_0.tmx",
         "MPG_Start_low_res.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
