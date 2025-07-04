@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
+import 'package:mpg_achievements_app/components/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 //an enumeration of all of the states a player can be in , here we declare the enum outside of our class
@@ -22,12 +23,24 @@ class Player extends SpriteAnimationGroupComponent with HasGameReference<PixelAd
   late final SpriteAnimation runningAnimation;
   //50ms or 20 fps or 0.05s this is reference from itch.io
   final double stepTime = 0.05;
+
+  //gravity variables
+  final double _gravity = 9.8;
+  final double _jumpForce = 460;
+  final double _terminalVelocity = 300;
+
   //ability to go left or right
   double horizontalMovement = 0;
   double moveSpeed = 100;
+
   //set velocity to x=0 and y=0
   Vector2 velocity = Vector2.zero();
+
+  //List of collision objects
   List<CollisionBlock> collisionsBlockList =[];
+
+  //ground
+  bool isOnGround = false;
 
 
   @override
@@ -42,8 +55,11 @@ class Player extends SpriteAnimationGroupComponent with HasGameReference<PixelAd
   //dt means deltatime and is adjusting the framspeed to make game playable even tough there might be high framrates
   void update(double dt) {
     _updatePlayerstate();
-    _checkHorizontalCollisions();
     _updatePlayermovement(dt);
+    _checkHorizontalCollisions();
+    //needs to be after checking for collisions
+    _addGravity(dt);
+    _checkVerticalCollisions();
     super.update(dt);
   }
 
@@ -97,11 +113,66 @@ class Player extends SpriteAnimationGroupComponent with HasGameReference<PixelAd
   }
 
   void _checkHorizontalCollisions() {
-
+//we are iterating through our obstacles
     for(final block in collisionsBlockList){
+      //because we do not want to interact with our platforms in horizontal movements, we first check if our obstacle is a platform if not we check for collisions with our util function _checkCollision
+    if(!block.isPlatform){
 
+      //this refers to our player
+      if(checkCollision(this, block)){
+        //if we are going to the right
+        if(velocity.x>0){
+          // we stop
+          velocity.x = 0;
+          // and we change position ot stop at block.x minus width of our player
+          position.x = block.x - width;
+        }
+        //if we are going to the left
+        else if(velocity.x < 0){
+          //stop
+          velocity.x = 0;
+          //new position should be player position + width of player
+          position.x = block.x + block.width + width;
+        }
+      }
+    }
     }
 
+  }
+  //gravity adds to our Y-velocity, we need deltatime again here to account for Framerate
+  void _addGravity(double dt){
+    velocity.y += _gravity;
+    //here we set a limit to our y-velocity which is our jumpforce for going up, and our terminal velocity for falling
+    velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
+    //here you change y position according to velocity times deltatime to adjust for clockspeed
+    position.y += velocity.y*dt;
+
+  }
+
+  void _checkVerticalCollisions() {
+    for (final block in collisionsBlockList) {
+      if (block.isPlatform) {
+        //handle Platfrom}
+      }
+      else {
+        if (checkCollision(this, block)) {
+          //if the character is falling
+          if (velocity.y > 0) {
+            //stop
+            velocity.y = 0;
+            //position set to
+            position.y = block.y - height;
+            isOnGround = true;
+          }
+          //if character is jumping
+          if (velocity.y < 0) {
+            //stop
+            velocity.y = 0;
+            position.y = block.y + block.height;
+          }
+        }
+      }
+    }
   }
 
 
@@ -124,6 +195,8 @@ class Player extends SpriteAnimationGroupComponent with HasGameReference<PixelAd
     //here the animation ist set after checking all of the conditions above
     current = playerState;
   }
+
+
 
 
 }

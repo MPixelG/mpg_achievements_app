@@ -43,7 +43,7 @@
   <object id="26" type="Platform" x="193" y="47" width="126" height="17"/>
   <object id="27" type="Platform" x="0" y="241" width="17" height="14"/>
   <object id="28" type="Platform" x="128" y="303" width="63" height="18"/>
-  <object id="29" type="Platform" x="385" y="321" width="31" height="30"/>
+  <object id="29" x="385" y="321" width="31" height="30"/>
   <object id="30" type="Platform" x="449" y="257" width="30" height="14"/>
   <object id="31" type="Platform" x="81.5" y="271" width="30" height="6"/>
  </objectgroup>

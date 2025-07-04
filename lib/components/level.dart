@@ -31,7 +31,7 @@ class Level extends World {
 
      //then we go through the list and check for the class Player, which was also defined as an object in the Óbjectlayer
      //When we find that class we create our player and add it to the level in the defined spawnpoint - ! just says that it can be null
-    for(final spawnPoint in spawnPointsLayer!.objects){
+    for(final spawnPoint in spawnPointsLayer.objects){
         switch(spawnPoint.class_){
         case 'Player':
            //player
