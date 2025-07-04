@@ -7,9 +7,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:mpg_achievements_app/components/player.dart';
 import 'components/level.dart';
-//DragCallbacks are imported for touch controls
-class PixelAdventure extends FlameGame with HasKeyboardHandlerComponents, DragCallbacks {
 
+//DragCallbacks are imported for touch controls
+class PixelAdventure extends FlameGame
+    with HasKeyboardHandlerComponents, DragCallbacks {
   late final CameraComponent cam;
 
   //Player variable
@@ -18,7 +19,6 @@ class PixelAdventure extends FlameGame with HasKeyboardHandlerComponents, DragCa
   //can be added for touch support
   late String platform;
   bool showJoystick = false;
-
 
   //Future is a value that is returned even thought a value of the method is not computed immediately, but later
   //FutureOr works same here either returns a Future or <void>
@@ -30,13 +30,15 @@ class PixelAdventure extends FlameGame with HasKeyboardHandlerComponents, DragCa
     //world is loaded after initialising all images
     final world = Level(levelName: 'Level_0', player: player);
     cam = CameraComponent.withFixedResolution(
-        world: world, width: 640, height: 360);
+      world: world,
+      width: 640,
+      height: 360,
+    );
     cam.viewfinder.anchor = Anchor.topLeft;
     addAll([cam, world]);
     if (showJoystick == true) {
       addJoystick();
-    }
-    else {
+    } else {
       if (kDebugMode) {
         print("Kein Joystick");
       }
@@ -47,23 +49,23 @@ class PixelAdventure extends FlameGame with HasKeyboardHandlerComponents, DragCa
 
   @override
   void update(double dt) {
-    if(showJoystick == true){
-    updateJoystick();}
+    if (showJoystick == true) {
+      updateJoystick();
+    }
 
     super.update(dt);
   }
 
-
-//Making a Joystick
-  void addJoystick() async{
+  //Making a Joystick
+  void addJoystick() async {
     joystick = JoystickComponent(
-      knob: SpriteComponent(
-        sprite: Sprite(images.fromCache('HUD/Knob.png'))
-        ,),
+      knob: SpriteComponent(sprite: Sprite(images.fromCache('HUD/Knob.png'))),
       background: SpriteComponent(
-          sprite: Sprite(images.fromCache('HUD/Joystick.png'))),
+        sprite: Sprite(images.fromCache('HUD/Joystick.png')),
+      ),
       //Joystick needs a margin
-      margin: const EdgeInsets.only(left: 32, bottom: 32),);
+      margin: const EdgeInsets.only(left: 32, bottom: 32),
+    );
     add(joystick);
   }
 
@@ -72,31 +74,26 @@ class PixelAdventure extends FlameGame with HasKeyboardHandlerComponents, DragCa
       case JoystickDirection.left:
       case JoystickDirection.upLeft:
       case JoystickDirection.downLeft:
-
         player.horizontalMovement = -1;
         break;
       case JoystickDirection.right:
       case JoystickDirection.downRight:
       case JoystickDirection.upRight:
-
         player.horizontalMovement = 1;
         break;
       default:
-
         player.horizontalMovement = 0;
     }
   }
 
-//check which platform is used and if the touch controls must be shown, TODO right settings must be set here;
+  //check which platform is used and if the touch controls must be shown, TODO right settings must be set here;
   bool _getPlatform() {
     bool os = false;
     if (kIsWeb) {
       os = false;
-    }
-    else if (Platform.isAndroid) {
+    } else if (Platform.isAndroid) {
       os = true;
-    }
-    else if (Platform.isIOS) {
+    } else if (Platform.isIOS) {
       os = true;
     }
     return os;
