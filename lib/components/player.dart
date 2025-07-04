@@ -7,13 +7,13 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 //an enumeration of all of the states a player can be in , here we declare the enum outside of our class
 //the values can be used like static variables
-enum PlayerState{idle, running}
+enum PlayerState { idle, running }
 
 //using SpriteAnimationGroupComponent is better for a lot of animations
 //with is used to additonal classes here our game class
 //import/reference to Keyboardhandler
-class Player extends SpriteAnimationGroupComponent with HasGameReference<PixelAdventure>, KeyboardHandler {
-
+class Player extends SpriteAnimationGroupComponent
+    with HasGameReference<PixelAdventure>, KeyboardHandler {
   //String character is required because we want to be able to change our character
   String character;
   //This call gives us the character that is used in the level.dart file
@@ -25,9 +25,11 @@ class Player extends SpriteAnimationGroupComponent with HasGameReference<PixelAd
   final double stepTime = 0.05;
 
   //gravity variables
-  final double _gravity = 9.8;
-  final double _jumpForce = 460;
+  final double _gravity = 15.0;
+  final double _jumpForce = 320;
   final double _terminalVelocity = 300;
+
+  bool hasjumped = false;
 
   //ability to go left or right
   double horizontalMovement = 0;
@@ -37,18 +39,17 @@ class Player extends SpriteAnimationGroupComponent with HasGameReference<PixelAd
   Vector2 velocity = Vector2.zero();
 
   //List of collision objects
-  List<CollisionBlock> collisionsBlockList =[];
+  List<CollisionBlock> collisionsBlockList = [];
 
   //ground
   bool isOnGround = false;
 
-
   @override
-  FutureOr<void> onLoad(){
+  FutureOr<void> onLoad() {
     //using an underscore is making things private
-  _loadAllAnimations();
-  debugMode = true;
-  return super.onLoad();
+    _loadAllAnimations();
+    debugMode = true;
+    return super.onLoad();
   }
 
   @override
@@ -66,13 +67,18 @@ class Player extends SpriteAnimationGroupComponent with HasGameReference<PixelAd
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     horizontalMovement = 0;
-    final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) || keysPressed.contains(LogicalKeyboardKey.arrowLeft);
-    final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.arrowRight) || keysPressed.contains(LogicalKeyboardKey.keyD);
+    final isLeftKeyPressed =
+        keysPressed.contains(LogicalKeyboardKey.keyA) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowLeft);
+    final isRightKeyPressed =
+        keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
+        keysPressed.contains(LogicalKeyboardKey.keyD);
 
     //ternary statement if leftkey pressed then add -1 to horizontal movement if not add 0 = not moving
     horizontalMovement += isLeftKeyPressed ? -1 : 0;
     horizontalMovement += isRightKeyPressed ? 1 : 0;
 
+    hasjumped = keysPressed.contains(LogicalKeyboardKey.space);
 
     return super.onKeyEvent(event, keysPressed);
   }
@@ -92,69 +98,76 @@ class Player extends SpriteAnimationGroupComponent with HasGameReference<PixelAd
 
     //set current animation
     current = PlayerState.idle;
-
-
   }
 
   //Body Expression are concise ways of defining methods of function e.g.    int add(int a, int b) => a + b;
 
- SpriteAnimation _spriteAnimation(String state, int amount) => SpriteAnimation.fromFrameData(game.images.fromCache('Main Characters/$character/$state (32x32).png'), SpriteAnimationData.sequenced(
-     //11 image in the Idle.png
-       amount: 11,
-       stepTime: stepTime,
-       textureSize: Vector2.all(32)));
+  SpriteAnimation _spriteAnimation(String state, int amount) =>
+      SpriteAnimation.fromFrameData(
+        game.images.fromCache('Main Characters/$character/$state (32x32).png'),
+        SpriteAnimationData.sequenced(
+          //11 image in the Idle.png
+          amount: 11,
+          stepTime: stepTime,
+          textureSize: Vector2.all(32),
+        ),
+      );
 
-
- //only handles x movement for player
+  //only handles x movement for player
   void _updatePlayermovement(double dt) {
-
-   velocity.x = horizontalMovement * moveSpeed;
+    if (hasjumped && isOnGround) _playerJump(dt);
+    
+    velocity.x = horizontalMovement * moveSpeed;
     position.x += velocity.x * dt;
   }
 
   void _checkHorizontalCollisions() {
-//we are iterating through our obstacles
-    for(final block in collisionsBlockList){
+    //we are iterating through our obstacles
+    for (final block in collisionsBlockList) {
       //because we do not want to interact with our platforms in horizontal movements, we first check if our obstacle is a platform if not we check for collisions with our util function _checkCollision
-    if(!block.isPlatform){
-
-      //this refers to our player
-      if(checkCollision(this, block)){
-        //if we are going to the right
-        if(velocity.x>0){
-          // we stop
-          velocity.x = 0;
-          // and we change position ot stop at block.x minus width of our player
-          position.x = block.x - width;
-        }
-        //if we are going to the left
-        else if(velocity.x < 0){
-          //stop
-          velocity.x = 0;
-          //new position should be player position + width of player
-          position.x = block.x + block.width + width;
+      if (!block.isPlatform) {
+        //this refers to our player
+        if (checkCollision(this, block)) {
+          //if we are going to the right
+          if (velocity.x > 0) {
+            // we stop
+            velocity.x = 0;
+            // and we change position ot stop at block.x minus width of our player
+            position.x = block.x - width;
+          }
+          //if we are going to the left
+          else if (velocity.x < 0) {
+            //stop
+            velocity.x = 0;
+            //new position should be player position + width of player
+            position.x = block.x + block.width + width;
+          }
         }
       }
     }
-    }
-
   }
+
   //gravity adds to our Y-velocity, we need deltatime again here to account for Framerate
-  void _addGravity(double dt){
+  void _addGravity(double dt) {
     velocity.y += _gravity;
     //here we set a limit to our y-velocity which is our jumpforce for going up, and our terminal velocity for falling
     velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
     //here you change y position according to velocity times deltatime to adjust for clockspeed
-    position.y += velocity.y*dt;
-
+    position.y += velocity.y * dt;
   }
 
   void _checkVerticalCollisions() {
     for (final block in collisionsBlockList) {
       if (block.isPlatform) {
-        //handle Platfrom}
-      }
-      else {
+        if (checkCollision(this, block)) {
+          if (velocity.y > 0) {
+            velocity.y = 0;
+            position.y = block.y - height;
+            isOnGround = true;
+            break;
+          }
+        }
+      } else {
         if (checkCollision(this, block)) {
           //if the character is falling
           if (velocity.y > 0) {
@@ -175,28 +188,29 @@ class Player extends SpriteAnimationGroupComponent with HasGameReference<PixelAd
     }
   }
 
-
-//handles animations and states
+  //handles animations and states
   void _updatePlayerstate() {
     PlayerState playerState = PlayerState.idle;
 
     //if we are going to the right and facing left flip us and the other way round
-    if(velocity.x < 0 && scale.x > 0){
+    if (velocity.x < 0 && scale.x > 0) {
       flipHorizontallyAroundCenter();
-    }
-    else if(velocity.x > 0 && scale.x < 0){
+    } else if (velocity.x > 0 && scale.x < 0) {
       flipHorizontallyAroundCenter();
     }
     //Check if moving
-    if (velocity.x > 0 || velocity.x < 0){ playerState = PlayerState.running;
-
+    if (velocity.x > 0 || velocity.x < 0) {
+      playerState = PlayerState.running;
     }
 
     //here the animation ist set after checking all of the conditions above
     current = playerState;
   }
-
-
-
-
+  
+  void _playerJump(double dt) {
+    velocity.y = -_jumpForce;
+    position.y += velocity.y * dt;
+    isOnGround = false;
+    hasjumped = false;
+  }
 }
