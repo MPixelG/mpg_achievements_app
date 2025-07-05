@@ -32,6 +32,7 @@ class Level extends World with HasGameReference {
   //creating a background dynamically //todo add scrolling
   void _scrollingBackground() {
     final backgroundLayer = level.tileMap.getLayer('Hintergrund_2');
+
     const tileSize = 64;
     //calculating the number of tiles we need for our level/game / floor() rounds the number here our game reference is needed
     final numTilesY = (game.size.y / tileSize).floor();
