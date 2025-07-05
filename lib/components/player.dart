@@ -1,13 +1,15 @@
 import 'dart:async';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
+import 'package:mpg_achievements_app/components/player_hitbox.dart';
 import 'package:mpg_achievements_app/components/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 //an enumeration of all of the states a player can be in , here we declare the enum outside of our class
 //the values can be used like static variables
-enum PlayerState { idle, running }
+enum PlayerState { idle, running, jumping, falling }
 
 //using SpriteAnimationGroupComponent is better for a lot of animations
 //with is used to additonal classes here our game class
@@ -21,6 +23,8 @@ class Player extends SpriteAnimationGroupComponent
   Player({required this.character, position}) : super(position: position);
   late final SpriteAnimation idleAnimation;
   late final SpriteAnimation runningAnimation;
+  late final SpriteAnimation jumpingAnimation;
+  late final SpriteAnimation fallingAnimation;
   //50ms or 20 fps or 0.05s this is reference from itch.io
   final double stepTime = 0.05;
 
@@ -41,6 +45,13 @@ class Player extends SpriteAnimationGroupComponent
   //List of collision objects
   List<CollisionBlock> collisionsBlockList = [];
 
+  PlayerHitbox hitbox = PlayerHitbox(
+    offsetX: 10,
+    offsetY: 4,
+    width: 14,
+    height: 28,
+  );
+
   //ground
   bool isOnGround = false;
 
@@ -48,7 +59,13 @@ class Player extends SpriteAnimationGroupComponent
   FutureOr<void> onLoad() {
     //using an underscore is making things private
     _loadAllAnimations();
-    debugMode = true;
+    debugMode = false;
+    add(
+      RectangleHitbox(
+        position: Vector2(hitbox.offsetX, hitbox.offsetY),
+        size: Vector2(hitbox.width, hitbox.height),
+      ),
+    );
     return super.onLoad();
   }
 
@@ -88,12 +105,16 @@ class Player extends SpriteAnimationGroupComponent
     // where we loaded them at the beginning
     idleAnimation = _spriteAnimation('Idle', 11);
     runningAnimation = _spriteAnimation('Run', 12);
+    fallingAnimation = _spriteAnimation('Fall', 1);
+    jumpingAnimation = _spriteAnimation('Jump', 1);
 
     //List of all animations
     animations = {
       //here this state is equal our idleAnimation from above
       PlayerState.idle: idleAnimation,
       PlayerState.running: runningAnimation,
+      PlayerState.falling: fallingAnimation,
+      PlayerState.jumping: jumpingAnimation,
     };
 
     //set current animation
@@ -107,7 +128,7 @@ class Player extends SpriteAnimationGroupComponent
         game.images.fromCache('Main Characters/$character/$state (32x32).png'),
         SpriteAnimationData.sequenced(
           //11 image in the Idle.png
-          amount: 11,
+          amount: amount,
           stepTime: stepTime,
           textureSize: Vector2.all(32),
         ),
@@ -116,7 +137,7 @@ class Player extends SpriteAnimationGroupComponent
   //only handles x movement for player
   void _updatePlayermovement(double dt) {
     if (hasjumped && isOnGround) _playerJump(dt);
-    
+
     velocity.x = horizontalMovement * moveSpeed;
     position.x += velocity.x * dt;
   }
@@ -133,14 +154,14 @@ class Player extends SpriteAnimationGroupComponent
             // we stop
             velocity.x = 0;
             // and we change position ot stop at block.x minus width of our player
-            position.x = block.x - width;
+            position.x = block.x - hitbox.offsetX - hitbox.width;
           }
           //if we are going to the left
           else if (velocity.x < 0) {
             //stop
             velocity.x = 0;
             //new position should be player position + width of player
-            position.x = block.x + block.width + width;
+            position.x = block.x + block.width + hitbox.width + hitbox.offsetX;
           }
         }
       }
@@ -162,7 +183,7 @@ class Player extends SpriteAnimationGroupComponent
         if (checkCollision(this, block)) {
           if (velocity.y > 0) {
             velocity.y = 0;
-            position.y = block.y - height;
+            position.y = block.y - hitbox.height - hitbox.offsetY;
             isOnGround = true;
             break;
           }
@@ -174,14 +195,14 @@ class Player extends SpriteAnimationGroupComponent
             //stop
             velocity.y = 0;
             //position set to
-            position.y = block.y - height;
+            position.y = block.y - hitbox.height - hitbox.offsetY;
             isOnGround = true;
           }
           //if character is jumping
           if (velocity.y < 0) {
             //stop
             velocity.y = 0;
-            position.y = block.y + block.height;
+            position.y = block.y + block.height - hitbox.offsetY;
           }
         }
       }
@@ -203,10 +224,15 @@ class Player extends SpriteAnimationGroupComponent
       playerState = PlayerState.running;
     }
 
+    // update state to falling if velocity is greater than 0
+    if (velocity.y > 0) playerState = PlayerState.falling;
+
+    if (velocity.y < 0) playerState = PlayerState.jumping;
+
     //here the animation ist set after checking all of the conditions above
     current = playerState;
   }
-  
+
   void _playerJump(double dt) {
     velocity.y = -_jumpForce;
     position.y += velocity.y * dt;

@@ -9,19 +9,19 @@
     ],
     "fileStates": {
         "Level_0.tmx": {
-            "scale": 1.5,
+            "scale": 2,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 319.66666666666663,
-                "y": 183.66666666666669
+                "x": 17.5,
+                "y": -4.5
             }
         },
         "Level_1.tmx": {
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 320.5,
-                "y": 183.5
+                "x": 321,
+                "y": 184
             }
         },
         "MPG_Start_low_res.tsx": {
@@ -31,7 +31,7 @@
         },
         "MPG_pixel_adventure.tsx": {
             "dynamicWrapping": false,
-            "scaleInDock": 0.75,
+            "scaleInDock": 1.5,
             "scaleInEditor": 1
         }
     },
