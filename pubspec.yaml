@@ -63,12 +63,13 @@ flutter:
   assets:
       - assets/images/
       - assets/tiles/
-      - assets/images/terrain/
+      - assets/images/Terrain/
       - assets/images/Main Characters/Ninja Frog/
       - assets/images/Main Characters/Pink Man/
       - assets/images/Main Characters/Virtual Guy/
       - assets/images/Main Characters/Mask Dude/
       - assets/images/HUD/
+      - assets/images/Background/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

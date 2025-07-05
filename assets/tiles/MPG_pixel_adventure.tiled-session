@@ -9,11 +9,11 @@
     ],
     "fileStates": {
         "Level_0.tmx": {
-            "scale": 2,
-            "selectedLayer": 2,
+            "scale": 1,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 17.5,
-                "y": -4.5
+                "x": 335,
+                "y": 183.5
             }
         },
         "Level_1.tmx": {
@@ -21,7 +21,7 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 321,
-                "y": 184
+                "y": 183.5
             }
         },
         "MPG_Start_low_res.tsx": {

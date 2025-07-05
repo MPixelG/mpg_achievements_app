@@ -94,7 +94,7 @@ class Player extends SpriteAnimationGroupComponent
     //ternary statement if leftkey pressed then add -1 to horizontal movement if not add 0 = not moving
     horizontalMovement += isLeftKeyPressed ? -1 : 0;
     horizontalMovement += isRightKeyPressed ? 1 : 0;
-
+    //if the key is pressed than the player jumps in _updatePlayerMovement
     hasjumped = keysPressed.contains(LogicalKeyboardKey.space);
 
     return super.onKeyEvent(event, keysPressed);
@@ -153,14 +153,14 @@ class Player extends SpriteAnimationGroupComponent
           if (velocity.x > 0) {
             // we stop
             velocity.x = 0;
-            // and we change position ot stop at block.x minus width of our player
+            // and we change position to stop at block.x minus width of our hitbox and the offset of our hitbox
             position.x = block.x - hitbox.offsetX - hitbox.width;
           }
           //if we are going to the left
           else if (velocity.x < 0) {
             //stop
             velocity.x = 0;
-            //new position should be player position + width of player
+            //new position should be player position + width of hitbox + offsetX
             position.x = block.x + block.width + hitbox.width + hitbox.offsetX;
           }
         }
@@ -181,8 +181,11 @@ class Player extends SpriteAnimationGroupComponent
     for (final block in collisionsBlockList) {
       if (block.isPlatform) {
         if (checkCollision(this, block)) {
+          //we don't want to check if the top of the player is hitting the bottom of a platform, but only if the bottom of our player is touching the top of our platform
+          //see fixedY in utils.dart
           if (velocity.y > 0) {
             velocity.y = 0;
+            //chenge to hitbox values
             position.y = block.y - hitbox.height - hitbox.offsetY;
             isOnGround = true;
             break;
@@ -194,7 +197,7 @@ class Player extends SpriteAnimationGroupComponent
           if (velocity.y > 0) {
             //stop
             velocity.y = 0;
-            //position set to
+            //position set to block.y - hitbox.height - hitbox.offsetY
             position.y = block.y - hitbox.height - hitbox.offsetY;
             isOnGround = true;
           }
@@ -202,6 +205,7 @@ class Player extends SpriteAnimationGroupComponent
           if (velocity.y < 0) {
             //stop
             velocity.y = 0;
+            //same for jump procedure
             position.y = block.y + block.height - hitbox.offsetY;
           }
         }
@@ -236,6 +240,7 @@ class Player extends SpriteAnimationGroupComponent
   void _playerJump(double dt) {
     velocity.y = -_jumpForce;
     position.y += velocity.y * dt;
+    //otherwise the player can even jump even if he is in the air
     isOnGround = false;
     hasjumped = false;
   }
