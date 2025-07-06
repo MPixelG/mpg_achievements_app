@@ -1,23 +1,34 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+
 //HasGameReference to load images from Cache
-class BackgroundTile extends SpriteComponent with HasGameReference{
+class BackgroundTile extends SpriteComponent with HasGameReference {
   final String color;
   BackgroundTile({this.color = "Gray", super.position});
 
-@override
+  final double scrollSpeed = 0.4;
+
+  @override
   FutureOr<void> onLoad() {
-  //64.6 so we do not see gaps between the tiles
-  //background priority can be set to change order in layers
-  //Todo make obstacles visible
-    priority = 0;
+    //64.6 so we do not see gaps between the tiles
+    //background priority can be set to change order in layers
+    //Todo make obstacles visible
+    priority = -1;
     size = Vector2.all(64.6);
     sprite = Sprite(game.images.fromCache('Background/$color.png'));
     return super.onLoad();
   }
+
+  @override
+  void update(double dt) {
+    //constantly increasing the BackgroundTiles positions to simulate a scrolling background
+    position.y += scrollSpeed;
+    double tileSize = 64;
+    //calculating the total height of all BackgroundTiles
+    int scrollHeight = (game.size.y / tileSize).floor();
+    //resetting position if out of set border
+    if (position.y > scrollHeight * tileSize) position.y = -tileSize;
+    super.update(dt);
   }
-
-
-
-
+}

@@ -45,13 +45,13 @@ class Level extends World with HasGameReference {
       );
 
       //?? says that if backgroundColor is null use gray if not null use backgroundColor / position is start-coordinates of background
-      for (double y = 0; y < numTilesY; y++) {
+      for (double y = 0; y < game.size.y / numTilesY; y++) {
         for (double x = 0; x < numTilesX; x++) {
           //?? says that if backgroundColor is null use gray if not null use backgroundColor / position is start-coordinates of background
           //Vector2 must be *tileSize because otherwise we would ad in position of the loop numbers, but every time a tile is added we need to add 64 to the position
           final backgroundTile = BackgroundTile(
             color: backgroundColor ?? 'Gray',
-            position: Vector2(x * tileSize - tileSize, y * tileSize - tileSize),
+            position: Vector2(x * tileSize - tileSize, y * tileSize),
           );
           add(backgroundTile);
         }
@@ -67,7 +67,7 @@ class Level extends World with HasGameReference {
     if (spawnPointsLayer != null) {
       //then we go through the list and check for the class Player, which was also defined as an object in the Óbjectlayer
       //When we find that class we create our player and add it to the level in the defined spawnpoint - ! just says that it can be null
-      for (final spawnPoint in spawnPointsLayer!.objects) {
+      for (final spawnPoint in spawnPointsLayer.objects) {
         switch (spawnPoint.class_) {
           case 'Player':
             //player

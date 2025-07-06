@@ -10,9 +10,9 @@
     "fileStates": {
         "Level_0.tmx": {
             "scale": 1,
-            "selectedLayer": 1,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 335,
+                "x": 319.5,
                 "y": 183.5
             }
         },
@@ -20,7 +20,7 @@
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 321,
+                "x": 320.5,
                 "y": 183.5
             }
         },
