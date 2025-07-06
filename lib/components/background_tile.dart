@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 class BackgroundTile extends SpriteComponent with HasGameReference{
   final String color;
   BackgroundTile({this.color = "Gray", super.position});
+
 @override
   FutureOr<void> onLoad() {
   //64.6 so we do not see gaps between the tiles
