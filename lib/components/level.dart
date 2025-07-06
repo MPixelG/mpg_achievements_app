@@ -29,6 +29,7 @@ class Level extends World with HasGameReference {
     //runs all the other onLoad-events the method is referring to, now not important
     return super.onLoad();
   }
+
   //creating a background dynamically //todo add scrolling
   void _scrollingBackground() {
     final backgroundLayer = level.tileMap.getLayer('Level');
@@ -38,20 +39,22 @@ class Level extends World with HasGameReference {
     final numTilesY = (game.size.y / tileSize).floor();
     final numTilesX = (game.size.x / tileSize).floor();
 
-    if(backgroundLayer != null){
-      final backgroundColor = backgroundLayer.properties.getValue('BackgroundColor');
+    if (backgroundLayer != null) {
+      final backgroundColor = backgroundLayer.properties.getValue(
+        'BackgroundColor',
+      );
 
       //?? says that if backgroundColor is null use gray if not null use backgroundColor / position is start-coordinates of background
-      for(double y = 0; y< numTilesY; y++){
-        for(double x = 0;x < numTilesX; x++ ){
+      for (double y = 0; y < numTilesY; y++) {
+        for (double x = 0; x < numTilesX; x++) {
           //?? says that if backgroundColor is null use gray if not null use backgroundColor / position is start-coordinates of background
           //Vector2 must be *tileSize because otherwise we would ad in position of the loop numbers, but every time a tile is added we need to add 64 to the position
           final backgroundTile = BackgroundTile(
-              color: backgroundColor ??'Gray',
-              position: Vector2(x * tileSize - tileSize ,y * tileSize - tileSize));
+            color: backgroundColor ?? 'Gray',
+            position: Vector2(x * tileSize - tileSize, y * tileSize - tileSize),
+          );
           add(backgroundTile);
         }
-
       }
     }
   }
@@ -67,7 +70,7 @@ class Level extends World with HasGameReference {
       for (final spawnPoint in spawnPointsLayer!.objects) {
         switch (spawnPoint.class_) {
           case 'Player':
-          //player
+            //player
             player.position = Vector2(spawnPoint.x, spawnPoint.y);
             add(player);
             break;
@@ -78,11 +81,7 @@ class Level extends World with HasGameReference {
   }
 
   void _addCollisions() {
-
     final collisionsLayer = level.tileMap.getLayer<ObjectGroup>('Collisions');
-
-
-
 
     if (collisionsLayer != null) {
       for (final collision in collisionsLayer.objects) {

@@ -16,7 +16,7 @@ bool checkCollision(player, block) {
 
   //we need to fix the x value because if we flip our character to the left the x value is still measured at the top right, so if we flip x-stays on the top left
   final fixedX = player.scale.x < 0
-  //*2 because checkbox needs to be offsetted on both sides
+      //*2 because checkbox needs to be offsetted on both sides
       ? playerX - (hitbox.offsetX * 2) - playerWidth
       : playerX;
   //if the block is a Platfrom then fixedY is the bottom  of the player y coordinate otherwise it is the top of ur player
