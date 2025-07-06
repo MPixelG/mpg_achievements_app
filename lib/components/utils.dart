@@ -4,6 +4,7 @@
 //hotbox is defined in player.dart, here we need to update our borders for our collision
 
 bool checkCollision(player, block) {
+
   final hitbox = player.hitbox;
   final playerX = player.position.x + hitbox.offsetX;
   final playerY = player.position.y + hitbox.offsetY;
