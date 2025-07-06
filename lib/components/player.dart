@@ -20,7 +20,7 @@ class Player extends SpriteAnimationGroupComponent
   String character;
   //This call gives us the character that is used in the level.dart file
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
-  Player({required this.character, position}) : super(position: position);
+  Player({required this.character, super.position});
   late final SpriteAnimation idleAnimation;
   late final SpriteAnimation runningAnimation;
   late final SpriteAnimation jumpingAnimation;

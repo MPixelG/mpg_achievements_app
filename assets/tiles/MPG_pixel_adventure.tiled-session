@@ -9,19 +9,19 @@
     ],
     "fileStates": {
         "Level_0.tmx": {
-            "scale": 1,
-            "selectedLayer": 1,
+            "scale": 0.75,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 335,
-                "y": 183.5
+                "x": 213.33333333333337,
+                "y": 224.66666666666669
             }
         },
         "Level_1.tmx": {
-            "scale": 1,
-            "selectedLayer": 1,
+            "scale": 0.5,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 321,
-                "y": 183.5
+                "x": 362,
+                "y": 205
             }
         },
         "MPG_Start_low_res.tsx": {
