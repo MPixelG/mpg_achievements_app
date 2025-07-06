@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="16" tileheight="16" infinite="0" nextlayerid="22" nextobjectid="97">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="16" tileheight="16" infinite="0" nextlayerid="22" nextobjectid="106">
  <tileset firstgid="1" source="MPG_pixel_adventure.tsx"/>
  <tileset firstgid="243" source="MPG_Start_low_res.tsx"/>
  <layer id="9" name="Level" width="40" height="23">
@@ -32,6 +32,15 @@
 51,52,53,7,8,8,8,8,8,8,8,8,8,8,8,9,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,7,8,9
 </data>
  </layer>
+ <objectgroup id="17" name="Spawnpoints">
+  <object id="96" type="Player" x="16" y="272" width="32" height="32"/>
+  <object id="97" name="Bananas" type="Fruit" x="176" y="192" width="32" height="32"/>
+  <object id="98" name="Cherries" type="Fruit" x="176" y="240" width="32" height="32"/>
+  <object id="99" name="Apple" type="Fruit" x="176" y="288" width="32" height="32"/>
+  <object id="100" name="Kiwi" type="Fruit" x="366.667" y="209.333" width="32" height="32"/>
+  <object id="101" name="Bananas" type="Fruit" x="464" y="96" width="32" height="32"/>
+  <object id="102" name="Apple" type="Fruit" x="288" y="304" width="32" height="32"/>
+ </objectgroup>
  <objectgroup id="20" name="Collisions">
   <object id="78" x="0" y="320" width="48" height="48"/>
   <object id="79" x="48" y="352" width="592" height="16"/>
@@ -51,8 +60,8 @@
   <object id="93" type="Platform" x="448" y="128" width="48" height="16"/>
   <object id="94" x="528" y="128" width="48" height="16"/>
   <object id="95" x="368" y="320" width="64" height="16"/>
- </objectgroup>
- <objectgroup id="17" name="Spawnpoints">
-  <object id="96" type="Player" x="16" y="272" width="32" height="32"/>
+  <object id="103" x="-16" y="0" width="16" height="320"/>
+  <object id="104" x="0" y="-16" width="640" height="16"/>
+  <object id="105" x="640" y="0" width="16" height="352"/>
  </objectgroup>
 </map>

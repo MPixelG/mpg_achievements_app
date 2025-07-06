@@ -10,7 +10,7 @@ import 'components/level.dart';
 
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame
-    with HasKeyboardHandlerComponents, DragCallbacks {
+    with HasKeyboardHandlerComponents, DragCallbacks, HasCollisionDetection {
   late final CameraComponent cam;
 
   //Player variable

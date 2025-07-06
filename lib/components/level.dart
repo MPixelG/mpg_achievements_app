@@ -3,6 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/background_tile.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
+import 'package:mpg_achievements_app/components/fruit.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 
 class Level extends World with HasGameReference {
@@ -70,9 +71,18 @@ class Level extends World with HasGameReference {
       for (final spawnPoint in spawnPointsLayer.objects) {
         switch (spawnPoint.class_) {
           case 'Player':
-            //player
+            //player spawning
             player.position = Vector2(spawnPoint.x, spawnPoint.y);
             add(player);
+            break;
+          case "Fruit":
+            //fruit spawning
+            final fruit = Fruit(
+              fruit: spawnPoint.name,
+              position: Vector2(spawnPoint.x, spawnPoint.y),
+              size: Vector2(spawnPoint.width, spawnPoint.height),
+            );
+            add(fruit);
             break;
           default:
         }

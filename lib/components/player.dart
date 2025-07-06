@@ -3,7 +3,8 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
-import 'package:mpg_achievements_app/components/player_hitbox.dart';
+import 'package:mpg_achievements_app/components/custom_hitbox.dart';
+import 'package:mpg_achievements_app/components/fruit.dart';
 import 'package:mpg_achievements_app/components/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
@@ -15,7 +16,7 @@ enum PlayerState { idle, running, jumping, falling }
 //with is used to additonal classes here our game class
 //import/reference to Keyboardhandler
 class Player extends SpriteAnimationGroupComponent
-    with HasGameReference<PixelAdventure>, KeyboardHandler {
+    with HasGameReference<PixelAdventure>, KeyboardHandler, CollisionCallbacks {
   //String character is required because we want to be able to change our character
   String character;
   //This call gives us the character that is used in the level.dart file
@@ -46,7 +47,7 @@ class Player extends SpriteAnimationGroupComponent
   //List of collision objects
   List<CollisionBlock> collisionsBlockList = [];
 
-  PlayerHitbox hitbox = PlayerHitbox(
+  CustomHitbox hitbox = CustomHitbox(
     offsetX: 10,
     offsetY: 4,
     width: 14,
@@ -99,6 +100,12 @@ class Player extends SpriteAnimationGroupComponent
     hasjumped = keysPressed.contains(LogicalKeyboardKey.space);
 
     return super.onKeyEvent(event, keysPressed);
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is Fruit) other.collidedWithPlayer();
+    super.onCollision(intersectionPoints, other);
   }
 
   void _loadAllAnimations() {
