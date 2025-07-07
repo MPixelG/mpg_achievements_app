@@ -4,7 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
 import 'package:mpg_achievements_app/components/custom_hitbox.dart';
-import 'package:mpg_achievements_app/components/fruit.dart';
+import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
@@ -47,6 +47,7 @@ class Player extends SpriteAnimationGroupComponent
   //List of collision objects
   List<CollisionBlock> collisionsBlockList = [];
 
+  // because the hitbox is a property of the player it follows the player whereever he goes. Same for the collecables
   CustomHitbox hitbox = CustomHitbox(
     offsetX: 10,
     offsetY: 4,
@@ -101,10 +102,11 @@ class Player extends SpriteAnimationGroupComponent
 
     return super.onKeyEvent(event, keysPressed);
   }
-
+//checking collisions with an inbuilt method that checks if player is colliding
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is Fruit) other.collidedWithPlayer();
+    //her the player checks if the hitbox that it is colliding with is a Collectable, if so it calls the collidedWithPlayer method of class Collectable
+    if (other is Collectable) other.collidedWithPlayer();
     super.onCollision(intersectionPoints, other);
   }
 

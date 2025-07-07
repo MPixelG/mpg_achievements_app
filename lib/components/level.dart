@@ -3,13 +3,18 @@ import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/background_tile.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
-import 'package:mpg_achievements_app/components/fruit.dart';
+import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 
 class Level extends World with HasGameReference {
   final String levelName;
   late TiledComponent level;
   final Player player;
+
+  //Todo add feature to make levels with and without scrolling background
+  final bool scrollingBackground = false;
+
+
   List<CollisionBlock> collisionsBlockList = [];
   //loads when the class instantiated
   //In dart, late keyword is used to declare a variable or field that will be initialized at a later time.e.g. late String name
@@ -75,14 +80,14 @@ class Level extends World with HasGameReference {
             player.position = Vector2(spawnPoint.x, spawnPoint.y);
             add(player);
             break;
-          case "Fruit":
+          case "Collectable":
             //fruit spawning
-            final fruit = Fruit(
-              fruit: spawnPoint.name,
+            final collectable = Collectable(
+              collectable: spawnPoint.name,
               position: Vector2(spawnPoint.x, spawnPoint.y),
               size: Vector2(spawnPoint.width, spawnPoint.height),
             );
-            add(fruit);
+            add(collectable);
             break;
           default:
         }

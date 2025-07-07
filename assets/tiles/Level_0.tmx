@@ -4,7 +4,7 @@
  <tileset firstgid="243" source="MPG_Start_low_res.tsx"/>
  <layer id="9" name="Level" width="40" height="23">
   <properties>
-   <property name="BackgroundColor" value="Green"/>
+   <property name="BackgroundColor" value="Blue"/>
   </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -33,13 +33,13 @@
 </data>
  </layer>
  <objectgroup id="17" name="Spawnpoints">
-  <object id="96" type="Player" x="16" y="272" width="32" height="32"/>
-  <object id="97" name="Bananas" type="Fruit" x="176" y="192" width="32" height="32"/>
-  <object id="98" name="Cherries" type="Fruit" x="176" y="240" width="32" height="32"/>
-  <object id="99" name="Apple" type="Fruit" x="176" y="288" width="32" height="32"/>
-  <object id="100" name="Kiwi" type="Fruit" x="366.667" y="209.333" width="32" height="32"/>
-  <object id="101" name="Bananas" type="Fruit" x="464" y="96" width="32" height="32"/>
-  <object id="102" name="Apple" type="Fruit" x="288" y="304" width="32" height="32"/>
+  <object id="96" name="Player" type="Player" x="16" y="272" width="32" height="32"/>
+  <object id="97" name="Bananas" type="Collectable" x="176" y="192" width="32" height="32"/>
+  <object id="98" name="Cherries" type="Collectable" x="176" y="240" width="32" height="32"/>
+  <object id="99" name="Apple" type="Collectable" x="176" y="288" width="32" height="32"/>
+  <object id="100" name="Kiwi" type="Collectable" x="366.667" y="209.333" width="32" height="32"/>
+  <object id="101" name="Bananas" type="Collectable" x="464" y="96" width="32" height="32"/>
+  <object id="102" name="Apple" type="Collectable" x="288" y="304" width="32" height="32"/>
  </objectgroup>
  <objectgroup id="20" name="Collisions">
   <object id="78" x="0" y="320" width="48" height="48"/>
