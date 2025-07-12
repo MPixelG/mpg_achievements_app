@@ -28,6 +28,7 @@ class Level extends World with HasGameReference {
     //await need to be there because it takes some time to load, that's why the method needs to be async
     //otherwise the rest of the programme would stop
     //16 is 16x16 of our tileset
+
     level = await TiledComponent.load('$levelName.tmx', Vector2.all(16));
     add(level);
     _scrollingBackground();

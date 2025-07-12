@@ -42,6 +42,7 @@ class Saw extends SpriteAnimationComponent with HasGameReference<PixelAdventure>
       textureSize: Vector2.all(38),
     ));
 
+
     return super.onLoad();
   }
 
