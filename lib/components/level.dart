@@ -5,6 +5,7 @@ import 'package:mpg_achievements_app/components/background_tile.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/player.dart';
+import 'package:mpg_achievements_app/components/saw.dart';
 
 class Level extends World with HasGameReference {
   final String levelName;
@@ -89,6 +90,18 @@ class Level extends World with HasGameReference {
             );
             add(collectable);
             break;
+          case "Saw":
+            final isVertical = spawnPoint.properties.getValue('isVertical');
+            final offNeg = spawnPoint.properties.getValue('offNeg');
+            final offPos = spawnPoint.properties.getValue('offPos');
+            final saw = Saw(isVertical: isVertical, offNeg: offNeg,offPos: offPos,
+              position: Vector2(spawnPoint.x, spawnPoint.y),
+              size: Vector2(spawnPoint.width, spawnPoint.height),
+            );
+            //saw rotates in the other direction
+            saw.scale.x = -1;
+            add(saw);
+                break;
           default:
         }
       }
