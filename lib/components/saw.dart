@@ -1,6 +1,9 @@
 import 'dart:async' show FutureOr;
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
+import 'custom_hitbox.dart';
 
 class Saw extends SpriteAnimationComponent with HasGameReference<PixelAdventure>{
 
@@ -23,15 +26,18 @@ class Saw extends SpriteAnimationComponent with HasGameReference<PixelAdventure>
   FutureOr<void> onLoad() {
 //move behind the actual game objects
     priority = -1;
+    //circle hitbox has the same size like our saws, do we do not need to add a CustomHitbox which correct the
+    //size of the hitbox with offset-Values like in the player
+    add(CircleHitbox());
 
     //here we calculate the range of pixels the objects can move from the upper left corner of the obstacle, so you need to
-    //add(move left) or subtract(move right) one tilesize for the borders of the movement
+    //add(left border) or subtract(right border) one tilesize for the borders of the movement
     if(isVertical){
-      rangeNeg = position.y - offNeg * tileSize;
-      rangePos = position.y + offPos * tileSize;
+      rangeNeg = position.y - offNeg * tileSize + height;
+      rangePos = position.y + offPos * tileSize - height;
     } else
-    {rangeNeg = position.x - offNeg * tileSize;
-    rangePos = position.x + offNeg * tileSize;}
+    {rangeNeg = position.x - offNeg * tileSize + width;
+    rangePos = position.x + offPos * tileSize + width;}
 
 
     animation = SpriteAnimation.fromFrameData(game.images.fromCache('Traps/Saw/On (38x38).png'), SpriteAnimationData.sequenced(
@@ -45,6 +51,45 @@ class Saw extends SpriteAnimationComponent with HasGameReference<PixelAdventure>
 
     return super.onLoad();
   }
+
+  @override
+  void update(double dt) {
+    if(isVertical){
+      _moveVertical(dt);
+    } else {
+      _moveHorizontal(dt);
+
+    }
+    super.update(dt);
+  }
+
+  void _moveVertical(double dt) {
+  if(position.y >= rangePos){
+    moveDirection = -1;
+  }
+  else if (position.y <= rangeNeg){
+    moveDirection = 1;
+  }
+
+  position.y += moveDirection * moveSpeed * dt;
+
+  }
+
+  void _moveHorizontal(double dt) {
+
+    if(position.x >= rangePos){
+      moveDirection = -1;
+    }
+    else if (position.x <= rangeNeg){
+      moveDirection = 1;
+    }
+
+    position.x += moveDirection * moveSpeed * dt;
+
+  }
+
+
+
 
   }
 

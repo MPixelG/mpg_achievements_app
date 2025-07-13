@@ -8,9 +8,11 @@ import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
+import 'saw.dart';
+
 //an enumeration of all of the states a player can be in , here we declare the enum outside of our class
 //the values can be used like static variables
-enum PlayerState { idle, running, jumping, falling }
+enum PlayerState { idle, running, jumping, falling, hit, appearing, disappearing }
 
 //using SpriteAnimationGroupComponent is better for a lot of animations
 //with is used to additonal classes here our game class
@@ -19,14 +21,25 @@ class Player extends SpriteAnimationGroupComponent
     with HasGameReference<PixelAdventure>, KeyboardHandler, CollisionCallbacks {
   //String character is required because we want to be able to change our character
   String character;
-  //This call gives us the character that is used in the level.dart file
-  //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
-  Player({required this.character, super.position});
+  String pathRespawn = 'Main Characters/';
+  late String pathPlayer = 'Main Characters/$character/';
+
+
+  //needs to be cleaned up, this is just a quick an dirty way to make loading animations mor adaptable
+  double textureSize32 = 32;
+  double textureSize96 = 96;
+  String texture32file = '(32x32).png';
+  String texture96file = '(96x96).png';
+
+
 
   late final SpriteAnimation idleAnimation;
   late final SpriteAnimation runningAnimation;
   late final SpriteAnimation jumpingAnimation;
   late final SpriteAnimation fallingAnimation;
+  late final SpriteAnimation hitAnimation;
+  late final SpriteAnimation appearAnimation;
+  late final SpriteAnimation disappearAnimation;
   //50ms or 20 fps or 0.05s this is reference from itch.io
   final double stepTime = 0.05;
 
@@ -36,6 +49,7 @@ class Player extends SpriteAnimationGroupComponent
   final double _terminalVelocity = 300;
 
   bool hasjumped = false;
+  bool gotHit = false;
 
   //ability to go left or right
   double horizontalMovement = 0;
@@ -43,11 +57,13 @@ class Player extends SpriteAnimationGroupComponent
 
   //set velocity to x=0 and y=0
   Vector2 velocity = Vector2.zero();
+  //starting position
+  Vector2 startingPosition = Vector2.zero();
 
   //List of collision objects
   List<CollisionBlock> collisionsBlockList = [];
 
-  // because the hitbox is a property of the player it follows the player whereever he goes. Same for the collecables
+  // because the hitbox is a property of the player it follows the player where ever he goes. Same for the collecables
   CustomHitbox hitbox = CustomHitbox(
     offsetX: 10,
     offsetY: 4,
@@ -58,10 +74,14 @@ class Player extends SpriteAnimationGroupComponent
   //ground
   bool isOnGround = false;
 
+  //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
+  Player({required this.character, super.position});
+
   @override
   FutureOr<void> onLoad() {
     //using an underscore is making things private
     _loadAllAnimations();
+    startingPosition = Vector2(position.x, position.y);
     debugMode = false;
     add(
       RectangleHitbox(
@@ -75,12 +95,13 @@ class Player extends SpriteAnimationGroupComponent
   @override
   //dt means deltatime and is adjusting the framspeed to make game playable even tough there might be high framrates
   void update(double dt) {
+    if(!gotHit){
     _updatePlayerstate();
     _updatePlayermovement(dt);
     _checkHorizontalCollisions();
     //needs to be after checking for collisions
     _addGravity(dt);
-    _checkVerticalCollisions();
+    _checkVerticalCollisions();}
     super.update(dt);
   }
 
@@ -105,18 +126,23 @@ class Player extends SpriteAnimationGroupComponent
 //checking collisions with an inbuilt method that checks if player is colliding
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    //her the player checks if the hitbox that it is colliding with is a Collectable, if so it calls the collidedWithPlayer method of class Collectable
+    //here the player checks if the hitbox that it is colliding with is a Collectable, if so it calls the collidedWithPlayer method of class Collectable
     if (other is Collectable) other.collidedWithPlayer();
+    if (other is Saw) _respawn();
     super.onCollision(intersectionPoints, other);
   }
 
   void _loadAllAnimations() {
     //this takes an image from the assets folder and also enables us to set some specifics like texture size and how we want to split up our animation and get them from cache
-    // where we loaded them at the beginning
-    idleAnimation = _spriteAnimation('Idle', 11);
-    runningAnimation = _spriteAnimation('Run', 12);
-    fallingAnimation = _spriteAnimation('Fall', 1);
-    jumpingAnimation = _spriteAnimation('Jump', 1);
+    // where we loaded them at the beginning -> needs to be cleaned up only quick and dirty fix
+    idleAnimation = _spriteAnimation(pathPlayer,'Idle ', 11, true, texture32file, textureSize32);
+    runningAnimation = _spriteAnimation(pathPlayer,'Run ', 12, true, texture32file, textureSize32);
+    fallingAnimation = _spriteAnimation(pathPlayer,'Fall ', 1, true, texture32file, textureSize32);
+    jumpingAnimation = _spriteAnimation(pathPlayer,'Jump ', 1, true, texture32file, textureSize32);
+    hitAnimation = _spriteAnimation(pathPlayer,'Hit ', 7, false, texture32file, textureSize32);
+    appearAnimation = _spriteAnimation(pathRespawn,'Appearing ', 7, false, texture96file, textureSize96);
+    disappearAnimation = _spriteAnimation(pathRespawn,'Desappearing ', 7, false, texture96file, textureSize96);
+
 
     //List of all animations
     animations = {
@@ -125,6 +151,10 @@ class Player extends SpriteAnimationGroupComponent
       PlayerState.running: runningAnimation,
       PlayerState.falling: fallingAnimation,
       PlayerState.jumping: jumpingAnimation,
+      PlayerState.hit: hitAnimation,
+      PlayerState.appearing: appearAnimation,
+      PlayerState.disappearing: disappearAnimation,
+
     };
 
     //set current animation
@@ -132,15 +162,16 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   //Body Expression are concise ways of defining methods of function e.g.    int add(int a, int b) => a + b;
-
-  SpriteAnimation _spriteAnimation(String state, int amount) =>
+  //loop gets passed in to say if animation should be looped or not, e.g. hit should only be played once -> loop = false
+    SpriteAnimation _spriteAnimation(String path, String state, int amount, bool loop, String fileName, double textureSize) =>
       SpriteAnimation.fromFrameData(
-        game.images.fromCache('Main Characters/$character/$state (32x32).png'),
+        game.images.fromCache('$path$state$fileName' ),
         SpriteAnimationData.sequenced(
           //11 image in the Idle.png
           amount: amount,
           stepTime: stepTime,
-          textureSize: Vector2.all(32),
+          textureSize: Vector2.all(textureSize),
+          loop: loop,
         ),
       );
 
@@ -158,6 +189,7 @@ class Player extends SpriteAnimationGroupComponent
       //because we do not want to interact with our platforms in horizontal movements, we first check if our obstacle is a platform if not we check for collisions with our util function _checkCollision
       if (!block.isPlatform) {
         //this refers to our player
+        //checkCollision defined in utils.dart
         if (checkCollision(this, block)) {
           //if we are going to the right
           if (velocity.x > 0) {
@@ -195,7 +227,7 @@ class Player extends SpriteAnimationGroupComponent
           //see fixedY in utils.dart
           if (velocity.y > 0) {
             velocity.y = 0;
-            //chenge to hitbox values
+            //change to hitbox values
             position.y = block.y - hitbox.height - hitbox.offsetY;
             isOnGround = true;
             break;
@@ -254,4 +286,28 @@ class Player extends SpriteAnimationGroupComponent
     isOnGround = false;
     hasjumped = false;
   }
-}
+
+  void _respawn() {
+    gotHit = true;
+    current = PlayerState.hit;
+    //not time to fix animations needs to be done
+    Future.delayed(Duration(milliseconds: 350),()
+    { current = PlayerState.disappearing;
+     Future.delayed(Duration(milliseconds: 350),(){
+       scale.x = 1;
+       velocity = Vector2.zero();
+        Future.delayed(Duration(milliseconds: 350),(){
+          position = startingPosition;
+         current = PlayerState.appearing;
+        _updatePlayerstate();
+        gotHit = false;});
+      });
+    });
+     }
+
+
+
+
+
+  }
+
