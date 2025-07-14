@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
@@ -9,29 +8,18 @@ import 'package:mpg_achievements_app/components/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'saw.dart';
 
-//an enumeration of all of the states a player can be in , here we declare the enum outside of our class
-//the values can be used like static variables
 enum PlayerState { idle, running, jumping, falling, hit, appearing, disappearing }
 
-//using SpriteAnimationGroupComponent is better for a lot of animations
-//with is used to additonal classes here our game class
-//import/reference to Keyboardhandler
 class Player extends SpriteAnimationGroupComponent
-    with HasGameReference<PixelAdventure>,
-        KeyboardHandler,
-        CollisionCallbacks {
-  //String character is required because we want to be able to change our character
+    with HasGameReference<PixelAdventure>, KeyboardHandler, CollisionCallbacks {
   String character;
   String pathRespawn = 'Main Characters/';
   late String pathPlayer = 'Main Characters/$character/';
 
-
-  //needs to be cleaned up, this is just a quick an dirty way to make loading animations mor adaptable
   double textureSize32 = 32;
   double textureSize96 = 96;
-  String texture32file = '(32x32).png';
-  String texture96file = '(96x96).png';
-
+  String texture32file = ' (32x32).png';
+  String texture96file = ' (96x96).png';
 
   late final SpriteAnimation idleAnimation;
   late final SpriteAnimation runningAnimation;
@@ -40,11 +28,9 @@ class Player extends SpriteAnimationGroupComponent
   late final SpriteAnimation hitAnimation;
   late final SpriteAnimation appearAnimation;
   late final SpriteAnimation disappearAnimation;
-  //50ms or 20 fps or 0.05s this is reference from itch.io
   final double stepTime = 0.05;
 
-  //gravity variables
-  final double _gravity = 15.0;
+  final double _gravity = 15;
   final double _jumpForce = 320;
   final double _terminalVelocity = 300;
 
@@ -54,65 +40,44 @@ class Player extends SpriteAnimationGroupComponent
   bool hasJumped = false;
   bool gotHit = false;
 
-
-  //ability to go left or right
-  double moveSpeed = 35;
-
+  double moveSpeed = 120;
   double horizontalMovement = 0;
-
-  //for debug fly purposes only
   double verticalMovement = 0;
 
-
-  //set velocity to x=0 and y=0
   Vector2 velocity = Vector2.zero();
-  //starting position
   Vector2 startingPosition = Vector2.zero();
-
-  //List of collision objects
-  List<CollisionBlock> collisionsBlockList = [];
-
-  // because the hitbox is a property of the player it follows the player where ever he goes. Same for the collecables
-  RectangleHitbox hitbox = RectangleHitbox(position: Vector2(9, 6), size: Vector2(14, 23));
-
-
-  //ground
+  List<CollisionBlock> collisionBlocks = [];
+  late RectangleHitbox hitbox;
   bool isOnGround = false;
 
-  //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.character, super.position});
 
   @override
   FutureOr<void> onLoad() {
-    //using an underscore is making things private
     _loadAllAnimations();
     startingPosition = Vector2(position.x, position.y);
     debugMode = true;
 
+    hitbox = RectangleHitbox(
+      position: Vector2(4, 6),
+      size: Vector2(24, 26),
+    );
     add(hitbox);
-/*    hitbox.onCollisionCallback = (intersections, other) {
-      if(other.parent is CollisionBlock) collideWithBlock(intersections, other);
-    };*/
+    return super.onLoad();
   }
 
   @override
-  //dt means deltatime and is adjusting the framspeed to make game playable even tough there might be high framrates
   void update(double dt) {
-    if(!gotHit) {
+    if (!gotHit) {
       _updatePlayerstate();
       _updatePlayerMovement(dt);
-      //needs to be after checking for collisions
-      _addGravity(dt);
     }
     super.update(dt);
   }
 
-  Vector2 mouseCoords = Vector2.zero();
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     horizontalMovement = 0;
-    verticalMovement = 0; //debug fly purposes only
-
     final isLeftKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.keyA) ||
             keysPressed.contains(LogicalKeyboardKey.arrowLeft);
@@ -120,101 +85,35 @@ class Player extends SpriteAnimationGroupComponent
         keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
             keysPressed.contains(LogicalKeyboardKey.keyD);
 
-    if (keysPressed.contains(LogicalKeyboardKey.keyR)) _respawn(); //press r to reset player
-    if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) debugFlyMode = !debugFlyMode; // press left alt to toggle fly mode
-    if (keysPressed.contains(LogicalKeyboardKey.keyX)) print(hitbox.isColliding); //press x to print if the player is currently in a wall
-    if (keysPressed.contains(LogicalKeyboardKey.keyC)) debugNoClipMode = !debugNoClipMode; //press C to toggle noClip mode. lets you fall / walk / fly through walls. better only use it whilst flying (ctrl key)
-    if (keysPressed.contains(LogicalKeyboardKey.keyT)) position = mouseCoords; //press T to teleport the player to the mouse
-    //ternary statement if leftkey pressed then add -1 to horizontal movement if not add 0 = not moving
-    if(isLeftKeyPressed) horizontalMovement = -1;
-    if(isRightKeyPressed) horizontalMovement = 1;
+    horizontalMovement += isLeftKeyPressed ? -1 : 0;
+    horizontalMovement += isRightKeyPressed ? 1 : 0;
 
-    //if the key is pressed than the player jumps in _updatePlayerMovement
     if (keysPressed.contains(LogicalKeyboardKey.space)) {
-      if(debugFlyMode) verticalMovement = -1; //when in debug mode move the player upwards
-      else hasJumped = true; //else jump
-    }
-
-    if (keysPressed.contains(LogicalKeyboardKey.shiftLeft) && debugFlyMode) { //when in fly mode and shift is pressed, the player gets moved down
-      verticalMovement = 1;
+      hasJumped = true;
     }
 
     return super.onKeyEvent(event, keysPressed);
   }
-//checking collisions with an inbuilt method that checks if player is colliding
+
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
-    if (other is Collectable) other.collidedWithPlayer();
-    if (other is Saw) _respawn();
-    if (other is CollisionBlock) collideWithBlock(intersectionPoints, (other as CollisionBlock).hitbox); //collide on plattforms
+    if (!debugNoClipMode) {
+      if (other is Collectable) other.collidedWithPlayer();
+      if (other is Saw) _respawn();
+    }
     super.onCollision(intersectionPoints, other);
   }
 
-  void collideWithBlock(Set<Vector2> intersectionPoints, ShapeHitbox other){
-    Vector2 leftPoint = intersectionPoints.first.clone();
-    Vector2 rightPoint = intersectionPoints.elementAt(1).clone();
-
-    if(leftPoint.x == rightPoint.x) collideHorizontally(leftPoint, rightPoint, other);
-    if(leftPoint.y == rightPoint.y) collideVertically(leftPoint, rightPoint, other);
-
-
-
-
-
-
-  }
-
-  void collideVertically(Vector2 firstIntersection, Vector2 secondIntersection, ShapeHitbox other){
-    Vector2 intersectionPoint = getNearestPointToEdge(firstIntersection, firstIntersection, Vector2(other.absoluteCenter.x, other.absolutePosition.y));
-
-    Vector2 relativePos = other.absolutePosition-hitbox.absolutePosition-hitbox.size; //the difference between the height of the player and the height of the plattform
-    if(intersectionPoint.y == other.absolutePosition.y && velocity.y > 0) { //when the intersection is on the top of the floor and your falling
-      position.y += relativePos.y;
-      isOnGround = true;
-      velocity.y = 0; //reset velocity
-    } else if (velocity.y < 0 && !(other.parent as CollisionBlock).isPlatform) { //when going up you just hit your head on a ceiling
-      position.y += (other.absolutePosition - hitbox.absolutePosition + other.size).y;
-      velocity.y = 0; //reset velocity
-    }
-  }
-
-  void collideHorizontally(Vector2 firstIntersection, Vector2 secondIntersection, ShapeHitbox other){
-    Vector2 intersectionPoint = getNearestPointToEdge(firstIntersection, firstIntersection, other.absoluteCenter);
-    Vector2 relativePos = other.absolutePosition-hitbox.absolutePosition-hitbox.size;
-
-    if(-relativePos.x > width / 2){
-      position.x += relativePos.x + width;
-      print("left");
-    } else {
-      position.x += relativePos.x;
-      print("right");
-    }
-
-  }
-
-  Vector2 getNearestPointToEdge(Vector2 first, Vector2 second, Vector2 platformCentre){ //returns the point thats the closest to the centre of the plattform
-      if(first.distanceTo(platformCentre) < second.distanceTo(platformCentre))
-        return first;
-      else return second;
-  }
-
-
   void _loadAllAnimations() {
-    //this takes an image from the assets folder and also enables us to set some specifics like texture size and how we want to split up our animation and get them from cache
-    // where we loaded them at the beginning -> needs to be cleaned up only quick and dirty fix
-    idleAnimation = _spriteAnimation(pathPlayer,'Idle ', 11, true, texture32file, textureSize32);
-    runningAnimation = _spriteAnimation(pathPlayer,'Run ', 12, true, texture32file, textureSize32);
-    fallingAnimation = _spriteAnimation(pathPlayer,'Fall ', 1, true, texture32file, textureSize32);
-    jumpingAnimation = _spriteAnimation(pathPlayer,'Jump ', 1, true, texture32file, textureSize32);
-    hitAnimation = _spriteAnimation(pathPlayer,'Hit ', 7, false, texture32file, textureSize32);
-    appearAnimation = _spriteAnimation(pathRespawn,'Appearing ', 7, false, texture96file, textureSize96);
-    disappearAnimation = _spriteAnimation(pathRespawn,'Disappearing ', 7, false, texture96file, textureSize96);
+    idleAnimation = _spriteAnimation(pathPlayer, 'Idle', 11, true, texture32file, textureSize32);
+    runningAnimation = _spriteAnimation(pathPlayer, 'Run', 12, true, texture32file, textureSize32);
+    fallingAnimation = _spriteAnimation(pathPlayer, 'Fall', 1, true, texture32file, textureSize32);
+    jumpingAnimation = _spriteAnimation(pathPlayer, 'Jump', 1, true, texture32file, textureSize32);
+    hitAnimation = _spriteAnimation(pathPlayer, 'Hit', 7, false, texture32file, textureSize32);
+    appearAnimation = _spriteAnimation(pathRespawn, 'Appearing', 7, false, texture96file, textureSize96);
+    disappearAnimation = _spriteAnimation(pathRespawn, 'Disappearing', 7, false, texture96file, textureSize96);
 
-
-    //List of all animations
     animations = {
-      //here this state is equal our idleAnimation from above
       PlayerState.idle: idleAnimation,
       PlayerState.running: runningAnimation,
       PlayerState.falling: fallingAnimation,
@@ -222,20 +121,15 @@ class Player extends SpriteAnimationGroupComponent
       PlayerState.hit: hitAnimation,
       PlayerState.appearing: appearAnimation,
       PlayerState.disappearing: disappearAnimation,
-
     };
-
-    //set current animation
     current = PlayerState.idle;
   }
 
-  //Body Expression are concise ways of defining methods of function e.g.    int add(int a, int b) => a + b;
-  //loop gets passed in to say if animation should be looped or not, e.g. hit should only be played once -> loop = false
-  SpriteAnimation _spriteAnimation(String path, String state, int amount, bool loop, String fileName, double textureSize) =>
+  SpriteAnimation _spriteAnimation(String path, String state, int amount,
+          bool loop, String fileName, double textureSize) =>
       SpriteAnimation.fromFrameData(
-        game.images.fromCache('$path$state$fileName' ),
+        game.images.fromCache('$path$state$fileName'),
         SpriteAnimationData.sequenced(
-          //11 image in the Idle.png
           amount: amount,
           stepTime: stepTime,
           textureSize: Vector2.all(textureSize),
@@ -243,93 +137,104 @@ class Player extends SpriteAnimationGroupComponent
         ),
       );
 
-  //only handles x movement for player
   void _updatePlayerMovement(double dt) {
-    if (hasJumped) {
-      if (!isOnGround) hasJumped = false;
-      else playerJump(dt);
-    }
+    if (hasJumped && isOnGround) _jump();
 
-
-      velocity.x += horizontalMovement * moveSpeed;
-
-      position.x += velocity.x * dt;
-      velocity.x *= 0.81 * (dt+1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
-      if (abs(velocity.x) < 0.3) velocity.x = 0;
-    // set the velocity to 0 as soon as it gets too small
-  }
-
-  //gravity adds to our Y-velocity, we need deltatime again here to account for Framerate
-  void _addGravity(double dt) {
-    if (debugFlyMode){
-      velocity.y += verticalMovement * moveSpeed * (dt+1);
-      velocity.y *= 0.86;
-    } else velocity.y += _gravity;
-
-
-    //here we set a limit to our y-velocity which is our jumpforce for going up, and our terminal velocity for falling
+    velocity.y += _gravity;
     velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
-    //here you change y position according to velocity times deltatime to adjust for clockspeed
+
+    velocity.x = horizontalMovement * moveSpeed;
+    position.x += velocity.x * dt;
+    _checkHorizontalCollisions();
+
     position.y += velocity.y * dt;
+    _checkVerticalCollisions();
   }
 
-  //handles animations and states
   void _updatePlayerstate() {
     PlayerState playerState = PlayerState.idle;
-    //if we are going to the right and facing left flip us and the other way round
-    //if the velocity is less than 2 we don't animate bc the movement is too slow and not noticeable
-    if (velocity.x < -3 && scale.x > 0) {
+
+    if (velocity.x < 0 && scale.x > 0) {
       flipHorizontallyAroundCenter();
-    } else if (velocity.x > 3 && scale.x < 0) {
+    } else if (velocity.x > 0 && scale.x < 0) {
       flipHorizontallyAroundCenter();
     }
-    //Check if moving
-    if (velocity.x > 3 || velocity.x < -3) {
+
+    if (velocity.x != 0) {
       playerState = PlayerState.running;
     }
 
-    // update state to falling if velocity is greater than 0
-    if (velocity.y > 0) playerState = PlayerState.falling;
+    if (velocity.y > 0 && !isOnGround) {
+      playerState = PlayerState.falling;
+    }
 
-    if (velocity.y < 0) playerState = PlayerState.jumping;
+    if (velocity.y < 0 && !isOnGround) {
+      playerState = PlayerState.jumping;
+    }
 
-    //here the animation ist set after checking all of the conditions above
     current = playerState;
   }
 
-  void playerJump(double dt) {
+  void _jump() {
     velocity.y = -_jumpForce;
-    position.y += velocity.y * dt;
-    //otherwise the player can even jump even if he is in the air
     isOnGround = false;
     hasJumped = false;
   }
 
-  void _respawn() {
-    gotHit = true;
-    current = PlayerState.hit;
-    velocity = Vector2.zero();
-    //not time to fix animations needs to be done
-    Future.delayed(Duration(milliseconds: 250),(){
-      scale.x = 0.33; //flip the player to the right side and a third of the size because the animation is triple of the size
-      scale.y = 0.33;
-      current = PlayerState.disappearing;
-      Future.delayed(Duration(milliseconds: 150),(){
-        Future.delayed(Duration(milliseconds: 450),(){
-          position = startingPosition;
+  void _respawn() async {
+    // Your respawn logic...
+  }
 
-          position = startingPosition;
+  void _checkHorizontalCollisions() {
+    for (final block in collisionBlocks) {
+      if (!block.isPlatform) {
+        if (checkCollision(this, block)) {
+          final playerRect = hitbox.toAbsoluteRect();
+          final blockRect = block.toAbsoluteRect();
+          if (velocity.x > 0) {
+            velocity.x = 0;
+            position.x -= (playerRect.right - blockRect.left);
+          } else if (velocity.x < 0) {
+            velocity.x = 0;
+            position.x += (blockRect.right - playerRect.left);
+          }
+        }
+      }
+    }
+  }
 
-          current = PlayerState.appearing;
-          Future.delayed(Duration(milliseconds: 350),(){
-            scale.x = 1;
-            scale.y = 1;
-            _updatePlayerstate();
-            gotHit = false;
-          });
+  void _checkVerticalCollisions() {
+    isOnGround = false;
+    for (final block in collisionBlocks) {
+      if (checkCollision(this, block)) {
+        final playerRect = hitbox.toAbsoluteRect();
+        final blockRect = block.toAbsoluteRect();
 
-        });
-      });
-    });
+        if (velocity.y > 0) { // Player is falling
+          if (block.isPlatform) {
+            // Land on platform only if coming from above.
+            if (playerRect.top < blockRect.top) {
+              velocity.y = 0;
+              position.y -= (playerRect.bottom - blockRect.top);
+              isOnGround = true;
+              break; // Found ground, stop checking.
+            }
+          } else { // It's a solid block, always collide.
+            velocity.y = 0;
+            position.y -= (playerRect.bottom - blockRect.top);
+            isOnGround = true;
+            break; // Found ground, stop checking.
+          }
+        }
+        
+        if (velocity.y < 0) { // Player is jumping
+          // Can only hit the ceiling of solid blocks.
+          if (!block.isPlatform) {
+            velocity.y = 0;
+            position.y += (blockRect.bottom - playerRect.top);
+          }
+        }
+      }
+    }
   }
 }
