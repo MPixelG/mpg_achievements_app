@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
@@ -49,6 +51,8 @@ class Player extends SpriteAnimationGroupComponent
   final double _terminalVelocity = 300;
 
   bool debugFlyMode = false;
+  bool debugNoClipMode = false;
+
 
   bool hasJumped = false;
   bool gotHit = false;
@@ -101,6 +105,7 @@ class Player extends SpriteAnimationGroupComponent
     add(playerHitbox.rightFoot);
     add(playerHitbox.head);
     add(playerHitbox.body);
+    add(playerHitbox);
 
     playerHitbox.body.onCollisionCallback = (intersectionPoints, other) {
       if (other.parent is CollisionBlock) _checkHorizontalCollisions(other.parent as CollisionBlock);
@@ -143,6 +148,9 @@ class Player extends SpriteAnimationGroupComponent
 
     if (keysPressed.contains(LogicalKeyboardKey.keyR)) _respawn(); //press r to reset player
     if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) debugFlyMode = !debugFlyMode; // press left alt to toggle fly mode
+    if (keysPressed.contains(LogicalKeyboardKey.keyY) && playerHitbox.getAllActiveCollisions().isNotEmpty) _checkCollisions(); //press y to transport the player to the nearest free spot when the player is in a wall [TEMP / EXPERIMENTAL]
+    if (keysPressed.contains(LogicalKeyboardKey.keyX)) print(playerHitbox.isColliding()); //press x to print if the player is currently in a wall
+    if (keysPressed.contains(LogicalKeyboardKey.keyC)) debugNoClipMode = !debugNoClipMode; //press C to toggle noClip mode. lets you fall / walk / fly through walls. better only use it whilst flying (ctrl key)
 
     //ternary statement if leftkey pressed then add -1 to horizontal movement if not add 0 = not moving
     if(isLeftKeyPressed) horizontalMovement = -1;
@@ -178,7 +186,7 @@ class Player extends SpriteAnimationGroupComponent
     jumpingAnimation = _spriteAnimation(pathPlayer,'Jump ', 1, true, texture32file, textureSize32);
     hitAnimation = _spriteAnimation(pathPlayer,'Hit ', 7, false, texture32file, textureSize32);
     appearAnimation = _spriteAnimation(pathRespawn,'Appearing ', 7, false, texture96file, textureSize96);
-    disappearAnimation = _spriteAnimation(pathRespawn,'Desappearing ', 7, false, texture96file, textureSize96);
+    disappearAnimation = _spriteAnimation(pathRespawn,'Disappearing ', 7, false, texture96file, textureSize96);
 
 
     //List of all animations
@@ -229,6 +237,9 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _checkHorizontalCollisions(CollisionBlock block) {
+    if (debugNoClipMode) return;
+
+
     //we are iterating through our obstacles
     //because we do not want to interact with our platforms in horizontal movements, we first check if our obstacle is a platform if not we check for collisions with our util function _checkCollision
     if (!block.isPlatform) {
@@ -255,9 +266,35 @@ class Player extends SpriteAnimationGroupComponent
     }
   }
 
+  void _checkCollisions(){
+    int layer = 1;
+    Vector2 startPos = position.clone(); //the current player pos where the player is stuck
+
+    while (playerHitbox.isColliding() && layer < 250) {
+      int points = layer + 3; //get a good number of point to check a next possible player pos for on a circle with a given radius
+
+      for (double angle = 0; angle < 356; angle+= 360.0 / points) { //divide a circle in the number of points equally big sections and get the angle in the angle var
+        double nextPosXChange = sin(radians(angle)) * layer; //get the coordinates of a point on the line of the circle at the degree of the given angle
+        double nextPosYChange = cos(radians(angle)) * layer; // sin for x and cos for y
+
+        position = startPos;
+        position.x += nextPosXChange;
+        position.y += nextPosYChange;
+
+        if (!playerHitbox.isColliding()){
+          print("outside!");
+          return;
+        }
+      }
+
+      layer++;
+    }
+    position = startPos;
+  }
+
 
   void _checkVerticalCollisions( block) {
-
+    if(debugNoClipMode) return;
 
     if (block.isPlatform) {
       if (checkCollision(this, block)) {
