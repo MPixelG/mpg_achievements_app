@@ -11,7 +11,7 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks{
   bool isPlatform;
   CollisionBlock({position, size, this.isPlatform = false})
     : super(position: position, size: size) {
-    debugMode = false;
+    debugMode = true;
   }
 
   RectangleHitbox hitbox = RectangleHitbox();
