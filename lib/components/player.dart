@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
@@ -103,6 +104,57 @@ class Player extends SpriteAnimationGroupComponent
     }
     super.onCollision(intersectionPoints, other);
   }
+
+
+  void collideWithBlock(Set<Vector2> intersectionPoints, ShapeHitbox other){
+    Vector2 leftPoint = intersectionPoints.first.clone();
+    Vector2 rightPoint = intersectionPoints.elementAt(1).clone();
+
+    if(leftPoint.x == rightPoint.x) collideHorizontally(leftPoint, rightPoint, other);
+    if(leftPoint.y == rightPoint.y) collideVertically(leftPoint, rightPoint, other);
+
+
+
+
+
+
+  }
+
+  void collideVertically(Vector2 firstIntersection, Vector2 secondIntersection, ShapeHitbox other){
+    Vector2 intersectionPoint = getNearestPointToEdge(firstIntersection, firstIntersection, Vector2(other.absoluteCenter.x, other.absolutePosition.y));
+
+    Vector2 relativePos = other.absolutePosition-hitbox.absolutePosition-hitbox.size; //the difference between the height of the player and the height of the plattform
+    if(intersectionPoint.y == other.absolutePosition.y && velocity.y > 0) { //when the intersection is on the top of the floor and your falling
+      position.y += relativePos.y;
+      isOnGround = true;
+      velocity.y = 0; //reset velocity
+    } else if (velocity.y < 0 && !(other.parent as CollisionBlock).isPlatform) { //when going up you just hit your head on a ceiling
+      position.y += (other.absolutePosition - hitbox.absolutePosition + other.size).y;
+      velocity.y = 0; //reset velocity
+    }
+  }
+
+  void collideHorizontally(Vector2 firstIntersection, Vector2 secondIntersection, ShapeHitbox other){
+    Vector2 intersectionPoint = getNearestPointToEdge(firstIntersection, firstIntersection, other.absoluteCenter);
+    Vector2 relativePos = other.absolutePosition-hitbox.absolutePosition-hitbox.size;
+
+    if(-relativePos.x > width / 2){
+      position.x += relativePos.x + width;
+      print("left");
+    } else {
+      position.x += relativePos.x;
+      print("right");
+    }
+
+  }
+
+  Vector2 getNearestPointToEdge(Vector2 first, Vector2 second, Vector2 platformCentre){ //returns the point thats the closest to the centre of the plattform
+      if(first.distanceTo(platformCentre) < second.distanceTo(platformCentre))
+        return first;
+      else return second;
+  }
+
+
 
   void _loadAllAnimations() {
     idleAnimation = _spriteAnimation(pathPlayer, 'Idle', 11, true, texture32file, textureSize32);
