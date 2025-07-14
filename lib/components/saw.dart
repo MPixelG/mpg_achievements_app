@@ -3,7 +3,6 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import 'custom_hitbox.dart';
 
 class Saw extends SpriteAnimationComponent with HasGameReference<PixelAdventure>{
 

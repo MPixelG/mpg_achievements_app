@@ -3,6 +3,8 @@
 //is our player overlapping an object in our world
 //hotbox is defined in player.dart, here we need to update our borders for our collision
 
+import 'package:mpg_achievements_app/components/custom_hitbox.dart';
+
 bool checkCollision(player, block) {
 
   final hitbox = player.hitbox;
@@ -35,3 +37,5 @@ bool checkCollision(player, block) {
       &&
       fixedX + playerWidth > blockX);
 }
+
+double abs(double val) => val < 0 ? -val : val;

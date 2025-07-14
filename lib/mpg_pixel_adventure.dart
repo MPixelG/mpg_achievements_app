@@ -72,15 +72,17 @@ class PixelAdventure extends FlameGame
   void updateJoystick() {
     switch (joystick.direction) {
       case JoystickDirection.left:
+        player.velocity.x += -1;
+        break;
       case JoystickDirection.upLeft:
       case JoystickDirection.downLeft:
-        player.horizontalMovement = -1;
-        break;
       case JoystickDirection.right:
-      case JoystickDirection.downRight:
-      case JoystickDirection.upRight:
         player.horizontalMovement = 1;
         break;
+      case JoystickDirection.downRight:
+      case JoystickDirection.upRight:
+      case JoystickDirection.up:
+      player.playerJump(1);
       default:
         player.horizontalMovement = 0;
     }

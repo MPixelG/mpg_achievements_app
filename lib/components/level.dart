@@ -58,7 +58,7 @@ class Level extends World with HasGameReference {
           //?? says that if backgroundColor is null use gray if not null use backgroundColor / position is start-coordinates of background
           //Vector2 must be *tileSize because otherwise we would ad in position of the loop numbers, but every time a tile is added we need to add 64 to the position
           final backgroundTile = BackgroundTile(
-            color: backgroundColor ?? 'Gray',
+            color: backgroundColor ?? 'Yellow',
             position: Vector2(x * tileSize - tileSize, y * tileSize),
           );
           add(backgroundTile);
@@ -135,6 +135,6 @@ class Level extends World with HasGameReference {
       }
     }
     //all collisionsBlocks are given to the player and now the player has a reference
-    player.collisionsBlockList = collisionsBlockList;
+    //player.collisionsBlockList = collisionsBlockList;
   }
 }
