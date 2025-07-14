@@ -14,8 +14,10 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks{
     debugMode = false;
   }
 
+  RectangleHitbox hitbox = RectangleHitbox();
   @override
   FutureOr<void> onLoad(){
-    add(RectangleHitbox(position: Vector2(0, 0) , size: size));
+    hitbox = RectangleHitbox(position: Vector2(0, 0) , size: size);
+    add(hitbox);
   }
 }

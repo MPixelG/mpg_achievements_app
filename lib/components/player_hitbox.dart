@@ -21,22 +21,45 @@ class PlayerHitbox extends Component with HasCollisionDetection {
     leftFoot = RectangleHitbox(
       position: Vector2(5, player.height - 5),
       size: Vector2(player.width / 3, 5),
-    );
+    )..allowSiblingCollision = true;
 
     rightFoot = RectangleHitbox(
         position: Vector2((player.width / 3) * 2, player.height - 5),
         size: Vector2(player.width / 3 - 5, 5)
-    );
+    )..allowSiblingCollision = true;
 
     head = RectangleHitbox(
         position: Vector2((player.width - headWidth) / 2, 6),
         size: Vector2(headWidth * 2, headHeight)
-    );
+    )..allowSiblingCollision = true;
 
     body = RectangleHitbox(
         position: Vector2((player.width - bodyWidth) / 2, headHeight + 6),
         size: Vector2(bodyWidth * 2, bodyHeight - headHeight - 7)
     );
+
+
+    // leftFoot.onCollisionStartCallback = (intersectionPoints, other) {
+    //   Vector2? nextPos = player.getNearestPointOutsideOfBox(
+    //       intersectionPoints.first, other);
+    //   player.position = nextPos;
+    // };
+    // rightFoot.onCollisionStartCallback = (intersectionPoints, other) {
+    //   Vector2? nextPos = player.getNearestPointOutsideOfBox(
+    //       intersectionPoints.first, other);
+    //   player.position = nextPos;
+    // };
+    // head.onCollisionStartCallback = (intersectionPoints, other) {
+    //   Vector2? nextPos = player.getNearestPointOutsideOfBox(
+    //       intersectionPoints.first, other);
+    //   player.position = nextPos;
+    // };
+    // body.onCollisionStartCallback = (intersectionPoints, other) {
+    //   Vector2? nextPos = player.getNearestPointOutsideOfBox(
+    //       intersectionPoints.first, other);
+    //   player.position = nextPos;
+    // };
+
 
     add(leftFoot);
     add(rightFoot);
@@ -54,6 +77,10 @@ class PlayerHitbox extends Component with HasCollisionDetection {
   }
 
   bool isColliding() {
+    Player parent = this.parent as Player;
+    print(parent.position);
+    updatePositions(parent);
+    print(leftFoot.isColliding || rightFoot.isColliding || body.isColliding || head.isColliding);
     return leftFoot.isColliding || rightFoot.isColliding || body.isColliding || head.isColliding;
   }
 
@@ -70,4 +97,10 @@ class PlayerHitbox extends Component with HasCollisionDetection {
     head.position = Vector2(playerPos.x + (playerWidth - headWidth) / 2, playerPos.y + 6);
     body.position = Vector2(playerPos.x + (playerWidth - bodyWidth) / 2, playerPos.y + headHeight + 6);
   }
+
+  @override
+  void update(double dt){
+    super.update(dt);
+  }
+
 }

@@ -1,19 +1,23 @@
 import 'dart:async';
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/background_tile.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/saw.dart';
 
-class Level extends World with HasGameReference {
+class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCallbacks{
   final String levelName;
   late TiledComponent level;
   final Player player;
 
   //Todo add feature to make levels with and without scrolling background
   final bool scrollingBackground = false;
+
+
 
 
   List<CollisionBlock> collisionsBlockList = [];
@@ -34,6 +38,9 @@ class Level extends World with HasGameReference {
     _scrollingBackground();
     _spawningObjects();
     _addCollisions();
+
+    add(overlays);
+    overlays.scale = Vector2.zero(); //hide the overlays
     //runs all the other onLoad-events the method is referring to, now not important
     return super.onLoad();
   }
@@ -137,4 +144,36 @@ class Level extends World with HasGameReference {
     //all collisionsBlocks are given to the player and now the player has a reference
     //player.collisionsBlockList = collisionsBlockList;
   }
-}
+
+   TextComponent overlays = TextComponent(text: "hello!", position: Vector2(0, 0));
+    @override
+    bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+      if (keysPressed.contains(LogicalKeyboardKey.keyV)) {if(overlays.scale == Vector2.zero()) overlays.scale = Vector2.all(0.5); else overlays.scale = Vector2.zero();} //press V to toggle the visibility of the overlays
+      return super.onKeyEvent(event, keysPressed);
+    }
+
+    Vector2 mouseCoords = Vector2.zero();
+    @override
+    void onPointerMove(PointerMoveEvent event) {
+        mouseCoords = event.localPosition..round();
+        player.mouseCoords = mouseCoords;
+    }
+
+
+
+    @override //update the overlays
+    void update(double dt) {
+      if(overlays.scale == Vector2.zero()) return;
+
+      Vector2 roundedPlayerPos = player.position.clone()..round();
+
+      String playerCoords = roundedPlayerPos.toString();
+      overlays.text = "Player: " + playerCoords + "\nMouse: " + mouseCoords.toString();
+
+      super.update(dt);
+    }
+
+    Vector2 get mousePos => mouseCoords;
+
+
+  }

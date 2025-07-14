@@ -1,16 +1,11 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
-import 'package:mpg_achievements_app/components/custom_hitbox.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
-import 'package:mpg_achievements_app/components/player_hitbox.dart';
 import 'package:mpg_achievements_app/components/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-
 import 'saw.dart';
 
 //an enumeration of all of the states a player can be in , here we declare the enum outside of our class
@@ -21,7 +16,9 @@ enum PlayerState { idle, running, jumping, falling, hit, appearing, disappearing
 //with is used to additonal classes here our game class
 //import/reference to Keyboardhandler
 class Player extends SpriteAnimationGroupComponent
-    with HasGameReference<PixelAdventure>, KeyboardHandler, CollisionCallbacks {
+    with HasGameReference<PixelAdventure>,
+        KeyboardHandler,
+        CollisionCallbacks {
   //String character is required because we want to be able to change our character
   String character;
   String pathRespawn = 'Main Characters/';
@@ -53,7 +50,6 @@ class Player extends SpriteAnimationGroupComponent
   bool debugFlyMode = false;
   bool debugNoClipMode = false;
 
-
   bool hasJumped = false;
   bool gotHit = false;
 
@@ -76,50 +72,26 @@ class Player extends SpriteAnimationGroupComponent
   List<CollisionBlock> collisionsBlockList = [];
 
   // because the hitbox is a property of the player it follows the player where ever he goes. Same for the collecables
-  CustomHitbox hitbox = CustomHitbox(
-    offsetX: 10,
-    offsetY: 4,
-    width: 14,
-    height: 28,
-  );
-
-  late PlayerHitbox playerHitbox;
+  RectangleHitbox hitbox = RectangleHitbox(position: Vector2(9, 6), size: Vector2(14, 23));
 
 
   //ground
   bool isOnGround = false;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
-  Player({required this.character, super.position}){playerHitbox = PlayerHitbox(this);}
+  Player({required this.character, super.position});
 
   @override
   FutureOr<void> onLoad() {
     //using an underscore is making things private
     _loadAllAnimations();
     startingPosition = Vector2(position.x, position.y);
-    debugMode = false;
+    debugMode = true;
 
-    playerHitbox = PlayerHitbox(this);
-
-    add(playerHitbox.leftFoot);
-    add(playerHitbox.rightFoot);
-    add(playerHitbox.head);
-    add(playerHitbox.body);
-    add(playerHitbox);
-
-    playerHitbox.body.onCollisionCallback = (intersectionPoints, other) {
-      if (other.parent is CollisionBlock) _checkHorizontalCollisions(other.parent as CollisionBlock);
-    };
-    playerHitbox.head.onCollisionCallback = (intersectionPoints, other) {
-      if (other.parent is CollisionBlock) _checkHorizontalCollisions(other.parent as CollisionBlock);
-    };
-    playerHitbox.rightFoot.onCollisionCallback = (intersectionPoints, other) {
-      if ((other) is CollisionBlock) _checkVerticalCollisions(other.parent as CollisionBlock);
-    };
-    playerHitbox.leftFoot.onCollisionCallback = (intersectionPoints, other) {
-      if (other.parent is CollisionBlock) _checkVerticalCollisions(other.parent as CollisionBlock);
-    };
-
+    add(hitbox);
+/*    hitbox.onCollisionCallback = (intersections, other) {
+      if(other.parent is CollisionBlock) collideWithBlock(intersections, other);
+    };*/
   }
 
   @override
@@ -134,6 +106,7 @@ class Player extends SpriteAnimationGroupComponent
     super.update(dt);
   }
 
+  Vector2 mouseCoords = Vector2.zero();
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     horizontalMovement = 0;
@@ -148,10 +121,9 @@ class Player extends SpriteAnimationGroupComponent
 
     if (keysPressed.contains(LogicalKeyboardKey.keyR)) _respawn(); //press r to reset player
     if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) debugFlyMode = !debugFlyMode; // press left alt to toggle fly mode
-    if (keysPressed.contains(LogicalKeyboardKey.keyY) && playerHitbox.getAllActiveCollisions().isNotEmpty) _checkCollisions(); //press y to transport the player to the nearest free spot when the player is in a wall [TEMP / EXPERIMENTAL]
-    if (keysPressed.contains(LogicalKeyboardKey.keyX)) print(playerHitbox.isColliding()); //press x to print if the player is currently in a wall
+    if (keysPressed.contains(LogicalKeyboardKey.keyX)) print(hitbox.isColliding); //press x to print if the player is currently in a wall
     if (keysPressed.contains(LogicalKeyboardKey.keyC)) debugNoClipMode = !debugNoClipMode; //press C to toggle noClip mode. lets you fall / walk / fly through walls. better only use it whilst flying (ctrl key)
-
+    if (keysPressed.contains(LogicalKeyboardKey.keyT)) position = mouseCoords; //press T to teleport the player to the mouse
     //ternary statement if leftkey pressed then add -1 to horizontal movement if not add 0 = not moving
     if(isLeftKeyPressed) horizontalMovement = -1;
     if(isRightKeyPressed) horizontalMovement = 1;
@@ -174,8 +146,25 @@ class Player extends SpriteAnimationGroupComponent
     //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
     if (other is Collectable) other.collidedWithPlayer();
     if (other is Saw) _respawn();
+    if (other is CollisionBlock) collideWithBlock(intersectionPoints, (other as CollisionBlock).hitbox); //collide on plattforms
     super.onCollision(intersectionPoints, other);
   }
+
+  void collideWithBlock(Set<Vector2> intersectionPoints, ShapeHitbox other){
+    Vector2 intersectingPoint = intersectionPoints.first.clone();
+
+    Vector2 relativePos = other.absolutePosition-hitbox.absolutePosition-hitbox.size;
+    if(intersectingPoint.y == other.absolutePosition.y && velocity.y > 0) { //when the intersection is on the top of the floor and your falling
+      position.y += relativePos.y;
+      isOnGround = true;
+      velocity.y = 0; //reset velocity
+    } else if (velocity.y < 0) { //when going up you just hit your head on a ceiling
+      position.y -= relativePos.y ;
+      velocity.y = 0; //reset velocity
+
+    }
+  }
+
 
   void _loadAllAnimations() {
     //this takes an image from the assets folder and also enables us to set some specifics like texture size and how we want to split up our animation and get them from cache
@@ -233,100 +222,7 @@ class Player extends SpriteAnimationGroupComponent
       position.x += velocity.x * dt;
       velocity.x *= 0.81 * (dt+1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
       if (abs(velocity.x) < 0.3) velocity.x = 0;
-     // set the velocity to 0 as soon as it gets too small
-  }
-
-  void _checkHorizontalCollisions(CollisionBlock block) {
-    if (debugNoClipMode) return;
-
-
-    //we are iterating through our obstacles
-    //because we do not want to interact with our platforms in horizontal movements, we first check if our obstacle is a platform if not we check for collisions with our util function _checkCollision
-    if (!block.isPlatform) {
-      //this refers to our player
-      //checkCollision defined in utils.dart
-      if (checkCollision(this, block)) {
-        //if we are going to the right
-        if (velocity.x > 0) {
-          velocity.x = 0;
-          //we stop
-          //and we change position to stop at block.x minus width of our hitbox and the offset of our hitbox
-          double newPos = block.x - hitbox.offsetX - hitbox.width; //TODO replace all old hitbox vars with the new player hitbox vars and remove the old one
-          position.x = newPos;
-        }
-        //if we are going to the left
-        else if (velocity.x < 0) {
-          velocity.x = 0;
-          //stop
-          //new position should be player position + width of hitbox + offsetX
-          double newPos = block.x + block.width + hitbox.width + hitbox.offsetX;
-          position.x = newPos;
-        }
-      }
-    }
-  }
-
-  void _checkCollisions(){
-    int layer = 1;
-    Vector2 startPos = position.clone(); //the current player pos where the player is stuck
-
-    while (playerHitbox.isColliding() && layer < 250) {
-      int points = layer + 3; //get a good number of point to check a next possible player pos for on a circle with a given radius
-
-      for (double angle = 0; angle < 356; angle+= 360.0 / points) { //divide a circle in the number of points equally big sections and get the angle in the angle var
-        double nextPosXChange = sin(radians(angle)) * layer; //get the coordinates of a point on the line of the circle at the degree of the given angle
-        double nextPosYChange = cos(radians(angle)) * layer; // sin for x and cos for y
-
-        position = startPos;
-        position.x += nextPosXChange;
-        position.y += nextPosYChange;
-
-        if (!playerHitbox.isColliding()){
-          print("outside!");
-          return;
-        }
-      }
-
-      layer++;
-    }
-    position = startPos;
-  }
-
-
-  void _checkVerticalCollisions( block) {
-    if(debugNoClipMode) return;
-
-    if (block.isPlatform) {
-      if (checkCollision(this, block)) {
-        //we don't want to check if the top of the player is hitting the bottom of a platform, but only if the bottom of our player is touching the top of our platform
-        //see fixedY in utils.dart
-        if (velocity.y > 0) {
-          velocity.y = 0;
-          //change to hitbox values
-          position.y = block.y - hitbox.height - hitbox.offsetY;
-          isOnGround = true;
-        }
-      }
-    } else {
-      if (checkCollision(this, block)) {
-        //if the character is falling
-        if (velocity.y > 0) {
-          //stop
-          velocity.y = 0;
-          //position set to block.y - hitbox.height - hitbox.offsetY
-          position.y = block.y - hitbox.height - hitbox.offsetY;
-          isOnGround = true;
-        }
-        //if character is jumping
-        if (velocity.y < 0) {
-          //stop
-          velocity.y = 0;
-          //same for jump procedure
-          position.y = block.y + block.height - hitbox.offsetY;
-        }
-      }
-    }
-
+    // set the velocity to 0 as soon as it gets too small
   }
 
   //gravity adds to our Y-velocity, we need deltatime again here to account for Framerate
