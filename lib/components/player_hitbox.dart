@@ -43,4 +43,23 @@ class PlayerHitbox extends Component with HasCollisionDetection{
     );
 
   }
+
+  Set<ShapeHitbox> getAllActiveCollisions() {
+    Set<ShapeHitbox> all = {};
+    all.addAll(leftFoot.activeCollisions);
+    all.addAll(rightFoot.activeCollisions);
+    all.addAll(body.activeCollisions);
+    all.addAll(head.activeCollisions);
+
+    return all;
+  }
+
+  bool isColliding() {
+    bool leftFootColliding = !leftFoot.activeCollisions.isEmpty;
+    if (leftFootColliding)
+        print('left foot collided');
+    return leftFoot.isColliding || rightFoot.isColliding || body.isColliding || head.isColliding;
+  }
+
+
 }
