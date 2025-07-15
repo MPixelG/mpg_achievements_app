@@ -82,7 +82,7 @@ class PixelAdventure extends FlameGame
       case JoystickDirection.downRight:
       case JoystickDirection.upRight:
       case JoystickDirection.up:
-      player.playerJump(1);
+      player.playerJump();
       default:
         player.horizontalMovement = 0;
     }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
@@ -49,6 +50,8 @@ class Player extends SpriteAnimationGroupComponent
 
   bool debugFlyMode = false;
   bool debugNoClipMode = false;
+  bool debugImmortalMode = false;
+
 
   bool hasJumped = false;
   bool gotHit = false;
@@ -72,7 +75,10 @@ class Player extends SpriteAnimationGroupComponent
   List<CollisionBlock> collisionsBlockList = [];
 
   // because the hitbox is a property of the player it follows the player where ever he goes. Same for the collecables
-  RectangleHitbox hitbox = RectangleHitbox(position: Vector2(9, 6), size: Vector2(14, 23));
+  RectangleHitbox hitbox = RectangleHitbox(
+    position: Vector2(4, 6),
+    size: Vector2(24, 26),
+  );
 
 
   //ground
@@ -86,12 +92,8 @@ class Player extends SpriteAnimationGroupComponent
     //using an underscore is making things private
     _loadAllAnimations();
     startingPosition = Vector2(position.x, position.y);
-    debugMode = true;
-
     add(hitbox);
-/*    hitbox.onCollisionCallback = (intersections, other) {
-      if(other.parent is CollisionBlock) collideWithBlock(intersections, other);
-    };*/
+    return super.onLoad();
   }
 
   @override
@@ -101,7 +103,6 @@ class Player extends SpriteAnimationGroupComponent
       _updatePlayerstate();
       _updatePlayerMovement(dt);
       //needs to be after checking for collisions
-      _addGravity(dt);
     }
     super.update(dt);
   }
@@ -124,6 +125,9 @@ class Player extends SpriteAnimationGroupComponent
     if (keysPressed.contains(LogicalKeyboardKey.keyX)) print(hitbox.isColliding); //press x to print if the player is currently in a wall
     if (keysPressed.contains(LogicalKeyboardKey.keyC)) debugNoClipMode = !debugNoClipMode; //press C to toggle noClip mode. lets you fall / walk / fly through walls. better only use it whilst flying (ctrl key)
     if (keysPressed.contains(LogicalKeyboardKey.keyT)) position = mouseCoords; //press T to teleport the player to the mouse
+    if (keysPressed.contains(LogicalKeyboardKey.keyY)) debugImmortalMode = !debugImmortalMode; //press Y to toggle immortality
+    if (keysPressed.contains(LogicalKeyboardKey.keyB)) debugMode = !debugMode; //press Y to toggle debug mode (visibility of hitboxes and more)
+
     //ternary statement if leftkey pressed then add -1 to horizontal movement if not add 0 = not moving
     if(isLeftKeyPressed) horizontalMovement = -1;
     if(isRightKeyPressed) horizontalMovement = 1;
@@ -145,26 +149,11 @@ class Player extends SpriteAnimationGroupComponent
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
     if (other is Collectable) other.collidedWithPlayer();
-    if (other is Saw) _respawn();
-    if (other is CollisionBlock) collideWithBlock(intersectionPoints, (other as CollisionBlock).hitbox); //collide on plattforms
+    if (other is Saw && !debugImmortalMode) _respawn();
+
+    if(!debugNoClipMode) checkCollision(other);
     super.onCollision(intersectionPoints, other);
   }
-
-  void collideWithBlock(Set<Vector2> intersectionPoints, ShapeHitbox other){
-    Vector2 intersectingPoint = intersectionPoints.first.clone();
-
-    Vector2 relativePos = other.absolutePosition-hitbox.absolutePosition-hitbox.size;
-    if(intersectingPoint.y == other.absolutePosition.y && velocity.y > 0) { //when the intersection is on the top of the floor and your falling
-      position.y += relativePos.y;
-      isOnGround = true;
-      velocity.y = 0; //reset velocity
-    } else if (velocity.y < 0) { //when going up you just hit your head on a ceiling
-      position.y -= relativePos.y ;
-      velocity.y = 0; //reset velocity
-
-    }
-  }
-
 
   void _loadAllAnimations() {
     //this takes an image from the assets folder and also enables us to set some specifics like texture size and how we want to split up our animation and get them from cache
@@ -211,31 +200,20 @@ class Player extends SpriteAnimationGroupComponent
 
   //only handles x movement for player
   void _updatePlayerMovement(double dt) {
-    if (hasJumped) {
-      if (!isOnGround) hasJumped = false;
-      else playerJump(dt);
-    }
+    if (hasJumped) if (isOnGround) playerJump(); else hasJumped = false;
 
 
-      velocity.x += horizontalMovement * moveSpeed;
+    velocity.x += horizontalMovement * moveSpeed;
+    velocity.x *= 0.81 * (dt+1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+    position.x += velocity.x * dt;
 
-      position.x += velocity.x * dt;
-      velocity.x *= 0.81 * (dt+1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
-      if (abs(velocity.x) < 0.3) velocity.x = 0;
-    // set the velocity to 0 as soon as it gets too small
-  }
-
-  //gravity adds to our Y-velocity, we need deltatime again here to account for Framerate
-  void _addGravity(double dt) {
-    if (debugFlyMode){
-      velocity.y += verticalMovement * moveSpeed * (dt+1);
-      velocity.y *= 0.86;
-    } else velocity.y += _gravity;
-
-
-    //here we set a limit to our y-velocity which is our jumpforce for going up, and our terminal velocity for falling
+    if(!debugFlyMode) velocity.y += _gravity;
     velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
-    //here you change y position according to velocity times deltatime to adjust for clockspeed
+
+    if (debugFlyMode) {
+      velocity.y += verticalMovement * moveSpeed * (dt + 1);
+      velocity.y *= 0.9;
+    }
     position.y += velocity.y * dt;
   }
 
@@ -263,9 +241,8 @@ class Player extends SpriteAnimationGroupComponent
     current = playerState;
   }
 
-  void playerJump(double dt) {
+  void playerJump() {
     velocity.y = -_jumpForce;
-    position.y += velocity.y * dt;
     //otherwise the player can even jump even if he is in the air
     isOnGround = false;
     hasJumped = false;
@@ -298,4 +275,35 @@ class Player extends SpriteAnimationGroupComponent
       });
     });
   }
+
+  void checkCollision(PositionComponent other){
+    if (other is! CollisionBlock) return; //physics only work on the collision blocks (including the platforms)
+
+    Vector2 posDiff = hitbox.absolutePosition - other.absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
+
+    //if the player faces in the other direction, we want to measure the distances from the other side of the hitbox. so we just add the width of it to the value.
+    if(scale.x < 0) {
+      posDiff.x -= hitbox.width;
+    }
+
+    //get all the distances it would take to transport the player to this side of the plattform
+    final double distanceUp = posDiff.y + hitbox.height;
+    final double distanceLeft = posDiff.x + hitbox.width;
+    final double distanceRight = other.width - posDiff.x;
+    final double distanceDown = other.height - posDiff.y;
+
+    final double smallestDistance = min(min(distanceUp, distanceDown), min(distanceRight, distanceLeft)); //get the smallest distance
+
+    if (smallestDistance == distanceUp && velocity.y > 0) {position.y -= distanceUp; isOnGround = true; velocity.y = 0;} //make sure youre falling (for plattforms), then update the position, set the player on the ground and reset the velocity.
+    if (smallestDistance == distanceDown && !other.isPlatform) {position.y += distanceDown; velocity.y = 0;} //make sure the block isnt a plattform, so that you can go through it from the bottom
+    if (smallestDistance == distanceLeft && !other.isPlatform) {position.x -= distanceLeft; velocity.x = 0;} //make sure the block isnt a plattform, so that you can go through it horizontally
+    if (smallestDistance == distanceRight && !other.isPlatform) {position.x += distanceRight; velocity.x = 0;}
+  }
+
+
+
+
+
+
+
 }
