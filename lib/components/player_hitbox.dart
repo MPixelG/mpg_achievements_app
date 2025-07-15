@@ -38,29 +38,6 @@ class PlayerHitbox extends Component with HasCollisionDetection {
         size: Vector2(bodyWidth * 2, bodyHeight - headHeight - 7)
     );
 
-
-    // leftFoot.onCollisionStartCallback = (intersectionPoints, other) {
-    //   Vector2? nextPos = player.getNearestPointOutsideOfBox(
-    //       intersectionPoints.first, other);
-    //   player.position = nextPos;
-    // };
-    // rightFoot.onCollisionStartCallback = (intersectionPoints, other) {
-    //   Vector2? nextPos = player.getNearestPointOutsideOfBox(
-    //       intersectionPoints.first, other);
-    //   player.position = nextPos;
-    // };
-    // head.onCollisionStartCallback = (intersectionPoints, other) {
-    //   Vector2? nextPos = player.getNearestPointOutsideOfBox(
-    //       intersectionPoints.first, other);
-    //   player.position = nextPos;
-    // };
-    // body.onCollisionStartCallback = (intersectionPoints, other) {
-    //   Vector2? nextPos = player.getNearestPointOutsideOfBox(
-    //       intersectionPoints.first, other);
-    //   player.position = nextPos;
-    // };
-
-
     add(leftFoot);
     add(rightFoot);
     add(head);

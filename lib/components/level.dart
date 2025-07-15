@@ -17,10 +17,6 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
   //Todo add feature to make levels with and without scrolling background
   final bool scrollingBackground = false;
 
-
-
-
-  List<CollisionBlock> collisionsBlockList = [];
   //loads when the class instantiated
   //In dart, late keyword is used to declare a variable or field that will be initialized at a later time.e.g. late String name
   //
@@ -129,14 +125,12 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
               size: Vector2(collision.width, collision.height),
               isPlatform: true,
             );
-            collisionsBlockList.add(platform);
             add(platform);
           default:
             final block = CollisionBlock(
               position: Vector2(collision.x, collision.y),
               size: Vector2(collision.width, collision.height),
             );
-            collisionsBlockList.add(block);
             add(block);
         }
       }
