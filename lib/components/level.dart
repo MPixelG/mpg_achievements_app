@@ -9,7 +9,7 @@ import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/saw.dart';
 
-class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCallbacks {
+class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCallbacks{
   final String levelName;
   late TiledComponent level;
   final Player player;
@@ -17,7 +17,6 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
   //Todo add feature to make levels with and without scrolling background
   final bool scrollingBackground = false;
 
-  List<CollisionBlock> collisionsBlockList = [];
   //loads when the class instantiated
   //In dart, late keyword is used to declare a variable or field that will be initialized at a later time.e.g. late String name
   //
@@ -99,17 +98,14 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
             final isVertical = spawnPoint.properties.getValue('isVertical');
             final offNeg = spawnPoint.properties.getValue('offNeg');
             final offPos = spawnPoint.properties.getValue('offPos');
-            final saw = Saw(
-              isVertical: isVertical,
-              offNeg: offNeg,
-              offPos: offPos,
+            final saw = Saw(isVertical: isVertical, offNeg: offNeg,offPos: offPos,
               position: Vector2(spawnPoint.x, spawnPoint.y),
               size: Vector2(spawnPoint.width, spawnPoint.height),
             );
             //saw rotates in the other direction
             saw.scale.x = -1;
             add(saw);
-            break;
+                break;
           default:
         }
       }
@@ -129,54 +125,49 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
               size: Vector2(collision.width, collision.height),
               isPlatform: true,
             );
-            collisionsBlockList.add(platform);
             add(platform);
-            break; 
           default:
             final block = CollisionBlock(
               position: Vector2(collision.x, collision.y),
               size: Vector2(collision.width, collision.height),
             );
-            collisionsBlockList.add(block);
             add(block);
         }
       }
     }
     //all collisionsBlocks are given to the player and now the player has a reference
-    player.collisionBlocks = collisionsBlockList;
+    //player.collisionsBlockList = collisionsBlockList;
   }
 
-  TextComponent overlays = TextComponent(text: "hello!", position: Vector2(10, 10)); // Adjusted position slightly for visibility
-  @override
-  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (keysPressed.contains(LogicalKeyboardKey.keyV)) {
-      if (overlays.scale == Vector2.zero()) {
-        overlays.scale = Vector2.all(1.0); // Set scale to 1.0 for visibility
-      } else {
-        overlays.scale = Vector2.zero();
-      }
-    } //press V to toggle the visibility of the overlays
-    return super.onKeyEvent(event, keysPressed);
+   TextComponent overlays = TextComponent(text: "hello!", position: Vector2(0, 0));
+    @override
+    bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+      if (keysPressed.contains(LogicalKeyboardKey.keyV)) {if(overlays.scale == Vector2.zero()) overlays.scale = Vector2.all(0.5); else overlays.scale = Vector2.zero();} //press V to toggle the visibility of the overlays
+      return super.onKeyEvent(event, keysPressed);
+    }
+
+    Vector2 mouseCoords = Vector2.zero();
+    @override
+    void onPointerMove(PointerMoveEvent event) {
+        mouseCoords = event.localPosition..round();
+        player.mouseCoords = mouseCoords;
+    }
+
+
+
+    @override //update the overlays
+    void update(double dt) {
+      if(overlays.scale == Vector2.zero()) return;
+
+      Vector2 roundedPlayerPos = player.position.clone()..round();
+
+      String playerCoords = roundedPlayerPos.toString();
+      overlays.text = "Player: " + playerCoords + "\nMouse: " + mouseCoords.toString();
+
+      super.update(dt);
+    }
+
+    Vector2 get mousePos => mouseCoords;
+
+
   }
-
-  Vector2 mouseCoords = Vector2.zero();
-  @override
-  void onPointerMove(PointerMoveEvent event) {
-    // We update the local mouseCoords here. The Player class doesn't need this info.
-    mouseCoords = event.localPosition;
-  }
-
-  @override //update the overlays
-  void update(double dt) {
-    super.update(dt); // It's good practice to call the super method first.
-    if (overlays.scale == Vector2.zero()) return;
-
-    Vector2 roundedPlayerPos = player.position.clone()..round();
-    String playerCoords = roundedPlayerPos.toString();
-
-    // The line that updates the text is now uncommented.
-    // overlays.text = "Player: $playerCoords\nMouse: ${mouseCoords.round()}";
-  }
-
-  Vector2 get mousePos => mouseCoords;
-}

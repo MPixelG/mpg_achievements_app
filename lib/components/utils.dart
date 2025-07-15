@@ -1,7 +1,11 @@
-// lib/components/utils.dart
+//utils are helper_methods that check additional physical requirements in the game
 
-import 'package:mpg_achievements_app/components/collision_block.dart';
+//is our player overlapping an object in our world
+//hitbox is defined in player.dart, here we need to update our borders for our collision
+
 import 'package:mpg_achievements_app/components/player.dart';
+
+import 'collision_block.dart';
 
 bool checkCollision(Player player, CollisionBlock block) {
   // Instead of manual calculations, we use the hitbox's absolute bounding box.
@@ -15,3 +19,5 @@ bool checkCollision(Player player, CollisionBlock block) {
   // The 'overlaps' method reliably checks for any intersection between the two rectangles.
   return playerRect.overlaps(blockRect);
 }
+
+double abs(double val) => val < 0 ? -val : val;
