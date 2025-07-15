@@ -1,24 +1,30 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'dart:math';
+import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart' hide AnimationStyle;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
+import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
 import 'package:mpg_achievements_app/components/player.dart';
+import 'components/camera/animation_style.dart';
 import 'components/level.dart';
 
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame
     with HasKeyboardHandlerComponents, DragCallbacks, HasCollisionDetection {
-  late final CameraComponent cam;
+
+  late final AdvancedCamera cam;
 
   //Player variable
-  Player player = Player(character: 'Ninja Frog');
-  late JoystickComponent joystick;
+  Player player = Player(character: 'Virtual Guy');
   //can be added for touch support
   late String platform;
   bool showJoystick = false;
+  late JoystickComponent joystick;
 
   //Future is a value that is returned even thought a value of the method is not computed immediately, but later
   //FutureOr works same here either returns a Future or <void>
@@ -29,12 +35,19 @@ class PixelAdventure extends FlameGame
     await images.loadAllImages();
     //world is loaded after initialising all images
     final world = Level(levelName: 'Level_0', player: player);
-    cam = CameraComponent.withFixedResolution(
-      world: world,
-      width: 640,
-      height: 360,
-    );
+    cam = AdvancedCamera(world: world);
+    cam.player = player;
     cam.viewfinder.anchor = Anchor.topLeft;
+
+
+
+    cam.moveTo(Vector2(-100, -300));
+    cam.moveTo(Vector2(0, 0), animationStyle: AnimationStyle.EaseOut, time: 1000);
+
+
+
+
+
     addAll([cam, world]);
     if (showJoystick == true) {
       addJoystick();

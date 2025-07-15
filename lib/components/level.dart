@@ -167,6 +167,16 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
       super.update(dt);
     }
 
+    //sets the visibility of all of the hitboxes of all of the components in the level (except for background tiles)
+    void setDebugMode(bool val) {
+      for (var value in this.descendants()) {
+        if (value is BackgroundTile) continue;
+
+        value.debugMode = val;
+      }
+    }
+
+
     Vector2 get mousePos => mouseCoords;
 
 

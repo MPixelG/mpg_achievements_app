@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
+import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/components/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'saw.dart';
@@ -19,7 +21,7 @@ enum PlayerState { idle, running, jumping, falling, hit, appearing, disappearing
 class Player extends SpriteAnimationGroupComponent
     with HasGameReference<PixelAdventure>,
         KeyboardHandler,
-        CollisionCallbacks {
+        CollisionCallbacks{
   //String character is required because we want to be able to change our character
   String character;
   String pathRespawn = 'Main Characters/';
@@ -126,7 +128,7 @@ class Player extends SpriteAnimationGroupComponent
     if (keysPressed.contains(LogicalKeyboardKey.keyC)) debugNoClipMode = !debugNoClipMode; //press C to toggle noClip mode. lets you fall / walk / fly through walls. better only use it whilst flying (ctrl key)
     if (keysPressed.contains(LogicalKeyboardKey.keyT)) position = mouseCoords; //press T to teleport the player to the mouse
     if (keysPressed.contains(LogicalKeyboardKey.keyY)) debugImmortalMode = !debugImmortalMode; //press Y to toggle immortality
-    if (keysPressed.contains(LogicalKeyboardKey.keyB)) debugMode = !debugMode; //press Y to toggle debug mode (visibility of hitboxes and more)
+    if (keysPressed.contains(LogicalKeyboardKey.keyB)) {debugMode = !debugMode; (parent as Level).setDebugMode(debugMode);} //press Y to toggle debug mode (visibility of hitboxes and more)
 
     //ternary statement if leftkey pressed then add -1 to horizontal movement if not add 0 = not moving
     if(isLeftKeyPressed) horizontalMovement = -1;
