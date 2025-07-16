@@ -2,14 +2,12 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/level.dart';
-import 'package:mpg_achievements_app/components/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import 'saw.dart';
+import 'traps/saw.dart';
 
 //an enumeration of all of the states a player can be in , here we declare the enum outside of our class
 //the values can be used like static variables

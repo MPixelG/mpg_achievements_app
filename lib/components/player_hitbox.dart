@@ -6,7 +6,7 @@ enum PlayerHitboxVariant {
   head, body, rightFoot, leftFoot
 }
 
-class PlayerHitbox extends Component with HasCollisionDetection {
+class PlayerHitbox extends Component with HasCollisionDetection { //OUTDATED
   final double headWidth = 6;
   final double headHeight = 6;
   final double bodyWidth = 7;
@@ -55,9 +55,7 @@ class PlayerHitbox extends Component with HasCollisionDetection {
 
   bool isColliding() {
     Player parent = this.parent as Player;
-    print(parent.position);
     updatePositions(parent);
-    print(leftFoot.isColliding || rightFoot.isColliding || body.isColliding || head.isColliding);
     return leftFoot.isColliding || rightFoot.isColliding || body.isColliding || head.isColliding;
   }
 

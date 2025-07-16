@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
-import '../mpg_pixel_adventure.dart';
 
 //A positionComponent can have an x, y , width and height
 class CollisionBlock extends PositionComponent with CollisionCallbacks{

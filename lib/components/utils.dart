@@ -3,7 +3,6 @@
 //is our player overlapping an object in our world
 //hitbox is defined in player.dart, here we need to update our borders for our collision
 
-import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 
 import 'collision_block.dart';

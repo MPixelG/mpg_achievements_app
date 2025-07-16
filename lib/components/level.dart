@@ -3,16 +3,15 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/cupertino.dart' hide PointerMoveEvent;
-import 'package:flutter/gestures.dart' hide PointerMoveEvent;
+import 'package:flutter/cupertino.dart' hide PointerMoveEvent, AnimationStyle;
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
+import 'package:mpg_achievements_app/components/camera/animation_style.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/player.dart';
-import 'package:mpg_achievements_app/components/saw.dart';
+import 'package:mpg_achievements_app/components/traps/saw.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import 'package:flutter/gestures.dart' hide PointerMoveEvent;
 
 import 'background/scrolling_background.dart';
 
@@ -43,7 +42,10 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
     _addCollisions();
 
     add(overlays);
-    overlays.scale = Vector2.zero(); //hide the overlays
+    overlays.scale = Vector2.zero(); //hi
+    overlays.priority = 2;
+
+    // de the overlays
     //runs all the other onLoad-events the method is referring to, now not important
     return super.onLoad();
   }
@@ -61,31 +63,6 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
     ScrollingBackground background = ScrollingBackground(tileColor: backgroundColor, camera: (parent as PixelAdventure).cam);
 
     add(background);
-
-
-    /*const tileSize = 64;
-    //calculating the number of tiles we need for our level/game / floor() rounds the number here our game reference is needed
-    final numTilesY = (game.size.y / tileSize).floor();
-    final numTilesX = (game.size.x / tileSize).floor();
-
-    if (backgroundLayer != null) {
-      final backgroundColor = backgroundLayer.properties.getValue(
-        'BackgroundColor',
-      );
-
-      //?? says that if backgroundColor is null use gray if not null use backgroundColor / position is start-coordinates of background
-      for (double y = 0; y < game.size.y / numTilesY; y++) {
-        for (double x = 0; x < numTilesX; x++) {
-          //?? says that if backgroundColor is null use gray if not null use backgroundColor / position is start-coordinates of background
-          //Vector2 must be *tileSize because otherwise we would ad in position of the loop numbers, but every time a tile is added we need to add 64 to the position
-          final backgroundTile = BackgroundTile(
-            color: backgroundColor ?? 'Yellow',
-            position: Vector2(x * tileSize - tileSize, y * tileSize),
-          );
-          add(backgroundTile);
-        }
-      }
-    }*/
   }
 
   void _spawningObjects() {
@@ -161,6 +138,7 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
     @override
     bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
       if (keysPressed.contains(LogicalKeyboardKey.keyV)) {if(overlays.scale == Vector2.zero()) overlays.scale = Vector2.all(0.5); else overlays.scale = Vector2.zero();} //press V to toggle the visibility of the overlays
+      if (keysPressed.contains(LogicalKeyboardKey.keyN)) {(parent as PixelAdventure).cam.shakeCamera(6, 5, animationStyle: AnimationStyle.EaseOut);} //press V to toggle the visibility of the overlays
       return super.onKeyEvent(event, keysPressed);
     }
 
@@ -183,7 +161,6 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
 
       String playerCoords = roundedPlayerPos.toString();
       overlays.text = "Player: " + playerCoords + "\nMouse: " + mouseCoords.toString();
-
       super.update(dt);
     }
 

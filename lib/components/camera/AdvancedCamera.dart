@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:mpg_achievements_app/components/camera/camera_effect.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 
 import 'animation_style.dart';
@@ -23,6 +24,12 @@ class AdvancedCamera extends CameraComponent {
   AnimationStyle animationStyle = AnimationStyle.Linear; // the animation style of the camera. for example 'easeOut' means
 
   Vector2 dir = Vector2.zero(); //the direction the camera is currently going into
+
+  Vector2 shakingPosition = Vector2.zero();
+  late double shakingAmount = 0;
+  late double shakingTime = 0;
+  late double totalShakingTime = 0;
+  late AnimationStyle shakingAnimation;
 
   bool followPlayer = false;
   late double followAccuracy; //the distance between camera pos and player pos it needs to move the camera. so a higher value equals less frequent camera adjustments
@@ -65,6 +72,13 @@ class AdvancedCamera extends CameraComponent {
     this.player = player;
   }
 
+  void shakeCamera(double shakingAmount, double shakingTime, {AnimationStyle animationStyle = AnimationStyle.EaseOut}){
+    this.shakingAmount = shakingAmount;
+    this.shakingTime = shakingTime;
+    totalShakingTime = shakingTime;
+    shakingAnimation = animationStyle;
+  }
+
   @override
   void update(double dt) {
     if (timeLeft > 0) { //if theres an active task with time left
@@ -105,6 +119,22 @@ class AdvancedCamera extends CameraComponent {
       if (viewfinder.position.distanceTo(player!.position) > followAccuracy) {
         moveTo(player!.absoluteCenter, time: 1000, animationStyle: AnimationStyle.EaseOut);
       }
+    }
+
+    if(shakingTime > 0) { //if theres an ongoing shaking animation
+
+      double power = switch (shakingAnimation){
+        AnimationStyle.EaseIn => easeIn(shakingTime / totalShakingTime, startVal: shakingAmount, endVal: 0), //basically the same as the moving of the camera
+        AnimationStyle.EaseOut => easeOut(shakingTime / totalShakingTime, startVal: 0, endVal: shakingAmount),
+        AnimationStyle.Linear => linear(shakingTime / totalShakingTime, startVal: shakingAmount, endVal: 0),
+        AnimationStyle.EaseInOut => easeInOut(shakingTime / totalShakingTime, startVal: shakingAmount, endVal: 0),
+      };
+
+      shakingPosition = shake(strength: power); //get the actual values
+
+      viewport.position = shakingPosition + Vector2(25, 0); //move it by 25 px because otherwise its not centered (idk why)
+
+      shakingTime -= dt; //decrease the time
     }
 
     super.update(dt);
