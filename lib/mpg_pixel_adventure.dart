@@ -42,12 +42,7 @@ class PixelAdventure extends FlameGame
 
 
     // cam.moveTo(Vector2(-100, -300));
-    // cam.moveTo(Vector2(0, 0), animationStyle: AnimationStyle.EaseOut, time: 1000);
-    cam.follow(player);
-
-
-
-
+    cam.setFollowPlayer(true, player: player, accuracy: 20);
 
     addAll([cam, world]);
     if (showJoystick == true) {

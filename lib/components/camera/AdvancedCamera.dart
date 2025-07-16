@@ -86,7 +86,14 @@ class AdvancedCamera extends CameraComponent {
       }
     }
 
-    if (followPlayer)
+    if (followPlayer) {
+
+      if (viewfinder.position.distanceTo(player!.position) > followAccuracy) {
+        moveTo(player!.absoluteCenter, time: 1000, animationStyle: AnimationStyle.EaseOut);
+      }
+
+
+    }
 
     super.update(dt);
   }
