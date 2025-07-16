@@ -78,8 +78,8 @@ class Player extends SpriteAnimationGroupComponent
 
   // because the hitbox is a property of the player it follows the player where ever he goes. Same for the collecables
   RectangleHitbox hitbox = RectangleHitbox(
-    position: Vector2(4, 6),
-    size: Vector2(24, 26),
+    position: Vector2(4, 4),
+    size: Vector2(24, 28),
   );
 
 
@@ -296,7 +296,7 @@ class Player extends SpriteAnimationGroupComponent
 
     final double smallestDistance = min(min(distanceUp, distanceDown), min(distanceRight, distanceLeft)); //get the smallest distance
 
-    if (smallestDistance == distanceUp && velocity.y > 0) {position.y -= distanceUp; isOnGround = true; velocity.y = 0;} //make sure youre falling (for plattforms), then update the position, set the player on the ground and reset the velocity.
+    if (smallestDistance == distanceUp && velocity.y > 0 && !(other.isPlatform && distanceUp > 5)) {position.y -= distanceUp; isOnGround = true; velocity.y = 0;} //make sure youre falling (for plattforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isnt too high, otherwise if half of the player falls through  a plattform, he gets teleported up
     if (smallestDistance == distanceDown && !other.isPlatform) {position.y += distanceDown; velocity.y = 0;} //make sure the block isnt a plattform, so that you can go through it from the bottom
     if (smallestDistance == distanceLeft && !other.isPlatform) {position.x -= distanceLeft; velocity.x = 0;} //make sure the block isnt a plattform, so that you can go through it horizontally
     if (smallestDistance == distanceRight && !other.isPlatform) {position.x += distanceRight; velocity.x = 0;}

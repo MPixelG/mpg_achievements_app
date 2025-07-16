@@ -22,6 +22,9 @@ class AdvancedCamera extends CameraComponent {
 
   Vector2 dir = Vector2.zero();
 
+  bool followPlayer = false;
+  late double followAccuracy;
+
 
   @override
   void moveTo(Vector2 point, {AnimationStyle animationStyle = AnimationStyle.Linear, double speed = double.infinity, double time = 0}) {
@@ -44,6 +47,12 @@ class AdvancedCamera extends CameraComponent {
     super.follow(target, maxSpeed: maxSpeed, horizontalOnly: horizontalOnly, verticalOnly: verticalOnly, snap: snap);
   }
 
+  void setFollowPlayer(bool val, {Player? player, double accuracy = 10}){
+    if(player != null) setPlayer(player);
+    followPlayer = val;
+    followAccuracy = accuracy;
+  }
+
   void setPlayer(Player player){
     this.player = player;
   }
@@ -53,10 +62,8 @@ class AdvancedCamera extends CameraComponent {
       timeLeft -= dt * 1000;
       double timeProgress = 1 - (timeLeft / initialGivenTime);
 
-      // Begrenzen des Fortschritts zwischen 0 und 1
       timeProgress = timeProgress.clamp(0, 1);
 
-      // Berechnung der Interpolation basierend auf dem Animationsstil
       double progressVal = switch (animationStyle) {
         AnimationStyle.Linear => linear(timeProgress),
         AnimationStyle.EaseIn => easeIn(timeProgress),
@@ -64,21 +71,22 @@ class AdvancedCamera extends CameraComponent {
         AnimationStyle.EaseInOut => easeInOut(timeProgress),
       };
 
-      // Manuelle Interpolation für Vector2
       pos = Vector2(
           initialPos.x + (givenMovePosition.x - initialPos.x) * progressVal,
           initialPos.y + (givenMovePosition.y - initialPos.y) * progressVal
       );
 
-      // Bewege die Kamera zur interpolierten Position
+
       moveTo(pos);
 
-      // Wenn die Zeit abgelaufen ist, setze auf Zielposition
+
       if (timeLeft <= 0) {
         pos = givenMovePosition;
         moveTo(pos);
       }
     }
+
+    if (followPlayer)
 
     super.update(dt);
   }

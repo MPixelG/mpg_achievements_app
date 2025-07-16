@@ -37,12 +37,13 @@ class PixelAdventure extends FlameGame
     final world = Level(levelName: 'Level_0', player: player);
     cam = AdvancedCamera(world: world);
     cam.player = player;
-    cam.viewfinder.anchor = Anchor.topLeft;
+    cam.viewfinder.anchor = Anchor.center;
 
 
 
-    cam.moveTo(Vector2(-100, -300));
-    cam.moveTo(Vector2(0, 0), animationStyle: AnimationStyle.EaseOut, time: 1000);
+    // cam.moveTo(Vector2(-100, -300));
+    // cam.moveTo(Vector2(0, 0), animationStyle: AnimationStyle.EaseOut, time: 1000);
+    cam.follow(player);
 
 
 

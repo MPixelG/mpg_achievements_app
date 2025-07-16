@@ -8,6 +8,8 @@ import 'package:mpg_achievements_app/components/collision_block.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/saw.dart';
+import 'package:mpg_achievements_app/components/scrolling_background.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCallbacks{
   final String levelName;
@@ -44,8 +46,19 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
   //creating a background dynamically //todo add scrolling
   void _scrollingBackground() {
     final backgroundLayer = level.tileMap.getLayer('Level');
+    String backgroundColor = "Green";
+    if (backgroundLayer != null) {
+      backgroundColor = backgroundLayer.properties.getValue(
+        'BackgroundColor',
+      );
+    }
 
-    const tileSize = 64;
+    ScrollingBackground background = ScrollingBackground(tileColor: backgroundColor, camera: (parent as PixelAdventure).cam);
+
+    add(background);
+
+
+    /*const tileSize = 64;
     //calculating the number of tiles we need for our level/game / floor() rounds the number here our game reference is needed
     final numTilesY = (game.size.y / tileSize).floor();
     final numTilesX = (game.size.x / tileSize).floor();
@@ -67,7 +80,7 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
           add(backgroundTile);
         }
       }
-    }
+    }*/
   }
 
   void _spawningObjects() {
