@@ -1,5 +1,3 @@
-import 'dart:math';
-
 // a collection of different Easing functions. can be used for smooth movements for a camera or other stuff
 enum AnimationStyle{
   EaseIn, EaseOut, Linear, EaseInOut

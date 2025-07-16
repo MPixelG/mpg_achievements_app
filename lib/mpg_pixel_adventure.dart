@@ -1,26 +1,22 @@
 import 'dart:async';
 import 'dart:io' show Platform;
-import 'dart:math';
-import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/cupertino.dart' hide AnimationStyle;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
 import 'package:mpg_achievements_app/components/player.dart';
-import 'components/camera/animation_style.dart';
 import 'components/level.dart';
 
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame
-    with HasKeyboardHandlerComponents, DragCallbacks, HasCollisionDetection {
+    with HasKeyboardHandlerComponents, DragCallbacks, HasCollisionDetection, ScrollDetector{
 
   late final AdvancedCamera cam;
 
   //Player variable
-  Player player = Player(character: 'Virtual Guy');
+  Player player = Player(character: 'Pink Man');
   //can be added for touch support
   late String platform;
   bool showJoystick = false;
@@ -40,9 +36,7 @@ class PixelAdventure extends FlameGame
     cam.viewfinder.anchor = Anchor.center;
 
 
-
-    // cam.moveTo(Vector2(-100, -300));
-    cam.setFollowPlayer(true, player: player, accuracy: 20);
+    cam.setFollowPlayer(true, player: player, accuracy: 50); //follows the player.
 
     addAll([cam, world]);
     if (showJoystick == true) {

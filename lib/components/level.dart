@@ -1,15 +1,20 @@
 import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter/cupertino.dart' hide PointerMoveEvent;
+import 'package:flutter/gestures.dart' hide PointerMoveEvent;
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/background_tile.dart';
+import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/saw.dart';
-import 'package:mpg_achievements_app/components/scrolling_background.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:flutter/gestures.dart' hide PointerMoveEvent;
+
+import 'background/scrolling_background.dart';
 
 class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCallbacks{
   final String levelName;
@@ -165,6 +170,8 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
         mouseCoords = event.localPosition..round();
         player.mouseCoords = mouseCoords;
     }
+
+    @override
 
 
 
