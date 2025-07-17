@@ -123,6 +123,7 @@ class Enemy extends SpriteAnimationGroupComponent
     _loadAllAnimations();
     startingPosition = Vector2(position.x, position.y);
     add(hitbox);
+    add(ScreenHitbox());
     return super.onLoad();
   }
 
@@ -166,7 +167,7 @@ class Enemy extends SpriteAnimationGroupComponent
       }
       final intersectionPoint = result.intersectionPoint!.toOffset();
       canvas.drawLine(originOffset,
-          Vector2(50,50).toOffset(),
+          intersectionPoint,
           paint,);
     }
 
