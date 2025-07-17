@@ -9,16 +9,19 @@ import 'package:mpg_achievements_app/components/background/background_tile.dart'
 import 'package:mpg_achievements_app/components/camera/animation_style.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
+import 'package:mpg_achievements_app/components/enemy.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/traps/saw.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'background/scrolling_background.dart';
 
+
 class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCallbacks{
   final String levelName;
   late TiledComponent level;
   final Player player;
+  final Enemy enemy;
 
   //Todo add feature to make levels with and without scrolling background
   final bool scrollingBackground = false;
@@ -27,7 +30,7 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
   //In dart, late keyword is used to declare a variable or field that will be initialized at a later time.e.g. late String name
   //
   //constructor
-  Level({required this.levelName, required this.player});
+  Level(this.enemy, {required this.levelName, required this.player});
 
   @override
   FutureOr<void> onLoad() async {
@@ -101,6 +104,10 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
             saw.scale.x = -1;
             add(saw);
                 break;
+          case "Enemy":
+            //enemy spawning
+            enemy.position = Vector2(spawnPoint.x, spawnPoint.y);
+            add(enemy);
           default:
         }
       }
@@ -137,7 +144,11 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
    TextComponent overlays = TextComponent(text: "hello!", position: Vector2(0, 0));
     @override
     bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-      if (keysPressed.contains(LogicalKeyboardKey.keyV)) {if(overlays.scale == Vector2.zero()) overlays.scale = Vector2.all(0.5); else overlays.scale = Vector2.zero();} //press V to toggle the visibility of the overlays
+      if (keysPressed.contains(LogicalKeyboardKey.keyV)) {if(overlays.scale == Vector2.zero()) {
+        overlays.scale = Vector2.all(0.5);
+      } else {
+        overlays.scale = Vector2.zero();
+      }} //press V to toggle the visibility of the overlays
       if (keysPressed.contains(LogicalKeyboardKey.keyN)) {(parent as PixelAdventure).cam.shakeCamera(6, 5, animationStyle: AnimationStyle.EaseOut);} //press V to toggle the visibility of the overlays
       return super.onKeyEvent(event, keysPressed);
     }
@@ -160,13 +171,13 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
       Vector2 roundedPlayerPos = player.position.clone()..round();
 
       String playerCoords = roundedPlayerPos.toString();
-      overlays.text = "Player: " + playerCoords + "\nMouse: " + mouseCoords.toString();
+      overlays.text = "Player: $playerCoords\nMouse: $mouseCoords";
       super.update(dt);
     }
 
     //sets the visibility of all of the hitboxes of all of the components in the level (except for background tiles)
     void setDebugMode(bool val) {
-      for (var value in this.descendants()) {
+      for (var value in descendants()) {
         if (value is BackgroundTile) continue;
 
         value.debugMode = val;

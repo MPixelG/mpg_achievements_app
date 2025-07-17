@@ -73,9 +73,5 @@ class PlayerHitbox extends Component with HasCollisionDetection { //OUTDATED
     body.position = Vector2(playerPos.x + (playerWidth - bodyWidth) / 2, playerPos.y + headHeight + 6);
   }
 
-  @override
-  void update(double dt){
-    super.update(dt);
-  }
 
 }

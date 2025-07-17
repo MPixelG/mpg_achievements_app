@@ -5,7 +5,9 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/cupertino.dart' hide AnimationStyle;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
+import 'package:flutter/material.dart' hide AnimationStyle;
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
+import 'package:mpg_achievements_app/components/enemy.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'components/level.dart';
 
@@ -16,7 +18,9 @@ class PixelAdventure extends FlameGame
   late final AdvancedCamera cam;
 
   //Player variable
-  Player player = Player(character: 'Pink Man');
+  Player player = Player(character: 'Virtual Guy');
+  //Enemy variable
+  late Enemy enemy = Enemy(enemyCharacter: 'Pink Man');
   //can be added for touch support
   late String platform;
   bool showJoystick = false;
@@ -30,7 +34,7 @@ class PixelAdventure extends FlameGame
     showJoystick = _getPlatform();
     await images.loadAllImages();
     //world is loaded after initialising all images
-    final world = Level(levelName: 'Level_0', player: player);
+    final world = Level(levelName: 'Level_0', player: player, enemy);
     cam = AdvancedCamera(world: world);
     cam.player = player;
     cam.viewfinder.anchor = Anchor.center;
