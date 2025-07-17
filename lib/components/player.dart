@@ -20,7 +20,7 @@ class Player extends SpriteAnimationGroupComponent
     with HasGameReference<PixelAdventure>,
         KeyboardHandler,
         CollisionCallbacks,
-        HasCollisions{
+        HasCollisions, BasicMovement, KeyboardControllableMovement{
   //String character is required because we want to be able to change our character
   String character;
   String pathRespawn = 'Main Characters/';
@@ -44,31 +44,11 @@ class Player extends SpriteAnimationGroupComponent
   //50ms or 20 fps or 0.05s this is reference from itch.io
   final double stepTime = 0.05;
 
-  //gravity variables
-  final double _gravity = 15.0;
-  final double _jumpForce = 320;
-  final double _terminalVelocity = 300;
-
-  bool debugFlyMode = false;
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
 
-
-  bool hasJumped = false;
   bool gotHit = false;
 
-
-  //ability to go left or right
-  double moveSpeed = 35;
-
-  double horizontalMovement = 0;
-
-  //for debug fly purposes only
-  double verticalMovement = 0;
-
-
-  //set velocity to x=0 and y=0
-  Vector2 velocity = Vector2.zero();
   //starting position
   Vector2 startingPosition = Vector2.zero();
 
@@ -82,8 +62,6 @@ class Player extends SpriteAnimationGroupComponent
   );
 
 
-  //ground
-  bool isOnGround = false;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.character, super.position});
@@ -102,46 +80,16 @@ class Player extends SpriteAnimationGroupComponent
   void update(double dt) {
     if(!gotHit) {
       _updatePlayerstate();
-      _updatePlayerMovement(dt);
-      //needs to be after checking for collisions
     }
     super.update(dt);
   }
 
-  Vector2 mouseCoords = Vector2.zero();
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    horizontalMovement = 0;
-    verticalMovement = 0; //debug fly purposes only
-
-    final isLeftKeyPressed =
-        keysPressed.contains(LogicalKeyboardKey.keyA) ||
-            keysPressed.contains(LogicalKeyboardKey.arrowLeft);
-    final isRightKeyPressed =
-        keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
-            keysPressed.contains(LogicalKeyboardKey.keyD);
-
     if (keysPressed.contains(LogicalKeyboardKey.keyR)) _respawn(); //press r to reset player
-    if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) debugFlyMode = !debugFlyMode; // press left alt to toggle fly mode
     if (keysPressed.contains(LogicalKeyboardKey.keyX)) print(hitbox.isColliding); //press x to print if the player is currently in a wall
     if (keysPressed.contains(LogicalKeyboardKey.keyC)) debugNoClipMode = !debugNoClipMode; //press C to toggle noClip mode. lets you fall / walk / fly through walls. better only use it whilst flying (ctrl key)
-    if (keysPressed.contains(LogicalKeyboardKey.keyT)) position = mouseCoords; //press T to teleport the player to the mouse
     if (keysPressed.contains(LogicalKeyboardKey.keyY)) debugImmortalMode = !debugImmortalMode; //press Y to toggle immortality
-    if (keysPressed.contains(LogicalKeyboardKey.keyB)) {debugMode = !debugMode; (parent as Level).setDebugMode(debugMode);} //press Y to toggle debug mode (visibility of hitboxes and more)
-
-    //ternary statement if leftkey pressed then add -1 to horizontal movement if not add 0 = not moving
-    if(isLeftKeyPressed) horizontalMovement = -1;
-    if(isRightKeyPressed) horizontalMovement = 1;
-
-    //if the key is pressed than the player jumps in _updatePlayerMovement
-    if (keysPressed.contains(LogicalKeyboardKey.space)) {
-      if(debugFlyMode) verticalMovement = -1; //when in debug mode move the player upwards
-      else hasJumped = true; //else jump
-    }
-
-    if (keysPressed.contains(LogicalKeyboardKey.shiftLeft) && debugFlyMode) { //when in fly mode and shift is pressed, the player gets moved down
-      verticalMovement = 1;
-    }
 
     return super.onKeyEvent(event, keysPressed);
   }
@@ -196,24 +144,6 @@ class Player extends SpriteAnimationGroupComponent
         ),
       );
 
-  //only handles x movement for player
-  void _updatePlayerMovement(double dt) {
-    if (hasJumped) if (isOnGround) playerJump(); else hasJumped = false;
-
-    velocity.x += horizontalMovement * moveSpeed;
-    velocity.x *= 0.81 * (dt+1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
-    position.x += velocity.x * dt;
-
-    if(!debugFlyMode) velocity.y += _gravity;
-    velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
-
-    if (debugFlyMode) {
-      velocity.y += verticalMovement * moveSpeed * (dt + 1);
-      velocity.y *= 0.9;
-    }
-    position.y += velocity.y * dt;
-  }
-
   //handles animations and states
   void _updatePlayerstate() {
     PlayerState playerState = PlayerState.idle;
@@ -236,13 +166,6 @@ class Player extends SpriteAnimationGroupComponent
 
     //here the animation ist set after checking all of the conditions above
     current = playerState;
-  }
-
-  void playerJump() {
-    velocity.y = -_jumpForce;
-    //otherwise the player can even jump even if he is in the air
-    isOnGround = false;
-    hasJumped = false;
   }
 
   void _respawn() {

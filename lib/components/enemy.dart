@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/traps/saw.dart';
 import '../mpg_pixel_adventure.dart';
+import 'Particles.dart';
 import 'collectables.dart';
 import 'collision_block.dart';
 import 'level.dart';
@@ -102,7 +103,7 @@ class Enemy extends SpriteAnimationGroupComponent
   @override
   late Paint paint;
 
-  static const numberOfRays = 1000;
+  static const numberOfRays = 100;
   final List<Ray2> rays = [];
   final List<RaycastResult<ShapeHitbox>> results = [];
   final safetyDistance = 50;
@@ -162,8 +163,8 @@ class Enemy extends SpriteAnimationGroupComponent
 
   @override
   void render(Canvas canvas) async {
-    super.render(canvas);
     renderResult(canvas, rayOriginPoint, results, paint);
+    super.render(canvas);
   }
 
   //render the RaycastsList
@@ -176,13 +177,35 @@ class Enemy extends SpriteAnimationGroupComponent
         continue;
       }
 
-
       // Beide Punkte sind jetzt im gleichen Koordinatensystem
-      canvas.drawLine(
-          origin.toOffset() - absolutePosition.toOffset() + hitbox.center.toOffset(),
-          result.intersectionPoint!.toOffset() - absolutePosition.toOffset() + hitbox.center.toOffset(),
-          Paint()..color = Colors.red..strokeWidth = 1.0
-      );
+
+      Vector2 lineStart = origin - absolutePosition + hitbox.center;
+      Vector2 lineEnd = result.intersectionPoint! - absolutePosition + hitbox.center;
+
+
+      if(scale.x > 0) {
+        canvas.drawLine(
+            lineStart.toOffset(),
+            lineEnd.toOffset(),
+            Paint()
+              ..color = Colors.red
+              ..strokeWidth = 1.0
+        );
+      } else{
+        double mirrorX = absolutePosition.x;
+        Vector2 mirroredStart = Vector2(-lineStart.x + hitbox.center.x * 2, lineStart.y);
+        Vector2 mirroredEnd = Vector2(-lineEnd.x + hitbox.center.x * 2, lineEnd.y);
+        canvas.drawLine(
+            mirroredStart.toOffset(),
+            mirroredEnd.toOffset(),
+            Paint()
+              ..color = Colors.red
+              ..strokeWidth = 1.0
+        );
+
+      }
+
+
     }
   }
 
@@ -206,10 +229,11 @@ class Enemy extends SpriteAnimationGroupComponent
     keysPressed.contains(LogicalKeyboardKey.keyJ);
     final isRightKeyPressed =
     keysPressed.contains(LogicalKeyboardKey.keyL);
+
     //debug key bindings
 
+
     if(keysPressed.contains(LogicalKeyboardKey.keyF)) position = game.player.position.clone();
-    if(keysPressed.contains(LogicalKeyboardKey.keyK)) print(results);
     if(keysPressed.contains(LogicalKeyboardKey.keyG)) debugFlyMode = !debugFlyMode;
 
 
@@ -218,13 +242,22 @@ class Enemy extends SpriteAnimationGroupComponent
     if (isRightKeyPressed) horizontalMovement = 1;
 
     //if the key is pressed than the player jumps in _updatePlayerMovement
-    if (keysPressed.contains(LogicalKeyboardKey.keyI)) {
+    if (keysPressed.contains(LogicalKeyboardKey.altRight) || keysPressed.contains(LogicalKeyboardKey.keyI)) { //right alt is more handy
       if (debugFlyMode) {
         verticalMovement = -1; //when in debug mode move the player upwards
       } else {
         hasJumped = true; //else jump
       }
     }
+
+    if (keysPressed.contains(LogicalKeyboardKey.keyK) && debugFlyMode) { //when in fly mode and shift is pressed, the player gets moved down
+      verticalMovement = 1;
+    }
+
+    if (keysPressed.contains(LogicalKeyboardKey.comma)) { //press comma to get a surprise! (can also be used to generate lag XD )
+      parent?.add(generateConfetti(position));
+    }
+
     return super.onKeyEvent(event, keysPressed);
   }
 

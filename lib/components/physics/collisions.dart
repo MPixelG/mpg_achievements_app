@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/player.dart';
-
+import 'package:flutter/services.dart';
 import '../collision_block.dart';
+import '../level.dart';
 
 mixin HasCollisions on Component, CollisionCallbacks {
 
@@ -54,4 +54,98 @@ mixin HasCollisions on Component, CollisionCallbacks {
 
     setPos(position);
   }
+}
+
+
+mixin BasicMovement on PositionComponent {
+
+  final double _gravity = 15.0;
+  final double _jumpForce = 320;
+  final double _terminalVelocity = 300;
+
+  double moveSpeed = 35;
+
+  double horizontalMovement = 0;
+
+  //for debug fly purposes only
+  double verticalMovement = 0;
+  bool debugFlyMode = false;
+
+  Vector2 velocity = Vector2.zero();
+
+  bool hasJumped = false;
+
+  bool isOnGround = false;
+
+  @override
+  void update(double dt) {
+    _updateMovement(dt);
+  }
+
+  void _updateMovement(double dt) {
+    if (hasJumped) if (isOnGround) jump(); else hasJumped = false;
+
+    velocity.x += horizontalMovement * moveSpeed;
+    velocity.x *= 0.81 * (dt+1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+    position.x += velocity.x * dt;
+
+    if(!debugFlyMode) velocity.y += _gravity;
+    velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
+
+    if (debugFlyMode) {
+      velocity.y += verticalMovement * moveSpeed * (dt + 1);
+      velocity.y *= 0.9;
+    }
+    position.y += velocity.y * dt;
+  }
+
+
+  void jump() {
+    velocity.y = -_jumpForce;
+    //otherwise the player can even jump even if he is in the air
+    isOnGround = false;
+    hasJumped = false;
+  }
+
+}
+
+mixin KeyboardControllableMovement on PositionComponent, BasicMovement, KeyboardHandler{
+
+  Vector2 mouseCoords = Vector2.zero();
+  @override
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    horizontalMovement = 0;
+    verticalMovement = 0; //debug fly purposes only
+
+    final isLeftKeyPressed =
+        keysPressed.contains(LogicalKeyboardKey.keyA) ||
+            keysPressed.contains(LogicalKeyboardKey.arrowLeft);
+    final isRightKeyPressed =
+        keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
+            keysPressed.contains(LogicalKeyboardKey.keyD);
+
+    if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) debugFlyMode = !debugFlyMode; // press left alt to toggle fly mode
+    if (keysPressed.contains(LogicalKeyboardKey.keyT)) position = mouseCoords; //press T to teleport the player to the mouse
+    if (keysPressed.contains(LogicalKeyboardKey.keyB)) {debugMode = !debugMode; (parent as Level).setDebugMode(debugMode);} //press Y to toggle debug mode (visibility of hitboxes and more)
+
+    //ternary statement if leftkey pressed then add -1 to horizontal movement if not add 0 = not moving
+    if(isLeftKeyPressed) horizontalMovement = -1;
+    if(isRightKeyPressed) horizontalMovement = 1;
+
+    //if the key is pressed than the player jumps in _updatePlayerMovement
+    if (keysPressed.contains(LogicalKeyboardKey.space)) {
+      if(debugFlyMode) {
+        verticalMovement = -1; //when in debug mode move the player upwards
+      } else {
+        hasJumped = true; //else jump
+      }
+    }
+
+    if (keysPressed.contains(LogicalKeyboardKey.shiftLeft) && debugFlyMode) { //when in fly mode and shift is pressed, the player gets moved down
+      verticalMovement = 1;
+    }
+
+    return super.onKeyEvent(event, keysPressed);
+  }
+
 }
