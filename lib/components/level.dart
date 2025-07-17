@@ -173,8 +173,5 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
       }
     }
 
-
     Vector2 get mousePos => mouseCoords;
-
-
   }

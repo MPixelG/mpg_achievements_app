@@ -79,6 +79,7 @@ class AdvancedCamera extends CameraComponent {
     shakingAnimation = animationStyle;
   }
 
+  late Vector2 centeredCamPos;
   @override
   void update(double dt) {
     if (timeLeft > 0) { //if theres an active task with time left
@@ -132,10 +133,9 @@ class AdvancedCamera extends CameraComponent {
 
       shakingPosition = shake(strength: power); //get the actual values
 
-      viewport.position = shakingPosition + Vector2(25, 0); //move it by 25 px because otherwise its not centered (idk why)
-
+      moveBy(shakingPosition);
       shakingTime -= dt; //decrease the time
-    }
+    } else shakingPosition = Vector2.zero();
 
     super.update(dt);
   }
