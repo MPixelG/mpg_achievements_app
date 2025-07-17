@@ -102,7 +102,7 @@ class Enemy extends SpriteAnimationGroupComponent
   @override
   late Paint paint;
 
-  static const numberOfRays = 100;
+  static const numberOfRays = 1000;
   final List<Ray2> rays = [];
   final List<RaycastResult<ShapeHitbox>> results = [];
   final safetyDistance = 50;
@@ -179,7 +179,7 @@ class Enemy extends SpriteAnimationGroupComponent
 
       // Beide Punkte sind jetzt im gleichen Koordinatensystem
       canvas.drawLine(
-          origin.toOffset() - absolutePosition.toOffset(),
+          origin.toOffset() - absolutePosition.toOffset() + hitbox.center.toOffset(),
           result.intersectionPoint!.toOffset() - absolutePosition.toOffset() + hitbox.center.toOffset(),
           Paint()..color = Colors.red..strokeWidth = 1.0
       );

@@ -95,7 +95,6 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
               size: Vector2(spawnPoint.width, spawnPoint.height),
             );
             totalCollectables++;
-            print("collectables: " +totalCollectables.toString());
             add(collectable);
             break;
           case "Saw":

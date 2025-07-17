@@ -71,7 +71,6 @@ class Collectable extends SpriteAnimationComponent
       _collected = true;
       (parent as Level).totalCollectables--;
       if((parent as Level).totalCollectables == 0) parent?.add(generateConfetti(position));
-      print((parent as Level).totalCollectables);
     }
     Future.delayed(const Duration(milliseconds: 400), () => removeFromParent()); // Remove after animation.
   }
