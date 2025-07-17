@@ -1,16 +1,16 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/collision_block.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/level.dart';
+import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'traps/saw.dart';
 
 //an enumeration of all of the states a player can be in , here we declare the enum outside of our class
-//the values can be used like static variables. This helps to manage animations and logic cleanly.
+//the values can be used like static variables
 enum PlayerState { idle, running, jumping, falling, hit, appearing, disappearing }
 
 //using SpriteAnimationGroupComponent is better for a lot of animations
@@ -19,10 +19,10 @@ enum PlayerState { idle, running, jumping, falling, hit, appearing, disappearing
 class Player extends SpriteAnimationGroupComponent
     with HasGameReference<PixelAdventure>,
         KeyboardHandler,
-        CollisionCallbacks{
+        CollisionCallbacks,
+        HasCollisions{
   //String character is required because we want to be able to change our character
   String character;
-  //reference paths for assests
   String pathRespawn = 'Main Characters/';
   late String pathPlayer = 'Main Characters/$character/';
 
@@ -33,7 +33,7 @@ class Player extends SpriteAnimationGroupComponent
   String texture32file = '(32x32).png';
   String texture96file = '(96x96).png';
 
- //animations for each possible player states, they are loaded in the _loadAllanimations() method
+
   late final SpriteAnimation idleAnimation;
   late final SpriteAnimation runningAnimation;
   late final SpriteAnimation jumpingAnimation;
@@ -41,30 +41,26 @@ class Player extends SpriteAnimationGroupComponent
   late final SpriteAnimation hitAnimation;
   late final SpriteAnimation appearAnimation;
   late final SpriteAnimation disappearAnimation;
-
   //50ms or 20 fps or 0.05s this is reference from itch.io
   final double stepTime = 0.05;
 
   //gravity variables
-  final double _gravity = 15.0; //gravity acceleration
-  final double _jumpForce = 320; //jump height
-  final double _terminalVelocity = 300; //max falling speed
+  final double _gravity = 15.0;
+  final double _jumpForce = 320;
+  final double _terminalVelocity = 300;
 
-  //debug switches for special modes
   bool debugFlyMode = false;
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
 
-  //track mouse coordinates if needed for teleportation
-  Vector2 mouseCoords = Vector2.zero();
 
- //action states
-  bool hasJumped = false; //true when jump
-  bool gotHit = false; //true when collision with obstacle
+  bool hasJumped = false;
+  bool gotHit = false;
 
 
   //ability to go left or right
   double moveSpeed = 35;
+
   double horizontalMovement = 0;
 
   //for debug fly purposes only
@@ -79,14 +75,14 @@ class Player extends SpriteAnimationGroupComponent
   //List of collision objects
   List<CollisionBlock> collisionsBlockList = [];
 
-  // because the hitbox is a property of the player it follows the player where ever he goes. Same for the collectables
+  // because the hitbox is a property of the player it follows the player where ever he goes. Same for the collecables
   RectangleHitbox hitbox = RectangleHitbox(
     position: Vector2(4, 4),
     size: Vector2(24, 28),
   );
 
 
-  //is the player standing on the ground or a platform
+  //ground
   bool isOnGround = false;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
@@ -112,19 +108,19 @@ class Player extends SpriteAnimationGroupComponent
     super.update(dt);
   }
 
-
+  Vector2 mouseCoords = Vector2.zero();
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     horizontalMovement = 0;
     verticalMovement = 0; //debug fly purposes only
-    //movement keys
+
     final isLeftKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.keyA) ||
             keysPressed.contains(LogicalKeyboardKey.arrowLeft);
     final isRightKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
             keysPressed.contains(LogicalKeyboardKey.keyD);
-    //debug key bindings
+
     if (keysPressed.contains(LogicalKeyboardKey.keyR)) _respawn(); //press r to reset player
     if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) debugFlyMode = !debugFlyMode; // press left alt to toggle fly mode
     if (keysPressed.contains(LogicalKeyboardKey.keyX)) print(hitbox.isColliding); //press x to print if the player is currently in a wall
@@ -132,11 +128,6 @@ class Player extends SpriteAnimationGroupComponent
     if (keysPressed.contains(LogicalKeyboardKey.keyT)) position = mouseCoords; //press T to teleport the player to the mouse
     if (keysPressed.contains(LogicalKeyboardKey.keyY)) debugImmortalMode = !debugImmortalMode; //press Y to toggle immortality
     if (keysPressed.contains(LogicalKeyboardKey.keyB)) {debugMode = !debugMode; (parent as Level).setDebugMode(debugMode);} //press Y to toggle debug mode (visibility of hitboxes and more)
-    if (keysPressed.contains(LogicalKeyboardKey.shiftLeft) && debugFlyMode) { //when in fly mode and shift is pressed, the player gets moved down
-      verticalMovement = 1;
-    }
-
-
 
     //ternary statement if leftkey pressed then add -1 to horizontal movement if not add 0 = not moving
     if(isLeftKeyPressed) horizontalMovement = -1;
@@ -148,21 +139,21 @@ class Player extends SpriteAnimationGroupComponent
       else hasJumped = true; //else jump
     }
 
-        return super.onKeyEvent(event, keysPressed);
+    if (keysPressed.contains(LogicalKeyboardKey.shiftLeft) && debugFlyMode) { //when in fly mode and shift is pressed, the player gets moved down
+      verticalMovement = 1;
+    }
+
+    return super.onKeyEvent(event, keysPressed);
   }
 //checking collisions with an inbuilt method that checks if player is colliding
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
-    //trigger collectable behaviour
     if (other is Collectable) other.collidedWithPlayer();
-    //trigger respawn on contact with deadly obstacle
     if (other is Saw && !debugImmortalMode) _respawn();
-    //check regular collisions if not in noclip mode, checkCollisions is further down
-    if(!debugNoClipMode) checkCollision(other);
     super.onCollision(intersectionPoints, other);
   }
-//load all animations from asset files
+
   void _loadAllAnimations() {
     //this takes an image from the assets folder and also enables us to set some specifics like texture size and how we want to split up our animation and get them from cache
     // where we loaded them at the beginning -> needs to be cleaned up only quick and dirty fix
@@ -185,7 +176,6 @@ class Player extends SpriteAnimationGroupComponent
       PlayerState.hit: hitAnimation,
       PlayerState.appearing: appearAnimation,
       PlayerState.disappearing: disappearAnimation,
-
     };
 
     //set current animation
@@ -208,13 +198,7 @@ class Player extends SpriteAnimationGroupComponent
 
   //only handles x movement for player
   void _updatePlayerMovement(double dt) {
-    //if hasJumped is true and isOnGround is true the player can jump;
-    if (hasJumped) if (isOnGround) {
-      playerJump();
-    } else {
-      hasJumped = false;
-    }
-
+    if (hasJumped) if (isOnGround) playerJump(); else hasJumped = false;
 
     velocity.x += horizontalMovement * moveSpeed;
     velocity.x *= 0.81 * (dt+1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
@@ -265,15 +249,12 @@ class Player extends SpriteAnimationGroupComponent
     gotHit = true;
     current = PlayerState.hit;
     velocity = Vector2.zero();
-    //not time to fix animations needs to be done
     Future.delayed(Duration(milliseconds: 250),(){
       scale.x = 0.33; //flip the player to the right side and a third of the size because the animation is triple of the size
       scale.y = 0.33;
       current = PlayerState.disappearing;
       Future.delayed(Duration(milliseconds: 150),(){
         Future.delayed(Duration(milliseconds: 450),(){
-          position = startingPosition;
-
           position = startingPosition;
 
           current = PlayerState.appearing;
@@ -283,36 +264,26 @@ class Player extends SpriteAnimationGroupComponent
             _updatePlayerstate();
             gotHit = false;
           });
-
         });
       });
     });
   }
 
-  void checkCollision(PositionComponent other){
-    if (other is! CollisionBlock) return; //physics only work on the collision blocks (including the platforms)
+  @override
+  ShapeHitbox getHitbox() => hitbox;
 
-    Vector2 posDiff = hitbox.absolutePosition - other.absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
+  @override
+  Vector2 getPosition() => position;
 
-    //if the player faces in the other direction, we want to measure the distances from the other side of the hitbox. so we just add the width of it to the value.
-    if(scale.x < 0) {
-      posDiff.x -= hitbox.width;
-    }
+  @override
+  Vector2 getScale() => scale;
 
-    //get all the distances it would take to transport the player to this side of the platform
-    final double distanceUp = posDiff.y + hitbox.height;
-    final double distanceLeft = posDiff.x + hitbox.width;
-    final double distanceRight = other.width - posDiff.x;
-    final double distanceDown = other.height - posDiff.y;
+  @override
+  Vector2 getVelocity() => velocity;
 
-    final double smallestDistance = min(min(distanceUp, distanceDown), min(distanceRight, distanceLeft)); //get the smallest distance
+  @override
+  void setIsOnGround(bool val) => isOnGround = val;
 
-    //here the new position for the player is set depending on the smallest calculated distance form the statement above
-    if (smallestDistance == distanceUp && velocity.y > 0 && !(other.isPlatform && distanceUp > 5)) {position.y -= distanceUp; isOnGround = true; velocity.y = 0;} //make sure youre falling (for plattforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isnt too high, otherwise if half of the player falls through  a plattform, he gets teleported up
-    if (smallestDistance == distanceDown && !other.isPlatform) {position.y += distanceDown; velocity.y = 0;} //make sure the block isnt a plattform, so that you can go through it from the bottom
-    if (smallestDistance == distanceLeft && !other.isPlatform) {position.x -= distanceLeft; velocity.x = 0;} //make sure the block isnt a plattform, so that you can go through it horizontally
-    if (smallestDistance == distanceRight && !other.isPlatform) {position.x += distanceRight; velocity.x = 0;}
-  }
-
-
+  @override
+  void setPos(Vector2 newPos) => position = newPos;
 }

@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:mpg_achievements_app/components/Particles.dart';
 import 'package:mpg_achievements_app/components/custom_hitbox.dart';
+import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
@@ -67,6 +69,9 @@ class Collectable extends SpriteAnimationComponent
         ),
       );
       _collected = true;
+      (parent as Level).totalCollectables--;
+      if((parent as Level).totalCollectables == 0) parent?.add(generateConfetti(position));
+      print((parent as Level).totalCollectables);
     }
     Future.delayed(const Duration(milliseconds: 400), () => removeFromParent()); // Remove after animation.
   }

@@ -5,10 +5,9 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/cupertino.dart' hide AnimationStyle;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
-import 'package:flutter/material.dart' hide AnimationStyle;
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
-import 'package:mpg_achievements_app/components/enemy.dart';
 import 'package:mpg_achievements_app/components/player.dart';
+import 'components/enemy.dart';
 import 'components/level.dart';
 
 //DragCallbacks are imported for touch controls
@@ -18,9 +17,9 @@ class PixelAdventure extends FlameGame
   late final AdvancedCamera cam;
 
   //Player variable
-  Player player = Player(character: 'Virtual Guy');
-  //Enemy variable
-  late Enemy enemy = Enemy(enemyCharacter: 'Pink Man');
+  Player player = Player(character: 'Pink Man');
+
+  late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
   //can be added for touch support
   late String platform;
   bool showJoystick = false;

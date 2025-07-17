@@ -14,6 +14,7 @@ import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/traps/saw.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
+import 'Particles.dart';
 import 'background/scrolling_background.dart';
 
 
@@ -22,6 +23,8 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
   late TiledComponent level;
   final Player player;
   final Enemy enemy;
+
+  int totalCollectables = 0;
 
   //Todo add feature to make levels with and without scrolling background
   final bool scrollingBackground = false;
@@ -48,12 +51,13 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
     overlays.scale = Vector2.zero(); //hi
     overlays.priority = 2;
 
+
     // de the overlays
     //runs all the other onLoad-events the method is referring to, now not important
     return super.onLoad();
   }
 
-  //creating a background dynamically //todo add scrolling
+  //creating a background dynamically
   void _scrollingBackground() {
     final backgroundLayer = level.tileMap.getLayer('Level');
     String backgroundColor = "Green";
@@ -90,6 +94,8 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
               position: Vector2(spawnPoint.x, spawnPoint.y),
               size: Vector2(spawnPoint.width, spawnPoint.height),
             );
+            totalCollectables++;
+            print("collectables: " +totalCollectables.toString());
             add(collectable);
             break;
           case "Saw":
@@ -108,6 +114,7 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
             //enemy spawning
             enemy.position = Vector2(spawnPoint.x, spawnPoint.y);
             add(enemy);
+            print("added enemy");
           default:
         }
       }

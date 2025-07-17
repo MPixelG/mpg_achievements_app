@@ -7,6 +7,7 @@ import 'package:flame/geometry.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/traps/saw.dart';
 import '../mpg_pixel_adventure.dart';
 import 'collectables.dart';
@@ -21,7 +22,8 @@ enum EnemyState { idle, running, jumping, falling, hit, appearing, disappearing 
 class Enemy extends SpriteAnimationGroupComponent
     with HasGameReference<PixelAdventure>,
         KeyboardHandler,
-        CollisionCallbacks, HasCollisionDetection {
+        CollisionCallbacks,
+        HasCollisions{
   //String character is required because we want to be able to change our character
   late String enemyCharacter;
 
@@ -95,12 +97,12 @@ class Enemy extends SpriteAnimationGroupComponent
   //variables for raycasting
   Ray2? ray;
   Ray2? reflection;
-  late Vector2 rayOriginPoint = center;
-  final Vector2 rayDirection = Vector2(0,1);
+  late Vector2 rayOriginPoint = absolutePosition;
+  final Vector2 rayDirection = Vector2(1,0);
   @override
   late Paint paint;
 
-  static const numberOfRays = 10;
+  static const numberOfRays = 100;
   final List<Ray2> rays = [];
   final List<RaycastResult<ShapeHitbox>> results = [];
   final safetyDistance = 50;
@@ -115,62 +117,85 @@ class Enemy extends SpriteAnimationGroupComponent
   FutureOr<void> onLoad() {
 
     //raycasting
-    paint = BasicPalette.black.paint()
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 1.0;
+    paint = BasicPalette.red.paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
 
     //using an underscore is making things private
     _loadAllAnimations();
     startingPosition = Vector2(position.x, position.y);
     add(hitbox);
+
+    if (game.children.whereType<CollisionBlock>().isNotEmpty) {
+      print("CollisionBlocks found: ${game.children.whereType<CollisionBlock>().length}");
+    }
+
     return super.onLoad();
   }
 
 
   @override
   //dt means deltatime and is adjusting the framspeed to make game playable even tough there might be high framrates
+  @override
   void update(double dt) {
     super.update(dt);
-    collisionDetection.raycastAll(
-        startAngle: 0,
-        rayOriginPoint,
-        numberOfRays: numberOfRays,
-        rays: rays,
-       // ignoreHitboxes: [hitbox],
-        out:results,
+    // Verwende center (lokale Koordinaten) statt absolutePosition
+    rayOriginPoint = center;
+
+    results.clear();
+
+    game.collisionDetection.raycastAll(
+      startAngle: -90,
+      rayOriginPoint,
+      numberOfRays: numberOfRays,
+      rays: rays,
+      sweepAngle: 180,
+      out: results,
+      ignoreHitboxes: [hitbox]
     );
 
     if (!gotHit) {
       _updateEnemystate();
       _updateEnemyMovement(dt);
     }
-    rayOriginPoint = center;
   }
 
   @override
   void render(Canvas canvas) async {
-
     super.render(canvas);
-    renderResult(canvas, rayOriginPoint, results, paint);}
-//render the RaycastsList
-    void renderResult(Canvas canvas,
-        Vector2 origin,
-        List <RaycastResult<ShapeHitbox>> results,
-        Paint paint) {
-    //offset just converts Vector2 to Offset(flutter native)
-    final originOffset = origin.toOffset();
+    renderResult(canvas, rayOriginPoint, results, paint);
+  }
+
+  //render the RaycastsList
+  void renderResult(Canvas canvas,
+      Vector2 origin,
+      List<RaycastResult<ShapeHitbox>> results,
+      Paint paint) {
     for(final result in results){
-      print(results.last.hitbox!.parent);
-      if(!result.isActive){
+      if(!result.isActive || result.intersectionPoint == null){
         continue;
       }
-      final intersectionPoint = result.intersectionPoint!.toOffset();
-      canvas.drawLine(originOffset,
-          Vector2(50,50).toOffset(),
-          paint,);
-    }
 
+
+      // Beide Punkte sind jetzt im gleichen Koordinatensystem
+      canvas.drawLine(
+          origin.toOffset() - absolutePosition.toOffset(),
+          result.intersectionPoint!.toOffset() - absolutePosition.toOffset() + hitbox.center.toOffset(),
+          Paint()..color = Colors.red..strokeWidth = 1.0
+      );
     }
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
+    if (other is Saw && !debugImmortalMode) _respawn();
+
+    checkCollision(other);
+
+    super.onCollision(intersectionPoints, other);
+  }
+
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
@@ -182,35 +207,11 @@ class Enemy extends SpriteAnimationGroupComponent
     final isRightKeyPressed =
     keysPressed.contains(LogicalKeyboardKey.keyL);
     //debug key bindings
-    if (keysPressed.contains(
-        LogicalKeyboardKey.keyR)) {
-      _respawn(); //press r to reset player
-    }
-    if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) {
-      debugFlyMode = !debugFlyMode; // press left alt to toggle fly mode
-    }
-    if (keysPressed.contains(LogicalKeyboardKey.keyX)) {
-      print(hitbox
-        .isColliding); //press x to print if the player is currently in a wall
-    }
-    if (keysPressed.contains(LogicalKeyboardKey.keyC)) {
-      debugNoClipMode =
-    !debugNoClipMode; //press C to toggle noClip mode. lets you fall / walk / fly through walls. better only use it whilst flying (ctrl key)
-    }
-    if (keysPressed.contains(LogicalKeyboardKey.keyT)) {
-      position = mouseCoords; //press T to teleport the player to the mouse
-    }
-    if (keysPressed.contains(LogicalKeyboardKey.keyY)) {
-      debugImmortalMode = !debugImmortalMode; //press Y to toggle immortality
-    }
-    if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
-      debugMode = !debugMode;
-      (parent as Level).setDebugMode(debugMode);
-    } //press B to toggle debug mode (visibility of hitboxes and more)
-    if (keysPressed.contains(LogicalKeyboardKey.shiftLeft) &&
-        debugFlyMode) { //when in fly mode and shift is pressed, the player gets moved down
-      verticalMovement = 1;
-    }
+
+    if(keysPressed.contains(LogicalKeyboardKey.keyF)) position = game.player.position.clone();
+    if(keysPressed.contains(LogicalKeyboardKey.keyK)) print(results);
+    if(keysPressed.contains(LogicalKeyboardKey.keyG)) debugFlyMode = !debugFlyMode;
+
 
     //ternary statement if leftkey pressed then add -1 to horizontal movement if not add 0 = not moving
     if (isLeftKeyPressed) horizontalMovement = -1;
@@ -225,20 +226,6 @@ class Enemy extends SpriteAnimationGroupComponent
       }
     }
     return super.onKeyEvent(event, keysPressed);
-  }
-
-
-//checking collisions with an inbuilt method that checks if player is colliding
-  @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
-    //trigger collectable behaviour
-    if (other is Collectable) other.collidedWithPlayer();
-    //trigger respawn on contact with deadly obstacle
-    if (other is Saw && !debugImmortalMode) _respawn();
-    //check regular collisions if not in noclip mode, checkCollisions is further down
-    if (!debugNoClipMode) checkCollision(other);
-    super.onCollision(intersectionPoints, other);
   }
 
 //load all animations from asset files
@@ -278,6 +265,7 @@ class Enemy extends SpriteAnimationGroupComponent
     current = EnemyState.idle;
   }
 
+
   //Body Expression are concise ways of defining methods of function e.g.    int add(int a, int b) => a + b;
   //loop gets passed in to say if animation should be looped or not, e.g. hit should only be played once -> loop = false
   SpriteAnimation _spriteAnimation(String path, String state, int amount,
@@ -309,12 +297,12 @@ class Enemy extends SpriteAnimationGroupComponent
     position.x += velocity.x * dt;
 
     if (!debugFlyMode) velocity.y += _gravity;
-    velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
-
-    if (debugFlyMode) {
+    else {
       velocity.y += verticalMovement * moveSpeed * (dt + 1);
       velocity.y *= 0.9;
     }
+
+    velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
     position.y += velocity.y * dt;
   }
 
@@ -377,48 +365,21 @@ class Enemy extends SpriteAnimationGroupComponent
     });
   }
 
-  void checkCollision(PositionComponent other) {
-    if (other is! CollisionBlock) {
-      return; //physics only work on the collision blocks (including the platforms)
-    }
+  @override
+  ShapeHitbox getHitbox() => hitbox;
 
-    Vector2 posDiff = hitbox.absolutePosition - other
-        .absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
+  @override
+  Vector2 getPosition() => position;
 
-    //if the player faces in the other direction, we want to measure the distances from the other side of the hitbox. so we just add the width of it to the value.
-    if (scale.x < 0) {
-      posDiff.x -= hitbox.width;
-    }
+  @override
+  Vector2 getScale() => scale;
 
-    //get all the distances it would take to transport the player to this side of the platform
-    final double distanceUp = posDiff.y + hitbox.height;
-    final double distanceLeft = posDiff.x + hitbox.width;
-    final double distanceRight = other.width - posDiff.x;
-    final double distanceDown = other.height - posDiff.y;
+  @override
+  Vector2 getVelocity() => velocity;
 
-    final double smallestDistance = min(min(distanceUp, distanceDown),
-        min(distanceRight, distanceLeft)); //get the smallest distance
+  @override
+  void setIsOnGround(bool val) => isOnGround = val;
 
-    //here the new position for the player is set depending on the smallest calculated distance form the statement above
-    if (smallestDistance == distanceUp && velocity.y > 0) {
-      position.y -= distanceUp;
-      isOnGround = true;
-      velocity.y = 0;
-    } //make sure you're falling (for platforms), then update the position, set the player on the ground and reset the velocity.
-    if (smallestDistance == distanceDown && !other.isPlatform) {
-      position.y += distanceDown;
-      velocity.y = 0;
-    } //make sure the block isn't a platform, so that you can go through it from the bottom
-    if (smallestDistance == distanceLeft && !other.isPlatform) {
-      position.x -= distanceLeft;
-      velocity.x = 0;
-    } //make sure the block isn't a platform, so that you can go through it horizontally
-    if (smallestDistance == distanceRight && !other.isPlatform) {
-      position.x += distanceRight;
-      velocity.x = 0;
-    }
-  }
-
-
+  @override
+  void setPos(Vector2 newPos) => position = newPos;
 }
-

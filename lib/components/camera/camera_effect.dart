@@ -10,8 +10,8 @@ Vector2 shake({double strength = 5, double persistance = 1}) {
 
   PerlinNoise1D noise = PerlinNoise1D();
 
-  double val1 = noise.octaveNoise(time1 / 10000+persistance, 3, 5);
-  double val2 = noise.octaveNoise(time2 / 10000*persistance, 3, 5);
+  double val1 = noise.octaveNoise(time1 / 1000+persistance, 10, 0.5); //less octaves makes the shaking smoother
+  double val2 = noise.octaveNoise(time2 / 1000*persistance, 10, 0.5);
 
   // Normalize and scale
   return Vector2(

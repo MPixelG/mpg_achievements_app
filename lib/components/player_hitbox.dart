@@ -56,7 +56,7 @@ class PlayerHitbox extends Component with HasCollisionDetection { //OUTDATED
   bool isColliding() {
     Player parent = this.parent as Player;
     updatePositions(parent);
-    return leftFoot.isColliding || rightFoot.isColliding || body.isColliding || head.isColliding;
+    return leftFoot.isColliding || rightFoot.isColliding || body.isColliding || head.isColliding; //refractoring
   }
 
   void updatePositions(Player player) {

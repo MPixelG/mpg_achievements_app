@@ -1,7 +1,12 @@
 import 'dart:async' show FutureOr;
+import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/foundation.dart';
+import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
+import '../Particles.dart';
 
 
 class Saw extends SpriteAnimationComponent with HasGameReference<PixelAdventure>{
