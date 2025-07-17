@@ -19,8 +19,9 @@ enum PlayerState { idle, running, jumping, falling, hit, appearing, disappearing
 class Player extends SpriteAnimationGroupComponent
     with HasGameReference<PixelAdventure>,
         KeyboardHandler,
-        CollisionCallbacks,
-        HasCollisions, BasicMovement, KeyboardControllableMovement{
+        CollisionCallbacks, HasCollisions,
+        BasicMovement, KeyboardControllableMovement{
+
   //String character is required because we want to be able to change our character
   String character;
   String pathRespawn = 'Main Characters/';
