@@ -56,6 +56,10 @@ mixin HasCollisions on Component, CollisionCallbacks {
   }
 }
 
+enum MovementType {
+  topDown, side
+}
+
 
 mixin BasicMovement on PositionComponent {
 
@@ -77,10 +81,15 @@ mixin BasicMovement on PositionComponent {
 
   bool isOnGround = false;
 
+
+  MovementType movementType = MovementType.side;
+
   @override
   void update(double dt) {
     _updateMovement(dt);
   }
+
+  void setMovementType(MovementType newType) => movementType = newType;
 
   void _updateMovement(double dt) {
     if (hasJumped) if (isOnGround) jump(); else hasJumped = false;
@@ -89,14 +98,24 @@ mixin BasicMovement on PositionComponent {
     velocity.x *= 0.81 * (dt+1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
     position.x += velocity.x * dt;
 
-    if(!debugFlyMode) velocity.y += _gravity;
-    velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
+    if(movementType == MovementType.side) _performGravity(dt);
+    else _performVerticalMovement(dt);
 
-    if (debugFlyMode) {
+    position.y += velocity.y * dt;
+  }
+
+  void _performGravity(double dt){
+    if(!debugFlyMode) velocity.y += _gravity;
+    else {
       velocity.y += verticalMovement * moveSpeed * (dt + 1);
       velocity.y *= 0.9;
     }
-    position.y += velocity.y * dt;
+    velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
+  }
+
+  void _performVerticalMovement(double dt){
+    velocity.y += verticalMovement * moveSpeed * (dt + 1);
+    velocity.y *=  0.81 * (dt+1);
   }
 
 
@@ -115,7 +134,7 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     horizontalMovement = 0;
-    verticalMovement = 0; //debug fly purposes only
+    verticalMovement = 0;
 
     final isLeftKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.keyA) ||
@@ -124,26 +143,46 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
         keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
             keysPressed.contains(LogicalKeyboardKey.keyD);
 
-    if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) debugFlyMode = !debugFlyMode; // press left alt to toggle fly mode
+    //ternary statement if left key pressed then add -1 to horizontal movement if not add 0 = not moving
+    if(isLeftKeyPressed) horizontalMovement --;
+    if(isRightKeyPressed) horizontalMovement ++;
+
+
+    if(movementType == MovementType.side) {
+      if (keysPressed.contains(LogicalKeyboardKey.controlLeft))
+        debugFlyMode = !debugFlyMode; // press left ctrl to toggle fly mode
+      //if the key is pressed than the player jumps in _updatePlayerMovement
+      if (keysPressed.contains(LogicalKeyboardKey.space)) {
+        if (debugFlyMode) {
+          verticalMovement = -1; //when in debug mode move the player upwards
+        } else {
+          hasJumped = true; //else jump
+        }
+      }
+
+      if (keysPressed.contains(LogicalKeyboardKey.shiftLeft) &&
+          debugFlyMode) { //when in fly mode and shift is pressed, the player gets moved down
+        verticalMovement = 1;
+      }
+    } else if(movementType == MovementType.topDown){
+
+      final isUpKeyPressed =
+          keysPressed.contains(LogicalKeyboardKey.keyW) ||
+              keysPressed.contains(LogicalKeyboardKey.arrowUp);
+      final isDownKeyPressed =
+          keysPressed.contains(LogicalKeyboardKey.keyS) ||
+              keysPressed.contains(LogicalKeyboardKey.arrowDown);
+
+      if(isUpKeyPressed) verticalMovement --;
+      if(isDownKeyPressed) verticalMovement ++;
+
+    }
+
+
+
+
     if (keysPressed.contains(LogicalKeyboardKey.keyT)) position = mouseCoords; //press T to teleport the player to the mouse
     if (keysPressed.contains(LogicalKeyboardKey.keyB)) {debugMode = !debugMode; (parent as Level).setDebugMode(debugMode);} //press Y to toggle debug mode (visibility of hitboxes and more)
-
-    //ternary statement if leftkey pressed then add -1 to horizontal movement if not add 0 = not moving
-    if(isLeftKeyPressed) horizontalMovement = -1;
-    if(isRightKeyPressed) horizontalMovement = 1;
-
-    //if the key is pressed than the player jumps in _updatePlayerMovement
-    if (keysPressed.contains(LogicalKeyboardKey.space)) {
-      if(debugFlyMode) {
-        verticalMovement = -1; //when in debug mode move the player upwards
-      } else {
-        hasJumped = true; //else jump
-      }
-    }
-
-    if (keysPressed.contains(LogicalKeyboardKey.shiftLeft) && debugFlyMode) { //when in fly mode and shift is pressed, the player gets moved down
-      verticalMovement = 1;
-    }
 
     return super.onKeyEvent(event, keysPressed);
   }

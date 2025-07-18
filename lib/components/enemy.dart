@@ -150,7 +150,6 @@ class Enemy extends SpriteAnimationGroupComponent
       rayOriginPoint,
       numberOfRays: numberOfRays,
       rays: rays,
-      sweepAngle: 180,
       out: results,
       ignoreHitboxes: [hitbox]
     );
