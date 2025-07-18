@@ -74,18 +74,14 @@ class Enemy extends SpriteAnimationGroupComponent
     return super.onLoad();
   }
 
-
-  @override
-  //dt means deltatime and is adjusting the framspeed to make game playable even tough there might be high framrates
   @override
   void update(double dt) {
     super.update(dt);
-    // Verwende center (lokale Koordinaten) statt absolutePosition
-    rayOriginPoint = center;
+    rayOriginPoint = center; //use the center of the player as the start of the raycast. note that this has to be an absolute position because we calculate it from the game, not from this character
 
-    results.clear();
+    results.clear(); //clear all the values
 
-    game.collisionDetection.raycastAll(
+    game.collisionDetection.raycastAll( //raycast rays in all different directions and deposit the results in the results Set
       startAngle: -90,
       rayOriginPoint,
       numberOfRays: numberOfRays,
@@ -107,16 +103,15 @@ class Enemy extends SpriteAnimationGroupComponent
       List<RaycastResult<ShapeHitbox>> results,
       Paint paint) {
     for(final result in results){
-      if(!result.isActive || result.intersectionPoint == null){
+      if(!result.isActive || result.intersectionPoint == null){ //if the result is invalid we continue with the next one
         continue;
       }
 
       Vector2 lineStart = origin - absolutePosition + hitbox.center;
       Vector2 lineEnd = result.intersectionPoint! - absolutePosition + hitbox.center;
 
-
-      if(scale.x > 0) {
-        canvas.drawLine(
+      if(scale.x > 0) { //if the enemy is mirrored because it walked in the other direction, everything we draw will be mirrored aswell. that's why we need to mirror the line manually
+        canvas.drawLine( //draw the line unmirrored
             lineStart.toOffset(),
             lineEnd.toOffset(),
             Paint()
@@ -124,10 +119,9 @@ class Enemy extends SpriteAnimationGroupComponent
               ..strokeWidth = 1.0
         );
       } else{
-        double mirrorX = absolutePosition.x;
-        Vector2 mirroredStart = Vector2(-lineStart.x + hitbox.center.x * 2, lineStart.y);
+        Vector2 mirroredStart = Vector2(-lineStart.x + hitbox.center.x * 2, lineStart.y); //mirror and move to the center of the hitbox
         Vector2 mirroredEnd = Vector2(-lineEnd.x + hitbox.center.x * 2, lineEnd.y);
-        canvas.drawLine(
+        canvas.drawLine( //draw the line mirrored
             mirroredStart.toOffset(),
             mirroredEnd.toOffset(),
             Paint()
