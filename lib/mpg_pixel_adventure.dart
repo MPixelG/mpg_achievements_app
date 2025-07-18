@@ -17,7 +17,7 @@ class PixelAdventure extends FlameGame
   late final AdvancedCamera cam;
 
   //Player variable
-  Player player = Player(character: 'Pink Man');
+  Player player = Player(playerCharacter: 'Pink Man');
 
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
   //can be added for touch support

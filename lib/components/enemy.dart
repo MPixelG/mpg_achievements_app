@@ -162,7 +162,7 @@ class Enemy extends SpriteAnimationGroupComponent
 
   @override
   void render(Canvas canvas) async {
-    renderResult(canvas, rayOriginPoint, results, paint);
+    if(debugMode) renderResult(canvas, rayOriginPoint, results, paint); //press B to enable debug mode and show the raycast results
     super.render(canvas);
   }
 

@@ -1,12 +1,7 @@
 import 'dart:async' show FutureOr;
-import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flutter/foundation.dart';
-import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-
-import '../Particles.dart';
 
 
 class Saw extends SpriteAnimationComponent with HasGameReference<PixelAdventure>{
@@ -18,7 +13,7 @@ class Saw extends SpriteAnimationComponent with HasGameReference<PixelAdventure>
   double moveDirection = 1;
   double rangeNeg = 0;
   double rangePos = 0;
-    bool isVertical;
+  bool isVertical;
   double offNeg;
   double offPos;
 
@@ -28,7 +23,7 @@ class Saw extends SpriteAnimationComponent with HasGameReference<PixelAdventure>
 
 @override
   FutureOr<void> onLoad() {
-//move behind the actual game objects
+    //move behind the actual game objects
     priority = -1;
     //circle hitbox has the same size like our saws, do we do not need to add a CustomHitbox which correct the
     //size of the hitbox with offset-Values like in the player
@@ -68,38 +63,28 @@ class Saw extends SpriteAnimationComponent with HasGameReference<PixelAdventure>
   }
 
   void _moveVertical(double dt) {
-  if(position.y >= rangePos){
-    moveDirection = -1;
-  }
-  else if (position.y <= rangeNeg){
-    moveDirection = 1;
-  }
+    if(position.y >= rangePos){
+      moveDirection = -1;
+      position.y = rangePos;
+    }
+    else if (position.y <= rangeNeg){
+      moveDirection = 1;
+      position.y = rangeNeg;
+    }
 
-  position.y += moveDirection * moveSpeed * dt;
-
+    position.y += moveDirection * moveSpeed * dt;
   }
 
   void _moveHorizontal(double dt) {
-
     if(position.x >= rangePos){
       moveDirection = -1;
+      position.x = rangePos;
     }
     else if (position.x <= rangeNeg){
       moveDirection = 1;
+      position.x = rangeNeg;
     }
 
     position.x += moveDirection * moveSpeed * dt;
-
   }
-
-
-
-
-  }
-
-
-
-
-
-
-
+}

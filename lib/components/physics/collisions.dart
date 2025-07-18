@@ -13,15 +13,19 @@ mixin HasCollisions on Component, CollisionCallbacks {
   Vector2 getVelocity();
   Vector2 getPosition();
 
+  bool _debugNoClipMode = false;
+
 
 
   void setPos(Vector2 newPos);
   void setIsOnGround(bool val);
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    checkCollision(other);
+    if(other is CollisionBlock && !_debugNoClipMode) checkCollision(other);
     super.onCollision(intersectionPoints, other);
   }
+
+  void setDebugNoCipMode(bool val) => _debugNoClipMode = val;
 
   void checkCollision(PositionComponent other){
     if (other is! CollisionBlock) return; //physics only work on the collision blocks (including the platforms)
@@ -47,7 +51,7 @@ mixin HasCollisions on Component, CollisionCallbacks {
 
     final double smallestDistance = min(min(distanceUp, distanceDown), min(distanceRight, distanceLeft)); //get the smallest distance
 
-    if (smallestDistance == distanceUp && velocity.y > 0 && !(other.isPlatform && distanceUp > 6)) {position.y -= distanceUp; setIsOnGround(true); velocity.y = 0;} //make sure youre falling (for plattforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isnt too high, otherwise if half of the player falls through  a plattform, he gets teleported up
+    if (smallestDistance == distanceUp && velocity.y > 0 && !(other.isPlatform && distanceUp > 8)) {position.y -= distanceUp; setIsOnGround(true); velocity.y = 0;} //make sure youre falling (for plattforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isnt too high, otherwise if half of the player falls through  a plattform, he gets teleported up
     if (smallestDistance == distanceDown && !other.isPlatform) {position.y += distanceDown; velocity.y = 0;} //make sure the block isnt a plattform, so that you can go through it from the bottom
     if (smallestDistance == distanceLeft && !other.isPlatform) {position.x -= distanceLeft; velocity.x = 0;} //make sure the block isnt a plattform, so that you can go through it horizontally
     if (smallestDistance == distanceRight && !other.isPlatform) {position.x += distanceRight; velocity.x = 0;}
@@ -56,7 +60,7 @@ mixin HasCollisions on Component, CollisionCallbacks {
   }
 }
 
-enum MovementType {
+enum ViewSide {
   topDown, side
 }
 
@@ -66,12 +70,13 @@ mixin BasicMovement on PositionComponent {
   final double _gravity = 15.0;
   final double _jumpForce = 320;
   final double _terminalVelocity = 300;
+  final double _friction = 0.81;
+
 
   double moveSpeed = 35;
 
   double horizontalMovement = 0;
 
-  //for debug fly purposes only
   double verticalMovement = 0;
   bool debugFlyMode = false;
 
@@ -81,24 +86,28 @@ mixin BasicMovement on PositionComponent {
 
   bool isOnGround = false;
 
+  bool gravityEnabled = true;
 
-  MovementType movementType = MovementType.side;
+
+  ViewSide viewSide = ViewSide.side;
 
   @override
   void update(double dt) {
     _updateMovement(dt);
   }
 
-  void setMovementType(MovementType newType) => movementType = newType;
+  void setMovementType(ViewSide newType) => viewSide = newType;
+
+  void setGravityEnabled(bool val) => gravityEnabled = val;
 
   void _updateMovement(double dt) {
     if (hasJumped) if (isOnGround) jump(); else hasJumped = false;
 
     velocity.x += horizontalMovement * moveSpeed;
-    velocity.x *= 0.81 * (dt+1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+    velocity.x *= _friction * (dt+1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
     position.x += velocity.x * dt;
 
-    if(movementType == MovementType.side) _performGravity(dt);
+    if(viewSide == ViewSide.side && gravityEnabled) _performGravity(dt);
     else _performVerticalMovement(dt);
 
     position.y += velocity.y * dt;
@@ -115,7 +124,7 @@ mixin BasicMovement on PositionComponent {
 
   void _performVerticalMovement(double dt){
     velocity.y += verticalMovement * moveSpeed * (dt + 1);
-    velocity.y *=  0.81 * (dt+1);
+    velocity.y *= _friction * (dt+1);
   }
 
 
@@ -148,7 +157,7 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
     if(isRightKeyPressed) horizontalMovement ++;
 
 
-    if(movementType == MovementType.side) {
+    if(viewSide == ViewSide.side) {
       if (keysPressed.contains(LogicalKeyboardKey.controlLeft))
         debugFlyMode = !debugFlyMode; // press left ctrl to toggle fly mode
       //if the key is pressed than the player jumps in _updatePlayerMovement
@@ -164,7 +173,7 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
           debugFlyMode) { //when in fly mode and shift is pressed, the player gets moved down
         verticalMovement = 1;
       }
-    } else if(movementType == MovementType.topDown){
+    } else if(viewSide == ViewSide.topDown){
 
       final isUpKeyPressed =
           keysPressed.contains(LogicalKeyboardKey.keyW) ||
