@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
@@ -12,9 +11,7 @@ import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/traps/saw.dart';
 import '../mpg_pixel_adventure.dart';
 import 'Particles.dart';
-import 'collectables.dart';
 import 'physics/collision_block.dart';
-import 'level.dart';
 
 enum EnemyState { idle, running, jumping, falling, hit, appearing, disappearing }
 

@@ -155,9 +155,14 @@ mixin BasicMovement on PositionComponent {
 
 mixin KeyboardControllableMovement on PositionComponent, BasicMovement, KeyboardHandler{
 
+
+
+  bool active = true;
   Vector2 mouseCoords = Vector2.zero();
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    if(!active) return super.onKeyEvent(event, keysPressed);
+
     horizontalMovement = 0;
     verticalMovement = 0;
 
@@ -213,5 +218,7 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
   }
 
   bool isClimbing();
+
+  bool setControllable(bool val) => active = val;
 
 }

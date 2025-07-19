@@ -17,22 +17,23 @@
                 17,
                 20
             ],
-            "scale": 2,
-            "selectedLayer": 0,
+            "scale": 4,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 353.25,
-                "y": 167.5
+                "x": 155.875,
+                "y": 92
             }
         },
         "Level_1.tmx": {
             "expandedObjectLayers": [
+                2,
                 3
             ],
             "scale": 3,
-            "selectedLayer": 0,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 277.16666666666663,
-                "y": 233.33333333333334
+                "x": 393.16666666666663,
+                "y": 219
             }
         },
         "Level_2.tmx": {
@@ -40,11 +41,11 @@
                 4,
                 2
             ],
-            "scale": 2,
-            "selectedLayer": 8,
+            "scale": 3,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": 205.25,
-                "y": 316.5
+                "x": 235.5,
+                "y": 476.33333333333326
             }
         },
         "Level_3.tmx": {
@@ -118,7 +119,7 @@
         "Level_1.tmx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
-    "property.type": "string",
+    "property.type": "float",
     "recentFiles": [
         "IndustrialTile_81.png.tsx",
         "Level_1.tmx",

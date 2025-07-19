@@ -29,7 +29,7 @@ class Collectable extends SpriteAnimationComponent
 
   @override
   FutureOr<void> onLoad() {
-    priority = -1; // Draw behind other components. default is 0
+    priority = 1; // Draw behind other components. default is 0
 
     add(
       RectangleHitbox(

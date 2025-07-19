@@ -1,12 +1,7 @@
-import 'dart:async';
-import 'dart:math' hide min, max;
-
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/experimental.dart';
 import 'package:mpg_achievements_app/components/camera/camera_effect.dart';
 import 'package:mpg_achievements_app/components/player.dart';
-import 'package:mpg_achievements_app/components/util/utils.dart';
 
 import 'animation_style.dart';
 

@@ -80,6 +80,7 @@ class Player extends SpriteAnimationGroupComponent
 
   void _respawn() async {
     if (gotHit) return; //if the player is already being respawned, stop
+    setControllable(false);
     gotHit = true; //indicate, that the player is being respawned
     current = PlayerState.hit; //hit animation
     velocity = Vector2.zero(); //reset velocity
@@ -109,6 +110,7 @@ class Player extends SpriteAnimationGroupComponent
     position += Vector2.all(
         32); //reposition the player, because it had a bit of displacement because of the respawn animation
     setGravityEnabled(true); //re-enable gravity
+    setControllable(true);
   }
 
   @override

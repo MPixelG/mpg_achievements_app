@@ -1,17 +1,9 @@
 
-import 'dart:async';
 import 'dart:math';
-
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart' hide Image;
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart' hide Image;
-import 'package:mpg_achievements_app/components/level.dart';
-import 'dart:ui' show Image;
-
-import 'package:mpg_achievements_app/components/physics/collisions.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 ParticleSystemComponent generateConfetti(Vector2 pos){
   Particle particle = Particle.generate(

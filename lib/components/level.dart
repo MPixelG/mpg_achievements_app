@@ -5,6 +5,7 @@ import 'package:flame/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/cupertino.dart' hide PointerMoveEvent, AnimationStyle;
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/components/camera/animation_style.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
@@ -41,14 +42,28 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
     //otherwise the rest of the programme would stop
     //16 is 16x16 of our tileset
 
-    level = await TiledComponent.load('$levelName.tmx', Vector2.all(32));
 
+    level = await TiledComponent.load('$levelName.tmx', Vector2(32, 32));
     add(level);
+
+    int amountOfBackgroundImages = (level.tileMap.getLayer("Level")?.properties.byName["BackgroundImages"]?.value as int) ?? 0;
+    
+    Set<TiledImage> images = {};
+    Set<double> parralaxFactors = {};
+    ImageLayer? imageLayer;
+    for (int i = 1; i <= amountOfBackgroundImages; i++) {
+      imageLayer = level.tileMap.getLayer("background$i") as ImageLayer;
+      imageLayer.visible = false;
+      images.add(imageLayer.image);
+      parralaxFactors.add(imageLayer.properties.byName["parralaxFactor"]?.value as double ?? 0.3);
+    }
+
+    add(LayeredImageBackground(images, (parent as PixelAdventure).cam, parallaxFactors: parralaxFactors, startPos: Vector2(0, -96)));
 
     (parent as PixelAdventure).cam.setBounds(Rectangle.fromRect(Rect.fromLTWH(0, 0, level.size.x, level.size.y)));
 
 
-    _scrollingBackground();
+   // _scrollingBackground();
     _spawningObjects();
     _addCollisions();
 
@@ -74,6 +89,7 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
     }
 
     ScrollingBackground background = ScrollingBackground(tileColor: backgroundColor, camera: (parent as PixelAdventure).cam);
+    background.priority = -3;
 
     add(background);
   }
@@ -187,9 +203,6 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
         player.mouseCoords = mouseCoords;
     }
 
-    @override
-
-
 
     @override //update the overlays
     void update(double dt) {
@@ -199,6 +212,10 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
 
       String playerCoords = roundedPlayerPos.toString();
       overlays.text = "Player: $playerCoords\nMouse: $mouseCoords";
+
+
+
+
       super.update(dt);
     }
 

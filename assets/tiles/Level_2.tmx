@@ -1,28 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="28" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="57">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="28" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="69">
  <tileset firstgid="1" source="MPG_pixel_adventure.tsx"/>
  <tileset firstgid="243" source="IndustrialTile_81.png.tsx"/>
  <tileset firstgid="407" source="industrialObjects.tsx"/>
- <imagelayer id="5" name="background0_0" offsetx="0" offsety="640">
+ <imagelayer id="5" name="background0_0" visible="0" offsetx="0" offsety="640">
   <image source="../images/sky/background_dark_full.png" width="1024" height="256"/>
  </imagelayer>
- <imagelayer id="6" name="background_0_1">
+ <imagelayer id="6" name="background_0_1" visible="0">
   <image source="../images/sky/background_light_full.png" width="1024" height="352"/>
  </imagelayer>
- <imagelayer id="6" name="background1" offsetx="-256" offsety="352" repeatx="1">
+ <imagelayer id="6" name="background1" visible="0" offsetx="-256" offsety="352" repeatx="1">
   <image source="../images/sky/1.png" width="576" height="324"/>
+  <properties>
+   <property name="parralaxFactor" type="float" value="0"/>
+  </properties>
  </imagelayer>
- <imagelayer id="5" name="background2" offsetx="-256" offsety="352" repeatx="1">
+ <imagelayer id="5" name="background2" visible="0" offsetx="-256" offsety="352" repeatx="1">
   <image source="../images/sky/2.png" width="576" height="324"/>
+  <properties>
+   <property name="parralaxFactor" type="float" value="0.25"/>
+  </properties>
  </imagelayer>
- <imagelayer id="8" name="background3" offsetx="-256" offsety="352" repeatx="1">
+ <imagelayer id="8" name="background3" visible="0" offsetx="-256" offsety="352" repeatx="1">
   <image source="../images/sky/3.png" width="576" height="324"/>
+  <properties>
+   <property name="parralaxFactor" type="float" value="0.35"/>
+  </properties>
  </imagelayer>
- <imagelayer id="9" name="background4" offsetx="-256" offsety="352" repeatx="1">
+ <imagelayer id="9" name="background4" visible="0" offsetx="-256" offsety="352" repeatx="1">
   <image source="../images/sky/4.png" width="576" height="324"/>
+  <properties>
+   <property name="parralaxFactor" type="float" value="0.65"/>
+  </properties>
  </imagelayer>
- <imagelayer id="10" name="background5" offsetx="-256" offsety="352" repeatx="1">
+ <imagelayer id="10" name="background5" visible="0" offsetx="-416" offsety="352" repeatx="1">
   <image source="../images/sky/5.png" width="576" height="324"/>
+  <properties>
+   <property name="parralaxFactor" type="float" value="0.8"/>
+  </properties>
  </imagelayer>
  <layer id="3" name="background" width="32" height="28">
   <data encoding="csv">
@@ -37,15 +52,15 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+384,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+384,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+384,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+384,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+384,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+384,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+384,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+384,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+393,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,397,398,398,399,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -59,6 +74,7 @@
  <layer id="1" name="Level" width="32" height="28">
   <properties>
    <property name="BackgroundColor" value="Blue"/>
+   <property name="BackgroundImages" type="int" value="5"/>
    <property name="Side" value="Side"/>
   </properties>
   <data encoding="csv">
@@ -73,15 +89,15 @@
 336,337,334,334,337,337,335,326,337,334,334,344,344,326,334,337,337,339,328,328,328,328,328,328,328,328,329,0,430,336,349,338,
 336,335,344,349,337,335,349,337,337,349,337,337,335,337,326,337,344,335,335,334,344,334,337,335,337,335,338,0,429,336,337,338,
 345,346,346,346,346,346,346,346,346,346,346,346,346,346,346,346,346,346,346,346,346,346,331,337,337,337,338,0,430,336,337,338,
-384,0,0,0,0,0,0,384,384,0,0,0,0,0,0,0,0,0,0,0,0,0,345,346,346,346,347,0,429,336,337,338,
-384,0,0,422,423,424,408,393,393,427,422,423,424,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,429,336,344,338,
-384,0,0,350,350,350,350,341,341,341,341,350,341,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,430,336,349,338,
-384,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,429,336,344,338,
-384,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,429,336,344,338,
-384,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,430,336,349,338,
-384,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,429,336,337,338,
-384,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,430,336,337,338,
-393,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,431,0,0,0,0,0,327,328,328,340,337,338,
+0,0,0,0,0,0,0,384,384,0,0,0,0,0,0,0,0,0,0,0,0,0,345,346,346,346,347,0,429,336,337,338,
+430,0,437,422,423,424,0,393,393,427,422,423,424,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,429,336,344,338,
+430,350,341,350,350,350,350,341,341,341,341,350,341,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,430,336,349,338,
+429,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,429,336,344,338,
+430,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,429,336,344,338,
+429,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,430,336,349,338,
+430,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,429,336,337,338,
+429,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,430,336,337,338,
+429,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,431,0,0,0,0,0,327,328,328,340,337,338,
 328,328,328,328,328,328,328,328,328,328,328,328,328,328,328,328,329,0,0,0,430,327,328,328,328,328,340,337,337,326,334,338,
 337,334,337,326,349,335,344,337,337,326,344,337,337,344,334,337,338,0,0,0,429,336,335,326,334,335,349,335,326,344,335,338,
 330,346,346,346,346,346,346,346,346,346,346,346,346,346,346,346,347,0,0,0,429,345,346,346,346,346,346,346,346,331,349,338,
@@ -106,8 +122,7 @@
   <object id="13" x="32" y="768" width="32" height="96"/>
   <object id="14" x="64" y="800" width="32" height="64"/>
   <object id="15" x="96" y="832" width="32" height="32"/>
-  <object id="16" x="0" y="352" width="32" height="288"/>
-  <object id="17" type="Platform" x="96" y="416" width="320" height="32"/>
+  <object id="17" type="Platform" x="33.3333" y="416" width="382.667" height="32"/>
   <object id="18" type="Platform" x="832" y="64" width="96" height="32"/>
   <object id="20" type="Ladder" x="896" y="256" width="32" height="352"/>
   <object id="21" type="Ladder" x="640" y="640" width="32" height="224"/>
@@ -115,22 +130,27 @@
   <object id="24" x="896" y="832" width="32" height="32"/>
   <object id="32" type="Platform" x="544" y="640" width="96" height="32"/>
   <object id="34" x="64" y="160" width="32" height="32"/>
-  <object id="35" x="192" y="160" width="32" height="32"/>
+  <object id="35" x="192" y="169.5" width="32" height="22.5"/>
+  <object id="60" x="227.588" y="205.25" width="24.8239" height="18.75"/>
+  <object id="62" x="256" y="216.75" width="32.25" height="7.25"/>
+  <object id="63" type="Ladder" x="0" y="384" width="32" height="256"/>
+  <object id="67" x="-32" y="352" width="32" height="320"/>
  </objectgroup>
  <objectgroup id="2" name="Spawnpoints">
   <object id="1" name="Player" type="Player" x="64" y="576" width="64" height="64"/>
   <object id="29" x="-32" y="0" width="32" height="192"/>
   <object id="30" x="0" y="-32" width="928" height="32"/>
-  <object id="43" name="Apple" type="Collectable" x="131.5" y="162.5" width="28" height="26"/>
-  <object id="44" name="Bananas" type="Collectable" x="836.5" y="38" width="21.5" height="20.5"/>
-  <object id="45" name="Melon" type="Collectable" x="859" y="41" width="17" height="17.5"/>
-  <object id="46" name="Cherries" type="Collectable" x="852" y="22" width="16" height="15.5"/>
-  <object id="47" name="Strawberry" type="Collectable" x="137.5" y="842.5" width="20" height="13"/>
+  <object id="43" name="Apple" type="Collectable" x="160" y="160" width="32" height="32"/>
+  <object id="44" name="Bananas" type="Collectable" x="608" y="221.366" width="34.2256" height="32.6337"/>
+  <object id="45" name="Melon" type="Collectable" x="191.75" y="383.75" width="32.25" height="32.25"/>
+  <object id="46" name="Cherries" type="Collectable" x="736" y="607.516" width="32.5" height="31.4844"/>
+  <object id="47" name="Strawberry" type="Collectable" x="128.25" y="832.25" width="31.5" height="31.5"/>
   <object id="48" name="Enemy" type="Enemy" x="831" y="828" width="31" height="32.5"/>
   <object id="50" name="Enemy" type="Enemy" x="228.5" y="812.5" width="40" height="44.5"/>
   <object id="51" name="Enemy" type="Enemy" x="320" y="384" width="32" height="32"/>
   <object id="52" name="Enemy" type="Enemy" x="128" y="384" width="32" height="32"/>
   <object id="53" name="Enemy" type="Enemy" x="864" y="32" width="32" height="32"/>
-  <object id="55" type="Enemy" x="288" y="544" width="96" height="96"/>
+  <object id="55" name="Enemy" type="Enemy" x="288" y="544" width="96" height="96"/>
+  <object id="57" name="Kiwi" type="Collectable" x="160" y="608.5" width="31.5" height="31.5"/>
  </objectgroup>
 </map>
