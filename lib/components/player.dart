@@ -134,4 +134,11 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   String getCharacter() => character;
+
+  bool climbing = false;
+  @override
+  void setClimbing(bool val) => climbing = val;
+
+  @override
+  bool isClimbing() => climbing;
 }

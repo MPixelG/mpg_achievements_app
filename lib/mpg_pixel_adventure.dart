@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/cupertino.dart' hide AnimationStyle;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
@@ -33,15 +34,16 @@ class PixelAdventure extends FlameGame
     showJoystick = _getPlatform();
     await images.loadAllImages();
     //world is loaded after initialising all images
-    final world = Level(levelName: 'Level_0', player: player, enemy);
+
+    final world = Level(levelName: 'Level_2', player: player, enemy);
+
     cam = AdvancedCamera(world: world);
     cam.player = player;
     cam.viewfinder.anchor = Anchor.center;
+    addAll([cam, world]);
 
 
     cam.setFollowPlayer(true, player: player, accuracy: 50); //follows the player.
-
-    addAll([cam, world]);
     if (showJoystick == true) {
       addJoystick();
     } else {
@@ -49,6 +51,8 @@ class PixelAdventure extends FlameGame
         print("Kein Joystick");
       }
     }
+
+
 
     return super.onLoad();
   }

@@ -1,7 +1,12 @@
+import 'dart:async';
+import 'dart:math' hide min, max;
+
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/experimental.dart';
 import 'package:mpg_achievements_app/components/camera/camera_effect.dart';
 import 'package:mpg_achievements_app/components/player.dart';
+import 'package:mpg_achievements_app/components/util/utils.dart';
 
 import 'animation_style.dart';
 
@@ -34,8 +39,24 @@ class AdvancedCamera extends CameraComponent {
   bool followPlayer = false;
   late double followAccuracy; //the distance between camera pos and player pos it needs to move the camera. so a higher value equals less frequent camera adjustments
 
+  Vector2 boundsMin = Vector2.zero();
+  Vector2 boundsMax = Vector2.all(double.infinity);
+
+
+
+
   @override
   void moveTo(Vector2 point, {AnimationStyle animationStyle = AnimationStyle.Linear, double speed = double.infinity, double time = 0, double? zoom}) {
+    Vector2 boundsMinRelative = Vector2.zero();
+    Vector2 boundsMaxRelative = Vector2.zero();
+
+    Vector2.min(boundsMin + (viewport.virtualSize / 2), boundsMax - (viewport.virtualSize / 2), boundsMinRelative);
+    Vector2.max(boundsMin + (viewport.virtualSize / 2), boundsMax - (viewport.virtualSize / 2), boundsMaxRelative);
+
+
+
+    point.clamp(boundsMinRelative, boundsMaxRelative);
+
     if (speed == double.infinity && time == 0) { // if theres no speed and time for the camera given, we complete it instant
       pos = point;
       viewfinder.zoom = zoom??viewfinder.zoom; //if there was given a new zoom val, use it
@@ -60,6 +81,12 @@ class AdvancedCamera extends CameraComponent {
   @override
   void follow(ReadOnlyPositionProvider target, {double maxSpeed = double.infinity, bool horizontalOnly = false, bool verticalOnly = false, bool snap = false, AnimationStyle animationStyle = AnimationStyle.Linear}) {
     super.follow(target, maxSpeed: maxSpeed, horizontalOnly: horizontalOnly, verticalOnly: verticalOnly, snap: snap);
+  }
+
+
+  void setMoveBounds(Vector2 min, Vector2 max){
+    boundsMin = min;
+    boundsMax = max;
   }
 
   void setFollowPlayer(bool val, {Player? player, double accuracy = 10}){ // enables following of the player. the accuracy is the distance between camera pos and player pos it needs to move the camera. so a higher value equals less frequent camera adjustments

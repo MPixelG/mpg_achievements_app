@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="16" tileheight="16" infinite="0" nextlayerid="22" nextobjectid="127">
+ <properties>
+  <property name="BackgroundColor" value="Yellow"/>
+  <property name="Side" value="Side"/>
+ </properties>
  <tileset firstgid="1" source="MPG_pixel_adventure.tsx"/>
  <tileset firstgid="243" source="MPG_Start_low_res.tsx"/>
  <layer id="9" name="Level" width="40" height="23">

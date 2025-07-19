@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
-import '../collision_block.dart';
+import 'collision_block.dart';
 import '../level.dart';
 
 mixin HasCollisions on Component, CollisionCallbacks {
@@ -13,17 +13,29 @@ mixin HasCollisions on Component, CollisionCallbacks {
   Vector2 getVelocity();
   Vector2 getPosition();
 
-  bool _debugNoClipMode = false;
+  void setClimbing(bool val);
 
+  bool _debugNoClipMode = false;
 
 
   void setPos(Vector2 newPos);
   void setIsOnGround(bool val);
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if(other is CollisionBlock && !_debugNoClipMode) checkCollision(other);
+    if(other is CollisionBlock && !_debugNoClipMode) {
+      checkCollision(other);
+    }
     super.onCollision(intersectionPoints, other);
   }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    if(other is CollisionBlock && other.climbable) {
+      setClimbing(false);
+    }
+    super.onCollisionEnd(other);
+  }
+
 
   void setDebugNoCipMode(bool val) => _debugNoClipMode = val;
 
@@ -51,10 +63,12 @@ mixin HasCollisions on Component, CollisionCallbacks {
 
     final double smallestDistance = min(min(distanceUp, distanceDown), min(distanceRight, distanceLeft)); //get the smallest distance
 
-    if (smallestDistance == distanceUp && velocity.y > 0 && !(other.isPlatform && distanceUp > 8)) {position.y -= distanceUp; setIsOnGround(true); velocity.y = 0;} //make sure youre falling (for plattforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isnt too high, otherwise if half of the player falls through  a plattform, he gets teleported up
-    if (smallestDistance == distanceDown && !other.isPlatform) {position.y += distanceDown; velocity.y = 0;} //make sure the block isnt a plattform, so that you can go through it from the bottom
-    if (smallestDistance == distanceLeft && !other.isPlatform) {position.x -= distanceLeft; velocity.x = 0;} //make sure the block isnt a plattform, so that you can go through it horizontally
-    if (smallestDistance == distanceRight && !other.isPlatform) {position.x += distanceRight; velocity.x = 0;}
+    if (smallestDistance == distanceUp && velocity.y > 0 && !(!other.hasCollisionDown && distanceUp > 8) && other.hasCollisionUp) {position.y -= distanceUp; setIsOnGround(true); velocity.y = 0;} //make sure youre falling (for plattforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isnt too high, otherwise if half of the player falls through  a plattform, he gets teleported up
+    if (smallestDistance == distanceDown && other.hasCollisionDown) {position.y += distanceDown; velocity.y = 0;} //make sure the block isnt a plattform, so that you can go through it from the bottom
+    if (smallestDistance == distanceLeft && other.hasHorizontalCollision) {position.x -= distanceLeft; velocity.x = 0;} //make sure the block isnt a plattform, so that you can go through it horizontally
+    if (smallestDistance == distanceRight && other.hasHorizontalCollision) {position.x += distanceRight; velocity.x = 0;}
+
+    if(other.climbable) setClimbing(true);
 
     setPos(position);
   }
@@ -100,6 +114,8 @@ mixin BasicMovement on PositionComponent {
 
   void setGravityEnabled(bool val) => gravityEnabled = val;
 
+  bool isClimbing();
+
   void _updateMovement(double dt) {
     if (hasJumped) if (isOnGround) jump(); else hasJumped = false;
 
@@ -114,7 +130,7 @@ mixin BasicMovement on PositionComponent {
   }
 
   void _performGravity(double dt){
-    if(!debugFlyMode) velocity.y += _gravity;
+    if(!debugFlyMode && !isClimbing()) velocity.y += _gravity;
     else {
       velocity.y += verticalMovement * moveSpeed * (dt + 1);
       velocity.y *= 0.9;
@@ -162,7 +178,7 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
         debugFlyMode = !debugFlyMode; // press left ctrl to toggle fly mode
       //if the key is pressed than the player jumps in _updatePlayerMovement
       if (keysPressed.contains(LogicalKeyboardKey.space)) {
-        if (debugFlyMode) {
+        if (debugFlyMode || isClimbing()) {
           verticalMovement = -1; //when in debug mode move the player upwards
         } else {
           hasJumped = true; //else jump
@@ -170,7 +186,7 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
       }
 
       if (keysPressed.contains(LogicalKeyboardKey.shiftLeft) &&
-          debugFlyMode) { //when in fly mode and shift is pressed, the player gets moved down
+          (debugFlyMode || isClimbing())) { //when in fly mode and shift is pressed, the player gets moved down
         verticalMovement = 1;
       }
     } else if(viewSide == ViewSide.topDown){
@@ -195,5 +211,7 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
 
     return super.onKeyEvent(event, keysPressed);
   }
+
+  bool isClimbing();
 
 }

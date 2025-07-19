@@ -5,7 +5,7 @@
 
 import 'package:mpg_achievements_app/components/player.dart';
 
-import '../collision_block.dart';
+import '../physics/collision_block.dart';
 
 bool checkCollision(Player player, CollisionBlock block) {
   // Instead of manual calculations, we use the hitbox's absolute bounding box.

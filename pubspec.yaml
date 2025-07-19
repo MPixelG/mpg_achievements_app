@@ -78,6 +78,9 @@ flutter:
       - assets/images/Items/Fruits/
       - assets/images/Traps/Saw/
       - assets/images/Background/
+      - assets/images/sky/
+      - assets/images/tiles/
+      - assets/images/objects/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

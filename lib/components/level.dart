@@ -7,14 +7,14 @@ import 'package:flutter/cupertino.dart' hide PointerMoveEvent, AnimationStyle;
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/components/camera/animation_style.dart';
-import 'package:mpg_achievements_app/components/collision_block.dart';
+import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/enemy.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/traps/saw.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:flame/experimental.dart';
 
-import 'Particles.dart';
 import 'background/scrolling_background.dart';
 
 
@@ -22,7 +22,7 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
   final String levelName;
   late TiledComponent level;
   final Player player;
-  final Enemy enemy;
+  Enemy enemy;
 
   int totalCollectables = 0;
 
@@ -41,18 +41,24 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
     //otherwise the rest of the programme would stop
     //16 is 16x16 of our tileset
 
-    level = await TiledComponent.load('$levelName.tmx', Vector2.all(16));
+    level = await TiledComponent.load('$levelName.tmx', Vector2.all(32));
+
     add(level);
+
+    (parent as PixelAdventure).cam.setBounds(Rectangle.fromRect(Rect.fromLTWH(0, 0, level.size.x, level.size.y)));
+
+
     _scrollingBackground();
     _spawningObjects();
     _addCollisions();
 
+
     add(overlays);
-    overlays.scale = Vector2.zero(); //hi
+    overlays.scale = Vector2.zero();
     overlays.priority = 2;
 
+    (parent as PixelAdventure).cam.setMoveBounds(Vector2.zero(), level.size);
 
-    // de the overlays
     //runs all the other onLoad-events the method is referring to, now not important
     return super.onLoad();
   }
@@ -111,19 +117,23 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
                 break;
           case "Enemy":
             //enemy spawning
+
+          enemy = Enemy(enemyCharacter: "Virtual Guy");
             enemy.position = Vector2(spawnPoint.x, spawnPoint.y);
             add(enemy);
-            print("added enemy");
+
           default:
         }
       }
     }
+
   }
 
   void _addCollisions() {
     final collisionsLayer = level.tileMap.getLayer<ObjectGroup>('Collisions');
 
     if (collisionsLayer != null) {
+      print("in collision layer!");
       for (final collision in collisionsLayer.objects) {
         //makes a list of all the collision object that are in the level and creates CollisionBlockObject-List with the respective attribute values
         switch (collision.class_) {
@@ -131,7 +141,18 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
             final platform = CollisionBlock(
               position: Vector2(collision.x, collision.y),
               size: Vector2(collision.width, collision.height),
-              isPlatform: true,
+              hasCollisionDown: false,
+              hasHorizontalCollision: false,
+            );
+            add(platform);
+          case 'Ladder':
+            final platform = CollisionBlock(
+              position: Vector2(collision.x, collision.y),
+              size: Vector2(collision.width, collision.height),
+              climbable: true,
+              hasCollisionDown: false,
+              hasCollisionUp: false,
+              hasHorizontalCollision: false,
             );
             add(platform);
           default:

@@ -13,7 +13,7 @@ import 'package:mpg_achievements_app/components/traps/saw.dart';
 import '../mpg_pixel_adventure.dart';
 import 'Particles.dart';
 import 'collectables.dart';
-import 'collision_block.dart';
+import 'physics/collision_block.dart';
 import 'level.dart';
 
 enum EnemyState { idle, running, jumping, falling, hit, appearing, disappearing }
@@ -235,4 +235,11 @@ class Enemy extends SpriteAnimationGroupComponent
 
   @override
   bool isInHitFrames() => gotHit;
+
+  bool climbing = false;
+  @override
+  void setClimbing(bool val) => climbing = val;
+
+  @override
+  bool isClimbing() => climbing;
 }

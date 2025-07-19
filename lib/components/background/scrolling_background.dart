@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
 
-class ScrollingBackground extends Component with HasGameReference{
+class ScrollingBackground extends Background with HasGameReference{
 
   AdvancedCamera? camera;
 
