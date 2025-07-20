@@ -5,6 +5,7 @@
  <layer id="1" name="Level" width="40" height="23" offsetx="1" offsety="0">
   <properties>
    <property name="BackgroundColor" value="Purple"/>
+   <property name="BackgroundImages" type="int" value="0"/>
    <property name="Side" value="Side"/>
   </properties>
   <data encoding="csv">

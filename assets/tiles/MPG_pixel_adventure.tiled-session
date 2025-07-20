@@ -7,6 +7,7 @@
     "expandedProjectPaths": [
         "."
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "IndustrialTile_81.png.tsx": {
             "dynamicWrapping": true,
@@ -17,11 +18,11 @@
                 17,
                 20
             ],
-            "scale": 4,
-            "selectedLayer": 2,
+            "scale": 1,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 155.875,
-                "y": 92
+                "x": -544,
+                "y": 211.5
             }
         },
         "Level_1.tmx": {
@@ -32,20 +33,20 @@
             "scale": 3,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 393.16666666666663,
-                "y": 219
+                "x": -389.66666666666663,
+                "y": 1259.1666666666665
             }
         },
         "Level_2.tmx": {
             "expandedObjectLayers": [
-                4,
-                2
+                2,
+                4
             ],
             "scale": 3,
-            "selectedLayer": 10,
+            "selectedLayer": 8,
             "viewCenter": {
-                "x": 235.5,
-                "y": 476.33333333333326
+                "x": 203.66666666666669,
+                "y": 476.16666666666663
             }
         },
         "Level_3.tmx": {
@@ -95,7 +96,8 @@
             "scaleInDock": 1.4
         },
         "industrialObjects.tsx": {
-            "dynamicWrapping": true
+            "dynamicWrapping": true,
+            "scaleInDock": 1
         },
         "testLevel.tmx": {
             "scale": 1.1615234374999999,
@@ -119,12 +121,12 @@
         "Level_1.tmx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
-    "property.type": "float",
+    "property.type": "int",
     "recentFiles": [
-        "IndustrialTile_81.png.tsx",
-        "Level_1.tmx",
-        "Level_2.tmx",
         "Level_0.tmx",
+        "Level_1.tmx",
+        "IndustrialTile_81.png.tsx",
+        "Level_2.tmx",
         "Level_3.tmx",
         "Level_4.tmx",
         "MPG_pixel_adventure.tsx",

@@ -1,7 +1,5 @@
 import 'package:flame/game.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 abstract class Screen extends StatelessWidget {
@@ -12,6 +10,8 @@ abstract class Screen extends StatelessWidget {
 }
 
 class MainMenuScreen extends Screen {
+  MainMenuScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: Container(

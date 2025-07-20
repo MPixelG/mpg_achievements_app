@@ -117,21 +117,29 @@ mixin BasicMovement on PositionComponent {
   bool isClimbing();
 
   void _updateMovement(double dt) {
-    if (hasJumped) if (isOnGround) jump(); else hasJumped = false;
+    if (hasJumped) if (isOnGround) {
+      jump();
+    } else {
+      hasJumped = false;
+    }
 
     velocity.x += horizontalMovement * moveSpeed;
     velocity.x *= _friction * (dt+1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
     position.x += velocity.x * dt;
 
-    if(viewSide == ViewSide.side && gravityEnabled) _performGravity(dt);
-    else _performVerticalMovement(dt);
+    if(viewSide == ViewSide.side && gravityEnabled) {
+      _performGravity(dt);
+    } else {
+      _performVerticalMovement(dt);
+    }
 
     position.y += velocity.y * dt;
   }
 
   void _performGravity(double dt){
-    if(!debugFlyMode && !isClimbing()) velocity.y += _gravity;
-    else {
+    if(!debugFlyMode && !isClimbing()) {
+      velocity.y += _gravity;
+    } else {
       velocity.y += verticalMovement * moveSpeed * (dt + 1);
       velocity.y *= 0.9;
     }
@@ -179,8 +187,9 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
 
 
     if(viewSide == ViewSide.side) {
-      if (keysPressed.contains(LogicalKeyboardKey.controlLeft))
+      if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) {
         debugFlyMode = !debugFlyMode; // press left ctrl to toggle fly mode
+      }
       //if the key is pressed than the player jumps in _updatePlayerMovement
       if (keysPressed.contains(LogicalKeyboardKey.space)) {
         if (debugFlyMode || isClimbing()) {
@@ -217,6 +226,7 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
     return super.onKeyEvent(event, keysPressed);
   }
 
+  @override
   bool isClimbing();
 
   bool setControllable(bool val) => active = val;

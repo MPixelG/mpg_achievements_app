@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/cupertino.dart' hide PointerMoveEvent, AnimationStyle;
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
@@ -40,38 +38,61 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
   FutureOr<void> onLoad() async {
     //await need to be there because it takes some time to load, that's why the method needs to be async
     //otherwise the rest of the programme would stop
-    //16 is 16x16 of our tileset
-
-
+    // Load the Tiled map for the current level.
+    // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
     level = await TiledComponent.load('$levelName.tmx', Vector2(32, 32));
     add(level);
-
+    //number of background images for Parralax effect -> set in Tiled as custom property
+    // If not found, it defaults to 0.
     int amountOfBackgroundImages = (level.tileMap.getLayer("Level")?.properties.byName["BackgroundImages"]?.value as int) ?? 0;
-    
+
+    // Lists to store background images and their corresponding parallax factors.
+    // Lists (not Sets) are used to preserve the order — each image must match its parallax factor by index.
     Set<TiledImage> images = {};
     Set<double> parralaxFactors = {};
     ImageLayer? imageLayer;
+
+    // Loop through all background image layers defined in Tiled.
+    // Background image layers are expected to be named "background1", "background2", etc.
     for (int i = 1; i <= amountOfBackgroundImages; i++) {
+      // Try to get the image layer from the Tiled map.
       imageLayer = level.tileMap.getLayer("background$i") as ImageLayer;
-      imageLayer.visible = false;
+      imageLayer.visible = false; // Disable visibility in the Tiled layer — we’ll render it manually for the parallax effect.
       images.add(imageLayer.image);
+      // Retrieve the custom parallax factor property from the image layer.
+      // If not found, default to 0.3.
       parralaxFactors.add(imageLayer.properties.byName["parralaxFactor"]?.value as double ?? 0.3);
     }
 
-    add(LayeredImageBackground(images, (parent as PixelAdventure).cam, parallaxFactors: parralaxFactors, startPos: Vector2(0, -96)));
+    // Add a custom LayeredImageBackground component that will handle rendering
+    // parallax background images with different scrolling speeds.
+    // Pass in the camera and the start position for background rendering.
+    add(LayeredImageBackground(images,
+        (parent as PixelAdventure).cam,
+        parallaxFactors: parralaxFactors,
+        startPos: Vector2(0, -96)));
 
-    (parent as PixelAdventure).cam.setBounds(Rectangle.fromRect(Rect.fromLTWH(0, 0, level.size.x, level.size.y)));
+    // Set hard camera bounds so the camera doesn't go outside the level.
+    // This bounds the camera’s movement inside the level dimensions.
+    (parent as PixelAdventure).cam.setBounds(
+        Rectangle.fromRect(
+            Rect.fromLTWH(0, 0, level.size.x, level.size.y)));
 
+    // Initialize other game systems: spawning objects and adding collisions.
+    // This loads enemies, items, and define collision areas from the Tiled map.
 
-   // _scrollingBackground();
+    // _scrollingBackground();
     _spawningObjects();
     _addCollisions();
 
 
+    // Add UI overlays to the game (e.g., score, health bar).
+    // Set their scale and render priority so they display correctly.
     add(overlays);
-    overlays.scale = Vector2.zero();
-    overlays.priority = 2;
+    overlays.scale = Vector2.zero();// Start hidden/scaled down
+    overlays.priority = 2;          // Ensure overlays draw above the rest of the game
 
+    // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
     (parent as PixelAdventure).cam.setMoveBounds(Vector2.zero(), level.size);
 
     //runs all the other onLoad-events the method is referring to, now not important
@@ -114,7 +135,7 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
             final collectable = Collectable(
               collectable: spawnPoint.name,
               position: Vector2(spawnPoint.x, spawnPoint.y),
-              size: Vector2(spawnPoint.width, spawnPoint.height),
+              size: Vector2(spawnPoint.width, spawnPoint.height)
             );
             totalCollectables++;
             add(collectable);
@@ -227,6 +248,6 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
         value.debugMode = val;
       }
     }
-
+ //gets mouse position Vector2
     Vector2 get mousePos => mouseCoords;
   }

@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/material.dart' hide Image;
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
@@ -34,7 +33,7 @@ class LayeredImageBackground extends Component with HasGameReference<PixelAdvent
         String newString = tiledImage.source!.substring(lastSlash+1);
 
         print(newString);
-        loadedImages.add(await game.images.load("sky/" + newString));
+        loadedImages.add(await game.images.load("sky/$newString"));
         imagesLoaded = true;
       }
     }

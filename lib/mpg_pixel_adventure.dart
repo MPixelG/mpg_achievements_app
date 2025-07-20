@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -12,7 +13,7 @@ import 'components/level.dart';
 
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame
-    with HasKeyboardHandlerComponents, DragCallbacks, HasCollisionDetection, ScrollDetector{
+    with HasKeyboardHandlerComponents, DragCallbacks, HasCollisionDetection, ScrollDetector, CollisionCallbacks{
 
   late final AdvancedCamera cam;
 

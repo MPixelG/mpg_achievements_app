@@ -47,24 +47,25 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   //dt means deltatime and is adjusting the framspeed to make game playable even tough there might be high framrates
-  @override
-  void update(double dt) {
-    super.update(dt);
-  }
 
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (keysPressed.contains(
-        LogicalKeyboardKey.keyR)) _respawn(); //press r to reset player
-    if (keysPressed.contains(LogicalKeyboardKey.keyX)) print(hitbox
+        LogicalKeyboardKey.keyR)) {
+      _respawn(); //press r to reset player
+    }
+    if (keysPressed.contains(LogicalKeyboardKey.keyX)) {
+      print(hitbox
         .isColliding); //press x to print if the player is currently in a wall
+    }
     if (keysPressed.contains(LogicalKeyboardKey.keyC)) {
       debugNoClipMode = !debugNoClipMode;
       setDebugNoCipMode(debugNoClipMode);
-    }; //press C to toggle noClip mode. lets you fall / walk / fly through walls. better only use it whilst flying (ctrl key)
-    if (keysPressed.contains(LogicalKeyboardKey.keyY))
+    } //press C to toggle noClip mode. lets you fall / walk / fly through walls. better only use it whilst flying (ctrl key)
+    if (keysPressed.contains(LogicalKeyboardKey.keyY)) {
       debugImmortalMode = !debugImmortalMode; //press Y to toggle immortality
+    }
 
     return super.onKeyEvent(event, keysPressed);
   }
@@ -112,9 +113,12 @@ class Player extends SpriteAnimationGroupComponent
     setGravityEnabled(true); //re-enable gravity
     setControllable(true);
   }
-
+ //Getters
   @override
   ShapeHitbox getHitbox() => hitbox;
+
+  @override
+  String getCharacter() => character;
 
   @override
   Vector2 getPosition() => position;
@@ -124,7 +128,7 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   Vector2 getVelocity() => velocity;
-
+ //setters
   @override
   void setIsOnGround(bool val) => isOnGround = val;
 
@@ -134,10 +138,8 @@ class Player extends SpriteAnimationGroupComponent
   @override
   bool isInHitFrames() => gotHit; //if the player is currently getting respawned
 
-  @override
-  String getCharacter() => character;
-
   bool climbing = false;
+
   @override
   void setClimbing(bool val) => climbing = val;
 

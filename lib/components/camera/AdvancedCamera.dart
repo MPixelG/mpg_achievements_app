@@ -6,7 +6,7 @@ import 'package:mpg_achievements_app/components/player.dart';
 import 'animation_style.dart';
 
 class AdvancedCamera extends CameraComponent {
-  AdvancedCamera({required World super.world, super.width = 640, super.height = 360}) : super.withFixedResolution() {}
+  AdvancedCamera({required World super.world, super.width = 640, super.height = 360}) : super.withFixedResolution();
 
   Player? player; //the player to follow
 
@@ -126,7 +126,9 @@ class AdvancedCamera extends CameraComponent {
       if(givenZoom != null) { //if there was a zoom given, it has to be calculated aswell
         double zoom = initialZoom! + (givenZoom! - initialZoom!) * progressVal;
         moveTo(pos, zoom: zoom);
-      } else moveTo(pos);
+      } else {
+        moveTo(pos);
+      }
 
 
 
@@ -157,7 +159,9 @@ class AdvancedCamera extends CameraComponent {
 
       moveBy(shakingPosition);
       shakingTime -= dt; //decrease the time
-    } else shakingPosition = Vector2.zero();
+    } else {
+      shakingPosition = Vector2.zero();
+    }
 
     super.update(dt);
   }
