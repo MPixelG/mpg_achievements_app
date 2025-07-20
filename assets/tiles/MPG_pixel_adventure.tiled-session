@@ -21,8 +21,8 @@
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": -544,
-                "y": 211.5
+                "x": 442.5,
+                "y": 252
             }
         },
         "Level_1.tmx": {
@@ -30,11 +30,11 @@
                 2,
                 3
             ],
-            "scale": 3,
-            "selectedLayer": 2,
+            "scale": 2,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": -389.66666666666663,
-                "y": 1259.1666666666665
+                "x": 384.75,
+                "y": 78.5
             }
         },
         "Level_2.tmx": {
@@ -123,8 +123,8 @@
     "project": "MPG_pixel_adventure.tiled-project",
     "property.type": "int",
     "recentFiles": [
-        "Level_0.tmx",
         "Level_1.tmx",
+        "Level_0.tmx",
         "IndustrialTile_81.png.tsx",
         "Level_2.tmx",
         "Level_3.tmx",

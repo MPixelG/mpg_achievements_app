@@ -24,13 +24,9 @@ bool checkCollision(Player player, CollisionBlock block) {
 double abs(double val) => val < 0 ? -val : val;
 
 
-/// Recursively prints the game component tree starting from a given root component.
-/// Useful for debugging the structure of your Flame game's scene graph.
-void printGameTree(Component component, [int depth = 0]) {
-  // Create an indentation string based on the depth of the component in the tree.
-  // Each level deeper in the tree adds two spaces for visual clarity.
-  final indent = '  ' * depth;
-
+/// Recursively prints the game component tree sastarting from a given root component.
+/// Useful for debugging the structure of yodur Flame game's scene graph.
+void printGameTree(Component component, [int depth = 0, String prefix = "", String childrenPrefix = ""]) {
   // Get the name/type of the current component.
   final name = component.runtimeType.toString();
 
@@ -39,12 +35,20 @@ void printGameTree(Component component, [int depth = 0]) {
 
   // Print the current component's info with indentation.
   // Output example: "  - SpriteComponent (12345678)"
-  print('$indent- $name ($id)');
+  print('$prefix$name ($id)');
 
   // Iterate over the component's children, if any.
   // Flame components always have a children list, even if it's empty.
+  int childIndex = 0; //the index of the child that is currently being worked on
+  final int totalChildIndexes = component.children.length; //the total amound of child nodes in the component
   for (final child in component.children) {
     // Recursively call this function for each child, increasing the depth.
-    printGameTree(child, depth + 1);
+    // Each level deeper in the tree adds two spaces for visual clarity.
+    if(childIndex+1 == totalChildIndexes){ //if its the final child in the component, we use └── bc its the end of that branch
+      printGameTree(child, depth + 1, "$childrenPrefix└── ", "$childrenPrefix└── ");
+    }else{
+      printGameTree(child, depth + 1, "$childrenPrefix├── ", "$childrenPrefix│   "); //use │ to indicate, that the 2 branches arent connected
+    }
+    childIndex++; //increase the child index
   }
 }
