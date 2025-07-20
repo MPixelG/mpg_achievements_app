@@ -10,6 +10,7 @@ import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'components/enemy.dart';
 import 'components/level.dart';
+import 'components/util/utils.dart';
 
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame
@@ -52,7 +53,12 @@ class PixelAdventure extends FlameGame
       }
     }
 
-
+    //using game tree printer from utils
+    // Ensure children are mounted before printing
+    Future.delayed(Duration(seconds: 1), () {
+      print('--- Game Tree ---');
+      printGameTree(world);
+    });
 
     return super.onLoad();
   }

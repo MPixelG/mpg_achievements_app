@@ -11,6 +11,7 @@ import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/enemy.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/traps/saw.dart';
+import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:flame/experimental.dart';
 
