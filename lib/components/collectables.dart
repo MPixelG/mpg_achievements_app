@@ -13,8 +13,11 @@ class Collectable extends SpriteAnimationComponent
 
   //name of the collectable and tape of collect -> those will be more than fruit in the future
   final String collectable;
-  final String type;
   bool _collected = false;
+  final bool animated;
+  late final int amount;
+  final bool interactiveTask;
+  String collectablePath;
   final double stepTime = 0.05;
   final hitbox = CustomHitbox(offsetX: 10,
       offsetY: 10,
@@ -22,7 +25,11 @@ class Collectable extends SpriteAnimationComponent
       height: 12);
 
   //constructor
-  Collectable({this.collectable = "Apple", this.type = 'Fruits',
+  Collectable({
+    required this.collectable,
+    required this.interactiveTask,
+    required this.collectablePath,
+    required this.animated,
     super.position,
     super.size});
 
@@ -30,8 +37,13 @@ class Collectable extends SpriteAnimationComponent
   @override
   FutureOr<void> onLoad() {
     priority = 1; // Draw behind other components. default is 0
+    if(animated) {
+      amount = 17;
+    } else {
+      amount = 1;
+    }
 
-    add(
+   add(
       RectangleHitbox(
         position: Vector2(hitbox.offsetX, hitbox.offsetY),
         size: Vector2(hitbox.width, hitbox.height),
@@ -39,11 +51,12 @@ class Collectable extends SpriteAnimationComponent
       ),
     );
     animation = SpriteAnimation.fromFrameData(
-      game.images.fromCache('Items/$type/$collectable.png'),
+      game.images.fromCache('$collectablePath/$collectable.png'),
       SpriteAnimationData.sequenced(
-        amount: 17,
+        amount: amount,
         stepTime: stepTime,
         textureSize: Vector2.all(32),
+        loop: animated,
       ),
     );
     return super.onLoad();
@@ -52,17 +65,17 @@ class Collectable extends SpriteAnimationComponent
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
-    if (other is Player) { // Check if the colliding object is the Player.
+    if (other is Player && !interactiveTask) { // Check if the colliding object is the Player.
       collidedWithPlayer();
     }
   }
 
   void collidedWithPlayer() {
-    if (!_collected) {
+    if (!_collected && !interactiveTask) {
       animation = SpriteAnimation.fromFrameData(
         game.images.fromCache('Items/Fruits/Collected.png'),
         SpriteAnimationData.sequenced(
-          amount: 17,
+          amount: 5,
           stepTime: stepTime,
           textureSize: Vector2.all(32),
           loop: false, // Play collection animation once.
@@ -71,7 +84,8 @@ class Collectable extends SpriteAnimationComponent
       _collected = true;
       (parent as Level).totalCollectables--;
       if((parent as Level).totalCollectables == 0) parent?.add(generateConfetti(position));
+      Future.delayed(const Duration(milliseconds: 400), () => removeFromParent()); // Remove after animation.
     }
-    Future.delayed(const Duration(milliseconds: 400), () => removeFromParent()); // Remove after animation.
+
   }
 }
