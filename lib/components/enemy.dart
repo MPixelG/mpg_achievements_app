@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/CharacterStateManager.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
+import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/traps/saw.dart';
 import '../mpg_pixel_adventure.dart';
 import 'Particles.dart';
@@ -51,7 +52,6 @@ class Enemy extends SpriteAnimationGroupComponent
   final List<Ray2> rays = [];
   final List<RaycastResult<ShapeHitbox>> results = [];
   late List<RaycastResult<ShapeHitbox>> lastResults = [];
-  final safetyDistance = 50;
 
 
   String enemyCharacter;
@@ -81,7 +81,7 @@ class Enemy extends SpriteAnimationGroupComponent
     time += dt; //increase the timers
     timeSinceLastUpdate += dt;
 
-    if(time < 1 && timeSinceLastUpdate > 1) return; //if the countdown isnt done and the last intersection with sth movable is more than a second ago, we return
+    if(time < 1 && !(timeSinceLastUpdate < 1 && time > 0.05)) return; //if the countdown isnt done and the last intersection with sth movable is more than a second ago, we return
     //print("updated " + hashCode.toString());
     time = 0; //reset the timer for the next ray
 
@@ -130,17 +130,17 @@ class Enemy extends SpriteAnimationGroupComponent
   }
 
   PositionComponent? getParentAsPositionComponent(Hitbox<dynamic>? hitbox){
-    if(hitbox == null) return null; //if the hitbox is null, it cant have a parent
+    if(hitbox == null) return null;
 
-    if(hitbox is! ShapeHitbox) return null; //if it isn't a shape hitbox, it cant have a parent
+    if(hitbox is! ShapeHitbox) return null;
 
-    Component? parent = hitbox.parent; //get the parent as a Component
+    Component? parent = hitbox.parent;
 
-    if(parent == null || parent is! PositionComponent){ //if it has no parent or the component is unmovable, we return null
+    if(parent == null || parent is! PositionComponent){
       return null;
     }
 
-    return parent; //return the parent. it has to be a PositionComponent now.
+    return parent;
   }
 
 
@@ -163,13 +163,24 @@ class Enemy extends SpriteAnimationGroupComponent
       Vector2 lineStart = origin - absolutePosition + hitbox.center;
       Vector2 lineEnd = result.intersectionPoint! - absolutePosition + hitbox.center;
 
+      lineStart.clamp(game.cam.boundsMin - absolutePosition, game.cam.boundsMax - absolutePosition);
+      lineEnd.clamp(game.cam.boundsMin - absolutePosition, game.cam.boundsMax - absolutePosition);
+
+
+      Paint paint = Paint();
+      if(getParentAsPositionComponent(result.hitbox) is Player){
+        paint.color = Colors.green;
+        paint.strokeWidth = 1.5;
+      } else{
+        paint.color == Colors.redAccent;
+        paint.strokeWidth = 1.0;
+      }
+
       if(scale.x > 0) { //if the enemy is mirrored because it walked in the other direction, everything we draw will be mirrored aswell. that's why we need to mirror the line manually
         canvas.drawLine( //draw the line unmirrored
             lineStart.toOffset(),
             lineEnd.toOffset(),
-            Paint()
-              ..color = Colors.red
-              ..strokeWidth = 1.0
+            paint
         );
       } else{
         Vector2 mirroredStart = Vector2(-lineStart.x + hitbox.center.x * 2, lineStart.y); //mirror and move to the center of the hitbox
@@ -177,9 +188,7 @@ class Enemy extends SpriteAnimationGroupComponent
         canvas.drawLine( //draw the line mirrored
             mirroredStart.toOffset(),
             mirroredEnd.toOffset(),
-            Paint()
-              ..color = Colors.red
-              ..strokeWidth = 1.0
+            paint
         );
       }
     }

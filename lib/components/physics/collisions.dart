@@ -89,7 +89,7 @@ enum ViewSide {
 
 mixin BasicMovement on PositionComponent {
  //constants for configuring basic movement
-  final double _gravity = 15.0;
+  final double _gravity = 512.0;
   final double _jumpForce = 320;
   final double _terminalVelocity = 300;
   final double _friction = 0.81;
@@ -145,10 +145,10 @@ mixin BasicMovement on PositionComponent {
   // Applies gravity and falling mechanics
   void _performGravity(double dt){
     if(!debugFlyMode && !isClimbing()) {
-      velocity.y += _gravity; // Fall down
+      velocity.y += _gravity * dt; // Fall down
     } else {
       velocity.y += verticalMovement * moveSpeed * (dt + 1);
-      velocity.y *= 0.9; // Simulated drag
+      velocity.y *= pow(0.01, dt); // Simulated drag
     }
     //limit fallspeed to terminalVelocity
     velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
