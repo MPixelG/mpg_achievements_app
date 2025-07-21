@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
+import 'package:mpg_achievements_app/components/ai/tile_grid.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
+import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
 import 'package:mpg_achievements_app/components/camera/animation_style.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
@@ -23,6 +27,8 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
   late TiledComponent level;
   final Player player;
   Enemy enemy;
+
+  late Pathfinder pathfinder;
 
   int totalCollectables = 0;
 
@@ -48,12 +54,30 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
     if (level.tileMap.getLayer('Level')?.properties.getValue('Parallax'))
     {_loadParallaxLevel();}
       else
-      { level.scale = Vector2.all(0.5);
+      { level.scale = Vector2.all(1);
         _scrollingBackground();}
     //spawn objects
     _spawningObjects();
       //add collision objects
     _addCollisions();
+
+
+    TileGrid grid = TileGrid((level.width / 32).toInt(), (level.height / 32).toInt(), 32, level.tileMap.getLayer("Collisions"));
+
+    add(grid);
+
+    pathfinder = Pathfinder(grid, 32);
+
+/*    List<Vector2>? path = pathfinder.findPath(Vector2(2, 29), Vector2(4, 22));
+
+    if(path != null){
+
+      for (var value in path) {
+        grid.highlightedSpots[value.x.toInt()][value.y.toInt()] = true;
+      }
+      print(path);
+
+    }*/
 
 
     // Add UI overlays to the game (e.g., score, health bar).
@@ -202,7 +226,8 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
       Vector2 roundedPlayerPos = player.position.clone()..round();
 
       String playerCoords = roundedPlayerPos.toString();
-      overlays.text = "Player: $playerCoords\nMouse: $mouseCoords";
+      overlays.text = "Player: $playerCoords\nMouse: $mouseCoords\nGrid Mouse Coords: ${(mouseCoords / 32)..floor()}";
+      overlays.position = (game as PixelAdventure).cam.pos - (game as PixelAdventure).cam.visibleWorldRect.size.toVector2() / 2;
 
 
 

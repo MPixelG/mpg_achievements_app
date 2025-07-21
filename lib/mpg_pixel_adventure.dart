@@ -36,7 +36,7 @@ class PixelAdventure extends FlameGame
     await images.loadAllImages();
     //world is loaded after initialising all images
 
-    final world = Level(levelName: 'Level_2', player: player, enemy);
+    final world = Level(levelName: 'Level_3', player: player, enemy);
 
     cam = AdvancedCamera(world: world);
     cam.player = player;
@@ -55,10 +55,10 @@ class PixelAdventure extends FlameGame
 
     //using game tree printer from utils
     // Ensure children are mounted before printing
-    Future.delayed(Duration(seconds: 1), () {
-      print('--- Game Tree ---');
-      printGameTree(world);
-    });
+    // Future.delayed(Duration(seconds: 1), () {
+    //   print('--- Game Tree ---');
+    //   printGameTree(world);
+    // });
 
     return super.onLoad();
   }
