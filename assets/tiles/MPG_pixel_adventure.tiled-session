@@ -32,10 +32,10 @@
                 3
             ],
             "scale": 1,
-            "selectedLayer": 0,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 278.5,
-                "y": 206
+                "x": 321,
+                "y": 183.5
             }
         },
         "Level_2.tmx": {
@@ -43,11 +43,11 @@
                 2,
                 4
             ],
-            "scale": 1,
-            "selectedLayer": 10,
+            "scale": 3,
+            "selectedLayer": 8,
             "viewCenter": {
-                "x": 496.5,
-                "y": 520
+                "x": 521,
+                "y": 711.8333333333333
             }
         },
         "Level_3.tmx": {
@@ -111,7 +111,7 @@
     },
     "last.imagePath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/images/sky",
     "map.fixedSize": true,
-    "map.height": 32,
+    "map.height": 28,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 32,
     "map.tileWidth": 32,
@@ -123,7 +123,7 @@
         "Level_0.tmx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
-    "property.type": "string",
+    "property.type": "bool",
     "recentFiles": [
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",

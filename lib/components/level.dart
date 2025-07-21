@@ -15,9 +15,7 @@ import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/enemy.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/traps/saw.dart';
-import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import 'package:flame/experimental.dart';
 
 import 'background/scrolling_background.dart';
 
@@ -109,27 +107,33 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
     add(background);
   }
 
-  void _spawningObjects() {
+  void _spawningObjects(){
     //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list
     final spawnPointsLayer = level.tileMap.getLayer<ObjectGroup>('Spawnpoints');
+
 
     //if there is no Spawnpointslayer the game can never the less run and does not crash / Nullcheck-Safety
     if (spawnPointsLayer != null) {
       //then we go through the list and check for the class Player, which was also defined as an object in the Óbjectlayer
       //When we find that class we create our player and add it to the level in the defined spawnpoint - ! just says that it can be null
       for (final spawnPoint in spawnPointsLayer.objects) {
+
         switch (spawnPoint.class_) {
           case 'Player':
             //player spawning
             player.position = Vector2(spawnPoint.x, spawnPoint.y);
             add(player);
             break;
-          case "Collectable":
-            //fruit spawning
+          case 'Collectable':
+            //checking type for spawning
+            bool interactiveTask = spawnPoint.properties.getValue('interactiveTask') ?? false;
+            String collectablePath(bool task) => task == true ? 'objects' : 'Items/Fruits';
+            
+            //collectable spawning
             final collectable = Collectable(
               collectable: spawnPoint.name,
               position: Vector2(spawnPoint.x, spawnPoint.y),
-              size: Vector2(spawnPoint.width, spawnPoint.height)
+              size: Vector2(spawnPoint.width, spawnPoint.height), interactiveTask: interactiveTask, collectablePath: collectablePath(interactiveTask), animated: !interactiveTask
             );
             totalCollectables++;
             add(collectable);
