@@ -6,6 +6,9 @@ import 'package:flutter/services.dart';
 import 'collision_block.dart';
 import '../level.dart';
 
+
+/// Mixin for adding collision detection behavior to a component.
+/// Requires implementing methods to provide hitbox, position, velocity, etc
 mixin HasCollisions on Component, CollisionCallbacks {
 
   ShapeHitbox getHitbox();
@@ -18,8 +21,11 @@ mixin HasCollisions on Component, CollisionCallbacks {
   bool _debugNoClipMode = false;
 
 
+  // Sets the new position of the object after a collision.
   void setPos(Vector2 newPos);
   void setIsOnGround(bool val);
+
+  // Called automatically by Flame when a collision begins.
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if(other is CollisionBlock && !_debugNoClipMode) {
@@ -28,6 +34,7 @@ mixin HasCollisions on Component, CollisionCallbacks {
     super.onCollision(intersectionPoints, other);
   }
 
+  // Called when the collision with another object ends
   @override
   void onCollisionEnd(PositionComponent other) {
     if(other is CollisionBlock && other.climbable) {
@@ -39,6 +46,7 @@ mixin HasCollisions on Component, CollisionCallbacks {
 
   void setDebugNoCipMode(bool val) => _debugNoClipMode = val;
 
+  //main collision physics
   void checkCollision(PositionComponent other){
     if (other is! CollisionBlock) return; //physics only work on the collision blocks (including the platforms)
 
@@ -55,7 +63,7 @@ mixin HasCollisions on Component, CollisionCallbacks {
       posDiff.x -= hitbox.width;
     }
 
-    //get all the distances it would take to transport the player to this side of the plattform
+    //get all the distances it would take to transport the player to this side of the platform
     final double distanceUp = posDiff.y + hitbox.height;
     final double distanceLeft = posDiff.x + hitbox.width;
     final double distanceRight = other.width - posDiff.x;
@@ -63,13 +71,13 @@ mixin HasCollisions on Component, CollisionCallbacks {
 
     final double smallestDistance = min(min(distanceUp, distanceDown), min(distanceRight, distanceLeft)); //get the smallest distance
 
-    if (smallestDistance == distanceUp && velocity.y > 0 && !(!other.hasCollisionDown && distanceUp > 8) && other.hasCollisionUp) {position.y -= distanceUp; setIsOnGround(true); velocity.y = 0;} //make sure youre falling (for plattforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isnt too high, otherwise if half of the player falls through  a plattform, he gets teleported up
-    if (smallestDistance == distanceDown && other.hasCollisionDown) {position.y += distanceDown; velocity.y = 0;} //make sure the block isnt a plattform, so that you can go through it from the bottom
-    if (smallestDistance == distanceLeft && other.hasHorizontalCollision) {position.x -= distanceLeft; velocity.x = 0;} //make sure the block isnt a plattform, so that you can go through it horizontally
+    // Resolve the collision in the direction of smallest overlap
+    if (smallestDistance == distanceUp && velocity.y > 0 && !(!other.hasCollisionDown && distanceUp > 8) && other.hasCollisionUp) {position.y -= distanceUp; setIsOnGround(true); velocity.y = 0;} //make sure you're falling (for platforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isn't too high, otherwise if half of the player falls through  a platform, he gets teleported up
+    if (smallestDistance == distanceDown && other.hasCollisionDown) {position.y += distanceDown; velocity.y = 0;} //make sure the block isn't a platform, so that you can go through it from the bottom
+    if (smallestDistance == distanceLeft && other.hasHorizontalCollision) {position.x -= distanceLeft; velocity.x = 0;} //make sure the block isn't a platform, so that you can go through it horizontally
     if (smallestDistance == distanceRight && other.hasHorizontalCollision) {position.x += distanceRight; velocity.x = 0;}
-
     if(other.climbable) setClimbing(true);
-
+    // sets new position
     setPos(position);
   }
 }
@@ -80,26 +88,22 @@ enum ViewSide {
 
 
 mixin BasicMovement on PositionComponent {
-
+ //constants for configuring basic movement
   final double _gravity = 15.0;
   final double _jumpForce = 320;
   final double _terminalVelocity = 300;
   final double _friction = 0.81;
 
 
-  double moveSpeed = 35;
+  double moveSpeed = 35; // Speed multiplier
 
-  double horizontalMovement = 0;
-
-  double verticalMovement = 0;
-  bool debugFlyMode = false;
-
+  double horizontalMovement = 0;// Directional input (left/right)
+  double verticalMovement = 0; // Directional input (up/down)
   Vector2 velocity = Vector2.zero();
 
+  bool debugFlyMode = false;
   bool hasJumped = false;
-
   bool isOnGround = false;
-
   bool gravityEnabled = true;
 
 
@@ -116,6 +120,7 @@ mixin BasicMovement on PositionComponent {
 
   bool isClimbing();
 
+  // Updates movement logic based on input and physics
   void _updateMovement(double dt) {
     if (hasJumped) if (isOnGround) {
       jump();
@@ -123,6 +128,7 @@ mixin BasicMovement on PositionComponent {
       hasJumped = false;
     }
 
+    // Horizontal movement and friction
     velocity.x += horizontalMovement * moveSpeed;
     velocity.x *= _friction * (dt+1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
     position.x += velocity.x * dt;
@@ -136,16 +142,19 @@ mixin BasicMovement on PositionComponent {
     position.y += velocity.y * dt;
   }
 
+  // Applies gravity and falling mechanics
   void _performGravity(double dt){
     if(!debugFlyMode && !isClimbing()) {
-      velocity.y += _gravity;
+      velocity.y += _gravity; // Fall down
     } else {
       velocity.y += verticalMovement * moveSpeed * (dt + 1);
-      velocity.y *= 0.9;
+      velocity.y *= 0.9; // Simulated drag
     }
+    //limit fallspeed to terminalVelocity
     velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
   }
 
+  // For top-down movement (WASD)
   void _performVerticalMovement(double dt){
     velocity.y += verticalMovement * moveSpeed * (dt + 1);
     velocity.y *= _friction * (dt+1);
@@ -229,6 +238,7 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
   @override
   bool isClimbing();
 
+  // Enable/disable player control
   bool setControllable(bool val) => active = val;
 
 }

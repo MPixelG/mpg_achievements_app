@@ -26,7 +26,7 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
 
   int totalCollectables = 0;
 
-  //Todo add feature to make levels with and without scrolling background
+  //Todo add feature to make levels with and without scrolling background //added via Tiled
   final bool scrollingBackground = false;
 
   //loads when the class instantiated
@@ -43,47 +43,16 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
     level = await TiledComponent.load('$levelName.tmx', Vector2(32, 32));
     add(level);
-    //number of background images for Parralax effect -> set in Tiled as custom property
-    // If not found, it defaults to 0.
-    int amountOfBackgroundImages = (level.tileMap.getLayer("Level")?.properties.byName["BackgroundImages"]?.value as int) ?? 0;
-
-    // Lists to store background images and their corresponding parallax factors.
-    // Lists (not Sets) are used to preserve the order — each image must match its parallax factor by index.
-    Set<TiledImage> images = {};
-    Set<double> parralaxFactors = {};
-    ImageLayer? imageLayer;
-
-    // Loop through all background image layers defined in Tiled.
-    // Background image layers are expected to be named "background1", "background2", etc.
-    for (int i = 1; i <= amountOfBackgroundImages; i++) {
-      // Try to get the image layer from the Tiled map.
-      imageLayer = level.tileMap.getLayer("background$i") as ImageLayer;
-      imageLayer.visible = false; // Disable visibility in the Tiled layer — we’ll render it manually for the parallax effect.
-      images.add(imageLayer.image);
-      // Retrieve the custom parallax factor property from the image layer.
-      // If not found, default to 0.3.
-      parralaxFactors.add(imageLayer.properties.byName["parralaxFactor"]?.value as double ?? 0.3);
-    }
-
-    // Add a custom LayeredImageBackground component that will handle rendering
-    // parallax background images with different scrolling speeds.
-    // Pass in the camera and the start position for background rendering.
-    add(LayeredImageBackground(images,
-        (parent as PixelAdventure).cam,
-        parallaxFactors: parralaxFactors,
-        startPos: Vector2(0, -96)));
-
-    // Set hard camera bounds so the camera doesn't go outside the level.
-    // This bounds the camera’s movement inside the level dimensions.
-    (parent as PixelAdventure).cam.setBounds(
-        Rectangle.fromRect(
-            Rect.fromLTWH(0, 0, level.size.x, level.size.y)));
-
-    // Initialize other game systems: spawning objects and adding collisions.
-    // This loads enemies, items, and define collision areas from the Tiled map.
-
-    // _scrollingBackground();
+    
+    // If level not Parallax, load level with  scrolling background, property is added in Tiled
+    if (level.tileMap.getLayer('Level')?.properties.getValue('Parallax'))
+    {_loadParallaxLevel();}
+      else
+      { level.scale = Vector2.all(0.5);
+        _scrollingBackground();}
+    //spawn objects
     _spawningObjects();
+      //add collision objects
     _addCollisions();
 
 
@@ -251,4 +220,41 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
     }
  //gets mouse position Vector2
     Vector2 get mousePos => mouseCoords;
-  }
+
+
+//if parallax effect, this method is called
+   void _loadParallaxLevel(){
+
+     int amountOfBackgroundImages = (level.tileMap.getLayer("Level")?.properties.byName["BackgroundImages"]?.value as int) ?? 0;
+
+     // Lists to store background images and their corresponding parallax factors.
+     // Lists (not Sets) are used to preserve the order — each image must match its parallax factor by index.
+     Set<TiledImage> images = {};
+     Set<double> parralaxFactors = {};
+     ImageLayer? imageLayer;
+
+     // Loop through all background image layers defined in Tiled.
+     // Background image layers are expected to be named "background1", "background2", etc.
+     for (int i = 1; i <= amountOfBackgroundImages; i++) {
+       // Try to get the image layer from the Tiled map.
+       imageLayer = level.tileMap.getLayer("background$i") as ImageLayer;
+       imageLayer.visible = false; // Disable visibility in the Tiled layer — we’ll render it manually for the parallax effect.
+       images.add(imageLayer.image);
+       // Retrieve the custom parallax factor property from the image layer.
+       // If not found, default to 0.3.
+       parralaxFactors.add(imageLayer.properties.byName["parralaxFactor"]?.value as double ?? 0.3);
+     }
+
+     // Add a custom LayeredImageBackground component that will handle rendering
+     // parallax background images with different scrolling speeds.
+     // Pass in the camera and the start position for background rendering.
+     add(LayeredImageBackground(images,
+         (parent as PixelAdventure).cam,
+         parallaxFactors: parralaxFactors,
+         startPos: Vector2(0, -96)));
+
+
+
+    }
+
+   }

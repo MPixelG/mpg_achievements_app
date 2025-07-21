@@ -75,6 +75,7 @@
   <properties>
    <property name="BackgroundColor" value="Blue"/>
    <property name="BackgroundImages" type="int" value="5"/>
+   <property name="Parallax" type="bool" value="true"/>
    <property name="Side" value="Side"/>
   </properties>
   <data encoding="csv">

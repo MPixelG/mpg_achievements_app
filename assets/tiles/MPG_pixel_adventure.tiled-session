@@ -11,6 +11,7 @@
     "fileStates": {
         "IndustrialTile_81.png.tsx": {
             "dynamicWrapping": true,
+            "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "Level_0.tmx": {
@@ -18,11 +19,11 @@
                 17,
                 20
             ],
-            "scale": 1,
+            "scale": 1.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 442.5,
-                "y": 252
+                "x": 530.6666666666666,
+                "y": 197
             }
         },
         "Level_1.tmx": {
@@ -30,11 +31,11 @@
                 2,
                 3
             ],
-            "scale": 2,
-            "selectedLayer": 0,
+            "scale": 1,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 384.75,
-                "y": 78.5
+                "x": 279,
+                "y": 206.5
             }
         },
         "Level_2.tmx": {
@@ -45,8 +46,8 @@
             "scale": 3,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": 203.66666666666669,
-                "y": 476.16666666666663
+                "x": -28.33333333333333,
+                "y": 450.16666666666663
             }
         },
         "Level_3.tmx": {
@@ -117,19 +118,20 @@
     "map.width": 32,
     "openFiles": [
         "MPG_pixel_adventure.tsx",
-        "Level_0.tmx",
-        "Level_1.tmx"
+        "Level_2.tmx",
+        "Level_1.tmx",
+        "Level_0.tmx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
-    "property.type": "int",
+    "property.type": "bool",
     "recentFiles": [
+        "MPG_pixel_adventure.tsx",
+        "Level_2.tmx",
         "Level_1.tmx",
         "Level_0.tmx",
         "IndustrialTile_81.png.tsx",
-        "Level_2.tmx",
         "Level_3.tmx",
         "Level_4.tmx",
-        "MPG_pixel_adventure.tsx",
         "Level_5.tmx",
         "Lever_3.tmx",
         "MPG_Start_low_res.tsx"

@@ -2,6 +2,7 @@
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="16" tileheight="16" infinite="0" nextlayerid="22" nextobjectid="129">
  <properties>
   <property name="BackgroundColor" value="Yellow"/>
+  <property name="Parallax" type="bool" value="false"/>
   <property name="Side" value="Side"/>
  </properties>
  <tileset firstgid="1" source="MPG_pixel_adventure.tsx"/>
@@ -10,6 +11,7 @@
   <properties>
    <property name="BackgroundColor" value="Blue"/>
    <property name="BackgroundImages" type="int" value="0"/>
+   <property name="Parallax" type="bool" value="false"/>
   </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -60,8 +62,6 @@
    </properties>
   </object>
   <object id="125" name="Enemy" type="Enemy" x="597" y="287" width="33" height="32"/>
-  <object id="126" x="362" y="29"/>
-  <object id="128" name="Checkpoint" type="Collectable" x="512" y="64" width="65" height="63"/>
  </objectgroup>
  <objectgroup id="20" name="Collisions">
   <object id="78" x="0" y="320" width="48" height="48"/>
