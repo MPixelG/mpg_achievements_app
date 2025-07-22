@@ -5,11 +5,12 @@ import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
+import 'package:mpg_achievements_app/components/ai/pathfinder2.dart';
 import 'package:mpg_achievements_app/components/ai/tile_grid.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
-import 'package:mpg_achievements_app/components/camera/animation_style.dart';
+import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/enemy.dart';
@@ -20,7 +21,7 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'background/scrolling_background.dart';
 
 
-class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCallbacks{
+class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCallbacks, TapCallbacks{
   final String levelName;
   late TiledComponent level;
   final Player player;
@@ -39,6 +40,8 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
   //constructor
   Level(this.enemy, {required this.levelName, required this.player});
 
+
+  late POIGenerator generator;
   @override
   FutureOr<void> onLoad() async {
     //await need to be there because it takes some time to load, that's why the method needs to be async
@@ -52,7 +55,7 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
     if (level.tileMap.getLayer('Level')?.properties.getValue('Parallax'))
     {_loadParallaxLevel();}
       else
-      { level.scale = Vector2.all(1);
+      { level.scale = Vector2.all(0.5);
         _scrollingBackground();}
     //spawn objects
     _spawningObjects();
@@ -60,22 +63,7 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
     _addCollisions();
 
 
-    TileGrid grid = TileGrid((level.width / 32).toInt(), (level.height / 32).toInt(), 32, level.tileMap.getLayer("Collisions"));
-
-    add(grid);
-
-    pathfinder = Pathfinder(grid, 32);
-
-/*    List<Vector2>? path = pathfinder.findPath(Vector2(2, 29), Vector2(4, 22));
-
-    if(path != null){
-
-      for (var value in path) {
-        grid.highlightedSpots[value.x.toInt()][value.y.toInt()] = true;
-      }
-      print(path);
-
-    }*/
+     generator = POIGenerator(this);
 
 
     // Add UI overlays to the game (e.g., score, health bar).
@@ -221,6 +209,14 @@ class Level extends World with HasGameReference, KeyboardHandler, PointerMoveCal
         mouseCoords = event.localPosition..round();
         player.mouseCoords = mouseCoords;
     }
+
+
+
+    @override
+  void onTapDown(TapDownEvent event) {
+      generator.onClick(event);
+      super.onTapDown(event);
+  }
 
 
     @override //update the overlays

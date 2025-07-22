@@ -89,7 +89,7 @@ enum ViewSide {
 
 mixin BasicMovement on PositionComponent {
  //constants for configuring basic movement
-  final double _gravity = 512.0;
+  final double _gravity = 650.0;
   final double _jumpForce = 320;
   final double _terminalVelocity = 300;
   final double _friction = 0.81;
@@ -109,9 +109,13 @@ mixin BasicMovement on PositionComponent {
 
   ViewSide viewSide = ViewSide.side;
 
+
+  bool updateMovement = true;
   @override
   void update(double dt) {
-    _updateMovement(dt);
+    if(updateMovement) {
+      _updateMovement(dt);
+    }
   }
 
   void setMovementType(ViewSide newType) => viewSide = newType;
@@ -147,7 +151,7 @@ mixin BasicMovement on PositionComponent {
     if(!debugFlyMode && !isClimbing()) {
       velocity.y += _gravity * dt; // Fall down
     } else {
-      velocity.y += verticalMovement * moveSpeed * (dt + 1);
+      velocity.y += verticalMovement * moveSpeed * (dt * 1000);
       velocity.y *= pow(0.01, dt); // Simulated drag
     }
     //limit fallspeed to terminalVelocity

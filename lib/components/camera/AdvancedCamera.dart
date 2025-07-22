@@ -3,7 +3,7 @@ import 'package:flame/effects.dart';
 import 'package:mpg_achievements_app/components/camera/camera_effect.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 
-import 'animation_style.dart';
+import '../animation/animation_style.dart';
 
 class AdvancedCamera extends CameraComponent {
   AdvancedCamera({required World super.world, super.width = 640, super.height = 360}) : super.withFixedResolution();

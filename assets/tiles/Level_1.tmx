@@ -6,6 +6,7 @@
   <properties>
    <property name="BackgroundColor" value="Purple"/>
    <property name="BackgroundImages" type="int" value="0"/>
+   <property name="Parallax" type="bool" value="false"/>
    <property name="Side" value="Side"/>
   </properties>
   <data encoding="csv">

@@ -208,7 +208,7 @@ class Pathfinder{
   }
 
 
-  bool isOnGround(Vector2 pos) => grid.valAt(pos - Vector2(0, -1)); //if the block beneath is solid, it is on ground
+  bool isOnGround(Vector2 pos) => grid.valAt(pos - Vector2(0, -1)) == TileType.solid || grid.valAt(pos - Vector2(0, -1)) == TileType.ladder; //if the block beneath is solid or a ladder, it is on ground
 
 }
 

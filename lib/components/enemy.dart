@@ -81,7 +81,7 @@ class Enemy extends SpriteAnimationGroupComponent
     time += dt; //increase the timers
     timeSinceLastUpdate += dt;
 
-    if(time < 1 && !(timeSinceLastUpdate < 1 && time > 0.05)) return; //if the countdown isnt done and the last intersection with sth movable is more than a second ago, we return
+    if(time < 1 && !(timeSinceLastUpdate < 1 && time > 0.2)) return; //if the countdown isnt done and the last intersection with sth movable is more than a second ago, we return
     //print("updated " + hashCode.toString());
     time = 0; //reset the timer for the next ray
 
