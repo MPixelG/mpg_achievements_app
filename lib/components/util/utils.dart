@@ -7,7 +7,6 @@ import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import '../physics/collision_block.dart';
 
-
 /* Checks whether a player's hitbox is colliding with a given collision block.
 This function uses Flame's built-in methods to convert both the player's hitbox
 and the block into absolute rectangles (Rect), and checks if those rectangles overlap.
@@ -20,11 +19,9 @@ bool checkCollision(Player player, CollisionBlock block) {
   This is typically a ShapeHitbox (e.g., RectangleHitbox) added to the player.*/
   final playerHitbox = player.hitbox;
 
-
   /* Convert the player's hitbox to its absolute rectangular bounds in the game world.
   `toAbsoluteRect()` takes into account the component's position and anchor.*/
   final playerRect = playerHitbox.toAbsoluteRect();
-
 
   /* The block is also a PositionComponent, so we can get its absolute bounding box.
   Convert the block (also a PositionComponent) to its absolute rectangle.
@@ -39,10 +36,14 @@ bool checkCollision(Player player, CollisionBlock block) {
 //A simple utility function that returns the absolute (positive) value of a number.
 double abs(double val) => val < 0 ? -val : val;
 
-
 // Recursively prints the game component tree starting from a given root component.
 // Useful for debugging the structure of your Flame game's scene graph.
-void printGameTree(Component component, [int depth = 0, String prefix = "", String childrenPrefix = ""]) {
+void printGameTree(
+  Component component, [
+  int depth = 0,
+  String prefix = "",
+  String childrenPrefix = "",
+]) {
   // Get the name/type of the current component.
   final name = component.runtimeType.toString();
 
@@ -56,15 +57,34 @@ void printGameTree(Component component, [int depth = 0, String prefix = "", Stri
   // Iterate over the component's children, if any.
   // Flame components always have a children list, even if it's empty.
   int childIndex = 0; //the index of the child that is currently being worked on
-  final int totalChildIndexes = component.children.length; //the total amound of child nodes in the component
+  final int totalChildIndexes = component
+      .children
+      .length; //the total amound of child nodes in the component
   for (final child in component.children) {
     // Recursively call this function for each child, increasing the depth.
     // Each level deeper in the tree adds two spaces for visual clarity.
-    if(childIndex+1 == totalChildIndexes){ //if its the final child in the component, we use └── bc its the end of that branch
-      printGameTree(child, depth + 1, "$childrenPrefix└── ", "$childrenPrefix└── ");
-    }else{
-      printGameTree(child, depth + 1, "$childrenPrefix├── ", "$childrenPrefix│   "); //use │ to indicate, that the 2 branches arent connected
+    if (childIndex + 1 == totalChildIndexes) {
+      //if its the final child in the component, we use └── bc its the end of that branch
+      printGameTree(
+        child,
+        depth + 1,
+        "$childrenPrefix└── ",
+        "$childrenPrefix└── ",
+      );
+    } else {
+      printGameTree(
+        child,
+        depth + 1,
+        "$childrenPrefix├── ",
+        "$childrenPrefix│   ",
+      ); //use │ to indicate, that the 2 branches arent connected
     }
     childIndex++; //increase the child index
   }
+}
+
+Vector2 safeNormalize(Vector2 vector) {
+  final length = vector.length;
+  if (length == 0) return Vector2.zero();
+  return vector / length;
 }
