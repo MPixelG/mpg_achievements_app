@@ -46,7 +46,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
   Vector2 lastClickPoint = Vector2(0, 0);
 
-  List<POINode>? path;
+  List<PathStep>? path;
 
   void onClick(TapDownEvent event) {
     Vector2 gridPos = (level.mousePos / 32)
@@ -247,17 +247,16 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
 
 
-  List<POINode>? getPathTo(Vector2 startPos, Vector2 endPos) {
+  List<PathStep>? getPathTo(Vector2 startPos, Vector2 endPos) {
     POINode? startNode = getNodeAt(startPos);
     POINode? endNode = getNodeAt(endPos);
 
     if (startNode == null || endNode == null) {
-      print("Start- oder Endnode nicht gefunden");
       return null;
     }
 
     if (startNode == endNode) {
-      return [startNode];
+      return [PathStep(startNode)];
     }
 
     Set<PathfindingNode> openNodes = {};
@@ -278,7 +277,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
       );
 
       if (currentNode.poiNode == endNode) {
-        return reconstructPath(currentNode);
+        return reconstructPathWithActions(currentNode);
       }
 
       openNodes.remove(currentNode);
@@ -301,13 +300,15 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
                 neighbor,
                 tentativeGScore,
                 getEstimatedDistanceToEnd(neighbor.position, endNode.position),
-                currentNode
+                currentNode,
+                connection
             );
             openNodes.add(newNeighborNode);
             nodeMap[neighbor] = newNeighborNode;
           } else if (tentativeGScore < existingNeighborNode.distanceToStart) {
             existingNeighborNode.distanceToStart = tentativeGScore;
             existingNeighborNode.parent = currentNode;
+            existingNeighborNode.usedConnection = connection;
 
             if (closedNodes.contains(existingNeighborNode)) {
               closedNodes.remove(existingNeighborNode);
@@ -318,7 +319,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
       }
     }
 
-    print("no path found from $startPos to $endPos");
+    print("No path found from $startPos from $endPos");
     return null;
   }
 
@@ -327,12 +328,20 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
   }
 
 
-  List<POINode> reconstructPath(PathfindingNode endNode) {
-    List<POINode> path = [];
+  List<PathStep> reconstructPathWithActions(PathfindingNode endNode) {
+    List<PathStep> path = [];
     PathfindingNode? current = endNode;
 
     while (current != null) {
-      path.insert(0, current.poiNode);
+      if (current.usedConnection != null) {
+        path.insert(0, PathStep(
+            current.poiNode,
+            current.usedConnection!.action,
+            current.usedConnection!.cost
+        ));
+      } else {
+        path.insert(0, PathStep(current.poiNode));
+      }
       current = current.parent;
     }
 
@@ -340,17 +349,50 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
   }
 
 
-  void debugDrawPath(Canvas canvas, List<POINode>? path) {
-    if (path == null || path.isEmpty) return;
-
-    Paint pathPaint = Paint()
-      ..color = Colors.red
-      ..strokeWidth = 3.0;
+  void debugDrawPathWithActions(Canvas canvas, List<PathStep> path) {
+    if (path.length < 2) return;
 
     for (int i = 0; i < path.length - 1; i++) {
-      Vector2 from = path[i].position * 32 + Vector2(16, 16);
-      Vector2 to = path[i + 1].position * 32 + Vector2(16, 16);
+      Vector2 from = path[i].node.position * 32 + Vector2(16, 16);
+      Vector2 to = path[i + 1].node.position * 32 + Vector2(16, 16);
+
+      Paint pathPaint = Paint()..strokeWidth = 3.0;
+
+      PathfindingAction? nextAction = path[i + 1].action;
+      switch (nextAction) {
+        case PathfindingAction.walk:
+          pathPaint.color = Colors.green;
+          break;
+        case PathfindingAction.jump:
+          pathPaint.color = Colors.blue;
+          break;
+        case PathfindingAction.fall:
+          pathPaint.color = Colors.red;
+          break;
+        case PathfindingAction.climbUp:
+          pathPaint.color = Colors.orange;
+          break;
+        case PathfindingAction.climbDown:
+          pathPaint.color = Colors.purple;
+          break;
+        default:
+          pathPaint.color = Colors.grey;
+      }
+
       canvas.drawLine(from.toOffset(), to.toOffset(), pathPaint);
+
+      Paint dotPaint = Paint()
+        ..color = pathPaint.color
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(from.toOffset(), 4, dotPaint);
+    }
+
+    if (path.isNotEmpty) {
+      Vector2 endPos = path.last.node.position * 32 + Vector2(16, 16);
+      Paint endPaint = Paint()
+        ..color = Colors.yellow
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(endPos.toOffset(), 6, endPaint);
     }
   }
 
@@ -365,7 +407,8 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
   void render(Canvas canvas) {
     super.render(canvas);
 
-    debugDrawPath(canvas, path);
+    if(path != null)
+      debugDrawPathWithActions(canvas, path!);
 
     if(!level.player.debugMode) return;
 
@@ -409,12 +452,6 @@ class POINode {
   void addConnection(POINodeConnection connection) =>
       connections!.add(connection);
 
-  @override
-  String toString() {
-    String out = "$position - {${connections.toString()}}";
-
-    return out;
-  }
 }
 
 class POINodeConnection {
@@ -423,16 +460,12 @@ class POINodeConnection {
   double cost;
 
   POINodeConnection(this.target, this.action, this.cost);
-
-  @override
-  String toString() {
-    return "${action.name} -> ${target.position.toString()}";
-  }
 }
 
 class PathfindingNode {
 
   POINode poiNode;
+  POINodeConnection? usedConnection;
 
   PathfindingNode? parent;
 
@@ -441,5 +474,12 @@ class PathfindingNode {
 
   double get totalCost => distanceToStart + estimatedDistanceToEnd;
 
-  PathfindingNode(this.poiNode, this.distanceToStart, this.estimatedDistanceToEnd, [this.parent]);
+  PathfindingNode(this.poiNode, this.distanceToStart, this.estimatedDistanceToEnd, [this.parent, this.usedConnection]);
+}
+class PathStep {
+  POINode node;
+  PathfindingAction? action;
+  double cost;
+
+  PathStep(this.node, [this.action, this.cost = 0]);
 }
