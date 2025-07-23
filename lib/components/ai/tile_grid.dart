@@ -36,9 +36,9 @@ class TileGrid extends Component {
 
   ///returns the val at the given pos
   TileType valAt(Vector2 pos) {
-    if (isInBounds(pos))
+    if (isInBounds(pos)) {
       return grid[pos.x.toInt()][pos.y.toInt()];
-    else {
+    } else {
       return TileType.solid;
     }
   }

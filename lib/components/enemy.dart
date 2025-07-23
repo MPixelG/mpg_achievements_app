@@ -141,10 +141,12 @@ class Enemy extends SpriteAnimationGroupComponent
       ); //we get the component of the hitbox the ray collided with. if it cant store a position its null
       PositionComponent? parent2 = getParentAsPositionComponent(hitbox2);
 
-      if (parent1 == null || parent2 == null)
+      if (parent1 == null || parent2 == null) {
         continue; //if this or the last intersection has no position (bc its outside of the world) we continue with the next ray
-      if (parent1 is! BasicMovement)
+      }
+      if (parent1 is! BasicMovement) {
         continue; //if the new ray intersects with sth unmovable then we can continue with the next ray
+      }
 
       if ((currentRayIntersections.elementAt(i).intersectionPoint?..round()) !=
           (lastRayIntersections.elementAt(i).intersectionPoint?..round())) {
@@ -172,13 +174,14 @@ class Enemy extends SpriteAnimationGroupComponent
 
   @override
   void render(Canvas canvas) async {
-    if (debugMode)
+    if (debugMode) {
       renderResult(
         canvas,
         rayOriginPoint,
         results,
         paint,
       ); //press B to enable debug mode and show the raycast results
+    }
     super.render(canvas);
   }
 

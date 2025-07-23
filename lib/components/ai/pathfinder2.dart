@@ -1,8 +1,12 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/ai/tile_grid.dart';
 import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -20,7 +24,7 @@ class ExperimentalPathfinder {
 
 enum PathfindingAction { walk, jump, fall, climbUp, climbDown }
 
-class POIGenerator {
+class POIGenerator extends Component with HasGameReference<PixelAdventure>{
   Level level;
 
   late TileGrid grid;
@@ -42,6 +46,8 @@ class POIGenerator {
 
   Vector2 lastClickPoint = Vector2(0, 0);
 
+  List<POINode>? path;
+
   void onClick(TapDownEvent event) {
     Vector2 gridPos = (level.mousePos / 32)
       ..floor()
@@ -53,14 +59,8 @@ class POIGenerator {
       print(node);
     }
 
-    print("clicked at " + gridPos.toString());
-    print(
-      "height to next ceiling: " +
-          getHeightToNextCeiling(gridPos, maxHeightToCheck: 100).toString(),
-    );
-    print("node: " + getNodeAt(gridPos).toString());
-    print("clearPath? " + hasClearPath(lastClickPoint, gridPos).toString());
 
+    path = getPathTo(lastClickPoint, gridPos);
     lastClickPoint = gridPos.clone();
   }
 
@@ -110,7 +110,6 @@ class POIGenerator {
       }
     });
   }
-
   void addFallNodeConnections() {
     nodes.forEach((node) {
       if (!isOnGround(node.position)) {
@@ -153,7 +152,6 @@ class POIGenerator {
       }
     });
   }
-
   void addJumpNodeConnections() {
     nodes.forEach((node) {
       if (isOnGround(node.position)) {
@@ -165,7 +163,6 @@ class POIGenerator {
       }
     });
   }
-
   void addJumpNodeInDirection(POINode node, double differenceX) {
     int heightToCeiling = getHeightToNextCeiling(
       node.position,
@@ -174,12 +171,6 @@ class POIGenerator {
     if (heightToCeiling > differenceX.abs()) {
       Vector2 jumpDestination =
           node.position + Vector2(differenceX, -heightToCeiling.toDouble());
-      print(
-        "destination at " +
-            node.position.toString() +
-            ": " +
-            jumpDestination.toString(),
-      );
 
       if (!hasClearPath(node.position, jumpDestination)) {
         print("didnt add bc theres no clear path");
@@ -193,12 +184,10 @@ class POIGenerator {
         POINodeConnection connection = POINodeConnection(
           nodeAtDestination,
           PathfindingAction.jump,
-          differenceX.abs() / 2,
+          differenceX.abs() / 2 + 2,
         );
         node.addConnection(connection);
-        print(
-          "added connection at ${node.position.toString()} to ${jumpDestination.toString()}",
-        );
+        print("added connection at ${node.position.toString()} to ${jumpDestination.toString()}");
       } else
         print("didnt add bc theres no node there");
     }
@@ -255,6 +244,158 @@ class POIGenerator {
       return null;
     }
   }
+
+
+
+  List<POINode>? getPathTo(Vector2 startPos, Vector2 endPos) {
+    POINode? startNode = getNodeAt(startPos);
+    POINode? endNode = getNodeAt(endPos);
+
+    if (startNode == null || endNode == null) {
+      print("Start- oder Endnode nicht gefunden");
+      return null;
+    }
+
+    if (startNode == endNode) {
+      return [startNode];
+    }
+
+    Set<PathfindingNode> openNodes = {};
+    Set<PathfindingNode> closedNodes = {};
+    Map<POINode, PathfindingNode> nodeMap = {};
+
+    PathfindingNode startPathNode = PathfindingNode(
+        startNode,
+        0,
+        getEstimatedDistanceToEnd(startNode.position, endNode.position)
+    );
+    openNodes.add(startPathNode);
+    nodeMap[startNode] = startPathNode;
+
+    while (openNodes.isNotEmpty) {
+      PathfindingNode currentNode = openNodes.reduce(
+              (a, b) => a.totalCost < b.totalCost ? a : b
+      );
+
+      if (currentNode.poiNode == endNode) {
+        return reconstructPath(currentNode);
+      }
+
+      openNodes.remove(currentNode);
+      closedNodes.add(currentNode);
+
+      if (currentNode.poiNode.connections != null) {
+        for (POINodeConnection connection in currentNode.poiNode.connections!) {
+          POINode neighbor = connection.target;
+
+          if (closedNodes.any((node) => node.poiNode == neighbor)) {
+            continue;
+          }
+
+          double tentativeGScore = currentNode.distanceToStart + connection.cost;
+
+          PathfindingNode? existingNeighborNode = nodeMap[neighbor];
+
+          if (existingNeighborNode == null) {
+            PathfindingNode newNeighborNode = PathfindingNode(
+                neighbor,
+                tentativeGScore,
+                getEstimatedDistanceToEnd(neighbor.position, endNode.position),
+                currentNode
+            );
+            openNodes.add(newNeighborNode);
+            nodeMap[neighbor] = newNeighborNode;
+          } else if (tentativeGScore < existingNeighborNode.distanceToStart) {
+            existingNeighborNode.distanceToStart = tentativeGScore;
+            existingNeighborNode.parent = currentNode;
+
+            if (closedNodes.contains(existingNeighborNode)) {
+              closedNodes.remove(existingNeighborNode);
+              openNodes.add(existingNeighborNode);
+            }
+          }
+        }
+      }
+    }
+
+    print("no path found from $startPos to $endPos");
+    return null;
+  }
+
+  double getEstimatedDistanceToEnd(Vector2 currentPos, Vector2 endPos) {
+    return (currentPos.x - endPos.x).abs() + (currentPos.y - endPos.y).abs();
+  }
+
+
+  List<POINode> reconstructPath(PathfindingNode endNode) {
+    List<POINode> path = [];
+    PathfindingNode? current = endNode;
+
+    while (current != null) {
+      path.insert(0, current.poiNode);
+      current = current.parent;
+    }
+
+    return path;
+  }
+
+
+  void debugDrawPath(Canvas canvas, List<POINode>? path) {
+    if (path == null || path.isEmpty) return;
+
+    Paint pathPaint = Paint()
+      ..color = Colors.red
+      ..strokeWidth = 3.0;
+
+    for (int i = 0; i < path.length - 1; i++) {
+      Vector2 from = path[i].position * 32 + Vector2(16, 16);
+      Vector2 to = path[i + 1].position * 32 + Vector2(16, 16);
+      canvas.drawLine(from.toOffset(), to.toOffset(), pathPaint);
+    }
+  }
+
+
+  @override
+  FutureOr<void> onLoad() {
+    priority = 1;
+    return super.onLoad();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+
+    debugDrawPath(canvas, path);
+
+    if(!level.player.debugMode) return;
+
+    Vector2 selectedGridPos = (level.mouseCoords / 32)..floor();
+
+    POINode? selectedNode = getNodeAt(selectedGridPos);
+
+
+    if(selectedNode != null){
+
+
+      List<POINodeConnection>? connections = selectedNode.connections;
+
+      if(connections != null){
+
+
+
+        Paint paint = Paint()..color = Colors.blue;
+        paint.strokeWidth = 2.0;
+
+
+        connections.forEach((element) {
+          canvas.drawLine(selectedNode.position.toOffset() * 32 + Offset(16, 16), element.target.position.toOffset() * 32 + Offset(16, 16), paint);
+        });
+
+      }
+
+    }
+
+  }
 }
 
 class POINode {
@@ -287,4 +428,18 @@ class POINodeConnection {
   String toString() {
     return "${action.name} -> ${target.position.toString()}";
   }
+}
+
+class PathfindingNode {
+
+  POINode poiNode;
+
+  PathfindingNode? parent;
+
+  double distanceToStart = 0;
+  double estimatedDistanceToEnd = 0;
+
+  double get totalCost => distanceToStart + estimatedDistanceToEnd;
+
+  PathfindingNode(this.poiNode, this.distanceToStart, this.estimatedDistanceToEnd, [this.parent]);
 }

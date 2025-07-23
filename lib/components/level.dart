@@ -1,16 +1,16 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter/material.dart' hide PointerMoveEvent, AnimationStyle;
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder2.dart';
-import 'package:mpg_achievements_app/components/ai/tile_grid.dart';
+import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
-import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
-import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/enemy.dart';
@@ -64,6 +64,8 @@ class Level extends World
     _addCollisions();
 
     generator = POIGenerator(this);
+
+    add(generator);
 
     // Add UI overlays to the game (e.g., score, health bar).
     // Set their scale and render priority so they display correctly.
@@ -250,10 +252,7 @@ class Level extends World
     super.update(dt);
   }
 
-  @override
-  void render(Canvas canvas) {
-    super.render(canvas);
-  }
+
 
   //sets the visibility of all of the hitboxes of all of the components in the level (except for background tiles)
   void setDebugMode(bool val) {
