@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide PointerMoveEvent, AnimationStyle;
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder2.dart';
 import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
@@ -26,8 +24,6 @@ class Level extends World
   late TiledComponent level;
   final Player player;
   Enemy enemy;
-
-  late Pathfinder pathfinder;
 
   int totalCollectables = 0;
 

@@ -30,9 +30,11 @@ mixin GoalIncludesBasicMovement on Goal{
   late final Vector2 endPos;
   @override
   void step() {
-    print("step");
     super.step();
   }
+
+
+
 }
 
 class MovementGoal extends Goal with GoalIncludesBasicMovement{
