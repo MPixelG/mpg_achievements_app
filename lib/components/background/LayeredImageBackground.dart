@@ -32,7 +32,6 @@ class LayeredImageBackground extends Component with HasGameReference<PixelAdvent
         int lastSlash = tiledImage.source!.lastIndexOf("/");
         String newString = tiledImage.source!.substring(lastSlash+1);
 
-        print(newString);
         loadedImages.add(await game.images.load("sky/$newString"));
         imagesLoaded = true;
       }

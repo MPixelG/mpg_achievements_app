@@ -5,7 +5,7 @@ import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide PointerMoveEvent, AnimationStyle;
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/ai/pathfinder2.dart';
+import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
 import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
@@ -51,15 +51,18 @@ class Level extends World
     if (level.tileMap.getLayer('Level')?.properties.getValue('Parallax')) {
       _loadParallaxLevel();
     } else {
-      level.scale = Vector2.all(0.5);
+      level.scale = Vector2.all(1);
       _scrollingBackground();
     }
+
+    generator = POIGenerator(this);
+
     //spawn objects
     _spawningObjects();
     //add collision objects
     _addCollisions();
 
-    generator = POIGenerator(this);
+
 
     add(generator);
 
@@ -159,7 +162,6 @@ class Level extends World
     final collisionsLayer = level.tileMap.getLayer<ObjectGroup>('Collisions');
 
     if (collisionsLayer != null) {
-      print("in collision layer!");
       for (final collision in collisionsLayer.objects) {
         //makes a list of all the collision object that are in the level and creates CollisionBlockObject-List with the respective attribute values
         switch (collision.class_) {

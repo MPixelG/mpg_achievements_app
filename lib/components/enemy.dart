@@ -7,11 +7,13 @@ import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/CharacterStateManager.dart';
+import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/traps/saw.dart';
 import '../mpg_pixel_adventure.dart';
 import 'Particles.dart';
+import 'ai/goal.dart';
 import 'physics/collision_block.dart';
 
 enum EnemyState {
@@ -31,7 +33,7 @@ class Enemy extends SpriteAnimationGroupComponent
         CollisionCallbacks,
         HasCollisions,
         BasicMovement,
-        CharacterStateManager {
+        CharacterStateManager, GoalIncludesBasicMovement {
   bool gotHit = false;
 
   //debug switches for special modes
@@ -91,6 +93,8 @@ class Enemy extends SpriteAnimationGroupComponent
   void update(double dt) {
     super.update(dt);
 
+    updateGoal(dt);
+
     time += dt; //increase the timers
     timeSinceLastUpdate += dt;
 
@@ -119,6 +123,9 @@ class Enemy extends SpriteAnimationGroupComponent
       //if sth changed, we reset the timer since the last intersection with sth movable
       timeSinceLastUpdate = 0; //reset the timer
     }
+
+
+
   }
 
   bool checkIntersectionChange<T>(
@@ -294,6 +301,11 @@ class Enemy extends SpriteAnimationGroupComponent
       parent?.add(generateConfetti(position));
     }
 
+    if (keysPressed.contains(LogicalKeyboardKey.keyO)) {
+      recalculatePath((level.mousePos/32)..floor());
+      print("moved to " + (level.mousePos / 32).toString());
+    }
+
     return super.onKeyEvent(event, keysPressed);
   }
 
@@ -371,4 +383,8 @@ class Enemy extends SpriteAnimationGroupComponent
 
   @override
   bool isClimbing() => climbing;
+
+
+  @override
+  Level get level => parent as Level;
 }

@@ -40,14 +40,13 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
   void onClick(TapDownEvent event) {
     Vector2 gridPos = (level.mousePos / 32)
-      ..floor()
-      ..round(); //converts the mouse position on the screen to a grid position
+      ..floor(); //converts the mouse position on the screen to a grid position
 
     POINode? node = getNodeAt(gridPos); //the node at the clicked field
 
     if (node != null) { //the node is null if theres no node at the given position
-      print(node);
-    }
+      print(node.toString());
+    } else print("node is null!");
 
 
     path = getPathTo(lastClickPoint, gridPos); // calculates the shortest path between the clicked mouse position and the last clicked mouse position
@@ -177,7 +176,6 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
         POINodeConnection connection = POINodeConnection(
           nodeAtDestination,
           PathfindingAction.jump,
-          differenceX.abs() / 2 +
               2, //it has a base cost of 2 and increases if you jump diagonally. this prevents the entity from jumping all the time
         );
         node.addConnection(connection); //add the connection
@@ -227,8 +225,9 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
   }
 
   POINode? getNodeAt(Vector2 pos) {
+    Vector2 goalPos = pos.clone()..floor();
     try {
-      return nodes.firstWhere((element) => element.position == pos); //get the first node where the position fits the given one
+      return nodes.firstWhere((element) => element.position == goalPos); //get the first node where the position fits the given one
     } on StateError { //a state error is thrown if theres no element with the given filter
       return null; //then we return null
     }
@@ -241,11 +240,13 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
     POINode? endNode = getNodeAt(endPos); //the node at the end of the path. we want to connect those two
 
     if (startNode == null || endNode == null) { //if one of those is null, they are inside of a wall or sth.
+      print("null! start: " + startNode.toString() + ", end: " + endNode.toString());
       return null; //we return bc its not possible to generate the path.
     }
 
     if (startNode == endNode) { // if the start is the end, the path is empty, because were already there.
-      return [PathStep(startNode)]; //we return one empty step.
+      print("same pos!");
+      return [PathStep(startNode, PathfindingAction.walk)]; //we return one empty step.
     }
 
 
@@ -314,7 +315,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
     //there was no path found, because its not possible
 
-    if(kDebugMode) print("No path found from $startPos from $endPos"); //debug logging
+    print("No path found from $startPos from $endPos"); //debug logging
     return null;
   }
 
@@ -335,11 +336,11 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
             current.usedConnection!.cost  //and the cost.
         ));
       } else {
-        path.insert(0, PathStep(current.poiNode)); //if no connection was used, we add a step with no action used to get there.
+        path.insert(0, PathStep(current.poiNode, PathfindingAction.walk)); //if no connection was used, we add a step with no action used to get there.
       }
       current = current.parent; //set the current one to the parent and repeat.
     }
-
+    print("done!");
     return path; //return the path
   }
 
@@ -446,6 +447,12 @@ class POINode { //this node is used for directiong an entity around. A POI (Poin
   void addConnection(POINodeConnection connection) =>
       connections!.add(connection); //adds a given connection to the connection list.
 
+  @override
+  String toString() {
+
+    return "node at ${position.toString()}";
+  }
+
 }
 
 class POINodeConnection { //a connection that connects 2 POI Nodes. it contains
@@ -478,4 +485,10 @@ class PathStep {
   double cost; //the cost it took to perform this action
 
   PathStep(this.node, [this.action, this.cost = 0]); //basic constructor
+
+
+  @override
+  String toString() {
+    return "${node.toString()} : ${action.toString()}";
+  }
 }
