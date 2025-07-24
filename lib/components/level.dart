@@ -174,15 +174,16 @@ class Level extends World
             );
             add(platform);
           case 'Ladder':
-            final platform = CollisionBlock(
+            final ladder = CollisionBlock(
               position: Vector2(collision.x, collision.y),
               size: Vector2(collision.width, collision.height),
               climbable: true,
               hasCollisionDown: false,
               hasCollisionUp: false,
               hasHorizontalCollision: false,
+              isLadder: true
             );
-            add(platform);
+            add(ladder);
           default:
             final block = CollisionBlock(
               position: Vector2(collision.x, collision.y),

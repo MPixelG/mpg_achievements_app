@@ -135,7 +135,7 @@
   <object id="60" x="227.588" y="205.25" width="24.8239" height="18.75"/>
   <object id="62" x="256" y="216.75" width="32.25" height="7.25"/>
   <object id="63" type="Ladder" x="0" y="384" width="32" height="256"/>
-  <object id="67" x="-32" y="352" width="32" height="320"/>
+  <object id="67" x="-33" y="352" width="32" height="320"/>
  </objectgroup>
  <objectgroup id="2" name="Spawnpoints">
   <object id="1" name="Player" type="Player" x="64" y="576" width="64" height="64"/>

@@ -149,7 +149,9 @@ mixin BasicMovement on PositionComponent {
   // Applies gravity and falling mechanics
   void _performGravity(double dt){
     if(!debugFlyMode && !isClimbing()) {
-      velocity.y += _gravity * dt; // Fall down
+      if(isClimbing()) {
+        velocity.y += _gravity * dt * 0.02; // Fall down
+      } else velocity.y += _gravity * dt;
     } else {
       velocity.y += verticalMovement * moveSpeed * (dt * 1000);
       velocity.y *= pow(0.01, dt); // Simulated drag
@@ -206,7 +208,9 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
       //if the key is pressed than the player jumps in _updatePlayerMovement
       if (keysPressed.contains(LogicalKeyboardKey.space)) {
         if (debugFlyMode || isClimbing()) {
-          verticalMovement = -1; //when in debug mode move the player upwards
+          //when in debug mode move the player upwards
+          if(isClimbing()) verticalMovement = -0.03;
+          else verticalMovement = -1;
         } else {
           hasJumped = true; //else jump
         }
@@ -214,7 +218,9 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
 
       if (keysPressed.contains(LogicalKeyboardKey.shiftLeft) &&
           (debugFlyMode || isClimbing())) { //when in fly mode and shift is pressed, the player gets moved down
-        verticalMovement = 1;
+        if(isClimbing()) verticalMovement = 0.03;
+        else verticalMovement = 1;
+
       }
     } else if(viewSide == ViewSide.topDown){
 
