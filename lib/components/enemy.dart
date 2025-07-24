@@ -382,9 +382,12 @@ class Enemy extends SpriteAnimationGroupComponent
   void setClimbing(bool val) => climbing = val;
 
   @override
-  bool isClimbing() => climbing;
+  bool get isClimbing => climbing;
 
 
   @override
   Level get level => parent as Level;
+
+  @override
+  bool get isTryingToGetDownLadder {return isShifting;}
 }

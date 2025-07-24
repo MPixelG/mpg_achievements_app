@@ -176,10 +176,10 @@ class Level extends World
           case 'Ladder':
             final ladder = CollisionBlock(
               position: Vector2(collision.x, collision.y),
-              size: Vector2(collision.width, collision.height),
+              size: Vector2(collision.width - 10, collision.height),
               climbable: true,
               hasCollisionDown: false,
-              hasCollisionUp: false,
+              hasCollisionUp: true,
               hasHorizontalCollision: false,
               isLadder: true
             );

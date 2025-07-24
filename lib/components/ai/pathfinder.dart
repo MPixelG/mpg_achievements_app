@@ -199,13 +199,13 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
         Vector2 posUp = node.position + Vector2(0, -1);
         Vector2 posDown = node.position + Vector2(0, 1);
 
-        bool isLadderUp = grid.valAt(posUp) == TileType.ladder;
-        bool isLadderDown = grid.valAt(posDown) == TileType.ladder;
+        bool isLadderOrAirUp = grid.isFree(posUp);
+        bool isLadderOrAitDown = grid.isFree(posDown);
 
         POINode? nodeUp = getNodeAt(posUp);
         POINode? nodeDown = getNodeAt(posDown);
 
-        if (nodeUp != null && isLadderUp) {
+        if (nodeUp != null && isLadderOrAirUp) {
           POINodeConnection connection = POINodeConnection(
             nodeUp,
             PathfindingAction.climbUp,
@@ -213,7 +213,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
           );
           node.addConnection(connection);
         }
-        if (nodeDown != null && isLadderDown) {
+        if (nodeDown != null && isLadderOrAitDown) {
           POINodeConnection connection = POINodeConnection(
             nodeDown,
             PathfindingAction.climbDown,
@@ -221,6 +221,23 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
           );
           node.addConnection(connection);
         }
+      } else if(grid.valAt(node.position) == TileType.air){
+
+        Vector2 posDown = node.position + Vector2(0, 1);
+        if(grid.valAt(posDown) == TileType.ladder){
+          POINode? nodeDown = getNodeAt(posDown);
+          if (nodeDown != null) {
+            POINodeConnection connection = POINodeConnection(
+              nodeDown,
+              PathfindingAction.climbDown,
+              0.7, //it has a base cost of 2 and increases if you jump diagonally. this prevents the entity from jumping all the time
+            );
+            node.addConnection(connection);
+          }
+
+
+        }
+
       }
     });
 

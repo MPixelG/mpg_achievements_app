@@ -18,6 +18,8 @@ mixin HasCollisions on Component, CollisionCallbacks {
 
   void setClimbing(bool val);
 
+  bool get isTryingToGetDownLadder;
+
   bool _debugNoClipMode = false;
 
 
@@ -72,11 +74,11 @@ mixin HasCollisions on Component, CollisionCallbacks {
     final double smallestDistance = min(min(distanceUp, distanceDown), min(distanceRight, distanceLeft)); //get the smallest distance
 
     // Resolve the collision in the direction of smallest overlap
-    if (smallestDistance == distanceUp && velocity.y > 0 && !(!other.hasCollisionDown && distanceUp > 8) && other.hasCollisionUp) {position.y -= distanceUp; setIsOnGround(true); velocity.y = 0;} //make sure you're falling (for platforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isn't too high, otherwise if half of the player falls through  a platform, he gets teleported up
+    if (smallestDistance == distanceUp && velocity.y > 0 && !(!other.hasCollisionDown && distanceUp > 8) && other.hasCollisionUp && !(other.isLadder && isTryingToGetDownLadder)) {position.y -= distanceUp; setIsOnGround(true); velocity.y = 0;} //make sure you're falling (for platforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isn't too high, otherwise if half of the player falls through  a platform, he gets teleported up
     if (smallestDistance == distanceDown && other.hasCollisionDown) {position.y += distanceDown; velocity.y = 0;} //make sure the block isn't a platform, so that you can go through it from the bottom
     if (smallestDistance == distanceLeft && other.hasHorizontalCollision) {position.x -= distanceLeft; velocity.x = 0;} //make sure the block isn't a platform, so that you can go through it horizontally
     if (smallestDistance == distanceRight && other.hasHorizontalCollision) {position.x += distanceRight; velocity.x = 0;}
-    if(other.climbable) setClimbing(true);
+    if(other.climbable && distanceUp > 5) setClimbing(true);
     // sets new position
     setPos(position);
   }
@@ -106,6 +108,8 @@ mixin BasicMovement on PositionComponent {
   bool isOnGround = false;
   bool gravityEnabled = true;
 
+  bool isShifting = false;
+
 
   ViewSide viewSide = ViewSide.side;
 
@@ -122,7 +126,7 @@ mixin BasicMovement on PositionComponent {
 
   void setGravityEnabled(bool val) => gravityEnabled = val;
 
-  bool isClimbing();
+  bool get isClimbing;
 
   // Updates movement logic based on input and physics
   void _updateMovement(double dt) {
@@ -148,8 +152,8 @@ mixin BasicMovement on PositionComponent {
 
   // Applies gravity and falling mechanics
   void _performGravity(double dt){
-    if(!debugFlyMode && !isClimbing()) {
-      if(isClimbing()) {
+    if(!debugFlyMode && !isClimbing) {
+      if(isClimbing) {
         velocity.y += _gravity * dt * 0.02; // Fall down
       } else velocity.y += _gravity * dt;
     } else {
@@ -182,6 +186,7 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
 
   bool active = true;
   Vector2 mouseCoords = Vector2.zero();
+
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if(!active) return super.onKeyEvent(event, keysPressed);
@@ -207,20 +212,23 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
       }
       //if the key is pressed than the player jumps in _updatePlayerMovement
       if (keysPressed.contains(LogicalKeyboardKey.space)) {
-        if (debugFlyMode || isClimbing()) {
+        if (debugFlyMode || isClimbing) {
           //when in debug mode move the player upwards
-          if(isClimbing()) verticalMovement = -0.03;
+          if(isClimbing) verticalMovement = -0.06;
           else verticalMovement = -1;
         } else {
           hasJumped = true; //else jump
         }
       }
 
-      if (keysPressed.contains(LogicalKeyboardKey.shiftLeft) &&
-          (debugFlyMode || isClimbing())) { //when in fly mode and shift is pressed, the player gets moved down
-        if(isClimbing()) verticalMovement = 0.03;
-        else verticalMovement = 1;
+      if (keysPressed.contains(LogicalKeyboardKey.shiftLeft)) { //when in fly mode and shift is pressed, the player gets moved down
+        if(isClimbing) verticalMovement = 0.06;
+        else if(debugFlyMode) verticalMovement = 1;
 
+        isShifting = true;
+
+      } else {
+        isShifting = false;
       }
     } else if(viewSide == ViewSide.topDown){
 
@@ -244,9 +252,6 @@ mixin KeyboardControllableMovement on PositionComponent, BasicMovement, Keyboard
 
     return super.onKeyEvent(event, keysPressed);
   }
-
-  @override
-  bool isClimbing();
 
   // Enable/disable player control
   bool setControllable(bool val) => active = val;

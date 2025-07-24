@@ -144,5 +144,8 @@ class Player extends SpriteAnimationGroupComponent
   void setClimbing(bool val) => climbing = val;
 
   @override
-  bool isClimbing() => climbing;
+  bool get isClimbing => climbing;
+
+  @override
+  bool get isTryingToGetDownLadder => isShifting;
 }
