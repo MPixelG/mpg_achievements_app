@@ -6,6 +6,8 @@ import 'package:flame/geometry.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/ai/goals/goal_manager.dart';
+import 'package:mpg_achievements_app/components/ai/goals/pathtracing_goal.dart';
 import 'package:mpg_achievements_app/components/animation/CharacterStateManager.dart';
 import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
@@ -13,7 +15,7 @@ import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/traps/saw.dart';
 import '../mpg_pixel_adventure.dart';
 import 'Particles.dart';
-import 'ai/goal.dart';
+import 'ai/goals/move_goal.dart';
 import 'physics/collision_block.dart';
 
 enum EnemyState {
@@ -33,7 +35,7 @@ class Enemy extends SpriteAnimationGroupComponent
         CollisionCallbacks,
         HasCollisions,
         BasicMovement,
-        CharacterStateManager, GoalIncludesBasicMovement {
+        CharacterStateManager, MoveGoal {
   bool gotHit = false;
 
   //debug switches for special modes
@@ -47,10 +49,7 @@ class Enemy extends SpriteAnimationGroupComponent
   List<CollisionBlock> collisionsBlockList = [];
 
   // because the hitbox is a property of the enemy it follows the enemy where ever he goes. Same for the collectables
-  RectangleHitbox hitbox = RectangleHitbox(
-    position: Vector2(4, 6),
-    size: Vector2(24, 26),
-  );
+
 
   //variables for raycasting
   Ray2? ray;
@@ -72,6 +71,7 @@ class Enemy extends SpriteAnimationGroupComponent
     super.anchor = Anchor.center,
   });
 
+  late GoalManager manager;
   @override
   FutureOr<void> onLoad() {
     //raycasting
@@ -81,102 +81,21 @@ class Enemy extends SpriteAnimationGroupComponent
 
     //using an underscore is making things private
     startingPosition = Vector2(position.x, position.y);
-    add(hitbox);
+
+    manager = GoalManager();
+    add(manager);
+    PathtracingGoal goal = PathtracingGoal((dt) {
+      return dt % 5 < 1;
+      }, 1, (result) => print("yay"));
+    manager.add(goal);
 
     return super.onLoad();
   }
 
-  double time = 0;
-  double timeSinceLastUpdate = 1;
-
   @override
-  void update(double dt) {
-    super.update(dt);
-
+  void update(double dt){
     updateGoal(dt);
-
-    time += dt; //increase the timers
-    timeSinceLastUpdate += dt;
-
-    if (time < 1 && !(timeSinceLastUpdate < 1 && time > 0.2))
-      return; //if the countdown isnt done and the last intersection with sth movable is more than a second ago, we return
-    time = 0; //reset the timer for the next ray
-
-    rayOriginPoint =
-        center; //use the center of the player as the start of the raycast. note that this has to be an absolute position because we calculate it from the game, not from this character
-
-    lastResults = results
-        .toList(); //update the last results and make sure not to create a reference
-    results.clear(); //clear all the values
-
-    game.collisionDetection.raycastAll(
-      //raycast rays in all different directions and deposit the results in the results Set
-      startAngle: -90,
-      rayOriginPoint,
-      numberOfRays: timeSinceLastUpdate < 1 ? numberOfRays * 3 : numberOfRays,
-      rays: rays,
-      out: results,
-      ignoreHitboxes: [hitbox],
-    );
-
-    if (checkIntersectionChange(results, lastResults)) {
-      //if sth changed, we reset the timer since the last intersection with sth movable
-      timeSinceLastUpdate = 0; //reset the timer
-    }
-
-
-
-  }
-
-  bool checkIntersectionChange<T>(
-    List<RaycastResult> currentRayIntersections,
-    List<RaycastResult> lastRayIntersections,
-  ) {
-    if (currentRayIntersections.length != lastRayIntersections.length)
-      return false; //if the lists dont have the same length, they cant be equal
-
-    for (int i = 0; i < currentRayIntersections.length; i++) {
-      //we iterate over every ray
-
-      Hitbox<dynamic>? hitbox1 = currentRayIntersections
-          .elementAt(i)
-          .hitbox; //the hitbox of the ray intersection
-      Hitbox<dynamic>? hitbox2 = lastRayIntersections.elementAt(i).hitbox;
-
-      PositionComponent? parent1 = getParentAsPositionComponent(
-        hitbox1,
-      ); //we get the component of the hitbox the ray collided with. if it cant store a position its null
-      PositionComponent? parent2 = getParentAsPositionComponent(hitbox2);
-
-      if (parent1 == null || parent2 == null) {
-        continue; //if this or the last intersection has no position (bc its outside of the world) we continue with the next ray
-      }
-      if (parent1 is! BasicMovement) {
-        continue; //if the new ray intersects with sth unmovable then we can continue with the next ray
-      }
-
-      if ((currentRayIntersections.elementAt(i).intersectionPoint?..round()) !=
-          (lastRayIntersections.elementAt(i).intersectionPoint?..round())) {
-        //we check if the current ray intersection point is at a different pos as the last one
-        return true; //return that theres sth movable, that moved
-      }
-    }
-
-    return false; //if we went through all of the rays and not a single one changed, we return that nothing has changed
-  }
-
-  PositionComponent? getParentAsPositionComponent(Hitbox<dynamic>? hitbox) {
-    if (hitbox == null) return null;
-
-    if (hitbox is! ShapeHitbox) return null;
-
-    Component? parent = hitbox.parent;
-
-    if (parent == null || parent is! PositionComponent) {
-      return null;
-    }
-
-    return parent;
+    super.update(dt);
   }
 
   @override
@@ -252,6 +171,20 @@ class Enemy extends SpriteAnimationGroupComponent
         );
       }
     }
+  }
+
+  PositionComponent? getParentAsPositionComponent(Hitbox<dynamic>? hitbox) {
+    if (hitbox == null) return null;
+
+    if (hitbox is! ShapeHitbox) return null;
+
+    Component? parent = hitbox.parent;
+
+    if (parent == null || parent is! PositionComponent) {
+      return null;
+    }
+
+    return parent;
   }
 
   @override

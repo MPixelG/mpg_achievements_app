@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flame/collisions.dart';
@@ -21,6 +22,17 @@ mixin HasCollisions on Component, CollisionCallbacks {
   bool get isTryingToGetDownLadder;
 
   bool _debugNoClipMode = false;
+
+  RectangleHitbox hitbox = RectangleHitbox(
+    position: Vector2(4, 6),
+    size: Vector2(24, 26),
+  );
+
+  @override
+  FutureOr<void> onLoad() {
+    add(hitbox);
+    return super.onLoad();
+  }
 
 
   // Sets the new position of the object after a collision.

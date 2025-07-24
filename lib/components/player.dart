@@ -26,12 +26,6 @@ class Player extends SpriteAnimationGroupComponent
   //starting position
   Vector2 startingPosition = Vector2.zero();
 
-  // because the hitbox is a property of the player it follows the player where ever he goes. Same for the collecables
-  RectangleHitbox hitbox = RectangleHitbox(
-    position: Vector2(4, 4),
-    size: Vector2(24, 28),
-  );
-
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required String playerCharacter, super.position}) {
@@ -42,7 +36,6 @@ class Player extends SpriteAnimationGroupComponent
   FutureOr<void> onLoad() {
     //using an underscore is making things private
     startingPosition = Vector2(position.x, position.y);
-    add(hitbox);
     return super.onLoad();
   }
 

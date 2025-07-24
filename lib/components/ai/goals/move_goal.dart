@@ -8,10 +8,10 @@ import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
 import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 
-import '../../mpg_pixel_adventure.dart';
-import '../physics/collision_block.dart';
+import '../../../mpg_pixel_adventure.dart';
+import '../../physics/collision_block.dart';
 
-mixin GoalIncludesBasicMovement on PositionComponent, BasicMovement {
+mixin MoveGoal on PositionComponent, BasicMovement {
   late Vector2 endPos; //the end pos for the movement
 
   List<PathStep>? path = [];
@@ -93,7 +93,7 @@ mixin GoalIncludesBasicMovement on PositionComponent, BasicMovement {
         }
     }
 
-    if (((lastPosition).clone()..floor()) == ((position).clone()..floor())) //check if the current position and the last position are about the same.
+    if (((lastPosition / 32).clone()..floor()) == ((position / 32).clone()..floor())) //check if the current position and the last position are about the same.
       timeSinceLastPosChange += dt; //if they are, we increase the timer
     else {
       timeSinceLastPosChange = 0; //if the position changed, we reset the timer
