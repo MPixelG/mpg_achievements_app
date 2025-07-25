@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/Particles.dart';
-import 'package:mpg_achievements_app/components/custom_hitbox.dart';
+import 'package:mpg_achievements_app/components/particles/Particles.dart';
 import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -19,10 +18,12 @@ class Collectable extends SpriteAnimationComponent
   final bool interactiveTask;
   String collectablePath;
   final double stepTime = 0.05;
-  final hitbox = CustomHitbox(offsetX: 10,
-      offsetY: 10,
-      width: 12,
-      height: 12);
+  final hitbox = RectangleHitbox(
+    position: Vector2(10, 10),
+    size: Vector2(12, 12),
+    collisionType: CollisionType.passive, // Detects collisions but doesn't block.
+  );
+
 
   //constructor
   Collectable({
@@ -43,13 +44,7 @@ class Collectable extends SpriteAnimationComponent
       amount = 1;
     }
 
-   add(
-      RectangleHitbox(
-        position: Vector2(hitbox.offsetX, hitbox.offsetY),
-        size: Vector2(hitbox.width, hitbox.height),
-        collisionType: CollisionType.passive, // Detects collisions but doesn't block.
-      ),
-    );
+    add(hitbox);
     animation = SpriteAnimation.fromFrameData(
       game.images.fromCache('$collectablePath/$collectable.png'),
       SpriteAnimationData.sequenced(
@@ -86,6 +81,5 @@ class Collectable extends SpriteAnimationComponent
       if((parent as Level).totalCollectables == 0) parent?.add(generateConfetti(position));
       Future.delayed(const Duration(milliseconds: 400), () => removeFromParent()); // Remove after animation.
     }
-
   }
 }

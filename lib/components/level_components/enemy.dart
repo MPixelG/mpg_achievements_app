@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame/geometry.dart';
-import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/ai/goals/follow_player_goal.dart';
@@ -13,13 +10,11 @@ import 'package:mpg_achievements_app/components/ai/goals/pathtracing_goal.dart';
 import 'package:mpg_achievements_app/components/ai/goals/player_locating_goal.dart';
 import 'package:mpg_achievements_app/components/animation/CharacterStateManager.dart';
 import 'package:mpg_achievements_app/components/level.dart';
+import 'package:mpg_achievements_app/components/level_components/saw.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
-import 'package:mpg_achievements_app/components/player.dart';
-import 'package:mpg_achievements_app/components/traps/saw.dart';
-import '../mpg_pixel_adventure.dart';
-import 'Particles.dart';
-import 'ai/goals/move_goal.dart';
-import 'physics/collision_block.dart';
+import '../../mpg_pixel_adventure.dart';
+import '../particles/Particles.dart';
+import '../ai/goals/move_goal.dart';
 
 enum EnemyState {
   idle,

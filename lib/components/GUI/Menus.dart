@@ -1,5 +1,6 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/components/GUI/widgets/pixel_button.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 abstract class Screen extends StatelessWidget {
@@ -26,21 +27,12 @@ class MainMenuScreen extends Screen {
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
+              PixelButton(text: "PLAY!!!",
                 onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => GameScreen(game: PixelAdventure())
-                    )
-                ),
-                style: ButtonStyle(
-                    alignment: Alignment.center,
-                    backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 44, 166, 12)),
-                    elevation: WidgetStatePropertyAll(3),
-                    textStyle: WidgetStatePropertyAll(TextStyle(fontFamily: "gameFont"))
-                ),
-                child: Text("PLAY"),
-              )
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => GameScreen(game: PixelAdventure())
+                  )))
             ]
         ),
       ),

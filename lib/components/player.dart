@@ -3,10 +3,11 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/CharacterStateManager.dart';
-import 'package:mpg_achievements_app/components/collectables.dart';
+import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import 'traps/saw.dart';
+
+import 'level_components/saw.dart';
 
 //using SpriteAnimationGroupComponent is better for a lot of animations
 //with is used to additonal classes here our game class

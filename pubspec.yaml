@@ -57,7 +57,7 @@ flutter:
   fonts:
     - family: gameFont
       fonts:
-        - asset: assets/fonts/SeymourOne-Regular.ttf
+        - asset: assets/fonts/pixel_0.ttf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

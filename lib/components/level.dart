@@ -10,17 +10,18 @@ import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
-import 'package:mpg_achievements_app/components/collectables.dart';
-import 'package:mpg_achievements_app/components/enemy.dart';
+import 'package:mpg_achievements_app/components/level_components/collectables.dart';
+import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/player.dart';
-import 'package:mpg_achievements_app/components/traps/saw.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'background/scrolling_background.dart';
+import 'level_components/saw.dart';
 
 class Level extends World
-    with HasGameReference, KeyboardHandler, PointerMoveCallbacks, TapCallbacks {
+    with HasGameReference<PixelAdventure>, KeyboardHandler, PointerMoveCallbacks, TapCallbacks {
+
   final String levelName;
   late TiledComponent level;
   final Player player;
@@ -28,7 +29,7 @@ class Level extends World
 
   int totalCollectables = 0;
 
-  late double tilesize;
+  late final double tilesize;
 
   //Todo add feature to make levels with and without scrolling background //added via Tiled
   final bool scrollingBackground = false;
@@ -60,15 +61,13 @@ class Level extends World
     }
 
     generator = POIGenerator(this);
+    add(generator);
 
     //spawn objects
     _spawningObjects();
     //add collision objects
     _addCollisions();
 
-
-
-    add(generator);
 
     // Add UI overlays to the game (e.g., score, health bar).
     // Set their scale and render priority so they display correctly.
@@ -77,7 +76,7 @@ class Level extends World
     overlays.priority = 2; // Ensure overlays draw above the rest of the game
 
     // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
-    (parent as PixelAdventure).cam.setMoveBounds(Vector2.zero(), level.size);
+    game.cam.setMoveBounds(Vector2.zero(), level.size);
 
     //runs all the other onLoad-events the method is referring to, now not important
     return super.onLoad();
@@ -88,7 +87,7 @@ class Level extends World
     final backgroundLayer = level.tileMap.getLayer('Level');
     String backgroundColor = "Green";
     if (backgroundLayer != null) {
-      backgroundColor = backgroundLayer.properties.getValue('BackgroundColor');
+      backgroundColor = backgroundLayer.properties.getValue('BackgroundColor') ?? "Green";
     }
 
     ScrollingBackground background = ScrollingBackground(
@@ -102,9 +101,9 @@ class Level extends World
 
   void _spawningObjects() {
     //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list
-    final spawnPointsLayer = level.tileMap.getLayer<ObjectGroup>('Spawnpoints');
+    final ObjectGroup? spawnPointsLayer = level.tileMap.getLayer<ObjectGroup>('Spawnpoints');
 
-    //if there is no Spawnpointslayer the game can never the less run and does not crash / Nullcheck-Safety
+    //if there is no Spawnpoint-layer the game can never the less run and does not crash / Nullcheck-Safety
     if (spawnPointsLayer != null) {
       //then we go through the list and check for the class Player, which was also defined as an object in the Óbjectlayer
       //When we find that class we create our player and add it to the level in the defined spawnpoint - ! just says that it can be null
@@ -249,8 +248,8 @@ class Level extends World
     overlays.text =
         "Player: $playerCoords\nMouse: $mouseCoords\nGrid Mouse Coords: ${(mouseCoords / 32)..floor()}";
     overlays.position =
-        (game as PixelAdventure).cam.pos -
-        (game as PixelAdventure).cam.visibleWorldRect.size.toVector2() / 2;
+        game.cam.pos -
+        game.cam.visibleWorldRect.size.toVector2() / 2;
 
     super.update(dt);
   }
