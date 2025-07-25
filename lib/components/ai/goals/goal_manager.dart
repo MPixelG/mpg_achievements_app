@@ -3,34 +3,33 @@ import 'package:mpg_achievements_app/components/ai/goals/goal.dart';
 
 class GoalManager extends Component{
 
+  GoalAttributes attributes = GoalAttributes();
+
   void addGoal(Goal goal){
-    parent!.add(goal);
+    goal.attributes = attributes;
+    add(goal);
   }
 
-  double time = 0;
   @override
   void update(double dt) {
     super.update(dt);
-    time += dt;
+    attributes.time += dt;
 
-    Goal highestPriorityGoal = children.reduce((value, element) {
-      if(value is Goal && value.prequisite(time)){
-        if(element is Goal && element.prequisite(time)){
-
-          if(value.goalPriority > element.goalPriority) {
-            return value;
-          } else {
-            return element;
-          }
-        }
-        return value;
+    Iterable<Component> activeGoals = children.where((value) {
+      if(value is Goal && value.prequisite(attributes)){
+        return true;
       }
-      return element;
-    }) as Goal;
+      return false;
+    });
 
 
-    highestPriorityGoal.updateGoal(dt);
+    for (var element in activeGoals) {
+      (element as Goal).updateGoal(dt);
+    }
   }
+}
 
-
+class GoalAttributes{
+  Map<String, dynamic> attributes = {};
+  double time = 0;
 }

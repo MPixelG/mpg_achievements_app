@@ -16,8 +16,8 @@
         },
         "Level_0.tmx": {
             "expandedObjectLayers": [
-                17,
-                20
+                20,
+                17
             ],
             "scale": 1.5,
             "selectedLayer": 1,
@@ -40,14 +40,14 @@
         },
         "Level_2.tmx": {
             "expandedObjectLayers": [
-                4,
-                2
+                2,
+                4
             ],
-            "scale": 4,
-            "selectedLayer": 9,
+            "scale": 2,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": 698.125,
-                "y": 651.25
+                "x": 525.5,
+                "y": 723.75
             }
         },
         "Level_3.tmx": {
@@ -100,6 +100,9 @@
             "dynamicWrapping": true,
             "scaleInDock": 1.4
         },
+        "crystal stuff.tsx": {
+            "dynamicWrapping": false
+        },
         "industrialObjects.tsx": {
             "dynamicWrapping": true,
             "scaleInDock": 1.4
@@ -113,13 +116,13 @@
             }
         }
     },
-    "last.imagePath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/images/sky",
+    "last.imagePath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/images/tiles",
     "map.fixedSize": true,
-    "map.height": 28,
+    "map.height": 64,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 32,
     "map.tileWidth": 32,
-    "map.width": 32,
+    "map.width": 64,
     "openFiles": [
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",
@@ -143,8 +146,8 @@
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
-        "height": 16,
-        "width": 16
+        "height": 32,
+        "width": 32
     },
-    "tileset.type": 1
+    "tileset.type": 0
 }

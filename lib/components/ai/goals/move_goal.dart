@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
+import 'package:mpg_achievements_app/components/ai/goals/goal.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
 import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
@@ -11,14 +12,32 @@ import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import '../../../mpg_pixel_adventure.dart';
 import '../../physics/collision_block.dart';
 
-mixin MoveGoal on PositionComponent, BasicMovement {
+class MoveGoal extends Goal {
+
+
+  MoveGoal(super.prequisite, super.goalPriority);
+
+  Vector2 get position => (parent!.parent! as PositionComponent).position;
+  Vector2 get absoluteCenter => (parent!.parent! as PositionComponent).absoluteCenter;
+  bool get isOnGround => (parent!.parent! as BasicMovement).isOnGround;
+  bool get isShifting => (parent!.parent! as BasicMovement).isShifting;
+  Level get level => (parent!.parent! as HasGameReference<PixelAdventure>).game.level;
+
+
+  set horizontalMovement(double pos) => (parent!.parent! as BasicMovement).horizontalMovement = pos;
+  set verticalMovement(double pos) => (parent!.parent! as BasicMovement).verticalMovement = pos;
+  set isShifting(bool val) => (parent!.parent! as BasicMovement).isShifting = val;
+
+
+
+
   late Vector2 endPos; //the end pos for the movement
 
   List<PathStep>? path = [];
 
   @override
   FutureOr<void> onLoad() {
-    endPos = Vector2(16, 19);
+    endPos = Vector2(-1, -1);
     path = level.generator.getPathTo((position / 32), endPos);
     return super.onLoad();
   }
@@ -36,10 +55,21 @@ mixin MoveGoal on PositionComponent, BasicMovement {
   double timeSinceLastPosChange = 0; //the time since the position changed. this will be used for when the entity got off the path and is stuck now if it was stuck for over 3 secs, the path will be regenerated from that pos
   Vector2 lastPosition = Vector2.zero(); //to check if the position changed
 
+  @override
   void updateGoal(double dt) { //the update funktion
+
+    Vector2? lastPlayerPos = attributes!.attributes["nearestPlayerPosition"];
+    if(lastPlayerPos != null) {
+      if((lastPlayerPos / 32).distanceTo(endPos) > 2) recalculatePath((lastPlayerPos / 32)..floor());
+    }
+
+
+    attributes!.attributes["entityPos"] = position;
+
     if (path == null || path!.isEmpty) { //if theres no current path set or its empty, we have nothing left to do
       return;
     }
+
 
     currentStep = path![stepIndex]; //set the current step
 
@@ -161,19 +191,21 @@ mixin MoveGoal on PositionComponent, BasicMovement {
     return result == null; //if the result is null, theres no collision
   }
 
-  int accuracy = 20; //the accuracy brings a bit of randomness in the movement. increase the value to get more random movement. it gets stronger the nearer you are to your destination.
+  int accuracy = 1;//the accuracy brings a bit of randomness in the movement. increase the value to get more random movement. it gets stronger the nearer you are to your destination.
+
 
   void adjustHorizontalMovementIfNeeded(Vector2 goalPos) {
     double difference = (position - goalPos).x; // the difference between the current pos and the given one.
 
     double random = (Random().nextInt(accuracy)).toDouble(); //get a random val from 0 to accuracy.
 
-    bool move = random < difference.abs(); //if the difference is smaller than a random val between 0 and accuracy, we dont move.
+    bool move = random + 5 < difference.abs(); //if the difference is smaller than a random val between 0 and accuracy, we dont move.
     // this simulates a bit of randomness and makes you walk not exactly at the destination but only at the area.
 
     if (move) { //if we move
       if (difference > 0) { //we check in which direction we have to go
         horizontalMovement = -1; //and then set the horizontal movement.
+
       } else {
         horizontalMovement = 1;
       }
@@ -202,11 +234,12 @@ mixin MoveGoal on PositionComponent, BasicMovement {
     }
   }
 
-  Vector2 get targetedPosition =>
+  Vector2 get targetedPosition => //returns the position of the currently targeted node. if the path is null, we return the current pos
       path?.elementAtOrNull(0)?.node.poiNode.position ??
-      position; //returns the position of the currently targeted node. if the path is null, we return the current pos
+      position;
 
-  Level get level; //returns the level.
+  void jump() {(parent!.parent! as BasicMovement).jump();}
+
 }
 
 enum GoalType { idle, move, custom }

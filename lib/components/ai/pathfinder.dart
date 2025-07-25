@@ -401,7 +401,6 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
       }
       current = current.parent; //set the current one to the parent and repeat.
     }
-    print("done!");
     return path; //return the path
   }
 

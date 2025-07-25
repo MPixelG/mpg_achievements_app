@@ -28,6 +28,8 @@ class PixelAdventure extends FlameGame
   bool showJoystick = false;
   late JoystickComponent joystick;
 
+  late final Level level;
+
   //Future is a value that is returned even thought a value of the method is not computed immediately, but later
   //FutureOr works same here either returns a Future or <void>
   @override
@@ -37,12 +39,12 @@ class PixelAdventure extends FlameGame
     await images.loadAllImages();
     //world is loaded after initialising all images
 
-    final world = Level(levelName: 'Level_2', player: player, enemy);
+    level = Level(levelName: 'Level_2', player: player, enemy);
 
-    cam = AdvancedCamera(world: world);
+    cam = AdvancedCamera(world: level);
     cam.player = player;
     cam.viewfinder.anchor = Anchor.center;
-    addAll([cam, world]);
+    addAll([cam, level]);
 
 
     cam.setFollowPlayer(true, player: player, accuracy: 50); //follows the player.

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
@@ -6,8 +7,10 @@ import 'package:flame/geometry.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/ai/goals/follow_player_goal.dart';
 import 'package:mpg_achievements_app/components/ai/goals/goal_manager.dart';
 import 'package:mpg_achievements_app/components/ai/goals/pathtracing_goal.dart';
+import 'package:mpg_achievements_app/components/ai/goals/player_locating_goal.dart';
 import 'package:mpg_achievements_app/components/animation/CharacterStateManager.dart';
 import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
@@ -35,7 +38,7 @@ class Enemy extends SpriteAnimationGroupComponent
         CollisionCallbacks,
         HasCollisions,
         BasicMovement,
-        CharacterStateManager, MoveGoal {
+        CharacterStateManager {
   bool gotHit = false;
 
   //debug switches for special modes
@@ -44,24 +47,6 @@ class Enemy extends SpriteAnimationGroupComponent
 
   //starting position
   Vector2 startingPosition = Vector2.zero();
-
-  //List of collision objects
-  List<CollisionBlock> collisionsBlockList = [];
-
-  // because the hitbox is a property of the enemy it follows the enemy where ever he goes. Same for the collectables
-
-
-  //variables for raycasting
-  Ray2? ray;
-  Ray2? reflection;
-  late Vector2 rayOriginPoint = absolutePosition;
-  final Vector2 rayDirection = Vector2(1, 0);
-
-  static const numberOfRays = 50;
-  final List<Ray2> rays = [];
-  final List<RaycastResult<ShapeHitbox>> results = [];
-  late List<RaycastResult<ShapeHitbox>> lastResults = [];
-
   String enemyCharacter;
 
   //constructor super is reference to the SpriteanimationGroupComponent above, which contains position as attributes
@@ -74,118 +59,21 @@ class Enemy extends SpriteAnimationGroupComponent
   late GoalManager manager;
   @override
   FutureOr<void> onLoad() {
-    //raycasting
-    paint = BasicPalette.red.paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
 
-    //using an underscore is making things private
     startingPosition = Vector2(position.x, position.y);
 
     manager = GoalManager();
     add(manager);
-    PathtracingGoal goal = PathtracingGoal((dt) {
-      return dt % 5 < 1;
-      }, 1, (result) => print("yay"));
-    manager.add(goal);
+
+    PathtracingGoal goal = PlayerLocatingGoal(1);
+    MoveGoal moveGoal = FollowPlayerGoal(0);
+
+    manager.addGoal(goal);
+    manager.addGoal(moveGoal);
 
     return super.onLoad();
   }
 
-  @override
-  void update(double dt){
-    updateGoal(dt);
-    super.update(dt);
-  }
-
-  @override
-  void render(Canvas canvas) async {
-    if (debugMode) {
-      renderResult(
-        canvas,
-        rayOriginPoint,
-        results,
-        paint,
-      ); //press B to enable debug mode and show the raycast results
-    }
-    super.render(canvas);
-  }
-
-  //render the RaycastsList
-  void renderResult(
-    Canvas canvas,
-    Vector2 origin,
-    List<RaycastResult<ShapeHitbox>> results,
-    Paint paint,
-  ) {
-    for (final result in results) {
-      if (!result.isActive || result.intersectionPoint == null) {
-        //if the result is invalid we continue with the next one
-        continue;
-      }
-
-      Vector2 lineStart = origin - absolutePosition + hitbox.center;
-      Vector2 lineEnd =
-          result.intersectionPoint! - absolutePosition + hitbox.center;
-
-      lineStart.clamp(
-        game.cam.boundsMin - absolutePosition,
-        game.cam.boundsMax - absolutePosition,
-      );
-      lineEnd.clamp(
-        game.cam.boundsMin - absolutePosition,
-        game.cam.boundsMax - absolutePosition,
-      );
-
-      Paint paint = Paint();
-      if (getParentAsPositionComponent(result.hitbox) is Player) {
-        paint.color = Colors.green;
-        paint.strokeWidth = 1.5;
-      } else {
-        paint.color == Colors.redAccent;
-        paint.strokeWidth = 1.0;
-      }
-
-      if (scale.x > 0) {
-        //if the enemy is mirrored because it walked in the other direction, everything we draw will be mirrored aswell. that's why we need to mirror the line manually
-        canvas.drawLine(
-          //draw the line unmirrored
-          lineStart.toOffset(),
-          lineEnd.toOffset(),
-          paint,
-        );
-      } else {
-        Vector2 mirroredStart = Vector2(
-          -lineStart.x + hitbox.center.x * 2,
-          lineStart.y,
-        ); //mirror and move to the center of the hitbox
-        Vector2 mirroredEnd = Vector2(
-          -lineEnd.x + hitbox.center.x * 2,
-          lineEnd.y,
-        );
-        canvas.drawLine(
-          //draw the line mirrored
-          mirroredStart.toOffset(),
-          mirroredEnd.toOffset(),
-          paint,
-        );
-      }
-    }
-  }
-
-  PositionComponent? getParentAsPositionComponent(Hitbox<dynamic>? hitbox) {
-    if (hitbox == null) return null;
-
-    if (hitbox is! ShapeHitbox) return null;
-
-    Component? parent = hitbox.parent;
-
-    if (parent == null || parent is! PositionComponent) {
-      return null;
-    }
-
-    return parent;
-  }
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
@@ -204,10 +92,12 @@ class Enemy extends SpriteAnimationGroupComponent
     final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyL);
 
     //debug key bindings
-    if (keysPressed.contains(LogicalKeyboardKey.keyF))
+    if (keysPressed.contains(LogicalKeyboardKey.keyF)) {
       position = game.player.position.clone();
-    if (keysPressed.contains(LogicalKeyboardKey.keyG))
+    }
+    if (keysPressed.contains(LogicalKeyboardKey.keyG)) {
       debugFlyMode = !debugFlyMode;
+    }
 
     //ternary statement if leftKey pressed then add -1 to horizontal movement if not add 0 = not moving
     if (isLeftKeyPressed) horizontalMovement = -1;
@@ -232,11 +122,6 @@ class Enemy extends SpriteAnimationGroupComponent
     if (keysPressed.contains(LogicalKeyboardKey.comma)) {
       //press comma to get a surprise! (can also be used to generate lag XD )
       parent?.add(generateConfetti(position));
-    }
-
-    if (keysPressed.contains(LogicalKeyboardKey.keyO)) {
-      recalculatePath((level.mousePos/32)..floor());
-      print("moved to " + (level.mousePos / 32).toString());
     }
 
     return super.onKeyEvent(event, keysPressed);

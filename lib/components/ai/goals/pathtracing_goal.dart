@@ -2,6 +2,8 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:mpg_achievements_app/components/ai/goals/goal.dart';
+import 'package:mpg_achievements_app/components/enemy.dart';
+import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../../physics/collisions.dart';
 import '../../player.dart';
@@ -24,12 +26,12 @@ class PathtracingGoal extends Goal{
   late Vector2 rayOriginPoint = absolutePosition;
   final Vector2 rayDirection = Vector2(1, 0);
 
-  static const numberOfRays = 50;
+  static const numberOfRays = 36;
   final List<Ray2> rays = [];
   final List<RaycastResult<ShapeHitbox>> results = [];
   late List<RaycastResult<ShapeHitbox>> lastResults = [];
 
-  PathtracingGoal(super.prequisite, super.goalPriority, this.onPlayerSight);
+  PathtracingGoal(super.prequisite, super.goalPriority);
 
 
 
@@ -38,8 +40,8 @@ class PathtracingGoal extends Goal{
     time += dt; //increase the timers
     timeSinceLastUpdate += dt;
 
-    if (time < 5 && !(timeSinceLastUpdate < 2 && time > 1))
-      return; //if the countdown isnt done and the last intersection with sth movable is more than a second ago, we return
+    // if (time < 1 && !(timeSinceLastUpdate < 2 && time > 0.5))
+    //   return; //if the countdown isnt done and the last intersection with sth movable is more than a second ago, we return
     time = 0; //reset the timer for the next ray
 
     rayOriginPoint =
@@ -57,6 +59,16 @@ class PathtracingGoal extends Goal{
       rays: rays,
       out: results,
       ignoreHitboxes: [hitbox],
+      hitboxFilter: (candidate) {
+
+
+        if(candidate.parent is CollisionBlock){
+          return (!(candidate.parent as CollisionBlock).isLadder);
+        }
+        return candidate.parent is! Enemy;
+
+
+      },
     );
 
     if (checkIntersectionChange(results, lastResults)) {
@@ -65,14 +77,19 @@ class PathtracingGoal extends Goal{
     }
 
 
+    double shortestPlayerDistance = double.infinity;
+    Vector2? shortestPlayerDistancePos;
+
     results.forEach((element) {
       if(element.hitbox != null && element.hitbox!.parent is Player){
-        onPlayerSight(element);
+        if(element.intersectionPoint!.distanceTo(rayOriginPoint) < shortestPlayerDistance) {shortestPlayerDistance = element.intersectionPoint!.distanceTo(rayOriginPoint); shortestPlayerDistancePos = element.intersectionPoint!;}
+        return;
       }
     });
-  }
 
-  void Function(RaycastResult result) onPlayerSight;
+    attributes!.attributes["playerPositions"] = results;
+    if(shortestPlayerDistancePos != null) attributes!.attributes["nearestPlayerPosition"] = shortestPlayerDistancePos;
+  }
 
 
   bool checkIntersectionChange<T>(

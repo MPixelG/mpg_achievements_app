@@ -1,11 +1,14 @@
 import 'package:flame/components.dart';
+import 'package:mpg_achievements_app/components/ai/goals/goal_manager.dart';
 
 abstract class Goal extends Component{
 
 
   double goalPriority;
-  bool Function(double dt) prequisite;
+  bool Function(GoalAttributes attributes) prequisite;
   bool repeat;
+
+  GoalAttributes? attributes;
 
   bool _done = false;
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="28" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="88">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="28" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="91">
  <tileset firstgid="1" source="MPG_pixel_adventure.tsx"/>
  <tileset firstgid="243" source="IndustrialTile_81.png.tsx"/>
  <tileset firstgid="407" source="industrialObjects.tsx"/>
@@ -133,7 +133,6 @@
   <object id="34" x="64" y="160" width="32" height="32"/>
   <object id="35" x="192" y="169.5" width="32" height="22.5"/>
   <object id="60" x="227.588" y="205.25" width="24.8239" height="18.75"/>
-  <object id="62" x="256" y="216.75" width="32.25" height="7.25"/>
   <object id="63" type="Ladder" x="0" y="384" width="32" height="256"/>
   <object id="67" x="-33" y="352" width="32" height="320"/>
  </objectgroup>
