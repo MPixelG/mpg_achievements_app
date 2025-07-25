@@ -22,8 +22,8 @@
             "scale": 1.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 320,
-                "y": 183.66666666666663
+                "x": 319.6666666666667,
+                "y": 183.3333333333333
             }
         },
         "Level_1.tmx": {
@@ -34,8 +34,8 @@
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 320.5,
-                "y": 184.25
+                "x": 320.25,
+                "y": 184
             }
         },
         "Level_2.tmx": {
@@ -44,10 +44,10 @@
                 4
             ],
             "scale": 2,
-            "selectedLayer": 10,
+            "selectedLayer": 9,
             "viewCenter": {
-                "x": 525.5,
-                "y": 723.75
+                "x": 282.25,
+                "y": 196.5
             }
         },
         "Level_3.tmx": {
@@ -58,8 +58,8 @@
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 512,
-                "y": 512.3333333333333
+                "x": 512.3333333333333,
+                "y": 512
             }
         },
         "Level_4.tmx": {
@@ -133,16 +133,17 @@
     "project": "MPG_pixel_adventure.tiled-project",
     "property.type": "bool",
     "recentFiles": [
-        "MPG_pixel_adventure.tsx",
-        "Level_3.tmx",
-        "Level_0.tmx",
-        "Level_1.tmx",
         "Level_2.tmx",
+        "Level_1.tmx",
+        "Level_0.tmx",
+        "Level_3.tmx",
+        "testLevel.tmx",
+        "MPG_Start_low_res.tsx",
         "IndustrialTile_81.png.tsx",
+        "MPG_pixel_adventure.tsx",
         "Level_4.tmx",
         "Level_5.tmx",
-        "Lever_3.tmx",
-        "MPG_Start_low_res.tsx"
+        "Lever_3.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

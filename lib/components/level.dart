@@ -14,6 +14,7 @@ import 'package:mpg_achievements_app/components/collectables.dart';
 import 'package:mpg_achievements_app/components/enemy.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/traps/saw.dart';
+import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'background/scrolling_background.dart';
@@ -26,6 +27,8 @@ class Level extends World
   Enemy enemy;
 
   int totalCollectables = 0;
+
+  late double tilesize;
 
   //Todo add feature to make levels with and without scrolling background //added via Tiled
   final bool scrollingBackground = false;
@@ -40,18 +43,19 @@ class Level extends World
 
   @override
   FutureOr<void> onLoad() async {
+    tilesize =await (await getTilesizeOfLevel(levelName)).toDouble();
+
     //await need to be there because it takes some time to load, that's why the method needs to be async
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
-    level = await TiledComponent.load('$levelName.tmx', Vector2(32, 32));
+    level = await TiledComponent.load('$levelName.tmx', Vector2.all(tilesize));
     add(level);
 
     // If level not Parallax, load level with  scrolling background, property is added in Tiled
     if (level.tileMap.getLayer('Level')?.properties.getValue('Parallax')) {
       _loadParallaxLevel();
     } else {
-      level.scale = Vector2.all(1);
       _scrollingBackground();
     }
 

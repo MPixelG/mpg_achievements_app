@@ -3,7 +3,10 @@
 //is our player overlapping an object in our world
 //hitbox is defined in player.dart, here we need to update our borders for our collision
 
+import 'dart:io';
+
 import 'package:flame/components.dart';
+import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import '../physics/collision_block.dart';
 
@@ -88,3 +91,20 @@ Vector2 safeNormalize(Vector2 vector) {
   if (length == 0) return Vector2.zero();
   return vector / length;
 }
+
+
+Future<int> getTilesizeOfLevel(String levelName) async{
+
+  String content = await rootBundle.loadString('assets/tiles/$levelName.tmx');
+  List<String> lines = content.split('\n');
+
+  int indexOfTilesizeDeclaration = lines[1].indexOf("tilewidth=\"") + 11; //include the length of 'tilewidh="'
+
+  int indexOfNextSemicolon = lines[1].indexOf("\"", indexOfTilesizeDeclaration);
+
+  String tilesizeString = lines[1].substring(indexOfTilesizeDeclaration, indexOfNextSemicolon);
+
+
+  return int.parse(tilesizeString);
+}
+
