@@ -6,8 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/menu_creator.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import 'json_factory/widgetFactory2.dart';
-import 'json_factory/widget_factory.dart';
+import 'json_factory/widgetFactory.dart';
 
 abstract class Screen extends StatelessWidget {
 
@@ -22,7 +21,7 @@ class MainMenuScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       body: FutureBuilder<Widget>(
-        future: ExperimentalWidgetFactory.loadFromJson('assets/screens/test.json', context),
+        future: WidgetFactory.loadFromJson('assets/screens/test.json', context),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return snapshot.data!;
@@ -68,7 +67,7 @@ class JsonScreenBuilder {
   static Widget _buildWidgetsFromData(Map<String, dynamic> screenData, BuildContext context) {
     return Stack(
       children: screenData['widgets'].map<Widget>((widgetData) {
-        final widget = WidgetFactory.buildFromJson(widgetData, context);
+        final widget = WidgetFactory.buildWidget(widgetData, context);
         final position = widgetData['position'];
 
         return Positioned(

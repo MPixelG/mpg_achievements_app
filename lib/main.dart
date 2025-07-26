@@ -1,7 +1,7 @@
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/GUI/Menus.dart';
-import 'package:mpg_achievements_app/components/GUI/json_factory/widgetFactory2.dart';
+import 'package:mpg_achievements_app/components/GUI/json_factory/widgetFactory.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 // must be async because device loads fullScreen and setsLandscape and then at last the joystick
 void main() async {

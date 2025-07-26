@@ -10,7 +10,7 @@ import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_button.da
 import '../../../mpg_pixel_adventure.dart';
 import '../Menus.dart';
 
-class ExperimentalWidgetFactory{
+class WidgetFactory{
 
   static Future<Widget>? loadFromJson(String jsonName, BuildContext context) async{
     final jsonString = await rootBundle.loadString(jsonName);

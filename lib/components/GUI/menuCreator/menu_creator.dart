@@ -39,7 +39,7 @@ class _MenuCreatorState extends State<MenuCreator> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Stack( // Muss Stack sein!
+      body: Stack(
         children: [
           ...children,
         ],
