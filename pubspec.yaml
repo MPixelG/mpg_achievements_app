@@ -81,6 +81,9 @@ flutter:
       - assets/images/sky/
       - assets/images/tiles/
       - assets/images/objects/
+      - assets/images/Menu/
+      - assets/images/Menu/Buttons/
+      - assets/screens/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

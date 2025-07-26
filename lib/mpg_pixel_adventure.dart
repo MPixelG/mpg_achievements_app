@@ -45,6 +45,14 @@ class PixelAdventure extends FlameGame
     addAll([cam, level]);
 
 
+    AssetImage image = AssetImage('images/Menu/Buttons/test_button.png');
+    image.obtainKey(ImageConfiguration()).then((key) {
+      print("Image key: $key");
+    }).catchError((e) {
+      print("Image load error: $e");
+    });
+
+
     cam.setFollowPlayer(true, player: player, accuracy: 50); //follows the player.
     if (showJoystick == true) {
       addJoystick();

@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/GUI/widgets/pixel_button.dart';
+import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/menu_creator.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
+import 'json_factory/widgetFactory2.dart';
+import 'json_factory/widget_factory.dart';
 
 abstract class Screen extends StatelessWidget {
 
@@ -10,39 +16,23 @@ abstract class Screen extends StatelessWidget {
   Screen({super.key, children});
 }
 
-class MainMenuScreen extends Screen {
-  MainMenuScreen({super.key});
-
+class MainMenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/MPG_low_resolution_640_368.png'),
-          colorFilter: ColorFilter.mode(Color.fromARGB(200, 0, 0, 0), BlendMode.srcOver),
-          fit: BoxFit.cover,
-        ),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: FutureBuilder<Widget>(
+        future: ExperimentalWidgetFactory.loadFromJson('assets/screens/test.json', context),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return snapshot.data!;
+          }
+          return Center(child: CircularProgressIndicator());
+        },
       ),
-      child: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              PixelButton(text: "PLAY!!!",
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => GameScreen(game: PixelAdventure())
-                  )))
-            ]
-        ),
-      ),
-
-
-    ),
     );
   }
 }
-
 class GameScreen extends StatelessWidget {
   final PixelAdventure game;
 
@@ -50,11 +40,43 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp( // Wichtig: MaterialApp-Wrapper
-      home: Scaffold(
-        body: GameWidget(game: game),
+    return MaterialApp(
+      home: Stack(
+        children: [GameWidget(game: game),
+          MenuCreator()
+        ]
       ),
       debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class JsonScreenBuilder {
+  static Future<Widget> buildScreen(String jsonPath, BuildContext context) async {
+    try {
+      // JSON aus Assets laden
+      final jsonString = await rootBundle.loadString(jsonPath);
+      final screenData = json.decode(jsonString);
+
+      return _buildWidgetsFromData(screenData, context);
+    } catch (e) {
+      print('Fehler beim Laden der JSON: $e');
+      return Container(child: Text('Fehler beim Laden'));
+    }
+  }
+
+  static Widget _buildWidgetsFromData(Map<String, dynamic> screenData, BuildContext context) {
+    return Stack(
+      children: screenData['widgets'].map<Widget>((widgetData) {
+        final widget = WidgetFactory.buildFromJson(widgetData, context);
+        final position = widgetData['position'];
+
+        return Positioned(
+          left: position['x'].toDouble(),
+          top: position['y'].toDouble(),
+          child: widget,
+        );
+      }).toList(),
     );
   }
 }

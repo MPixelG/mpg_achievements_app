@@ -1,6 +1,7 @@
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/GUI/Menus.dart';
+import 'package:mpg_achievements_app/components/GUI/json_factory/widgetFactory2.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 // must be async because device loads fullScreen and setsLandscape and then at last the joystick
 void main() async {
@@ -13,11 +14,20 @@ void main() async {
   //just helps to not load the game every time you change something in the code only for development
   //later changed to only game when deploying
 
-  runApp(MaterialApp(
-    home: MainMenuScreen(),
-    debugShowCheckedModeBanner: false
-  ));
-  
+  runApp(MainApp());
+
+
+
 
   
+}
+
+class MainApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: MainMenuScreen(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
 }

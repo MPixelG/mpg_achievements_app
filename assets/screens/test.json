@@ -1,0 +1,45 @@
+{
+  "id": "mainScreen",
+  "type": "Column",
+  "properties": {
+    "mainAxisAlignment": "center",
+    "crossAxisAlignment": "center"
+  },
+  "children": [
+    {
+      "id": "playButtonContainer",
+      "type": "Container",
+      "children": [
+        {
+          "id": "playButton",
+          "type": "Button",
+          "properties": {
+            "text": "PLAY",
+            "action": {
+              "type": "start_game"
+            }
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "settingsButtonContainer",
+      "type": "Container",
+      "children": [
+        {
+          "id": "settingsButton",
+          "type": "Button",
+          "properties": {
+            "text": "SETTINGS",
+            "action": {
+              "type": "screen_change",
+              "val": "settings"
+            }
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}
