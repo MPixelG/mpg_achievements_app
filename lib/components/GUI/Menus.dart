@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/menu_creator.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/gui_editor.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'json_factory/widgetFactory.dart';
@@ -42,6 +42,7 @@ class GameScreen extends StatelessWidget {
     return MaterialApp(
       home: Stack(
         children: [GameWidget(game: game),
+          GuiEditor()
         ]
       ),
       debugShowCheckedModeBanner: false,
