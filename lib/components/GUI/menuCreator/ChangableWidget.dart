@@ -1,27 +1,33 @@
-import 'package:flutter/cupertino.dart';
+/*import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'menu_creator.dart';
 
 class ChangeableWidget extends StatefulWidget {
-  final Widget Function() builder;
-  final double initialX;
-  final double initialY;
+  final GuiNode node;
+  final VoidCallback? onDelete;
 
-  const ChangeableWidget({
-    super.key,
-    required this.builder,
-    this.initialX = 0,
-    this.initialY = 0,
-  });
+  const ChangeableWidget({super.key, required this.node, this.onDelete});
 
   @override
   State<ChangeableWidget> createState() => _ChangeableWidgetState();
 }
 
+
 class _ChangeableWidgetState extends State<ChangeableWidget> {
+  late double exactX = 0.5;
+  late double exactY = 0.5;
   late double x;
   late double y;
-  double width = 150;
-  double height = 50;
+  double width = 0.2;
+  double height = 0.4;
+  double exactWidth = 0.2;
+  double exactHeight = 0.4;
+
+  double get screenWidth => MediaQuery.of(context).size.width;
+  double get screenHeight => MediaQuery.of(context).size.height;
+
 
   @override
   void initState() {
@@ -33,37 +39,36 @@ class _ChangeableWidgetState extends State<ChangeableWidget> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: x,
-      top: y,
+      left: x * screenWidth,
+      top: y * screenHeight,
       child: GestureDetector(
         onPanUpdate: (details) {
-          setState(() {
-            x += details.delta.dx;
-            y += details.delta.dy;
-          });
+          move(details);
         },
-        onSecondaryTapDown: (details) => _showContextMenu(context, details.globalPosition),
+        onSecondaryTapDown: (details) => _showContextMenu(context, details.globalPosition, widget.onDelete),
         child: Stack(
           children: [
-            Container(
-              width: width,
-              height: height,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.red),
-              ),
-              child: widget.builder(),
-            ),
+            SizedBox(
+              width: width * screenWidth, //set the right size
+              height: height * screenHeight,
+              child:
+
+              Stack(
+                children: [
+                  widget.builder(),
+                  ...getChildren()
+
+                ])
+            ), //render the actual widget
+
             Positioned(
-              right: 0,
+              right: 0, //on the bottom left edge
               bottom: 0,
-              child: GestureDetector(
+              child: GestureDetector( //gesture detector for resizing
                 onPanUpdate: (details) {
-                  setState(() {
-                    width += details.delta.dx;
-                    height += details.delta.dy;
-                  });
+                  resize(details); //resize when dragged on the bottom edge
                 },
-                child: Icon(Icons.open_in_full, size: 16),
+                child: Icon(Icons.open_in_full, size: 16), //render the resize icon
               ),
             ),
           ],
@@ -71,9 +76,74 @@ class _ChangeableWidgetState extends State<ChangeableWidget> {
       ),
     );
   }
+
+  List<Widget> getChildren(){
+    List<Widget> out = [];
+
+    for (var value in connections.entries) {
+      if(value.value == widget.key){
+        out.add(widgets[value.key]!);
+      }
+    }
+
+    print("children: " + out.toString());
+
+    return out;
+  }
+
+
+  void resize(DragUpdateDetails details){
+    setState(() {
+
+      double newWidth = exactWidth + (details.delta.dx / screenWidth);
+      double newHeight = exactHeight + (details.delta.dy / screenHeight);
+
+      exactWidth = newWidth;
+      exactHeight = newHeight;
+
+      final isAltPressed = HardwareKeyboard.instance.isAltPressed;
+      if (isAltPressed) {
+        const gridSize = 32.0;
+        newWidth = (exactWidth / (gridSize / screenWidth)).round() * gridSize / screenWidth;
+        newHeight = (exactHeight / (gridSize / screenHeight)).round() * gridSize / screenHeight;
+      }
+
+      if(newWidth > 10 / screenWidth) {
+        width = newWidth;
+      }
+      if(newHeight > 10 / screenHeight) {
+        height = newHeight;
+      }
+    });
+  }
+
+  void move(DragUpdateDetails details){
+    setState(() {
+      double newX = exactX + (details.delta.dx / screenWidth);
+      double newY = exactY + (details.delta.dy / screenHeight);
+
+      final isAltPressed = HardwareKeyboard.instance.isAltPressed;
+
+      exactX = newX;
+      exactY = newY;
+
+      if (isAltPressed) {
+        const gridSize = 32.0;
+        newX = (exactX / (gridSize / screenWidth)).round() * (gridSize / screenWidth);
+        newY = (exactY / (gridSize / screenHeight)).round() * (gridSize / screenHeight);
+      }
+
+      x = newX;
+      y = newY;
+    });
+  }
+
 }
 
-void _showContextMenu(BuildContext context, Offset position) async {
+
+
+
+void _showContextMenu(BuildContext context, Offset position, VoidCallback? onDelete) async {
   final selected = await showMenu<String>(
     context: context,
     position: RelativeRect.fromLTRB(
@@ -91,15 +161,29 @@ void _showContextMenu(BuildContext context, Offset position) async {
         value: 'edit',
         child: Text('Edit'),
       ),
+      PopupMenuItem(
+        value: 'add_to',
+        child: Text('Add To Other Widget'),
+      ),
     ],
   );
 
-  if (selected != null) {
+  if (selected != null && onDelete != null) {
     if (selected == 'delete') {
-      print("Deleted");
+      onDelete();
     } else if (selected == 'edit') {
-      print("edited");
+    }else if(selected == 'add_to'){
     }
   }
+}*/
+
+
+class GuiNode {
+  String type;
+  Map<String, dynamic> properties;
+  String id;
+
+  GuiNode(this.type, this.properties, this.id);
 }
+
 

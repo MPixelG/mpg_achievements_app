@@ -108,3 +108,11 @@ Future<int> getTilesizeOfLevel(String levelName) async{
   return int.parse(tilesizeString);
 }
 
+num max<T extends num>(List<T> vals){
+  T? smallestVal;
+  for (var value in vals) {
+    if(smallestVal == null || value < smallestVal) smallestVal = value;
+  }
+
+  return smallestVal ?? 0;
+}

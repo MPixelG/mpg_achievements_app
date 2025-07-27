@@ -42,7 +42,6 @@ class GameScreen extends StatelessWidget {
     return MaterialApp(
       home: Stack(
         children: [GameWidget(game: game),
-          MenuCreator()
         ]
       ),
       debugShowCheckedModeBanner: false,
