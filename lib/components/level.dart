@@ -14,6 +14,7 @@ import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/player.dart';
+import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
@@ -45,7 +46,7 @@ class Level extends World
 
   @override
   FutureOr<void> onLoad() async {
-    tilesize =await (await getTilesizeOfLevel(levelName)).toDouble();
+    tilesize = await (await getTilesizeOfLevel(levelName)).toDouble();
 
     //await need to be there because it takes some time to load, that's why the method needs to be async
     //otherwise the rest of the programme would stop
@@ -74,6 +75,10 @@ class Level extends World
     add(debugOverlays);
     debugOverlays.scale = Vector2.zero(); // Start hidden/scaled down
     debugOverlays.priority = 2; // Ensure overlays draw above the rest of the game
+
+/*    if (level != null) {
+      game.lightingRenderer.extractObjectsFromTiledMap(level);
+    }*/
 
 
 
