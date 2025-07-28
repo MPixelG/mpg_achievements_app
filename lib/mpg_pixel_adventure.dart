@@ -34,6 +34,9 @@ class PixelAdventure extends FlameGame
 
   final GuiEditor guiEditor = GuiEditor();
 
+  //needs to go into the overlay_controller later
+  bool showDialogue = true;
+
 
 
   //Future is a value that is returned even thought a value of the method is not computed immediately, but later
@@ -51,6 +54,9 @@ class PixelAdventure extends FlameGame
     cam.player = player;
     cam.viewfinder.anchor = Anchor.center;
     addAll([cam, level]);
+
+    //add overlays
+    overlays.add('DialogueOverlay');
 
 
     cam.setFollowPlayer(true, player: player, accuracy: 50); //follows the player.

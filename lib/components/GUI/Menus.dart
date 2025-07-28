@@ -4,6 +4,8 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/gui_editor.dart';
+import 'package:mpg_achievements_app/components/util/dialogue_utils/dialogue_overlay.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'json_factory/widgetFactory.dart';
@@ -46,6 +48,10 @@ class GameScreen extends StatelessWidget {
           overlayBuilderMap: {
             "guiEditor": (BuildContext context, PixelAdventure game){
               return game.guiEditor;
+              },
+            //Overlay is registered in overlayBuilderMap
+            'DialogueOverlay':(BuildContext context, PixelAdventure game){
+              return DialogueOverlay(game: game);
             }
           },
 
