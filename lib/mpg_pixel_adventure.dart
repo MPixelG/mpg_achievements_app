@@ -34,6 +34,9 @@ class PixelAdventure extends FlameGame
 
   final GuiEditor guiEditor = GuiEditor();
 
+  //needs to go into the overlay_controller later
+  bool showDialogue = true;
+
 
   FragmentShader? shader;
   Image? sceneImage;
@@ -47,12 +50,15 @@ class PixelAdventure extends FlameGame
     await images.loadAllImages();
     //world is loaded after initialising all images
 
-    level = Level(levelName: 'Level_4', player: player, enemy);
+    level = Level(levelName: 'Level_2', player: player, enemy);
 
     cam = AdvancedCamera(world: level);
     cam.player = player;
     cam.viewfinder.anchor = Anchor.center;
     addAll([cam, level]);
+
+    //add overlays
+    overlays.add('DialogueOverlay');
 
 
     cam.setFollowPlayer(true, player: player, accuracy: 50); //follows the player.

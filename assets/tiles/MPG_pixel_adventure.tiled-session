@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "parralax_city_0.tsx",
+    "activeFile": "Level_2.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -16,14 +16,14 @@
         },
         "Level_0.tmx": {
             "expandedObjectLayers": [
-                20,
-                17
+                17,
+                20
             ],
             "scale": 1.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 320,
-                "y": 183.66666666666663
+                "x": 320.3333333333333,
+                "y": 184.33333333333334
             }
         },
         "Level_1.tmx": {
@@ -34,20 +34,20 @@
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 320.5,
+                "x": 320.75,
                 "y": 184.25
             }
         },
         "Level_2.tmx": {
             "expandedObjectLayers": [
-                2,
-                4
+                4,
+                2
             ],
             "scale": 1.5,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": 1079,
-                "y": 510.66666666666663
+                "x": 118.99999999999997,
+                "y": 199
             }
         },
         "Level_3.tmx": {
@@ -59,15 +59,15 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 512.3333333333333,
-                "y": 512.6666666666666
+                "y": 512.3333333333333
             }
         },
         "Level_4.tmx": {
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 983.3333333333334,
-                "y": 690.6666666666665
+                "x": 1424.6666666666665,
+                "y": 460.66666666666663
             }
         },
         "Level_5.tmx": {
@@ -105,8 +105,8 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 2509,
-                "y": 96
+                "x": 1025,
+                "y": 447
             }
         },
         "crystal stuff.tsx": {
@@ -180,18 +180,18 @@
     "project": "MPG_pixel_adventure.tiled-project",
     "property.type": "string",
     "recentFiles": [
+        "MPG_pixel_adventure.tsx",
         "Level_4.tmx",
+        "city_night.tmx",
+        "parralax_city_0.tsx",
+        "backgrounds.tsx",
+        "Level_3.tmx",
+        "Level_0.tmx",
+        "Level_1.tmx",
+        "Level_2.tmx",
         "industrial_tiles_3.tsx",
         "industrial_tiles_4.tsx",
-        "industrial_tiles_2.tsx",
-        "industrial_tiles_bg_2.tsx",
-        "industrial_tiles_bg_0.tsx",
-        "industrial_tiles_bg_1.tsx",
-        "MPG_pixel_adventure.tsx",
-        "Level_2.tmx",
-        "Level_1.tmx",
-        "Level_0.tmx",
-        "Level_3.tmx"
+        "industrial_tiles_2.tsx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",
