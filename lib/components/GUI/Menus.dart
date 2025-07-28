@@ -35,15 +35,21 @@ class MainMenuScreen extends StatelessWidget {
 class GameScreen extends StatelessWidget {
   final PixelAdventure game;
 
-  const GameScreen({super.key, required this.game});
+  GameScreen({super.key, required this.game});
+
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Stack(
-        children: [GameWidget(game: game),
-          GuiEditor()
-        ]
+        children: [GameWidget(game: game,
+          overlayBuilderMap: {
+            "guiEditor": (BuildContext context, PixelAdventure game){
+              return game.guiEditor;
+            }
+          },
+
+        ),]
       ),
       debugShowCheckedModeBanner: false,
     );
@@ -53,7 +59,6 @@ class GameScreen extends StatelessWidget {
 class JsonScreenBuilder {
   static Future<Widget> buildScreen(String jsonPath, BuildContext context) async {
     try {
-      // JSON aus Assets laden
       final jsonString = await rootBundle.loadString(jsonPath);
       final screenData = json.decode(jsonString);
 

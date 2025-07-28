@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/cupertino.dart' hide AnimationStyle;
+import 'package:flutter/cupertino.dart' hide AnimationStyle, Image;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
+import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
 import 'package:mpg_achievements_app/components/player.dart';
+import 'components/GUI/menuCreator/gui_editor.dart';
 import 'components/level_components/enemy.dart';
 import 'components/level.dart';
 
@@ -28,6 +31,13 @@ class PixelAdventure extends FlameGame
 
   late final Level level;
 
+
+  final GuiEditor guiEditor = GuiEditor();
+
+
+  FragmentShader? shader;
+  Image? sceneImage;
+
   //Future is a value that is returned even thought a value of the method is not computed immediately, but later
   //FutureOr works same here either returns a Future or <void>
   @override
@@ -37,20 +47,12 @@ class PixelAdventure extends FlameGame
     await images.loadAllImages();
     //world is loaded after initialising all images
 
-    level = Level(levelName: 'Level_2', player: player, enemy);
+    level = Level(levelName: 'Level_4', player: player, enemy);
 
     cam = AdvancedCamera(world: level);
     cam.player = player;
     cam.viewfinder.anchor = Anchor.center;
     addAll([cam, level]);
-
-
-    AssetImage image = AssetImage('images/Menu/Buttons/test_button.png');
-    image.obtainKey(ImageConfiguration()).then((key) {
-      print("Image key: $key");
-    }).catchError((e) {
-      print("Image load error: $e");
-    });
 
 
     cam.setFollowPlayer(true, player: player, accuracy: 50); //follows the player.
@@ -61,6 +63,9 @@ class PixelAdventure extends FlameGame
         print("Kein Joystick");
       }
     }
+
+    //shader = (await FragmentProgram.fromAsset("assets/shaders/test.glsl")).fragmentShader();
+    //await _renderSceneToImage();
 
     return super.onLoad();
   }
@@ -118,4 +123,40 @@ class PixelAdventure extends FlameGame
     }
     return os;
   }
+
+// Ersetze deine render() Methode mit dieser:
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+
+    // Einfacher Vollbild-Shader-Effekt
+    if (shader != null) {
+      final paint = Paint()..shader = shader;
+
+      // Shader-Parameter setzen (falls vorhanden)
+      shader!.setFloat(0, size.x); // uSize.x
+      shader!.setFloat(1, size.y); // uSize.y
+
+      // Vollbild-Rechteck mit Shader zeichnen
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, size.x, size.y),
+        paint,
+      );
+    }
+  }
+
+
+
+  Future<void> _renderSceneToImage() async {
+    final recorder = PictureRecorder();
+    final tempCanvas = Canvas(recorder);
+
+    level.render(tempCanvas);
+    player.render(tempCanvas);
+
+    final picture = recorder.endRecording();
+    sceneImage = await picture.toImage(size.x.toInt(), size.y.toInt());
+  }
+
+
 }

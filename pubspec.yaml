@@ -54,6 +54,8 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
 
+
+
   fonts:
     - family: gameFont
       fonts:
@@ -78,12 +80,16 @@ flutter:
       - assets/images/Items/Fruits/
       - assets/images/Traps/Saw/
       - assets/images/Background/
+      - assets/images/Background/City_Clean/
+      - assets/images/Background/City_Dirty/
       - assets/images/sky/
       - assets/images/tiles/
       - assets/images/objects/
       - assets/images/Menu/
       - assets/images/Menu/Buttons/
       - assets/screens/
+  shaders:
+    - assets/shaders/test.glsl
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="28" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="91">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="28" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="92">
  <tileset firstgid="1" source="MPG_pixel_adventure.tsx"/>
  <tileset firstgid="243" source="IndustrialTile_81.png.tsx"/>
  <tileset firstgid="407" source="industrialObjects.tsx"/>
@@ -9,31 +9,31 @@
  <imagelayer id="6" name="background_0_1" visible="0">
   <image source="../images/sky/background_light_full.png" width="1024" height="352"/>
  </imagelayer>
- <imagelayer id="6" name="background1" visible="0" offsetx="-256" offsety="352" repeatx="1">
+ <imagelayer id="6" name="background1" repeatx="1">
   <image source="../images/sky/1.png" width="576" height="648"/>
   <properties>
    <property name="parralaxFactor" type="float" value="0"/>
   </properties>
  </imagelayer>
- <imagelayer id="5" name="background2" visible="0" offsetx="-256" offsety="352" repeatx="1">
+ <imagelayer id="5" name="background2" parallaxx="0.3" repeatx="1">
   <image source="../images/sky/2.png" width="576" height="1024"/>
   <properties>
    <property name="parralaxFactor" type="float" value="0.25"/>
   </properties>
  </imagelayer>
- <imagelayer id="8" name="background3" visible="0" offsetx="-256" offsety="352" repeatx="1">
+ <imagelayer id="8" name="background3" offsetx="-320" offsety="-192" parallaxx="0.3" parallaxy="0.5" repeatx="1">
   <image source="../images/sky/3.png" width="576" height="1024"/>
   <properties>
    <property name="parralaxFactor" type="float" value="0.35"/>
   </properties>
  </imagelayer>
- <imagelayer id="9" name="background4" visible="0" offsetx="-256" offsety="352" repeatx="1">
+ <imagelayer id="9" name="background4" parallaxx="0.4" parallaxy="0.6" repeatx="1">
   <image source="../images/sky/4.png" width="576" height="1024"/>
   <properties>
    <property name="parralaxFactor" type="float" value="0.65"/>
   </properties>
  </imagelayer>
- <imagelayer id="10" name="background5" visible="0" offsetx="-416" offsety="352" repeatx="1">
+ <imagelayer id="10" name="background5" offsetx="0" offsety="160" parallaxx="0.6" parallaxy="0.8" repeatx="1">
   <image source="../images/sky/5.png" width="576" height="1024"/>
   <properties>
    <property name="parralaxFactor" type="float" value="0.8"/>
@@ -156,5 +156,6 @@
     <property name="interactiveTask" type="bool" value="true"/>
    </properties>
   </object>
+  <object id="91" name="Enemy" type="Enemy" x="864" y="32" width="32" height="32"/>
  </objectgroup>
 </map>

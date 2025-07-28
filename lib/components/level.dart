@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
@@ -68,12 +69,14 @@ class Level extends World
     //add collision objects
     _addCollisions();
 
-
     // Add UI overlays to the game (e.g., score, health bar).
     // Set their scale and render priority so they display correctly.
-    add(overlays);
-    overlays.scale = Vector2.zero(); // Start hidden/scaled down
-    overlays.priority = 2; // Ensure overlays draw above the rest of the game
+    add(debugOverlays);
+    debugOverlays.scale = Vector2.zero(); // Start hidden/scaled down
+    debugOverlays.priority = 2; // Ensure overlays draw above the rest of the game
+
+
+
 
     // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
     game.cam.setMoveBounds(Vector2.zero(), level.size);
@@ -200,7 +203,7 @@ class Level extends World
     //player.collisionsBlockList = collisionsBlockList;
   }
 
-  TextComponent overlays = TextComponent(
+  TextComponent debugOverlays = TextComponent(
     text: "hello!",
     position: Vector2(0, 0),
   );
@@ -208,10 +211,10 @@ class Level extends World
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (keysPressed.contains(LogicalKeyboardKey.keyV)) {
-      if (overlays.scale == Vector2.zero()) {
-        overlays.scale = Vector2.all(0.5);
+      if (debugOverlays.scale == Vector2.zero()) {
+        debugOverlays.scale = Vector2.all(0.5);
       } else {
-        overlays.scale = Vector2.zero();
+        debugOverlays.scale = Vector2.zero();
       }
     } //press V to toggle the visibility of the overlays
     if (keysPressed.contains(LogicalKeyboardKey.keyN)) {
@@ -221,6 +224,9 @@ class Level extends World
         animationStyle: AnimationStyle.EaseOut,
       );
     } //press V to toggle the visibility of the overlays
+
+    if(keysPressed.contains(LogicalKeyboardKey.keyH)) game.overlays.toggle("guiEditor");
+
     return super.onKeyEvent(event, keysPressed);
   }
 
@@ -240,14 +246,14 @@ class Level extends World
 
   @override //update the overlays
   void update(double dt) {
-    if (overlays.scale == Vector2.zero()) return;
+    if (debugOverlays.scale == Vector2.zero()) return;
 
     Vector2 roundedPlayerPos = player.position.clone()..round();
 
     String playerCoords = roundedPlayerPos.toString();
-    overlays.text =
+    debugOverlays.text =
         "Player: $playerCoords\nMouse: $mouseCoords\nGrid Mouse Coords: ${(mouseCoords / 32)..floor()}";
-    overlays.position =
+    debugOverlays.position =
         game.cam.pos -
         game.cam.visibleWorldRect.size.toVector2() / 2;
 
@@ -282,7 +288,8 @@ class Level extends World
     // Lists to store background images and their corresponding parallax factors.
     // Lists (not Sets) are used to preserve the order — each image must match its parallax factor by index.
     Set<TiledImage> images = {};
-    Set<double> parralaxFactors = {};
+    List<Vector2> parralaxFactors = [];
+    List<Vector2> startPositions = [];
     ImageLayer? imageLayer;
 
     // Loop through all background image layers defined in Tiled.
@@ -296,9 +303,13 @@ class Level extends World
       // Retrieve the custom parallax factor property from the image layer.
       // If not found, default to 0.3.
       parralaxFactors.add(
-        imageLayer.properties.byName["parralaxFactor"]?.value as double ?? 0.3,
+        Vector2(imageLayer.parallaxX.toDouble(), imageLayer.parallaxY.toDouble()),
       );
+      startPositions.add(Vector2(imageLayer.offsetX.toDouble(), imageLayer.offsetY.toDouble()));
+      print("added parralax " + parralaxFactors.last.toString());
     }
+
+    print("startPositions: " + startPositions.toString());
 
     // Add a custom LayeredImageBackground component that will handle rendering
     // parallax background images with different scrolling speeds.
@@ -306,10 +317,15 @@ class Level extends World
     add(
       LayeredImageBackground(
         images,
-        (parent as PixelAdventure).cam,
+        game.cam,
         parallaxFactors: parralaxFactors,
-        startPos: Vector2(0, -96),
+        startPositions: startPositions,
       ),
     );
   }
+
+
+
+
+
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/extensions.dart';
 import 'package:mpg_achievements_app/components/particles/Particles.dart';
 import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/components/player.dart';
@@ -11,7 +12,7 @@ class Collectable extends SpriteAnimationComponent
     with HasGameReference<PixelAdventure>, CollisionCallbacks {
 
   //name of the collectable and tape of collect -> those will be more than fruit in the future
-  final String collectable;
+  late String collectable;
   bool _collected = false;
   final bool animated;
   late final int amount;
@@ -34,6 +35,17 @@ class Collectable extends SpriteAnimationComponent
     super.position,
     super.size});
 
+  static final List<String> collectableNames = [
+    "Apple",
+    "Bananas",
+    "Cherries",
+    "Kiwi",
+    "Melon",
+    "Orange",
+    "Pineapple",
+    "Strawberry"
+  ];
+
 
   @override
   FutureOr<void> onLoad() {
@@ -42,6 +54,12 @@ class Collectable extends SpriteAnimationComponent
       amount = 17;
     } else {
       amount = 1;
+    }
+
+    if(collectable == ""){
+
+      collectable = collectableNames.random();
+
     }
 
     add(hitbox);

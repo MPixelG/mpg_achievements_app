@@ -14,18 +14,19 @@ class LayeredImageBackground extends Component with HasGameReference<PixelAdvent
 
   late Set<Image> loadedImages = {};
   bool imagesLoaded = false;
-  late Set<double>? parallaxFactors = {};
+  late List<Vector2>? parallaxFactors = [];
 
-  late Vector2? startPos;
+  List<Vector2> startPositions;
 
-  LayeredImageBackground(this.tiledImages, this.camera, {this.parallaxFactors, this.startPos});
+  LayeredImageBackground(this.tiledImages, this.camera, {this.parallaxFactors, required this.startPositions});
+
+  Paint _paint = Paint();
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     priority = -1;
 
-    startPos ??= Vector2.zero();
 
     for (var tiledImage in tiledImages) {
       if (tiledImage.source != null) {
@@ -47,13 +48,13 @@ class LayeredImageBackground extends Component with HasGameReference<PixelAdvent
       for (int i = 0; i < loadedImages.length; i++) {
         final loadedImage = loadedImages.elementAt(i);
 
-        double parralaxFactor = parallaxFactors?.elementAt(i) ?? 1 / (loadedImages.length-i);
+        Vector2 parralaxFactor = parallaxFactors?.elementAt(i) ?? Vector2.all(1);
 
-        final cameraOffset = startPos! + (camera.viewfinder.position.clone() + startPos!) * parralaxFactor;
+        final cameraOffset = (startPositions[i] + ((camera.viewfinder.position.clone()..multiply(Vector2.all(1) - parralaxFactor))));
 
-        canvas.drawImage(loadedImage, cameraOffset.toOffset(), Paint());
-        canvas.drawImage(loadedImage, cameraOffset.toOffset()- Offset(loadedImage.size.x-1, 0), Paint());
-        canvas.drawImage(loadedImage, cameraOffset.toOffset()+ Offset(loadedImage.size.x-1, 0), Paint());
+        canvas.drawImage(loadedImage, cameraOffset.toOffset(), _paint);
+        canvas.drawImage(loadedImage, cameraOffset.toOffset() - Offset(loadedImage.size.x-1, 0), _paint);
+        canvas.drawImage(loadedImage, cameraOffset.toOffset() + Offset(loadedImage.size.x-1, 0), _paint);
       }
 
     }
