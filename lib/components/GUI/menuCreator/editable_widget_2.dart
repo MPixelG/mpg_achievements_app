@@ -1,4 +1,3 @@
-/*
 import 'dart:math';
 
 import 'package:flame/extensions.dart';
@@ -21,20 +20,12 @@ class _EditableWidgetState extends State<EditableWidget> { //a class for the sta
 
   @override
   Widget build(BuildContext context) { //the state of the widget. thats the stuff that gets rendered later
-    if (widget.isRoot) { //if its the root node, we need to collect all the children recursively for adding gesture detection to them later. doing that recursively doesnt rly work.
-      List<EditorNode> allNodes = []; //a list of all the children nodes
-      _collectAllNodesRecursive(widget.node, allNodes); //gets all of the child nodes of the given node. since this is the root node, this will get us every one of them.
-
-      return Stack( //a stack lets you render multiple widgets over each other.
-        clipBehavior: Clip.none, //so that no child widget gets cut off outside of the bounds of the root node
-        children: [
-          for (EditorNode node in allNodes) //recursively gets all of the nodes from the root node
-            _buildNodeWidget(node),
-        ],
-      );
-    } else {
-      return Container(); //since we already did all of the work for the children in the root node, we can skip the build part for the children.
-    }
+    return Stack( //a stack lets you render multiple widgets over each other.
+      clipBehavior: Clip.none, //so that no child widget gets cut off outside of the bounds of the root node
+      children: [
+        _buildNodeWidget(widget.node),
+      ],
+    );
   }
 
   void _collectAllNodesRecursive(EditorNode node, List<EditorNode> allNodes) { //recursively collects all of the child nodes into a given list.
@@ -87,14 +78,21 @@ class _EditableWidgetState extends State<EditableWidget> { //a class for the sta
       decoration: BoxDecoration(
         border: isDragging ? Border.all(color: Colors.blue, width: 2) : null, //if we are dragging, we create a blue border.
       ),
-      child: node.builder(), //give the actual content of the current node as a child to be rendered inside
+      child: Stack(
+
+        clipBehavior: Clip.none,
+        children: [
+          node.builder(),
+
+           //give the actual content of the current node as a child to be rendered inside
+        ]
+
+      )
     );
 
-    return Positioned( //move the node to the actual position
-      left: absolutePos.dx * screenWidth, //convert the relative position to the absolute position. the relative one is a percentage of the screen size.
-      top: absolutePos.dy * screenHeight, //same for the y
-      child: GestureDetector( //a gesture detector to detect clicking, dragging, etc.
-        behavior: HitTestBehavior.opaque, //set the hit test behavior to opaque, so that only the clicked element gets clicked at, not the ones below it.
+    return Stack(children: [ //move the node to the actual position
+        IntrinsicWidth( child:IntrinsicWidth(child: GestureDetector( //a gesture detector to detect clicking, dragging, etc.
+        behavior: HitTestBehavior.deferToChild, //set the hit test behavior to opaque, so that only the clicked element gets clicked at, not the ones below it.
         onPanStart: (details) { //when we start clicking / dragging
           setState(() {
             node.properties['isDragging'] = true; //we set dragging to true
@@ -109,9 +107,14 @@ class _EditableWidgetState extends State<EditableWidget> { //a class for the sta
         onSecondaryTapDown: (details) { // when we right-click
           _showContextMenu(context, details.globalPosition, node); //we create a little menu to delete, edit, etc. still WIP //TODO
         },
-        child: content, //the actual content of the node
+        child: Stack(children: [content,]//the actual content of the node
+        ),
       ),
-    );
+      ),
+      ),
+      for(EditorNode childNode in node.childrenNodes)
+        EditableWidget(childNode, key: GlobalKey()),
+    ]);
   }
 
 
@@ -264,8 +267,6 @@ Future<String> getDialogueAnswer(String question, BuildContext context) async {
       })
 
       ?? "";
-
-
   return text;
 }
 
@@ -360,9 +361,7 @@ Widget _buildColumn(EditorNode node){
   );
 }
 
-// Lösung 2: Erweiterte Builder mit dynamischen Eigenschaften
 Widget _buildRowAdvanced(EditorNode node) {
-  // Eigenschaften aus den node properties lesen
   final double minWidth = node.properties['minWidth'] as double? ?? 100;
   final double minHeight = node.properties['minHeight'] as double? ?? 50;
   final bool showBorder = node.properties['showBorder'] as bool? ?? true;
@@ -477,4 +476,3 @@ class EditorNode { //the logic behind the widgets. the nodes let us create a tre
 
   EditorNode(this.builder, this.key, {required this.properties});
 }
-*/

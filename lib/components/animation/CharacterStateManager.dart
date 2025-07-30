@@ -93,13 +93,13 @@ mixin CharacterStateManager on SpriteAnimationGroupComponent, BasicMovement, Has
     PlayerState playerState = PlayerState.idle;
     //if we are going to the right and facing left flip us and the other way round
     //if the velocity is less than 2 we don't animate bc the movement is too slow and not noticeable
-    if (velocity.x < -3 && scale.x > 0) {
+    if (velocity.x < -1 && scale.x > 0) {
       flipHorizontallyAroundCenter();
-    } else if (velocity.x > 3 && scale.x < 0) {
+    } else if (velocity.x > 1 && scale.x < 0) {
       flipHorizontallyAroundCenter();
     }
     //Check if moving
-    if (velocity.x > 3 || velocity.x < -3) {
+    if (velocity.x > 1 || velocity.x < -1) {
       playerState = PlayerState.running;
     }
 
