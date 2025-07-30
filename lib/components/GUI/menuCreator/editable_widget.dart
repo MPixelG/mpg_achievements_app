@@ -118,7 +118,7 @@ class _EditableWidgetState extends State<EditableWidget> { //a class for the sta
   void panUpdate(DragUpdateDetails details, EditorNode node){
 
     //we need an exact pos, because every frame we only move the curser by 1-5 px. if we round that back to 0 bc of the grid movement we wouldnt move at all. thats why we have the regular position that is used for rendering and the exact position used for calculating.
-    final Offset exactPos = node.properties['exactPosition'] as Offset? ?? Offset(0.05, 0.05); //if there isnt a position set yet, we use 0.1 as a default (0.1 = 10% of the screen width)
+    final Offset exactPos = node.properties['exactPosition'] as Offset? ?? node.properties['position'] as Offset? ?? Offset(0.05, 0.05); //if there isnt a position set yet, we use 0.1 as a default (0.1 = 10% of the screen width)
 
     final Offset newExactPos = Offset(exactPos.dx + details.delta.dx / screenWidth, //add the movement of the curser to the position of the component to drag it with the mouse cursor
         exactPos.dy + details.delta.dy / screenHeight); //same for the y
@@ -167,15 +167,57 @@ class _EditableWidgetState extends State<EditableWidget> { //a class for the sta
     );
 
     if (selected == 'add_child') { //if we clicked on 'add child'
+
+
+      final newType = await showMenu<String>(
+        context: context,
+        position: RelativeRect.fromLTRB( //set the sizes and position to the given pos
+          position.dx,
+          position.dy,
+          position.dx, //set the sizes to the same pos to be as small as possible
+          position.dy,
+        ), items: [
+
+          PopupMenuItem(value: "container", child: Text("Container")),
+          PopupMenuItem(value: "text", child: Text("Text")),
+          PopupMenuItem(value: "row", child: Text("Row")),
+          PopupMenuItem(value: "colum", child: Text("Colum"))
+
+
+      ]);
       setState(() { //we update the state
         final childPos = Offset(0.05, 0.05); //the new child pos
 
-        final newChild = EditorNode(() => Container( //add a new editor node (for now just a colored container)
-          width: 50, //with a width of 50
-          height: 30, //and a height of 30
-          color: Colors.primaries.random(Random(targetNode.key.hashCode)).shade300, //get a random color depending on the parents key
+        String text = "";
+        if(newType == "text") {
+          Future.microtask(() async {
+            String text = "";
+            if(newType == "text") {
+              text = await getDialogueAnswer("question", context);
 
-        ), GlobalKey(), properties: {'position': childPos}); //sets the next position as a property
+              setState(() {
+                EditorNode newChild = EditorNode(() => _buildText(text),
+                    GlobalKey(),
+                    properties: {'position': childPos}
+                );
+                targetNode.childrenNodes.add(newChild);
+              });
+            }
+          });
+        }
+
+
+
+        EditorNode newChild = EditorNode(() => switch(newType){
+          "row" => _buildRow(targetNode),
+          "colum" => _buildColumn(targetNode),
+
+          "text" => _buildText(text),
+          "container" => _buildContainer(targetNode.key),
+          _ => _buildContainer(targetNode.key)
+        },
+            GlobalKey(), properties: {'position': childPos}
+        );
 
         targetNode.childrenNodes.add(newChild); //and add it to the targeted node
       });
@@ -187,6 +229,234 @@ class _EditableWidgetState extends State<EditableWidget> { //a class for the sta
       );
     }
   }
+}
+
+Future<String> getDialogueAnswer(String question, BuildContext context) async {
+
+  final TextEditingController _textController = TextEditingController();
+
+  String text = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(question),
+          content: TextField(
+            controller: _textController,
+            decoration: InputDecoration(hintText: question),
+          ),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Submit'),
+              onPressed: () {
+                Navigator.of(context).pop(_textController.text);
+              },
+            ),
+          ],
+        );
+
+      })
+
+      ?? "";
+
+
+  return text;
+}
+
+
+
+Container _buildContainer(Key targetedNodeKey){
+  return Container( //add a new editor node (for now just a colored container)
+    width: 50, //with a width of 50
+    height: 30, //and a height of 30
+    color: Colors.primaries.random(Random(targetedNodeKey.hashCode)).shade300, //get a random color depending on the parents key
+  );
+}
+
+Text _buildText(String text){
+  return Text(text, style: TextStyle(fontFamily: "gameFont"));
+}
+
+Widget _buildRow(EditorNode node){
+  return Container(
+    constraints: BoxConstraints(
+      minWidth: 100,
+      minHeight: 50,
+    ),
+    decoration: BoxDecoration(
+      border: Border.all(
+        color: Colors.blue.withOpacity(0.5),
+        width: 1,
+        style: BorderStyle.solid,
+      ),
+      color: Colors.blue.withOpacity(0.1),
+    ),
+    child: IntrinsicHeight(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (node.childrenNodes.isEmpty)
+            Container(
+              width: 80,
+              height: 30,
+              alignment: Alignment.center,
+              child: Text(
+                'Empty Row',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildColumn(EditorNode node){
+  return Container(
+    constraints: BoxConstraints(
+      minWidth: 80,
+      minHeight: 100,
+    ),
+    decoration: BoxDecoration(
+      border: Border.all(
+        color: Colors.green.withOpacity(0.5),
+        width: 1,
+        style: BorderStyle.solid,
+      ),
+      color: Colors.green.withOpacity(0.1),
+    ),
+    child: IntrinsicWidth(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (node.childrenNodes.isEmpty)
+            Container(
+              width: 60,
+              height: 80,
+              alignment: Alignment.center,
+              child: Text(
+                'Empty\nColumn',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
+// Lösung 2: Erweiterte Builder mit dynamischen Eigenschaften
+Widget _buildRowAdvanced(EditorNode node) {
+  // Eigenschaften aus den node properties lesen
+  final double minWidth = node.properties['minWidth'] as double? ?? 100;
+  final double minHeight = node.properties['minHeight'] as double? ?? 50;
+  final bool showBorder = node.properties['showBorder'] as bool? ?? true;
+  final MainAxisAlignment mainAxisAlignment =
+      node.properties['mainAxisAlignment'] as MainAxisAlignment? ?? MainAxisAlignment.start;
+  final CrossAxisAlignment crossAxisAlignment =
+      node.properties['crossAxisAlignment'] as CrossAxisAlignment? ?? CrossAxisAlignment.center;
+
+  return Container(
+    constraints: BoxConstraints(
+      minWidth: minWidth,
+      minHeight: minHeight,
+    ),
+    decoration: showBorder ? BoxDecoration(
+      border: Border.all(
+        color: Colors.blue.withOpacity(0.5),
+        width: 1,
+      ),
+      color: Colors.blue.withOpacity(0.05),
+    ) : null,
+    child: IntrinsicHeight(
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: mainAxisAlignment,
+        crossAxisAlignment: crossAxisAlignment,
+        children: [
+          if (node.childrenNodes.isEmpty)
+            Container(
+              padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+              child: Text(
+                'Drop items here',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildColumnAdvanced(EditorNode node) {
+  final double minWidth = node.properties['minWidth'] as double? ?? 80;
+  final double minHeight = node.properties['minHeight'] as double? ?? 100;
+  final bool showBorder = node.properties['showBorder'] as bool? ?? true;
+  final MainAxisAlignment mainAxisAlignment =
+      node.properties['mainAxisAlignment'] as MainAxisAlignment? ?? MainAxisAlignment.start;
+  final CrossAxisAlignment crossAxisAlignment =
+      node.properties['crossAxisAlignment'] as CrossAxisAlignment? ?? CrossAxisAlignment.center;
+
+  return Container(
+    constraints: BoxConstraints(
+      minWidth: minWidth,
+      minHeight: minHeight,
+    ),
+    decoration: showBorder ? BoxDecoration(
+      border: Border.all(
+        color: Colors.green.withOpacity(0.5),
+        width: 1,
+      ),
+      color: Colors.green.withOpacity(0.05),
+    ) : null,
+    child: IntrinsicWidth(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: mainAxisAlignment,
+        crossAxisAlignment: crossAxisAlignment,
+        children: [
+
+          // Wenn keine Kinder vorhanden sind, Platzhalter anzeigen
+          if (node.childrenNodes.isEmpty)
+            Container(
+              padding: EdgeInsets.all(8),
+              child: Text(
+                'Drop items\nhere',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
+// Hilfsfunktion um zu prüfen ob ein Layout-Widget leer ist
+bool _isLayoutEmpty(EditorNode node) {
+  return node.childrenNodes.isEmpty;
 }
 
 extension OffsetClamp on Offset { //we create an extension for the offset. with that, we can now call the clamp function on any offset. this way everything is cleaned up and we dont have a separate function just for this

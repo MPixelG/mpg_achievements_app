@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io' show Platform;
-import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -9,7 +8,6 @@ import 'package:flutter/cupertino.dart' hide AnimationStyle, Image;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
 import 'package:mpg_achievements_app/components/player.dart';
-import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
 import 'components/GUI/menuCreator/gui_editor.dart';
 import 'components/level_components/enemy.dart';
 import 'components/level.dart';
@@ -48,7 +46,7 @@ class PixelAdventure extends FlameGame
     await images.loadAllImages();
     //world is loaded after initialising all images
 
-    level = Level(levelName: 'Level_2', player: player, enemy);
+    level = Level(levelName: 'Level_4', player: player, enemy);
 
     cam = AdvancedCamera(world: level);
     cam.player = player;

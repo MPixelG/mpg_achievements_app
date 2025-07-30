@@ -16,14 +16,14 @@
         },
         "Level_0.tmx": {
             "expandedObjectLayers": [
-                17,
-                20
+                20,
+                17
             ],
             "scale": 1.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 320.3333333333333,
-                "y": 184.33333333333334
+                "x": 320,
+                "y": 183.66666666666663
             }
         },
         "Level_1.tmx": {
@@ -34,20 +34,20 @@
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 320.75,
+                "x": 320.5,
                 "y": 184.25
             }
         },
         "Level_2.tmx": {
             "expandedObjectLayers": [
-                4,
-                2
+                2,
+                4
             ],
             "scale": 1.5,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": 118.99999999999997,
-                "y": 199
+                "x": 1079,
+                "y": 510.66666666666663
             }
         },
         "Level_3.tmx": {
@@ -59,15 +59,15 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 512.3333333333333,
-                "y": 512.3333333333333
+                "y": 512.6666666666666
             }
         },
         "Level_4.tmx": {
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1424.6666666666665,
-                "y": 460.66666666666663
+                "x": 983.3333333333334,
+                "y": 690.6666666666665
             }
         },
         "Level_5.tmx": {
@@ -105,8 +105,8 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1025,
-                "y": 447
+                "x": 2509,
+                "y": 96
             }
         },
         "crystal stuff.tsx": {
@@ -118,30 +118,30 @@
         },
         "industrial_tiles_2.tsx": {
             "dynamicWrapping": true,
-            "scaleInDock": 1,
+            "scaleInDock": 1.4,
             "scaleInEditor": 8
         },
         "industrial_tiles_3.tsx": {
             "dynamicWrapping": false,
-            "scaleInDock": 1,
+            "scaleInDock": 1.4,
             "scaleInEditor": 1
         },
         "industrial_tiles_4.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 1.4,
             "scaleInEditor": 1
         },
         "industrial_tiles_bg_0.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 1.4,
             "scaleInEditor": 3
         },
         "industrial_tiles_bg_1.tsx": {
             "dynamicWrapping": false,
-            "scaleInDock": 1,
+            "scaleInDock": 1.4,
             "scaleInEditor": 1
         },
         "industrial_tiles_bg_2.tsx": {
             "dynamicWrapping": false,
-            "scaleInDock": 1,
+            "scaleInDock": 1.4,
             "scaleInEditor": 3
         },
         "parralax_city_0.tsx": {

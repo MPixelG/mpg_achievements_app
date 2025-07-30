@@ -1,8 +1,6 @@
 
 import 'package:flame/components.dart';
-import 'package:jenny/jenny.dart' show YarnProject, DialogueView, DialogueChoice;
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-
+import 'package:jenny/jenny.dart';
 
 abstract class DialogueYarnCreator extends Component {
 
@@ -37,7 +35,7 @@ abstract class DialogueYarnCreator extends Component {
       ===
     ''';
 
-    final project = YarnProject()
+    final YarnProject project = YarnProject()
       ..parse(yarntest);
 
 
