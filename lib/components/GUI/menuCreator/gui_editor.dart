@@ -17,17 +17,19 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   late LayoutWidget root; //just temp to be initialized later in initState()
 
   late NodeViewer nodeViewer; //this is the node viewer that will be used to show the dependencies of a node. TODO: implement this
-
+  final GlobalKey<NodeViewerState> _nodeViewerKey = GlobalKey<NodeViewerState>();
 
 
   @override
   void initState(){
 
-    root = addRow();
-    nodeViewer = NodeViewer(root: root); //the node viewer is initialized with the root widget, which is the main widget that contains all the other widgets.
+    root = addContainer();
+    nodeViewer = NodeViewer(root: root, key: _nodeViewerKey,); //the node viewer is initialized with the root widget, which is the main widget that contains all the other widgets.
 
     super.initState();
   }
+
+
 
 
   @override
@@ -71,6 +73,10 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
               case "text": showTextAlertDialog(context);
               case "row": addWidget(addRow());
             }
+
+            _nodeViewerKey.currentState?.setState(() {}); //this updates the node viewer to show the new widget that was added
+            print("updated state of node viewer!");
+
           },tooltip: "open widget menu", child: Icon(Icons.add_box_rounded),),
     );
   }
@@ -136,13 +142,11 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       double screenWidth = MediaQuery.of(context).size.width;
       double screenHeight = MediaQuery.of(context).size.height;
 
-      return Expanded(
-        child: Container(
+      return Container(
         color: Colors.primaries.random(),
         width: properties["width"] == null ? double.infinity : properties["width"] * screenWidth,
         height: properties["height"] == null ? double.infinity : properties["height"] * screenHeight,
         child: Stack(children: children),
-        ),
       );
     }, id: 'container${containerIndex++}');
 

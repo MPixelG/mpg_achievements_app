@@ -8,10 +8,10 @@ class NodeViewer extends StatefulWidget {
   const NodeViewer({this.root, super.key});
 
   @override
-  State<NodeViewer> createState() => _NodeViewerState();
+  State<NodeViewer> createState() => NodeViewerState();
 }
 
-class _NodeViewerState extends State<NodeViewer> {
+class NodeViewerState extends State<NodeViewer> {
   void _handleReorder(LayoutWidget dragged, LayoutWidget target) {
     if (widget.root == null || dragged == target || isDescendant(dragged, target)) return;
 
@@ -79,6 +79,10 @@ class _NodeViewerState extends State<NodeViewer> {
       ),
     );
   }
+
+  void refresh() {
+    setState(() {});
+  }
 }
 
 class DisplayNode extends StatelessWidget {
@@ -117,7 +121,7 @@ class DisplayNode extends StatelessWidget {
 
     return DragTarget<LayoutWidget>(
       onWillAcceptWithDetails: (dragged) {
-        return dragged.data != node && !(isDescendant(dragged.data, node));
+        return dragged.data != node ;
       },
       onAcceptWithDetails: (dragged) {
         if (onReorder != null) onReorder!(dragged.data, node);
@@ -215,6 +219,8 @@ class DisplayNode extends StatelessWidget {
     );
   }
 
+  /// Checks if the dragged widget is a descendant of the target widget.
+  /// This is used to prevent dragging a widget into its own subtree.
   bool isDescendant(LayoutWidget dragged, LayoutWidget target) {
     if (target.children.contains(dragged)) return true;
     for (var child in target.children) {

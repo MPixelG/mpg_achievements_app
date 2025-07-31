@@ -303,7 +303,6 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
     POINode? endNode = getNodeAt(endPos); //the node at the end of the path. we want to connect those two
 
     if (startNode == null || endNode == null) { //if one of those is null, they are inside of a wall or sth.
-      print("null! start: " + startNode.toString() + ", end: " + endNode.toString());
       return null; //we return bc its not possible to generate the path.
     }
 
