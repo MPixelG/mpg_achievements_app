@@ -145,6 +145,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
         ),
       );
     }, id: 'container${containerIndex++}');
+
     return widget;
   }
 

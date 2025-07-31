@@ -41,26 +41,46 @@ class _NodeViewerState extends State<NodeViewer> {
   @override
   Widget build(BuildContext context) {
     if (widget.root == null) {
-      return const Center(child: Text("No root widget defined"));
+      return const Scaffold(
+        body: Center(child: Text("No root widget defined")),
+      );
     }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Node Viewer"),
         centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(8),
-        child: DisplayNode(
-          node: widget.root!,
-          onReorder: _handleReorder,
+      body: Container(
+        padding: const EdgeInsets.all(16),
+        child: InteractiveViewer(
+          constrained: false,
+          boundaryMargin: const EdgeInsets.all(20),
+          minScale: 0.5,
+          maxScale: 2.0,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Container(
+                constraints: const BoxConstraints(
+                  minWidth: 800,
+                  minHeight: 600,
+                ),
+                child: DisplayNode(
+                  node: widget.root!,
+                  onReorder: _handleReorder,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-// In DisplayNode
 class DisplayNode extends StatelessWidget {
   final LayoutWidget node;
   final String prefix;
@@ -96,36 +116,102 @@ class DisplayNode extends StatelessWidget {
     }
 
     return DragTarget<LayoutWidget>(
-      onWillAccept: (dragged) {
-        return dragged != node && !(dragged == null || isDescendant(dragged, node));
+      onWillAcceptWithDetails: (dragged) {
+        return dragged.data != node && !(isDescendant(dragged.data, node));
       },
-      onAccept: (dragged) {
-        if (onReorder != null) onReorder!(dragged, node);
+      onAcceptWithDetails: (dragged) {
+        if (onReorder != null) onReorder!(dragged.data, node);
       },
       builder: (context, candidateData, rejectedData) {
-        return LongPressDraggable<LayoutWidget>(
+        bool isHovering = candidateData.isNotEmpty;
+
+        return Draggable<LayoutWidget>(
           data: node,
           feedback: Material(
-            child: Text(prefix + node.id, style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "$prefix${node.id}",
-                  style: const TextStyle(fontSize: 16, color: Colors.black87),
+            elevation: 8,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade100,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.blue, width: 2),
+              ),
+              child: Text(
+                prefix + node.id,
+                style: const TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 12),
-                  child: Column(children: displayedChildren),
-                ),
-              ],
+              ),
             ),
           ),
+          childWhenDragging: Opacity(
+            opacity: 0.5,
+            child: _buildNodeContent(context, isHovering, displayedChildren),
+          ),
+          child: _buildNodeContent(context, isHovering, displayedChildren),
         );
       },
+    );
+  }
+
+  Widget _buildNodeContent(BuildContext context, bool isHovering, List<Widget> displayedChildren) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 2.0),
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: isHovering ? Colors.green.shade50 : Colors.transparent,
+        border: isHovering
+            ? Border.all(color: Colors.green, width: 2)
+            : Border.all(color: Colors.grey.shade300, width: 1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: IntrinsicWidth(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.widgets,
+                    size: 16,
+                    color: Colors.blue.shade700,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    "$prefix${node.id}",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blue.shade800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (displayedChildren.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: displayedChildren,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 
@@ -137,4 +223,3 @@ class DisplayNode extends StatelessWidget {
     return false;
   }
 }
-
