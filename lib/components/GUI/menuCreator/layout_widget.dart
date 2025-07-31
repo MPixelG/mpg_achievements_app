@@ -1,41 +1,27 @@
 import 'package:flutter/cupertino.dart';
-
-class LayoutWidget{
-  final List<LayoutWidget> children = [];
-  final Widget Function(BuildContext context, List<LayoutWidget> children, Map<String, dynamic> properties) _builder;
+class LayoutWidget {
+  final String id;
+  final Widget Function(BuildContext context, List<Widget> children, Map<String, dynamic> properties) _builder;
+  late final List<LayoutWidget> children;
   Map<String, dynamic> properties;
 
-  LayoutWidget(this._builder, {this.properties = const {}});
+  LayoutWidget(this._builder, {
+    required this.id,
+    List<LayoutWidget>? children,
+    this.properties = const {},
+  }){
+    this.children = children ?? [];
+  }
 
   void addChild(LayoutWidget child) {
     children.add(child);
   }
 
-  Widget build(BuildContext context) => _builder(context, children, properties);
+  void removeChild(LayoutWidget child) {
+    children.remove(child);
+  }
 
-  void removeChild(LayoutWidget child) => children.remove(child);
-}
-
-class RelativelySizedBox extends StatelessWidget {
-  final double widthFactor;
-  final double heightFactor;
-  final Widget child;
-
-  const RelativelySizedBox({
-    required this.widthFactor,
-    required this.heightFactor,
-    required this.child,
-    super.key,
-  });
-
-  @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    return SizedBox(
-      width: widthFactor * size.width,
-      height: heightFactor * size.height,
-      child: child,
-    );
+    return _builder(context, children.map((c) => c.build(context)).toList(), properties);
   }
 }

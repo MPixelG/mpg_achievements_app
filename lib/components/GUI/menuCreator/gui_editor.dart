@@ -124,6 +124,8 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
     return widgets.map((widget) => widget.build(context)).toList();
   }
 
+
+  int containerIndex = 0; //this is used to give the container widgets a unique id
   /// Adds a container widget to the layout.
   /// The container will fill a percentage of the screen size based on the properties provided.
   /// If no properties are provided, it defaults to 30% of the screen width and height.
@@ -139,29 +141,30 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
         color: Colors.primaries.random(),
         width: properties["width"] == null ? double.infinity : properties["width"] * screenWidth,
         height: properties["height"] == null ? double.infinity : properties["height"] * screenHeight,
-        child: Stack(children: toWidgetList(children)),
+        child: Stack(children: children),
         ),
       );
-    });
-
+    }, id: 'container${containerIndex++}');
     return widget;
   }
 
 
+  int rowIndex = 0; //this is used to give the row widgets a unique id
   LayoutWidget addRow(){
     LayoutWidget widget = LayoutWidget((context, children, properties) {
       return Row(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
-        children: toWidgetList(children),
+        children: children,
       );
-    });
+    }, id: 'row${rowIndex++}');
 
     return widget;
   }
 
 
+  int textIndex = 0; //this is used to give the text widgets a unique id
   /// Adds a text widget to the layout.
   LayoutWidget addText(String text){
     LayoutWidget widget = LayoutWidget((context, children, properties) {
@@ -172,9 +175,9 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
             text,
             style: TextStyle(fontSize: 18, color: Colors.black, fontFamily: "gameFont"),
             textAlign: TextAlign.center),
-        ...toWidgetList(children)]
+        ...children]
       );
-    });
+    }, id: 'text${textIndex++}');
 
     return widget;
   }
