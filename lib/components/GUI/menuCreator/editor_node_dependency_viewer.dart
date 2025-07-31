@@ -4,8 +4,9 @@ import 'package:mpg_achievements_app/components/GUI/menuCreator/layout_widget.da
 
 class NodeViewer extends StatefulWidget { // a widget to view and manage a tree of LayoutWidgets
   final LayoutWidget? root; // the root node of the tree to display
+  final void Function()? updateViewport; // a function to update the viewport, not used in this widget but can be used to refresh the view of the parent
 
-  const NodeViewer({this.root, super.key}); //default constructor with an optional root node
+  const NodeViewer({this.root, super.key, this.updateViewport}); //default constructor with an optional root node
 
   @override
   State<NodeViewer> createState() => NodeViewerState(); // create the state for this widget. we have a separate class for that
@@ -24,6 +25,11 @@ class NodeViewerState extends State<NodeViewer> { //the state for the NodeViewer
 
     target.children.add(dragged); //and add it to the target widgets children
     setState(() {}); //refresh the state to update the gui
+
+    if(widget.updateViewport != null) { //if there is a function to update the viewport, call it
+      widget.updateViewport!(); //this is used to refresh the view of the parent widget
+    }
+
   }
 
   bool isDescendant(LayoutWidget dragged, LayoutWidget target) { //check if the dragged widget is a descendant of the target widget

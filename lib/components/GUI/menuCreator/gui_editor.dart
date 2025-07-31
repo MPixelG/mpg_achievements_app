@@ -19,10 +19,14 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   late NodeViewer nodeViewer; //this is the node viewer that will be used to show the dependencies of a node. TODO: implement this
   final GlobalKey<NodeViewerState> _nodeViewerKey = GlobalKey<NodeViewerState>();
 
+  void updateViewport() { //this is used to update the viewport of the node viewer, so that it shows the current state of the layout
+    setState(() {}); //we call setState on the node viewer to rebuild it and show the current state of the layout
+  }
+
   @override
   void initState(){ //inits. basically the same as onLoad but for flutter widgets
     root = addContainer(null); //set the root widget to a container widget, which is the main widget that contains all the other widgets. we set null as the parent, so it is the root widget.
-    nodeViewer = NodeViewer(root: root, key: _nodeViewerKey,); //the node viewer is initialized with the root widget, which is the main widget that contains all the other widgets.
+    nodeViewer = NodeViewer(root: root, key: _nodeViewerKey, updateViewport: updateViewport); //the node viewer is initialized with the root widget, which is the main widget that contains all the other widgets.
 
     super.initState();
   }
@@ -142,8 +146,8 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
       return Container( //the actual container widget that will be displayed
         color: properties["color"], //if the color is provided, we use it, otherwise we use a random color. we defined that above
-        width: properties["width"] == null ? screenWidth : properties["width"] * screenWidth, //we calculate the width of the container based on the properties provided. if no width is provided, we use the screen width to fully fill the screen
-        height: properties["height"] == null ? screenHeight : properties["height"] * screenHeight, //same for the height
+        width: properties["width"] == null ? (screenWidth) : properties["width"] * screenWidth, //we calculate the width of the container based on the properties provided. if no width is provided, we use the screen width to fully fill the screen
+        height: properties["height"] == null ? (screenHeight) : properties["height"] * screenHeight, //same for the height
         child: children.isNotEmpty ? children.first : null //we only allow one child in a container, so we take the first child from the children list. if no child is provided, we give null
       );
     }, id: 'container${containerIndex++}', //the container id is set to a unique id based on the containerIndex. it also increments the index so that the next container will have a different id
