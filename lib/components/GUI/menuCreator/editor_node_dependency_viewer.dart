@@ -101,133 +101,123 @@ class NodeViewerState extends State<NodeViewer> { //the state for the NodeViewer
   }
 }
 
-class DisplayNode extends StatelessWidget {
-  final LayoutWidget node;
-  final String prefix;
-  final String childrenPrefix;
-  final void Function(LayoutWidget dragged, LayoutWidget target)? onReorder;
+class DisplayNode extends StatelessWidget { //a widget to display a single LayoutWidget and its children
+  final LayoutWidget node; //the node to display
+  final void Function(LayoutWidget dragged, LayoutWidget target)? onReorder; //the function thats called when a widget is dragged and dropped onto another widget to reorder them
 
-  const DisplayNode({
-    required this.node,
-    super.key,
-    this.prefix = "",
-    this.childrenPrefix = "",
-    this.onReorder,
+  const DisplayNode({ //constructor for the DisplayNode widget
+    required this.node, //the node to display
+    super.key, //the key for the widget
+    this.onReorder, //function to reorder
   });
 
   @override
-  Widget build(BuildContext context) {
-    final children = node.children;
+  Widget build(BuildContext context) { //build the widget tree for the DisplayNode and its children
+    final children = node.children; //get the children of the node to display
 
-    List<Widget> displayedChildren = [];
-    for (int i = 0; i < children.length; i++) {
-      String nextPrefix =
-          childrenPrefix + (i == children.length - 1 ? "└── " : "├── ");
-      String nextChildrenPrefix =
-          childrenPrefix + (i == children.length - 1 ? "    " : "│   ");
+    List<Widget> displayedChildren = []; //a list to hold the widgets that will be displayed as children
+    for (int i = 0; i < children.length; i++) { //iterate over them
 
-      displayedChildren.add(
-        DisplayNode(
-          node: children[i],
-          prefix: nextPrefix,
-          childrenPrefix: nextChildrenPrefix,
-          onReorder: onReorder,
-          key: ValueKey(children[i].id),
+      displayedChildren.add( //and add them to the list
+        DisplayNode( //as a DisplayNode widget
+          node: children[i], //with the given child node
+          onReorder: onReorder, //and the function to reorder them
+          key: ValueKey(children[i].id), //and a key to identify it
         ),
       );
     }
 
-    return DragTarget<LayoutWidget>(
-      onWillAcceptWithDetails: (dragged) {
-        return dragged.data != node && node.canAddChild;
+    return DragTarget<LayoutWidget>( //the DisplayNode is also a DragTarget so that we can drop widgets onto it
+      onWillAcceptWithDetails: (dragged) { //when a widget is dragged over the DisplayNode we check if we can accept it
+        return dragged.data != node && node.canAddChild; //if its not the same node and if the node can accept children, we return true
       },
-      onAcceptWithDetails: (dragged) {
-        if (onReorder != null) onReorder!(dragged.data, node);
+      onAcceptWithDetails: (dragged) { //when a widget is dropped onto the DisplayNode
+        if (onReorder != null) onReorder!(dragged.data, node); //we call the function to reorder the nodes
       },
-      builder: (context, candidateData, rejectedData) {
-        bool isHovering = candidateData.isNotEmpty;
+      builder: (context, candidateData, rejectedData) { //build the widget tree for the DisplayNode
+        bool isHovering = candidateData.isNotEmpty; //check if the DisplayNode is currently being hovered over by a dragged widget
 
-        return Draggable<LayoutWidget>(
-          data: node,
-          feedback: Material(
-            elevation: 8,
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade100,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.blue, width: 2),
+        return Draggable<LayoutWidget>( //the DisplayNode is also a Draggable widget so that we can drag it around
+          data: node, //the data we want to drag is the node
+          feedback: Material( //the feedback widget that is displayed while dragging
+            elevation: 8, //with a little bit of elevation
+            borderRadius: BorderRadius.circular(8), //and a border radius of 8
+            child: Container( //the container that holds the feedback widget
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), //with some padding (its used to add some space around the text)
+              decoration: BoxDecoration( //the decoration of the container
+                color: Colors.blue.shade100, //a light blue background color
+                borderRadius: BorderRadius.circular(8), //with a border radius of 8
+                border: Border.all(color: Colors.blue, width: 2), //and a blue border
               ),
-              child: Text(
-                prefix + node.id,
-                style: const TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+              child: Text( //the text that is displayed while dragging
+                node.id, //it displays the id of the node for now //TODO
+                style: const TextStyle( //the style of the text
+                  color: Colors.blue, //the text color is blue
+                  fontWeight: FontWeight.bold, //in bold
+                  fontSize: 14, //with a font size of 14
                 ),
               ),
             ),
           ),
-          childWhenDragging: Opacity(
-            opacity: 0.5,
-            child: _buildNodeContent(context, isHovering, displayedChildren),
+          childWhenDragging: Opacity( //the widget that is displayed while dragging the DisplayNode has a lower opacity
+            opacity: 0.5, //of 0.5
+            child: _buildNodeContent(context, isHovering, displayedChildren), //the content of the DisplayNode is still displayed while dragging
           ),
-          child: _buildNodeContent(context, isHovering, displayedChildren),
+          child: _buildNodeContent(context, isHovering, displayedChildren), //the content of the DisplayNode is displayed normally when not dragging
         );
       },
     );
   }
 
-  Widget _buildNodeContent(
-    BuildContext context,
-    bool isHovering,
-    List<Widget> displayedChildren,
+  Widget _buildNodeContent( //a helper function to build the content of the DisplayNode
+    BuildContext context, //the context of the widget
+    bool isHovering, //if the DisplayNode is currently being hovered over
+    List<Widget> displayedChildren, //the list of widgets that are the children of the node
   ) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 2.0),
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: isHovering ? Colors.green.shade50 : Colors.transparent,
-        border: isHovering
-            ? Border.all(color: Colors.green, width: 2)
-            : Border.all(color: Colors.grey.shade300, width: 1),
-        borderRadius: BorderRadius.circular(8),
+    return Container( //the container that holds the content of the DisplayNode
+      margin: const EdgeInsets.symmetric(vertical: 2.0), //with some vertical margin (the space between the nodes)
+      padding: const EdgeInsets.all(8.0), //and some padding (the space inside the node)
+      decoration: BoxDecoration( //the decoration of the container
+        color: isHovering ? Colors.green.shade50 : Colors.transparent, //if the DisplayNode is being hovered over, we use a light green background color, otherwise we use transparent (no background)
+        border: isHovering //if the DisplayNode is being hovered over, we use a green border, otherwise we use a light grey border
+            ? Border.all(color: Colors.green, width: 2) // a green border
+            : Border.all(color: Colors.grey.shade300, width: 1), // a light grey border
+        borderRadius: BorderRadius.circular(8), //with a border radius of 8
       ),
-      child: IntrinsicWidth(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(4),
+      child: IntrinsicWidth( //the content of the DisplayNode should have an intrinsic width (a width that is determined by the content)
+        child: Column( //the content is a column
+          crossAxisAlignment: CrossAxisAlignment.start, //with the children aligned to the start (left side)
+          mainAxisSize: MainAxisSize.min, //it takes as little space as needed
+          children: [ //the children of the column are the content of the DisplayNode
+            Container( //the first child is a container that displays the id of the node
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), //with some padding
+              decoration: BoxDecoration( //the decoration of the container
+                color: Colors.blue.shade50, //a light blue background color
+                borderRadius: BorderRadius.circular(4), //with a border radius of 4
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.widgets, size: 16, color: Colors.blue.shade700),
-                  const SizedBox(width: 4),
-                  Text(
-                    "$prefix${node.id}",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.blue.shade800,
+              child: Row( //the content of the container is a row
+                mainAxisSize: MainAxisSize.min, //it takes as little space as needed
+                children: [ //the children of the row are the icon and the id of the node
+                  Icon(Icons.widgets, size: 16, color: Colors.blue.shade700), //an icon in a blue color
+                  const SizedBox(width: 4), //a little space between the icon and the text
+                  Text( //the text that displays the id of the node
+                    node.id, //the id of the node
+                    style: TextStyle( //the style of the text
+                      fontSize: 14, //the font size is 14
+                      fontWeight: FontWeight.w600, //the font weight is semi-bold
+                      color: Colors.blue.shade800, //the text color is a darker blue
                     ),
                   ),
                 ],
               ),
             ),
-            if (displayedChildren.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
+            if (displayedChildren.isNotEmpty) ...[ //if the node has children, we display them
+              const SizedBox(height: 8), //a little space between the id and the children
+              Padding( //the children are displayed in a column with some padding
+                padding: const EdgeInsets.only(left: 20), //with some padding to the left
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: displayedChildren,
+                  crossAxisAlignment: CrossAxisAlignment.start, //the children are aligned to the start (left side)
+                  children: displayedChildren, //the children are the widgets we created earlier
                 ),
               ),
             ],
