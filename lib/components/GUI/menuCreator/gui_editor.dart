@@ -11,19 +11,17 @@ class GuiEditor extends StatefulWidget { //the GUI editor lets us create guis an
 
 class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI editor.
 
-  double get screenWidth => MediaQuery.of(context).size.width;
-  double get screenHeight => MediaQuery.of(context).size.width;
+  double get screenWidth => MediaQuery.of(context).size.width; //getter for the screen width, so we can use it to calculate the size of the widgets
+  double get screenHeight => MediaQuery.of(context).size.width; //same for the width
 
   late LayoutWidget root; //just temp to be initialized later in initState()
 
   late NodeViewer nodeViewer; //this is the node viewer that will be used to show the dependencies of a node. TODO: implement this
   final GlobalKey<NodeViewerState> _nodeViewerKey = GlobalKey<NodeViewerState>();
 
-
   @override
-  void initState(){
-
-    root = addContainer(null);
+  void initState(){ //inits. basically the same as onLoad but for flutter widgets
+    root = addContainer(null); //set the root widget to a container widget, which is the main widget that contains all the other widgets. we set null as the parent, so it is the root widget.
     nodeViewer = NodeViewer(root: root, key: _nodeViewerKey,); //the node viewer is initialized with the root widget, which is the main widget that contains all the other widgets.
 
     super.initState();
@@ -32,81 +30,81 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   @override
   Widget build(BuildContext context) { //here we actually build the stuff thats being rendered
     return Scaffold( //we use a scaffold bc it lets us easily add components with some presets.
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white, //the background color of the scaffold is white, so we can see the widgets clearly
 
-        body: Row(
-          children: [
+        body: Row( //we use a row to display the node viewer and the root widget side by side
+          children: [ //the children of the row are the node viewer and the root widget
             SizedBox(height: screenHeight, width: 0.2 * screenWidth, child: nodeViewer), //the node viewer is on the left side of the screen, taking up 20% of the width
             SizedBox(height: screenHeight, width: 0.8 * screenWidth, child: root.build(context)),// the root widget is the main widget that contains all the other widgets. it is built using the LayoutWidget class.
           ]
         ),
 
-      floatingActionButton: PopupMenuButton(itemBuilder: (context) => [
-        PopupMenuItem(
-          value: 'container',
-          child: ListTile(
-            leading: Icon(Icons.add_card),
-            title: Text('Container'),
+      floatingActionButton: PopupMenuButton(itemBuilder: (context) => [ //this is the floating action button that opens a popup menu with the options to add widgets
+        PopupMenuItem(//this is the popup menu item that lets us add a container widget
+          value: 'container', //the value of the popup menu item is used to identify which widget to add
+          child: ListTile( //the ListTile is used to display the icon and the text of the popup menu item
+            leading: Icon(Icons.add_card), //the icon of the ListTile is the icon that is displayed next to the text
+            title: Text('Container'), //the displayed text
           ),
         ),
-        PopupMenuItem(
-          value: 'text',
+        PopupMenuItem( //another option for text
+          value: 'text', //text as a value
           child: ListTile(
-            leading: Icon(Icons.text_snippet),
-            title: Text('Text'),
+            leading: Icon(Icons.text_snippet), //a text snippet icon
+            title: Text('Text'), //with Text as a display
           ),
         ),
-        PopupMenuItem(
-          value: 'row',
+        PopupMenuItem( //another option for row
+          value: 'row', //row as a value
           child: ListTile(
-            leading: Icon(Icons.rectangle_outlined),
-            title: Text('Row'),
+            leading: Icon(Icons.rectangle_outlined), //a rectangle icon
+            title: Text('Row'), //with Row as a display
           ),
         ),
       ],
-          onSelected: (value) {
-            switch(value){
-              case "container": addWidget(addContainer(root));
-              case "text": showTextAlertDialog(context);
-              case "row": addWidget(addRow(root));
+          onSelected: (value) { //this is called when an item is selected from the popup menu
+            switch(value){ //we switch on the value of the selected item
+              case "container": addWidget(addContainer(root)); //if the value is container, we add a container widget to the root widget
+              case "text": showTextAlertDialog(context); //same for text
+              case "row": addWidget(addRow(root)); //and row
             }
 
             _nodeViewerKey.currentState?.setState(() {}); //this updates the node viewer to show the new widget that was added
 
-          },tooltip: "open widget menu", child: Icon(Icons.add_box_rounded),),
+          },tooltip: "open widget menu", child: Icon(Icons.add_box_rounded)) //tooltip and + icon
     );
   }
 
-  void showTextAlertDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        String inputText = "";
-        return AlertDialog(
-          title: Text("Ener your text name here"),
-          content: TextField(
-            autofocus: true,
-            onChanged: (value) {
-              inputText = value;
+  void showTextAlertDialog(BuildContext context) { //this function shows an alert dialog to enter text for a text widget
+    showDialog( //buil-in function to show a dialog
+      context: context, //the context is the current context of the widget
+      builder: (context) { //the builder is a function that returns the widget that will be displayed in the dialog
+        String inputText = ""; //this is the text that will be entered in the text field. we set it to an empty string by default
+        return AlertDialog( //the actual dialog widget
+          title: Text("Ener your text name here"), //the title of the dialog
+          content: TextField( //the content of the dialog is a text field where the user can enter the text
+            autofocus: true, //this makes the text field focused when the dialog is opened
+            onChanged: (value) { //this is called when the text in the text field changes
+              inputText = value; //we update the inputText variable with the new value
             },
-            decoration: InputDecoration(hintText: "Ener your text name here"),
+            decoration: InputDecoration(hintText: "Ener your text name here"), //the background of the text field has a hint text that tells the user what to enter
           ),
-          actions: [
-            TextButton(
+          actions: [ //the actions of the dialog are the buttons that the user can press
+            TextButton( //the cancel button
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(); //we close the dialog when the user presses the cancel button
               },
-              child: Text("Cancel"),
+              child: Text("Cancel"), //the text of the cancel button
             ),
-            TextButton(
+            TextButton( //the accept button
               onPressed: () {
-                Navigator.of(context).pop();
-                if (inputText.isNotEmpty) {
-                  addWidget(addText(inputText, root));
-                  _nodeViewerKey.currentState?.setState(() {});
+                Navigator.of(context).pop(); //we close the dialog when the user presses the accept button
+                if (inputText.isNotEmpty) { //if the inputText is not empty, we add a text widget to the root widget
+                  addWidget(addText(inputText, root)); //we add the text widget to the root widget
+                  _nodeViewerKey.currentState?.setState(() {}); //this updates the node viewer to show the new text widget that was added. we use the key to access the state of the node viewer and call setState to rebuild it
                 }
               },
-              child: Text("Accept"),
+              child: Text("Accept"), //the text of the accept button
             ),
           ],
         );
@@ -117,8 +115,8 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   /// Adds a widget to the layout.
   /// The widget is built using the provided LayoutWidget.
   void addWidget(LayoutWidget layoutWidget) async{
-    setState(() {
-      root.addChild(layoutWidget);
+    setState(() { //we call setState to rebuild the widget tree and show the new widget
+      root.addChild(layoutWidget); //we add the new widget to the root widget's children
     });
   }
 
@@ -135,55 +133,56 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   /// The container will have a random color from the Colors.primaries list.
   LayoutWidget addContainer(LayoutWidget? parent) {
     //if a parent is provided, we add the container to the parent
-    LayoutWidget widget = LayoutWidget((context, children, properties) {
+    LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
 
-      double screenWidth = MediaQuery.of(context).size.width;
-      double screenHeight = MediaQuery.of(context).size.height;
+      double screenWidth = MediaQuery.of(context).size.width; //getter for the screen width
+      double screenHeight = MediaQuery.of(context).size.height; //and height
 
       properties["color"] ??= Colors.primaries.random(); //if no color is provided, use a random color from the Colors.primaries list
 
-      return Container(
-        color: properties["color"],
-        width: properties["width"] == null ? screenWidth : properties["width"] * screenWidth,
-        height: properties["height"] == null ? screenHeight : properties["height"] * screenHeight,
-        child: Stack(children: children),
+      return Container( //the actual container widget that will be displayed
+        color: properties["color"], //if the color is provided, we use it, otherwise we use a random color. we defined that above
+        width: properties["width"] == null ? screenWidth : properties["width"] * screenWidth, //we calculate the width of the container based on the properties provided. if no width is provided, we use the screen width to fully fill the screen
+        height: properties["height"] == null ? screenHeight : properties["height"] * screenHeight, //same for the height
+        child: children.isNotEmpty ? children.first : null //we only allow one child in a container, so we take the first child from the children list. if no child is provided, we give null
       );
-    }, id: 'container${containerIndex++}', type: ContainerType.single, removeFromParent: parent?.removeChild);
+    }, id: 'container${containerIndex++}', //the container id is set to a unique id based on the containerIndex. it also increments the index so that the next container will have a different id
+        type: ContainerType.single, //sets the type of the container to single, meaning it can only have one child
+        removeFromParent: parent?.removeChild); // we set the removeFromParent function to the parent's removeChild function, so that we can remove the container from the parent if needed
 
-    return widget;
+    return widget; //return the created widget
   }
 
-
   int rowIndex = 0; //this is used to give the row widgets a unique id
-  LayoutWidget addRow(LayoutWidget? parent){
-    LayoutWidget widget = LayoutWidget((context, children, properties) {
-      return Row(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: children,
+  LayoutWidget addRow(LayoutWidget? parent){ //this is used to add a row widget to the layout
+    LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
+      return Row( //the actual row widget that will be displayed
+        mainAxisSize: MainAxisSize.max, //the main axis size is set to max, so the row will take up all the available space
+        crossAxisAlignment: CrossAxisAlignment.stretch, //the cross axis alignment is set to stretch, so the children will stretch to fill the available space
+        mainAxisAlignment: MainAxisAlignment.center, //the main axis alignment is set to center, so the children will be centered in the row
+        children: children, //the children of the row are the children passed to the builder function, which are the widgets that will be displayed in the row
       );
-    }, id: 'row${rowIndex++}', type: ContainerType.unlimited, removeFromParent: parent?.removeChild);
+    }, id: 'row${rowIndex++}', //same as the container
+        type: ContainerType.unlimited, //sets the type of the row to unlimited, meaning it can have multiple children
+        removeFromParent: parent?.removeChild); //same as the container
 
-    return widget;
+    return widget; //return the created widget
   }
 
 
   int textIndex = 0; //this is used to give the text widgets a unique id
   /// Adds a text widget to the layout.
-  LayoutWidget addText(String text, LayoutWidget? parent){
-    LayoutWidget widget = LayoutWidget((context, children, properties) {
-
-      return Stack(
-        children: [
-          Text(
-            text,
-            style: TextStyle(fontSize: 18, color: Colors.black, fontFamily: "gameFont"),
-            textAlign: TextAlign.center),
-        ...children]
+  LayoutWidget addText(String text, LayoutWidget? parent){ //this is used to add a text widget to the layout
+    LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
+      return Text(
+            text, //the text that will be displayed in the widget
+            style: TextStyle(fontSize: 18, color: Colors.black, fontFamily: "gameFont"), //the text style is set to a font size of 18, black color and the pixel art font
+            textAlign: TextAlign.center //the text is centered in the widget
       );
-    }, id: 'text${textIndex++}', type: ContainerType.sealed, removeFromParent: parent?.removeChild);
+    }, id: 'text${textIndex++}', //same as the container and row
+        type: ContainerType.sealed, //sealed means that the text widget cannot have any children
+        removeFromParent: parent?.removeChild); //same as the container and row
 
-    return widget;
+    return widget; //return the created widget
   }
 }
