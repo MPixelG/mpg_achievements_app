@@ -52,6 +52,19 @@ class NodeViewerState extends State<NodeViewer> {
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
+
+      //trash to drop widgets
+      floatingActionButton: DragTarget<LayoutWidget>(
+          builder: (context, candidateData, rejectedData) => FloatingActionButton(onPressed: () {
+            widget.root!.children.clear();
+            setState(() {});
+      },
+            child: Icon(CupertinoIcons.trash),),
+            onAcceptWithDetails: (details) {
+              details.data.removeFromParent(details.data);
+              setState(() {});
+            },),
+
       body: Container(
         padding: const EdgeInsets.all(16),
         child: InteractiveViewer(
@@ -121,7 +134,7 @@ class DisplayNode extends StatelessWidget {
 
     return DragTarget<LayoutWidget>(
       onWillAcceptWithDetails: (dragged) {
-        return dragged.data != node ;
+        return dragged.data != node && node.canAddChild;
       },
       onAcceptWithDetails: (dragged) {
         if (onReorder != null) onReorder!(dragged.data, node);
@@ -217,15 +230,5 @@ class DisplayNode extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  /// Checks if the dragged widget is a descendant of the target widget.
-  /// This is used to prevent dragging a widget into its own subtree.
-  bool isDescendant(LayoutWidget dragged, LayoutWidget target) {
-    if (target.children.contains(dragged)) return true;
-    for (var child in target.children) {
-      if (isDescendant(dragged, child)) return true;
-    }
-    return false;
   }
 }

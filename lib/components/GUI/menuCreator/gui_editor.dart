@@ -23,14 +23,11 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   @override
   void initState(){
 
-    root = addContainer();
+    root = addContainer(null);
     nodeViewer = NodeViewer(root: root, key: _nodeViewerKey,); //the node viewer is initialized with the root widget, which is the main widget that contains all the other widgets.
 
     super.initState();
   }
-
-
-
 
   @override
   Widget build(BuildContext context) { //here we actually build the stuff thats being rendered
@@ -69,13 +66,12 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       ],
           onSelected: (value) {
             switch(value){
-              case "container": addWidget(addContainer());
+              case "container": addWidget(addContainer(root));
               case "text": showTextAlertDialog(context);
-              case "row": addWidget(addRow());
+              case "row": addWidget(addRow(root));
             }
 
             _nodeViewerKey.currentState?.setState(() {}); //this updates the node viewer to show the new widget that was added
-            print("updated state of node viewer!");
 
           },tooltip: "open widget menu", child: Icon(Icons.add_box_rounded),),
     );
@@ -106,7 +102,8 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
               onPressed: () {
                 Navigator.of(context).pop();
                 if (inputText.isNotEmpty) {
-                  addWidget(addText(inputText));
+                  addWidget(addText(inputText, root));
+                  _nodeViewerKey.currentState?.setState(() {});
                 }
               },
               child: Text("Accept"),
@@ -136,26 +133,29 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   /// The container will fill a percentage of the screen size based on the properties provided.
   /// If no properties are provided, it defaults to 30% of the screen width and height.
   /// The container will have a random color from the Colors.primaries list.
-  LayoutWidget addContainer(){
+  LayoutWidget addContainer(LayoutWidget? parent) {
+    //if a parent is provided, we add the container to the parent
     LayoutWidget widget = LayoutWidget((context, children, properties) {
 
       double screenWidth = MediaQuery.of(context).size.width;
       double screenHeight = MediaQuery.of(context).size.height;
 
+      properties["color"] ??= Colors.primaries.random(); //if no color is provided, use a random color from the Colors.primaries list
+
       return Container(
-        color: Colors.primaries.random(),
-        width: properties["width"] == null ? double.infinity : properties["width"] * screenWidth,
-        height: properties["height"] == null ? double.infinity : properties["height"] * screenHeight,
+        color: properties["color"],
+        width: properties["width"] == null ? screenWidth : properties["width"] * screenWidth,
+        height: properties["height"] == null ? screenHeight : properties["height"] * screenHeight,
         child: Stack(children: children),
       );
-    }, id: 'container${containerIndex++}');
+    }, id: 'container${containerIndex++}', type: ContainerType.single, removeFromParent: parent?.removeChild);
 
     return widget;
   }
 
 
   int rowIndex = 0; //this is used to give the row widgets a unique id
-  LayoutWidget addRow(){
+  LayoutWidget addRow(LayoutWidget? parent){
     LayoutWidget widget = LayoutWidget((context, children, properties) {
       return Row(
         mainAxisSize: MainAxisSize.max,
@@ -163,7 +163,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
         mainAxisAlignment: MainAxisAlignment.center,
         children: children,
       );
-    }, id: 'row${rowIndex++}');
+    }, id: 'row${rowIndex++}', type: ContainerType.unlimited, removeFromParent: parent?.removeChild);
 
     return widget;
   }
@@ -171,7 +171,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
   int textIndex = 0; //this is used to give the text widgets a unique id
   /// Adds a text widget to the layout.
-  LayoutWidget addText(String text){
+  LayoutWidget addText(String text, LayoutWidget? parent){
     LayoutWidget widget = LayoutWidget((context, children, properties) {
 
       return Stack(
@@ -182,7 +182,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
             textAlign: TextAlign.center),
         ...children]
       );
-    }, id: 'text${textIndex++}');
+    }, id: 'text${textIndex++}', type: ContainerType.sealed, removeFromParent: parent?.removeChild);
 
     return widget;
   }
