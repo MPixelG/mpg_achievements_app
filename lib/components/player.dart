@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/CharacterStateManager.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
+import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
@@ -24,6 +26,8 @@ class Player extends SpriteAnimationGroupComponent
 
   bool gotHit = false;
 
+  int lives = 3;
+  int startHP = 3;
   //starting position
   Vector2 startingPosition = Vector2.zero();
 
@@ -69,12 +73,26 @@ class Player extends SpriteAnimationGroupComponent
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
     if (other is Collectable) other.collidedWithPlayer();
-    if (other is Saw && !debugImmortalMode) _respawn();
+    if (other is Saw && !debugImmortalMode) _hit();
+    if (other is Enemy && !debugImmortalMode) _hit();
     if (other is Collectable && other.interactiveTask) {game.showDialogue = true;
+
+    if (lives <= 0) _respawn();
+
     print('Board1');}
     super.onCollision(intersectionPoints, other);
   }
-
+  void _hit() async {
+    if (gotHit) return;
+    lives = lives - 1;
+    if (lives <= 0) return;
+    print(lives);
+    gotHit = true;
+    current = PlayerState.hit;
+    await Future.delayed(Duration(milliseconds: 250));
+    current = PlayerState.appearing;
+    gotHit = false;
+  }
   void _respawn() async {
     if (gotHit) return; //if the player is already being respawned, stop
     updateMovement = false;
@@ -106,6 +124,7 @@ class Player extends SpriteAnimationGroupComponent
     gotHit = false; //indicate, that the respawn process is over
     position += Vector2.all(
         32); //reposition the player, because it had a bit of displacement because of the respawn animation
+    lives = startHP;
     setGravityEnabled(true); //re-enable gravity
     updateMovement = true;
   }
