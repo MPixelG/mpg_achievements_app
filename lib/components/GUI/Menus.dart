@@ -18,6 +18,9 @@ abstract class Screen extends StatelessWidget {
 }
 
 class MainMenuScreen extends StatelessWidget {
+  const MainMenuScreen({super.key});
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +40,7 @@ class MainMenuScreen extends StatelessWidget {
 class GameScreen extends StatelessWidget {
   final PixelAdventure game;
 
-  GameScreen({super.key, required this.game});
+  const GameScreen({super.key, required this.game});
 
 
   @override
@@ -70,8 +73,7 @@ class JsonScreenBuilder {
 
       return _buildWidgetsFromData(screenData, context);
     } catch (e) {
-      print('Fehler beim Laden der JSON: $e');
-      return Container(child: Text('Fehler beim Laden'));
+      return Container(child: Text('Error loading screen: $e', style: TextStyle(color: Colors.red, fontSize: 20)));
     }
   }
 

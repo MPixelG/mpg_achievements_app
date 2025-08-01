@@ -47,6 +47,10 @@ class WidgetOptions {
     );
   }
 
+  static bool isRegistered(Type widgetType) {
+    return _widgetOptionsCache.containsKey(widgetType);
+  }
+
 
   void register() {
     if (_widgetOptionsCache.containsKey(widgetType)) {

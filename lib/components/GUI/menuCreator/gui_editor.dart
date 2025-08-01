@@ -39,6 +39,8 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
   void registerWidgetOptions() { //this is used to register the widget options for the widgets that can be added to the layout
 
+    if(WidgetOptions.isRegistered(Container)) return; //if the widget options for the container are already registered, we return and do not register them again. this is to prevent duplicate registrations.
+
     WidgetOptions(Container, options: [
       WidgetOption<double>(parseDouble, name: "width", defaultValue: 0.1, description: "The width of the container as a percentage of the screen width"),
       WidgetOption<double>(parseDouble, name: "height", defaultValue: 0.1, description: "The height of the container as a percentage of the screen height"),
@@ -116,10 +118,6 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       WidgetOption<ButtonAction>(parseButtonAction, name: "onPressed", defaultValue: DebugButtonAction(), description: "The function to call when the button is pressed. If not set, it will do nothing."),
 
       WidgetOption<String>((type) => type.toString(), name: "imageName", defaultValue: "button_0", description: "The name of the nine patch image texture that will be used for the button."),
-      WidgetOption<int>(parseInt, name: "borderX", defaultValue: 3, description: "The border size of the nine patch image in the x direction."),
-      WidgetOption<int>(parseInt, name: "borderY", defaultValue: 3, description: "The border size of the nine patch image in the y direction."),
-      WidgetOption<int>(parseInt, name: "borderX2", defaultValue: 3, description: "The second border size of the nine patch image in the x direction."),
-      WidgetOption<int>(parseInt, name: "borderY2", defaultValue: 3, description: "The second border size of the nine patch image in the y direction."),
     ]).register();
 
     WidgetOptions(Expanded, options: [
@@ -280,7 +278,6 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   LayoutWidget? getNearestStackRecursive(LayoutWidget widget) {
     for (var value in widget.children) {
       if (value.widgetType == Stack) { //if the widget is a stack, we return it
-        print("found a stack widget in the children of ${widget.id}"); //we print a message to the console that we found a stack widget
         return value; //we return the stack widget
       }
       return getNearestStackRecursive(value);
@@ -291,7 +288,6 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   LayoutWidget? getNearestFlexRecursive(LayoutWidget widget) {
     for (var value in widget.children) {
       if (value.widgetType == Row || value.widgetType == Column) {
-        print("found a flex widget in the children of ${widget.id}"); //we print a message to the console that we found an expanded widget
         return value; //we return the expanded widget
       }
       return getNearestFlexRecursive(value);
@@ -487,20 +483,12 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       properties["text"] ??= options.getDefaultValue("text");
       properties["onPressed"] ??= options.getDefaultValue("onPressed");
       properties["imageName"] ??= options.getDefaultValue("imageName");
-      properties["borderX"] ??= options.getDefaultValue("borderX");
-      properties["borderY"] ??= options.getDefaultValue("borderY");
-      properties["borderX2"] ??= options.getDefaultValue("borderX2");
-      properties["borderY2"] ??= options.getDefaultValue("borderY2");
 
 
       return NinePatchButton(
           text: options.getValue("text", properties["text"]), //the text that will be displayed on the button
           onPressed: options.getValue("onPressed", properties["onPressed"]).press, //the onPressed function is set to the action that was passed to the function, so that we can use it in the widget
-          imageName: options.getValue("imageName", properties["imageName"]), //the image name is the name of the nine patch image texture that will be used for the button
-          borderX: options.getValue("borderX", properties["borderX"]), //the border size of the nine patch image in the x direction
-          borderY: options.getValue("borderY", properties["borderY"]), //the border size of the nine patch image in the y direction
-          borderX2: options.getValue("borderX2", properties["borderX2"]), //the second border size of the nine patch image in the x direction
-          borderY2: options.getValue("borderY2", properties["borderY2"]), //the second border size of the nine patch image in the y direction
+          textureName: options.getValue("imageName", properties["imageName"]) //the image name is set to the image name that was passed to the function, so that we can use it in the widget
       );
     }, id: 'ninepatch_button${ninepatchButtonIndex++}',
         type: ContainerType.single,

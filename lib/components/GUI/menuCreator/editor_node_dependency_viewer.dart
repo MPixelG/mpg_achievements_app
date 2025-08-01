@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/layout_widget.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/option_editor.dart';
 
 class NodeViewer extends StatefulWidget { // a widget to view and manage a tree of LayoutWidgets
   final LayoutWidget? root; // the root node of the tree to display
@@ -293,8 +295,26 @@ class DisplayNode extends StatelessWidget { //a widget to display a single Layou
             updateViewport();
           },
         ),
+        PopupMenuItem(
+          onTap: () => showPropertiesEditor(context), //a menu item to show the properties editor
+          child: const Text("edit properties"),
+        )
       ],
     );
+  }
+
+  void showPropertiesEditor(BuildContext context) { //a function to show the properties editor for the node
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return OptionEditorMenu(node: node);
+      },
+    );
+
+
+
   }
 
 }

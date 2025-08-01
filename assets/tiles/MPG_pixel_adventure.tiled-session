@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Level_4.tmx",
+    "activeFile": "IndustrialTile_81.png.tsx",
     "expandedProjectPaths": [
         "."
     ],
@@ -16,8 +16,8 @@
         },
         "Level_0.tmx": {
             "expandedObjectLayers": [
-                17,
-                20
+                20,
+                17
             ],
             "scale": 1.5,
             "selectedLayer": 1,
@@ -34,8 +34,8 @@
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 320.75,
-                "y": 184
+                "x": 320.5,
+                "y": 184.25
             }
         },
         "Level_2.tmx": {
@@ -46,8 +46,8 @@
             "scale": 1.5,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": 896.3333333333333,
-                "y": 575.3333333333333
+                "x": 522.6666666666666,
+                "y": 543.6666666666666
             }
         },
         "Level_3.tmx": {
@@ -176,7 +176,8 @@
         "parralax_city_0.tsx",
         "city_night.tmx",
         "Level_4.tmx",
-        "industrial_tiles_2.tsx"
+        "industrial_tiles_2.tsx",
+        "IndustrialTile_81.png.tsx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
     "property.type": "string",
@@ -190,9 +191,9 @@
         "parralax_city_0.tsx",
         "city_night.tmx",
         "Level_4.tmx",
-        "industrial_tiles_3.tsx",
-        "industrial_tiles_4.tsx",
-        "industrial_tiles_2.tsx"
+        "industrial_tiles_2.tsx",
+        "IndustrialTile_81.png.tsx",
+        "industrial_tiles_3.tsx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",

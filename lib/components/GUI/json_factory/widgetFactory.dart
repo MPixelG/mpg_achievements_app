@@ -84,13 +84,6 @@ class WidgetFactory{
 
 
     return NinePatchButton(
-      borderX: borderX,
-      borderX2: borderX2,
-      borderY: borderY,
-      borderY2: borderY2,
-
-      imageName: imageName,
-
       text: text,
       onPressed: callback,
     );
