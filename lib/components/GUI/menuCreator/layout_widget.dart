@@ -66,6 +66,17 @@ class LayoutWidget {
     return false; // Default case, should not happen
   }
 
+  bool canDropOn(LayoutWidget other){
+
+    if(widgetType == Positioned && other.widgetType != Stack) return false; // Cannot drop a Positioned widget on a Widget that is not a Stack
+
+    if(other == parent) return false; // dropping on the parent has no effect
+
+    if(isDescendant(this, other)) return false; // Cannot drop a widget on itself or its descendants
+
+    return true;
+  }
+
   Widget build(BuildContext context) {
     return _builder(
       context,
@@ -73,6 +84,14 @@ class LayoutWidget {
       properties,
     );
   }
+}
+
+
+bool isDescendant(LayoutWidget dragged, LayoutWidget target) { //check if the dragged widget is a descendant of the target widget
+  for (var child in dragged.children) { //for every child of the dragged widget
+    if (child == target || isDescendant(child, target)) return true; //if the child is the target or if the child has the target as a descendant, return true. this checks the entire tree of children recursively
+  }
+  return false; //if no child is the target or has the target as a descendant, return false
 }
 
 /// The type of container this widget is.

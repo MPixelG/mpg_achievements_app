@@ -32,13 +32,6 @@ class NodeViewerState extends State<NodeViewer> { //the state for the NodeViewer
 
   }
 
-  bool isDescendant(LayoutWidget dragged, LayoutWidget target) { //check if the dragged widget is a descendant of the target widget
-    for (var child in dragged.children) { //for every child of the dragged widget
-      if (child == target || isDescendant(child, target)) return true; //if the child is the target or if the child has the target as a descendant, return true. this checks the entire tree of children recursively
-    }
-    return false; //if no child is the target or has the target as a descendant, return false
-  }
-
   LayoutWidget? findParent(LayoutWidget root, LayoutWidget child) { //find the parent of a child widget in the tree
     for (var c in root.children) { //for every child of the root widget
       if (c == child) return root; //if the child is the same as the current child, return the root widget as the parent
@@ -146,7 +139,7 @@ class DisplayNode extends StatelessWidget { //a widget to display a single Layou
       },
       child: DragTarget<LayoutWidget>( //the DisplayNode is also a DragTarget so that we can drop widgets onto it
         onWillAcceptWithDetails: (dragged) { //when a widget is dragged over the DisplayNode we check if we can accept it
-          return dragged.data != node && node.canAddChild; //if its not the same node and if the node can accept children, we return true
+          return dragged.data != node && node.canAddChild && dragged.data.canDropOn(node); //if its not the same node and if the node can accept children, we return true
         },
         onAcceptWithDetails: (dragged) { //when a widget is dropped onto the DisplayNode
           if (onReorder != null) onReorder!(dragged.data, node); //we call the function to reorder the nodes
