@@ -149,7 +149,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
         PopupMenuItem( //another option for row
           value: 'row', //row as a value
           child: ListTile(
-            leading: Icon(Icons.rectangle_outlined), //a rectangle icon
+            leading: Icon(Icons.view_agenda_rounded), //a rectangle icon
             title: Text('Row'), //with Row as a display
           ),
         ),
@@ -160,12 +160,21 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
             title: Text('Nine Patch Button'), //with Nine Patch Button as a display
           ),
         ),
+        PopupMenuItem(
+          value: 'column', //another option for column
+          child: ListTile(
+            leading: Icon(Icons.view_week_rounded), //a column icon
+            title: Text('Column'), //with Column as a display
+          ),
+
+        )
       ],
           onSelected: (value) { //this is called when an item is selected from the popup menu
             switch(value){ //we switch on the value of the selected item
               case "container": addWidget(addContainer(root)); //if the value is container, we add a container widget to the root widget
               case "text": showTextAlertDialog(context); //same for text
               case "row": addWidget(addRow(root)); //and row
+              case "column": addWidget(addColumn(root)); //and column
               case "ninepatch_button": addWidget(addNinepatchButton(root)); //and nine patch button
             }
 
@@ -272,7 +281,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   LayoutWidget addRow(LayoutWidget? parent){ //this is used to add a row widget to the layout
     LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
 
-      WidgetOptions options = WidgetOptions.fromType(Row); //same as the container
+      WidgetOptions options = WidgetOptions.fromType(Row);
 
 
       properties["mainAxisSize"] ??= options.getDefaultValue("mainAxisSize"); //we set the mainAxisSize property to the default value defined in the widget options, so that we can use it in the widget
@@ -294,12 +303,39 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   }
 
 
+  int columnIndex = 0; //this is used to give the row widgets a unique id
+  LayoutWidget addColumn(LayoutWidget? parent){ //this is used to add a row widget to the layout
+    LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
+
+      WidgetOptions options = WidgetOptions.fromType(Row); //a Row has the same options as a Column, so we can use the same widget options class
+
+
+      properties["mainAxisSize"] ??= options.getDefaultValue("mainAxisSize"); //we set the mainAxisSize property to the default value defined in the widget options, so that we can use it in the widget
+      properties["crossAxisAlignment"] ??= options.getDefaultValue("crossAxisAlignment"); //we set the crossAxisAlignment property to the default value defined in the widget options, so that we
+      properties["mainAxisAlignment"] ??= options.getDefaultValue("mainAxisAlignment"); //we set the mainAxisAlignment property to the default value defined in the widget options, so that we can use it in the widget
+
+
+      return Column( //the actual row widget that will be displayed
+        mainAxisSize: options.getValue("mainAxisSize", properties["mainAxisSize"]), //the main axis size is set to min, so the row will only take up as much space as its children need
+        crossAxisAlignment: options.getValue("crossAxisAlignment", properties["crossAxisAlignment"]), //the cross axis alignment is set to center, so the children will be centered in the row
+        mainAxisAlignment: options.getValue("mainAxisAlignment", properties["mainAxisAlignment"]), //the main axis alignment is set to center, so the children will be centered in the row
+        children: children, //the children of the row are the children passed to the builder function, which are the widgets that will be displayed in the row
+      );
+    }, id: 'column${columnIndex++}', //same as the container
+        type: ContainerType.unlimited, //sets the type of the row to unlimited, meaning it can have multiple children
+        removeFromParent: parent?.removeChild); //same as the container
+
+    return widget; //return the created widget
+  }
+
+
+
   int textIndex = 0; //this is used to give the text widgets a unique id
   /// Adds a text widget to the layout.
   LayoutWidget addText(String text, LayoutWidget? parent){ //this is used to add a text widget to the layout
     LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
 
-      WidgetOptions options = WidgetOptions.fromType(Text); //same as the container and row
+      WidgetOptions options = WidgetOptions.fromType(Text);
 
 
       properties["text"] ??= text; //we set the text property to the text that was passed to the function, so that we can use it in the widget
