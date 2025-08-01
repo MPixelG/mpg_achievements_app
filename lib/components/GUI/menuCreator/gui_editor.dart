@@ -104,7 +104,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
     WidgetOptions(NinePatchButton, options: [
 
-      WidgetOption<String>((type) => type.toString(), name: "text", defaultValue: "Button", description: "The text to display on the button."),
+      WidgetOption<String>((type) => type.toString(), name: "text", defaultValue: "", description: "The text to display on the button."),
       WidgetOption<ButtonAction>(parseButtonAction, name: "onPressed", defaultValue: DebugButtonAction(), description: "The function to call when the button is pressed. If not set, it will do nothing."),
 
       WidgetOption<String>((type) => type.toString(), name: "imageName", defaultValue: "button_0", description: "The name of the nine patch image texture that will be used for the button."),
@@ -235,20 +235,30 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
     //if a parent is provided, we add the container to the parent
     LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
       
-      WidgetOptions options = WidgetOptions.fromType(Container);
+      WidgetOptions options = WidgetOptions.fromType(Container); //we get the widget options for the container widget, which defines the properties that can be set in the GUI editor
 
-      double screenWidth = MediaQuery.of(context).size.width; //getter for the screen width
-      double screenHeight = MediaQuery.of(context).size.height; //and height
+      RenderBox? currentParentBox = context.findRenderObject() as RenderBox?;
+
+      double availableWidth = currentParentBox == null ? MediaQuery.of(context).size.width : (currentParentBox.size.width); //we get the available width of the parent widget, if no parent is provided, we use the screen width
+      double availableHeight = currentParentBox == null ? MediaQuery.of(context).size.height : (currentParentBox.size.height); //same for the height
+
+      print("availableWidth: $availableWidth, availableHeight: $availableHeight"); //debugging output to see the available width and height of the parent widget
 
       properties["width"] ??= options.getDefaultValue("width"); //we set the width property to the default value defined in the widget options, so that we can use it in the widget
       properties["height"] ??= options.getDefaultValue("height"); //same for the height
       properties["color"] ??= options.getDefaultValue("color"); //we set the color property to the default value defined in the widget options, so that we can use it in the widget
+      properties["padding"] ??= options.getDefaultValue("padding"); //we set the padding property to the default value defined in the widget options, so that we can use it in the widget
+      properties["margin"] ??= options.getDefaultValue("margin"); //we set the margin property to the default value defined in the widget options, so that we can use it in the widget
+      properties["alignment"] ??= options.getDefaultValue("alignment"); //we set the alignment
 
 
       return Container( //the actual container widget that will be displayed
         color: options.getValue("color", properties["color"]), //if the color is provided, we use it, otherwise we use a random color. we defined that above
-        width: options.getValue("width", properties["width"]) * screenWidth, //the width of the container is set to a percentage of the screen width, if no width is provided, we use the default value defined in the widget options
-        height: options.getValue("height", properties["height"]) * screenHeight, //same for the height
+        width: options.getValue("width", properties["width"]) * availableWidth, //the width of the container is set to a percentage of the screen width, if no width is provided, we use the default value defined in the widget options
+        height: options.getValue("height", properties["height"]) * availableHeight, //same for the height
+        padding: options.getValue("padding", properties["padding"]), //the padding of the container is set to the value provided in the properties, if no padding is provided, we use the default value defined in the widget options
+        margin: options.getValue("margin", properties["margin"]), //the margin of the container is set to the value provided in the properties, if no margin is provided, we use the default value defined in the widget options
+        alignment: options.getValue("alignment", properties["alignment"]), //the alignment of the container is set to the value provided in the properties, if no alignment is provided, we use the default value defined in the widget options
         child: children.isNotEmpty ? children.first : null //we only allow one child in a container, so we take the first child from the children list. if no child is provided, we give null
       );
     }, id: 'container${containerIndex++}', //the container id is set to a unique id based on the containerIndex. it also increments the index so that the next container will have a different id
@@ -262,7 +272,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   LayoutWidget addRow(LayoutWidget? parent){ //this is used to add a row widget to the layout
     LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
 
-      WidgetOptions options = WidgetOptions.fromType(Row);
+      WidgetOptions options = WidgetOptions.fromType(Row); //same as the container
 
 
       properties["mainAxisSize"] ??= options.getDefaultValue("mainAxisSize"); //we set the mainAxisSize property to the default value defined in the widget options, so that we can use it in the widget
@@ -289,7 +299,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   LayoutWidget addText(String text, LayoutWidget? parent){ //this is used to add a text widget to the layout
     LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
 
-      WidgetOptions options = WidgetOptions.fromType(Text);
+      WidgetOptions options = WidgetOptions.fromType(Text); //same as the container and row
 
 
       properties["text"] ??= text; //we set the text property to the text that was passed to the function, so that we can use it in the widget
@@ -313,15 +323,23 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
       WidgetOptions options = WidgetOptions.fromType(NinePatchButton);
 
+      properties["text"] ??= options.getDefaultValue("text");
+      properties["onPressed"] ??= options.getDefaultValue("onPressed");
+      properties["imageName"] ??= options.getDefaultValue("imageName");
+      properties["borderX"] ??= options.getDefaultValue("borderX");
+      properties["borderY"] ??= options.getDefaultValue("borderY");
+      properties["borderX2"] ??= options.getDefaultValue("borderX2");
+      properties["borderY2"] ??= options.getDefaultValue("borderY2");
+
 
       return NinePatchButton(
           text: options.getValue("text", properties["text"]), //the text that will be displayed on the button
-          onPressed: (options.getValue("onPressed", properties["onPressed"]) ?? options.getDefaultValue("onPressed")).press, //the onPressed function is set to the action that was passed to the function, so that we can use it in the widget
-          imageName: 'button_0', //the image name is the name of the nine patch image texture that will be used for the button
-          borderX: 3,
-          borderY: 3,
-          borderX2: 3,
-          borderY2: 3,
+          onPressed: options.getValue("onPressed", properties["onPressed"]).press, //the onPressed function is set to the action that was passed to the function, so that we can use it in the widget
+          imageName: options.getValue("imageName", properties["imageName"]), //the image name is the name of the nine patch image texture that will be used for the button
+          borderX: options.getValue("borderX", properties["borderX"]), //the border size of the nine patch image in the x direction
+          borderY: options.getValue("borderY", properties["borderY"]), //the border size of the nine patch image in the y direction
+          borderX2: options.getValue("borderX2", properties["borderX2"]), //the second border size of the nine patch image in the x direction
+          borderY2: options.getValue("borderY2", properties["borderY2"]), //the second border size of the nine patch image in the y direction
       );
     }, id: 'ninepatch_button${ninepatchButtonIndex++}',
         type: ContainerType.single,
