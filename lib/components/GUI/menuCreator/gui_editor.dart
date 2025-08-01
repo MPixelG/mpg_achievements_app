@@ -1,5 +1,6 @@
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/button_action.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/editor_node_dependency_viewer.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/layout_widget.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_options.dart';
@@ -73,9 +74,25 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
     ]).register();
 
     WidgetOptions(Row, options: [
-      WidgetOption<MainAxisAlignment>(parseMainAxisAlignment, name: "mainAxisAlignment", defaultValue: MainAxisAlignment.center, description: "The main axis alignment of the row. If not set, center will be used."),
-      WidgetOption<CrossAxisAlignment>(parseCrossAxisAlignment, name: "crossAxisAlignment", defaultValue: CrossAxisAlignment.center, description: "The cross axis alignment of the row. If not set, center will be used."),
-      WidgetOption<MainAxisSize>(parseMainAxisSize, name: "mainAxisSize", defaultValue: MainAxisSize.min, description: "The main axis size of the row. If not set, min will be used."),
+      WidgetOption<MainAxisAlignment>(parseMainAxisAlignment, name: "mainAxisAlignment", defaultValue: MainAxisAlignment.center, description: "The main axis alignment of the row. If not set, center will be used.", options: [
+        MainAxisAlignment.start,
+        MainAxisAlignment.end,
+        MainAxisAlignment.center,
+        MainAxisAlignment.spaceBetween,
+        MainAxisAlignment.spaceAround,
+        MainAxisAlignment.spaceEvenly,
+      ]),
+      WidgetOption<CrossAxisAlignment>(parseCrossAxisAlignment, name: "crossAxisAlignment", defaultValue: CrossAxisAlignment.center, description: "The cross axis alignment of the row. If not set, center will be used.", options: [
+        CrossAxisAlignment.start,
+        CrossAxisAlignment.end,
+        CrossAxisAlignment.center,
+        CrossAxisAlignment.stretch,
+        CrossAxisAlignment.baseline,
+      ]),
+      WidgetOption<MainAxisSize>(parseMainAxisSize, name: "mainAxisSize", defaultValue: MainAxisSize.min, description: "The main axis size of the row. If not set, min will be used.", options: [
+        MainAxisSize.min,
+        MainAxisSize.max,
+      ]),
     ]).register();
 
     WidgetOptions(Text, options: [
@@ -83,6 +100,20 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       WidgetOption<TextStyle?>(parseTextStyle, name: "style", defaultValue: null, description: "The style of the text. If not set, a default style will be used."),
       WidgetOption<TextAlign>(parseTextAlign, name: "textAlign", defaultValue: TextAlign.center, description: "The alignment of the text. If not set, center will be used."),
     ]).register();
+
+
+    WidgetOptions(NinePatchButton, options: [
+
+      WidgetOption<String>((type) => type.toString(), name: "text", defaultValue: "Button", description: "The text to display on the button."),
+      WidgetOption<ButtonAction>(parseButtonAction, name: "onPressed", defaultValue: DebugButtonAction(), description: "The function to call when the button is pressed. If not set, it will do nothing."),
+
+      WidgetOption<String>((type) => type.toString(), name: "imageName", defaultValue: "button_0", description: "The name of the nine patch image texture that will be used for the button."),
+      WidgetOption<int>(parseInt, name: "borderX", defaultValue: 3, description: "The border size of the nine patch image in the x direction."),
+      WidgetOption<int>(parseInt, name: "borderY", defaultValue: 3, description: "The border size of the nine patch image in the y direction."),
+      WidgetOption<int>(parseInt, name: "borderX2", defaultValue: 3, description: "The second border size of the nine patch image in the x direction."),
+      WidgetOption<int>(parseInt, name: "borderY2", defaultValue: 3, description: "The second border size of the nine patch image in the y direction."),
+    ]).register();
+
 
   }
 
@@ -150,7 +181,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       builder: (context) { //the builder is a function that returns the widget that will be displayed in the dialog
         String inputText = ""; //this is the text that will be entered in the text field. we set it to an empty string by default
         return AlertDialog( //the actual dialog widget
-          title: Text("Ener your text name here"), //the title of the dialog
+          title: Text("Enter your text name here"), //the title of the dialog
           content: TextField( //the content of the dialog is a text field where the user can enter the text
             autofocus: true, //this makes the text field focused when the dialog is opened
             onChanged: (value) { //this is called when the text in the text field changes
@@ -209,11 +240,15 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       double screenWidth = MediaQuery.of(context).size.width; //getter for the screen width
       double screenHeight = MediaQuery.of(context).size.height; //and height
 
+      properties["width"] ??= options.getDefaultValue("width"); //we set the width property to the default value defined in the widget options, so that we can use it in the widget
+      properties["height"] ??= options.getDefaultValue("height"); //same for the height
+      properties["color"] ??= options.getDefaultValue("color"); //we set the color property to the default value defined in the widget options, so that we can use it in the widget
+
 
       return Container( //the actual container widget that will be displayed
         color: options.getValue("color", properties["color"]), //if the color is provided, we use it, otherwise we use a random color. we defined that above
-        width: properties["width"] == null ? (options.getDefaultValue("width") * screenWidth) : options.getValue("width", properties) * screenWidth, //we calculate the width of the container based on the properties provided. if no width is provided, we use the screen width to fully fill the screen
-        height: properties["height"] == null ? (options.getDefaultValue("height") * screenHeight) : properties["height"] * screenHeight, //same for the height
+        width: options.getValue("width", properties["width"]) * screenWidth, //the width of the container is set to a percentage of the screen width, if no width is provided, we use the default value defined in the widget options
+        height: options.getValue("height", properties["height"]) * screenHeight, //same for the height
         child: children.isNotEmpty ? children.first : null //we only allow one child in a container, so we take the first child from the children list. if no child is provided, we give null
       );
     }, id: 'container${containerIndex++}', //the container id is set to a unique id based on the containerIndex. it also increments the index so that the next container will have a different id
@@ -226,10 +261,19 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   int rowIndex = 0; //this is used to give the row widgets a unique id
   LayoutWidget addRow(LayoutWidget? parent){ //this is used to add a row widget to the layout
     LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
+
+      WidgetOptions options = WidgetOptions.fromType(Row);
+
+
+      properties["mainAxisSize"] ??= options.getDefaultValue("mainAxisSize"); //we set the mainAxisSize property to the default value defined in the widget options, so that we can use it in the widget
+      properties["crossAxisAlignment"] ??= options.getDefaultValue("crossAxisAlignment"); //we set the crossAxisAlignment property to the default value defined in the widget options, so that we
+      properties["mainAxisAlignment"] ??= options.getDefaultValue("mainAxisAlignment"); //we set the mainAxisAlignment property to the default value defined in the widget options, so that we can use it in the widget
+
+
       return Row( //the actual row widget that will be displayed
-        mainAxisSize: MainAxisSize.min, //the main axis size is set to min, so the row will only take up as much space as its children need
-        crossAxisAlignment: CrossAxisAlignment.center, //the cross axis alignment is set to center, so the children will be centered in the row
-        mainAxisAlignment: MainAxisAlignment.center, //the main axis alignment is set to center, so the children will be centered in the row
+        mainAxisSize: options.getValue("mainAxisSize", properties["mainAxisSize"]), //the main axis size is set to min, so the row will only take up as much space as its children need
+        crossAxisAlignment: options.getValue("crossAxisAlignment", properties["crossAxisAlignment"]), //the cross axis alignment is set to center, so the children will be centered in the row
+        mainAxisAlignment: options.getValue("mainAxisAlignment", properties["mainAxisAlignment"]), //the main axis alignment is set to center, so the children will be centered in the row
         children: children, //the children of the row are the children passed to the builder function, which are the widgets that will be displayed in the row
       );
     }, id: 'row${rowIndex++}', //same as the container
@@ -244,10 +288,16 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   /// Adds a text widget to the layout.
   LayoutWidget addText(String text, LayoutWidget? parent){ //this is used to add a text widget to the layout
     LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
+
+      WidgetOptions options = WidgetOptions.fromType(Text);
+
+
+      properties["text"] ??= text; //we set the text property to the text that was passed to the function, so that we can use it in the widget
+
       return Text(
-            text, //the text that will be displayed in the widget
-            style: TextStyle(fontSize: 18, color: Colors.black, fontFamily: "gameFont"), //the text style is set to a font size of 18, black color and the pixel art font
-            textAlign: TextAlign.center //the text is centered in the widget
+            options.getValue("text", properties["text"]), //the text that will be displayed in the widget
+            style: options.getValue("style", properties["style"]), //the text style is set to a font size of 18, black color and the pixel art font
+            textAlign: options.getValue("textAlign", properties["textAlign"]) //the text is centered in the widget
       );
     }, id: 'text${textIndex++}', //same as the container and row
         type: ContainerType.sealed, //sealed means that the text widget cannot have any children
@@ -260,9 +310,13 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   int ninepatchButtonIndex = 0; //this is used to give the nine patch button widgets a unique id
   LayoutWidget addNinepatchButton(LayoutWidget? parent) {
     LayoutWidget widget = LayoutWidget((context, children, properties) {
+
+      WidgetOptions options = WidgetOptions.fromType(NinePatchButton);
+
+
       return NinePatchButton(
-          text: 'Test Button',
-          onPressed: () { print("pressed!"); },
+          text: options.getValue("text", properties["text"]), //the text that will be displayed on the button
+          onPressed: (options.getValue("onPressed", properties["onPressed"]) ?? options.getDefaultValue("onPressed")).press, //the onPressed function is set to the action that was passed to the function, so that we can use it in the widget
           imageName: 'button_0', //the image name is the name of the nine patch image texture that will be used for the button
           borderX: 3,
           borderY: 3,

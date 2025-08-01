@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/button_action.dart';
 
 class WidgetOptions {
 
@@ -255,4 +256,22 @@ TextStyle parseTextStyle(dynamic value) {
     );
   }
   return const TextStyle(); // Return an empty TextStyle if the value cannot be parsed
+}
+
+int? parseInt(dynamic value) {
+  if (value is int) {
+    return value;
+  } else if (value is String) {
+    return int.tryParse(value) ?? 0; // Default to 0 if parsing fails
+  }
+  return null; // Default to 0 for any other type
+}
+
+ButtonAction? parseButtonAction(dynamic value) {
+  if (value is ButtonAction) {
+    return value;
+  } else if (value is Map<String, dynamic>) {
+    return ButtonAction.fromJson(value);
+  }
+  return null;
 }
