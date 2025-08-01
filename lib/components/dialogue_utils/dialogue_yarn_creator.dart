@@ -20,9 +20,13 @@ class DialogueYarnCreator extends Component with DialogueView {
 // Parse the Yarn script into a YarnProject
   Future<YarnProject> _loadYarnFile(String yarnfile) async {
     final yarntest = '''
+      <<character "Task" Board>>
+      <<character "Player" Player>>
+      
       title: Start
       ---
-      Hello there!
+      <<if visited('Board1')>>
+      Board: Hello there!
       -> How are you?
       <<jump>>
       -> Go away!
@@ -30,11 +34,11 @@ class DialogueYarnCreator extends Component with DialogueView {
       ===
       title: Happy
       ---
-      I'm glad to hear that!
+      Board: I'm glad to hear that!
       ===
       title: Angry
       ---
-      Oh... sorry to bother you.
+      Board: Oh... sorry to bother you.
       ===
     ''';
 

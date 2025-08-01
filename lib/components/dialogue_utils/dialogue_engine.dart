@@ -14,7 +14,7 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
   late final DialogueYarnCreator yarnCreator;
   late final _script;
   late DialogueRunner _dialogueRunner;
-  late DialogueLine _currentLine;
+  DialogueLine? _currentLine;
   bool _dialogueFinished = false;
   Completer<bool>? _finishedReadingCompleter;
 
