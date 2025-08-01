@@ -95,6 +95,14 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       ]),
     ]).register();
 
+    WidgetOptions(Positioned, options: [
+      WidgetOption<double>(parseDouble, name: "left", defaultValue: 0.0, description: "The left position of the widget in the stack."),
+      WidgetOption<double>(parseDouble, name: "top", defaultValue: 0.0, description: "The top position of the widget in the stack."),
+      WidgetOption<double>(parseDouble, name: "right", defaultValue: 0.0, description: "The right position of the widget in the stack."),
+      WidgetOption<double>(parseDouble, name: "bottom", defaultValue: 0.0, description: "The bottom position of the widget in the stack."),
+    ]).register();
+
+
     WidgetOptions(Text, options: [
       WidgetOption<String>((type) => type.toString(), name: "text", defaultValue: "", description: "The text to display in the text widget."),
       WidgetOption<TextStyle?>(parseTextStyle, name: "style", defaultValue: null, description: "The style of the text. If not set, a default style will be used."),
@@ -132,6 +140,13 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
         ),
 
       floatingActionButton: PopupMenuButton(itemBuilder: (context) => [ //this is the floating action button that opens a popup menu with the options to add widgets
+        PopupMenuItem(
+          value: 'positioned', //another option for positioned
+          child: ListTile(
+            leading: Icon(Icons.add_circle_outline), //a positioned icon
+            title: Text('Positioned'), //with Positioned as a display
+          ),
+        ),
         PopupMenuItem(//this is the popup menu item that lets us add a container widget
           value: 'container', //the value of the popup menu item is used to identify which widget to add
           child: ListTile( //the ListTile is used to display the icon and the text of the popup menu item
@@ -166,15 +181,24 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
             leading: Icon(Icons.view_week_rounded), //a column icon
             title: Text('Column'), //with Column as a display
           ),
+        ),
+        PopupMenuItem( //another option for stack)
+          value: 'stack', //stack as a value
+          child: ListTile(
+            leading: Icon(Icons.layers), //a stack icon
+            title: Text('Stack'), //with Stack as a display
+          ),
+        ),
 
-        )
       ],
           onSelected: (value) { //this is called when an item is selected from the popup menu
             switch(value){ //we switch on the value of the selected item
+              case "positioned": addWidget(addPositioned(root)); //if the value is positioned, we add a positioned widget to the root widget
               case "container": addWidget(addContainer(root)); //if the value is container, we add a container widget to the root widget
               case "text": showTextAlertDialog(context); //same for text
               case "row": addWidget(addRow(root)); //and row
               case "column": addWidget(addColumn(root)); //and column
+              case "stack": addWidget(addStack(root)); //and stack
               case "ninepatch_button": addWidget(addNinepatchButton(root)); //and nine patch button
             }
 
@@ -327,6 +351,45 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
     return widget; //return the created widget
   }
+
+  int stackIndex = 0; //this is used to give the stack widgets a unique id
+  LayoutWidget addStack(LayoutWidget? parent) {
+    LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
+      return Stack( //the actual stack widget that will be displayed
+        children: children, //the children of the stack are the children passed to the builder function, which are the widgets that will be displayed in the stack
+      );
+    }, id: 'stack${stackIndex++}', //same as the container
+        type: ContainerType.unlimited, //sets the type of the stack to unlimited, so it can have multiple children
+        removeFromParent: parent?.removeChild); //same as the container
+
+    return widget; //return the created widget
+  }
+
+  int positionedIndex = 0; //this is used to give the positioned widgets a unique id
+  LayoutWidget addPositioned(LayoutWidget? parent) { //this is used to add a positioned widget to the layout
+    LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
+
+      WidgetOptions options = WidgetOptions.fromType(Positioned);
+
+      properties["left"] ??= options.getDefaultValue("left"); //we set the left property to the default value defined in the widget options, so that we can use it in the widget
+      properties["top"] ??= options.getDefaultValue("top"); //we set the top property to the default value defined in the widget options, so that we can use it in the widget
+      properties["right"] ??= options.getDefaultValue("right"); //we set the right property to the default value defined in the widget options, so that we can use it in the widget
+      properties["bottom"] ??= options.getDefaultValue("bottom"); //we set the bottom property to the default value defined in the widget options, so that we can use it in the widget
+
+      return Positioned( //the actual positioned widget that will be displayed
+        left: options.getValue("left", properties["left"]), //the left position of the widget in the stack
+        top: options.getValue("top", properties["top"]), //the top position of the widget in the stack
+        right: options.getValue("right", properties["right"]), //the right position of the widget in the stack
+        bottom: options.getValue("bottom", properties["bottom"]), //the bottom position of the widget in the stack
+        child: children.isNotEmpty ? children.first : Container(), //we only allow one child in a positioned widget, so we take the first child from the children list. if no child is provided, we give null
+      );
+    }, id: 'positioned${positionedIndex++}', //same as the container and row
+        type: ContainerType.single, //sealed means that this widget cannot have any children
+        removeFromParent: parent?.removeChild); //same as the container and row
+
+    return widget; //return the created widget
+  }
+
 
 
 

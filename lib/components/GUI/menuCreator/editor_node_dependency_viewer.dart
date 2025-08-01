@@ -150,19 +150,25 @@ class DisplayNode extends StatelessWidget { //a widget to display a single Layou
           feedback: Material( //the feedback widget that is displayed while dragging
             elevation: 8, //with a little bit of elevation
             borderRadius: BorderRadius.circular(8), //and a border radius of 8
-            child: Container( //the container that holds the feedback widget
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), //with some padding (its used to add some space around the text)
-              decoration: BoxDecoration( //the decoration of the container
-                color: Colors.blue.shade100, //a light blue background color
-                borderRadius: BorderRadius.circular(8), //with a border radius of 8
-                border: Border.all(color: Colors.blue, width: 2), //and a blue border
-              ),
-              child: Text( //the text that is displayed while dragging
-                node.id, //it displays the id of the node for now //TODO
-                style: const TextStyle( //the style of the text
-                  color: Colors.blue, //the text color is blue
-                  fontWeight: FontWeight.bold, //in bold
-                  fontSize: 14, //with a font size of 14
+            child: GestureDetector(
+              onSecondaryTap: () { //when the user right clicks on the feedback widget,
+
+              },
+
+              child: Container( //the container that holds the feedback widget
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), //with some padding (its used to add some space around the text)
+                decoration: BoxDecoration( //the decoration of the container
+                  color: Colors.blue.shade100, //a light blue background color
+                  borderRadius: BorderRadius.circular(8), //with a border radius of 8
+                  border: Border.all(color: Colors.blue, width: 2), //and a blue border
+                ),
+                child: Text( //the text that is displayed while dragging
+                  node.id, //it displays the id of the node for now //TODO
+                  style: const TextStyle( //the style of the text
+                    color: Colors.blue, //the text color is blue
+                    fontWeight: FontWeight.bold, //in bold
+                    fontSize: 14, //with a font size of 14
+                  ),
                 ),
               ),
             ),
