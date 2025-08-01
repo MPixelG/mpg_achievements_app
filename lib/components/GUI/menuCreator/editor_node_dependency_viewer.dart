@@ -69,12 +69,14 @@ class NodeViewerState extends State<NodeViewer> { //the state for the NodeViewer
           onPressed: () { //when the button is pressed
             widget.root!.children.clear(); //clear the children of the root widget
             setState(() {}); //and refresh the state to update the gui
+            widget.updateViewport!();
           },
           child: Icon(CupertinoIcons.trash), //the icon of the button is a trash can
         ),
         onAcceptWithDetails: (details) { //when a widget is dropped onto the button
           details.data.removeFromParent(details.data); //we remove the widget from its parent so that its gone
           setState(() {}); //and refresh the state to update the gui
+          widget.updateViewport!();
         },
       ),
 
