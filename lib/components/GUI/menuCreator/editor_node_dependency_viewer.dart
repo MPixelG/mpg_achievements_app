@@ -86,7 +86,7 @@ class NodeViewerState extends State<NodeViewer> { //the state for the NodeViewer
               scrollDirection: Axis.vertical,
               child: Container( //the container that holds the content
                 constraints: const BoxConstraints( //with constraints so that it has a minimum size
-                  minWidth: 800, //of 800
+                  minWidth: 200, //of 800
                   minHeight: 600, //and 600
                 ),
                 child: DisplayNode( //the actual display node. it also displays all the children recursively
@@ -290,6 +290,7 @@ class DisplayNode extends StatelessWidget { //a widget to display a single Layou
           child: const Text("Delete Node"), //the text of the menu item
           onTap: () { //when the user taps on the menu item
             node.removeFromParent(node); //remove the node from its parent if it has a removeFromParent function
+            updateViewport();
           },
         ),
       ],

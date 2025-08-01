@@ -121,6 +121,11 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       WidgetOption<int>(parseInt, name: "borderX2", defaultValue: 3, description: "The second border size of the nine patch image in the x direction."),
       WidgetOption<int>(parseInt, name: "borderY2", defaultValue: 3, description: "The second border size of the nine patch image in the y direction."),
     ]).register();
+
+    WidgetOptions(Expanded, options: [
+      WidgetOption<double>(parseDouble, name: "flex", defaultValue: 1.0, description: "The flex factor of the expanded widget. If not set, 1.0 will be used."), //the flex factor is used to determine how much space the widget should take up in the row or column
+    ]).register();
+
   }
 
 
@@ -138,6 +143,13 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
         ),
 
       floatingActionButton: PopupMenuButton(itemBuilder: (context) => [ //this is the floating action button that opens a popup menu with the options to add widgets
+        PopupMenuItem(
+          value: 'expanded', //another option for positioned
+          child: ListTile(
+            leading: Icon(Icons.expand_rounded), //a positioned icon
+            title: Text('Expanded'), //with Positioned as a display
+          ),
+        ),
         PopupMenuItem(
           value: 'positioned', //another option for positioned
           child: ListTile(
@@ -191,13 +203,17 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       ],
           onSelected: (value) { //this is called when an item is selected from the popup menu
             switch(value){ //we switch on the value of the selected item
-              case "positioned": addWidget(addPositioned(getNearestStackRecursive(root))); //if the value is positioned, we add a positioned widget to the root widget
+              case "positioned": {LayoutWidget? parent = getNearestStackRecursive(root); addWidget(addPositioned(parent), root: parent);} //if the value is positioned, we add a positioned widget to the root widget
               case "container": addWidget(addContainer(root)); //if the value is container, we add a container widget to the root widget
               case "text": showTextAlertDialog(context); //same for text
               case "row": addWidget(addRow(root)); //and row
               case "column": addWidget(addColumn(root)); //and column
               case "stack": addWidget(addStack(root)); //and stack
               case "ninepatch_button": addWidget(addNinepatchButton(root)); //and nine patch button
+              case "expanded": {
+                LayoutWidget? parent = getNearestFlexRecursive(root); //we get the nearest stack widget to add the expanded widget to
+                addWidget(addExpanded(parent), root: parent);
+              }
             }
 
             _nodeViewerKey.currentState?.setState(() {}); //this updates the node viewer to show the new widget that was added
@@ -245,11 +261,13 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
   /// Adds a widget to the layout.
   /// The widget is built using the provided LayoutWidget.
-  void addWidget(LayoutWidget? layoutWidget) async{
+  void addWidget(LayoutWidget? layoutWidget, {LayoutWidget? root}) async{
     if(layoutWidget == null) return; //if the layoutWidget is null, we return and do not add anything
 
     setState(() { //we call setState to rebuild the widget tree and show the new widget
-      root.addChild(layoutWidget); //we add the new widget to the root widget's children
+      root ??= this.root; //if no root is provided, we use the current root widget
+
+      root!.addChild(layoutWidget); //we add the new widget to the root widget's children
     });
   }
 
@@ -262,9 +280,21 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   LayoutWidget? getNearestStackRecursive(LayoutWidget widget) {
     for (var value in widget.children) {
       if (value.widgetType == Stack) { //if the widget is a stack, we return it
+        print("found a stack widget in the children of ${widget.id}"); //we print a message to the console that we found a stack widget
         return value; //we return the stack widget
       }
-      getNearestStackRecursive(value);
+      return getNearestStackRecursive(value);
+    }
+    return null; //if we reach here, it means that the widget has no parent or no children, so we return null
+  }
+
+  LayoutWidget? getNearestFlexRecursive(LayoutWidget widget) {
+    for (var value in widget.children) {
+      if (value.widgetType == Row || value.widgetType == Column) {
+        print("found a flex widget in the children of ${widget.id}"); //we print a message to the console that we found an expanded widget
+        return value; //we return the expanded widget
+      }
+      return getNearestFlexRecursive(value);
     }
     return null; //if we reach here, it means that the widget has no parent or no children, so we return null
   }
@@ -376,7 +406,9 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
   int positionedIndex = 0; //this is used to give the positioned widgets a unique id
   LayoutWidget? addPositioned(LayoutWidget? parent) { //this is used to add a positioned widget to the layout
+    print("testing positioned widget: ${parent?.id}, ${parent?.canAddChild}");
     if(parent == null || !parent.canAddChild) return null;
+    print("passed");
     LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
 
       WidgetOptions options = WidgetOptions.fromType(Positioned);
@@ -396,6 +428,26 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
     }, id: 'positioned${positionedIndex++}', //same as the container and row
         type: ContainerType.single, //sealed means that this widget cannot have any children
         removeFromParent: parent.removeChild, parent: parent, widgetType: Positioned); //same as the container and row
+
+    return widget; //return the created widget
+  }
+
+  LayoutWidget? addExpanded(LayoutWidget? parent) { //this is used to add an expanded widget to the layout
+    if(parent == null || !parent.canAddChild) return null; //if the parent is null or cannot have children, we return null
+
+    LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
+
+      WidgetOptions options = WidgetOptions.fromType(Expanded);
+
+      properties["flex"] ??= options.getDefaultValue("flex"); //we set the flex property to the default value defined in the widget options, so that we can use it in the widget
+
+      return Expanded( //the actual expanded widget that will be displayed
+        flex: options.getValue("flex", properties["flex"]).toInt(), //the flex factor of the expanded widget
+        child: children.isNotEmpty ? children.first : Container(), //we only allow one child in an expanded widget, so we take the first child from the children list. if no child is provided, we give null
+      );
+    }, id: 'expanded${containerIndex++}', //same as the container and row
+        type: ContainerType.single, //sealed means that this widget cannot have any children
+        removeFromParent: parent.removeChild, parent: parent, widgetType: Expanded); //same as the container and row
 
     return widget; //return the created widget
   }
