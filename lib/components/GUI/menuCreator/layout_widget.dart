@@ -49,6 +49,39 @@ class LayoutWidget {
     removeFromParent = newParent.removeChild;
   }
 
+  void swapWith(LayoutWidget other) {
+    if (parent != other.parent) {
+      return; // Cannot swap widgets that arent siblings (i.e., do not share the same parent)
+    }
+
+    final index1 = children.indexOf(this);
+    final index2 = other.parent?.children.indexOf(other) ?? -1;
+
+    if (index1 == -1 || index2 == -1) {
+      throw Exception("One of the widgets is not a child of the parent");
+    }
+
+    children.swap(index1, index2);
+  }
+
+  void moveUp() {
+    if (parent == null) return; // Cannot move up if there is no parent
+
+    final index = parent!.children.indexOf(this);
+    if (index > 0) {
+      parent!.children.swap(index, index - 1);
+    }
+  }
+
+  void moveDown() {
+    if (parent == null) return; // Cannot move down if there is no parent
+
+    final index = parent!.children.indexOf(this);
+    if (index < parent!.children.length - 1) {
+      parent!.children.swap(index, index + 1);
+    }
+  }
+
   void removeChild(LayoutWidget child) {
     children.removeWhere((element) => element.id == child.id);
   }
@@ -70,9 +103,8 @@ class LayoutWidget {
 
     if(widgetType == Positioned && other.widgetType != Stack) return false; // Cannot drop a Positioned widget on a Widget that is not a Stack
 
-    if(other == parent) return false; // dropping on the parent has no effect
 
-    if(isDescendant(this, other)) return false; // Cannot drop a widget on itself or its descendants
+    //if(isDescendant(this, other)) return false; // Cannot drop a widget on itself or its descendants
 
     return true;
   }
@@ -99,3 +131,15 @@ bool isDescendant(LayoutWidget dragged, LayoutWidget target) { //check if the dr
 /// - `sealed`: Cannot have any children added.
 /// - `single`: Can only have one child.
 enum ContainerType { unlimited, sealed, single }
+
+
+extension on List{
+  void swap(int index1, int index2) {
+    if (index1 < 0 || index2 < 0 || index1 >= length || index2 >= length) {
+      throw RangeError('Index out of range');
+    }
+    final temp = this[index1];
+    this[index1] = this[index2];
+    this[index2] = temp;
+  }
+}

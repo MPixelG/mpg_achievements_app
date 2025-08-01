@@ -77,7 +77,7 @@ class NodeViewerState extends State<NodeViewer> { //the state for the NodeViewer
         padding: const EdgeInsets.all(8), //padding around the content so that it doesnt touch the edges
         child: InteractiveViewer( //allows us to zoom and move the content
           constrained: false, //we dont want to constrain the size of the content
-          boundaryMargin: const EdgeInsets.all(600), //the margin around the content so that we can scroll a bit outside the content
+          boundaryMargin: const EdgeInsets.all(100), //the margin around the content so that we can scroll a bit outside the content
           minScale: 0.01, //the minimum scale we can zoom out to
           maxScale: 8.0, //the maximum scale we can zoom in to
           child: SingleChildScrollView( //allows to scroll horizontally
@@ -92,6 +92,7 @@ class NodeViewerState extends State<NodeViewer> { //the state for the NodeViewer
                 child: DisplayNode( //the actual display node. it also displays all the children recursively
                   node: widget.root!, //the root widget is the node we want to display
                   onReorder: _handleReorder, //the function to handle reordering of nodes when they are dragged and dropped onto each other
+                  updateViewport: () {widget.updateViewport!(); setState(() {});}, //the function to update the viewport, not used in this widget but can be used to refresh the view of the parent
                 ),
               ),
             ),
@@ -105,11 +106,13 @@ class NodeViewerState extends State<NodeViewer> { //the state for the NodeViewer
 class DisplayNode extends StatelessWidget { //a widget to display a single LayoutWidget and its children
   final LayoutWidget node; //the node to display
   final void Function(LayoutWidget dragged, LayoutWidget target)? onReorder; //the function thats called when a widget is dragged and dropped onto another widget to reorder them
+  final void Function() updateViewport; //a function to update the viewport, not used in this widget but can be used to refresh the view of the parent
 
   const DisplayNode({ //constructor for the DisplayNode widget
     required this.node, //the node to display
     super.key, //the key for the widget
     this.onReorder, //function to reorder
+    required this.updateViewport
   });
 
   @override
@@ -124,19 +127,53 @@ class DisplayNode extends StatelessWidget { //a widget to display a single Layou
           node: children[i], //with the given child node
           onReorder: onReorder, //and the function to reorder them
           key: ValueKey(children[i].id), //and a key to identify it
+          updateViewport: updateViewport, //and the function to update the viewport
         ),
       );
     }
 
+    bool canMoveUp = (node.parent?.children.indexOf(node) ?? 0) > 0; //check if the node can be moved up (if its not the first child)
+    bool canMoveDown = (node.parent?.children.indexOf(node) ?? 0) < (node.parent?.children.length ?? 0) - 1; //check if the node can be moved down (if its not the last child)
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onSecondaryTapDown: (details) {
-        if(!isMenuShown) { //if no menu is currently shown, we show the context menu. we need to do this to prevent multiple menus from parents of this widgets from being shown at the same time
-          isMenuShown = true; //set the static variable to true to indicate that a menu is shown
+        if(!hasTapped) { //if no menu is currently shown, we show the context menu. we need to do this to prevent multiple menus from parents of this widgets from being shown at the same time
+          hasTapped = true; //set the static variable to true to indicate that a menu is shown
           _showContextMenu(context, details); //show the context menu at the position of the tap
-          Future.delayed(Duration(milliseconds: 10), () => isMenuShown = false); // reset the static variable after a short delay to allow the menu to be shown again
+          Future.delayed(Duration(milliseconds: 10), () => hasTapped = false); // reset the static variable after a short delay to allow the menu to be shown again
         }
       },
+
+      onTapDown: (details) {
+        if(hasTapped) return; //if there has been tapped before, we dont want to do anything
+        hasTapped = true; //set the static variable to true to indicate that a menu is shown
+        Future.delayed(Duration(milliseconds: 10), () => hasTapped = false);
+
+        double buttonX = 16 * 1;
+
+        if(buttonX - details.localPosition.dx > 20) { //if the tap is more than 20 pixels away from the first button, we dont want to do anything
+          return;
+        }
+
+        double secondButtonX = 16 * 3; //calculate the position of the second button
+
+        if((buttonX - details.localPosition.dx).abs() < (secondButtonX - details.localPosition.dx).abs()) {
+          if(canMoveUp) { //if the tap is closer to the first button and the node can be moved up
+            node.moveUp(); //we move the node up
+            updateViewport(); //and update the viewport
+          }
+        } //if the tap is closer to the first button, we press the first one
+        else {
+          if(canMoveDown){
+            node.moveDown(); //if the tap is closer to the second button and the node can be moved down, we move the node down
+            updateViewport();
+          }
+        } //otherwise we press the second one
+
+
+      },
+
       child: DragTarget<LayoutWidget>( //the DisplayNode is also a DragTarget so that we can drop widgets onto it
         onWillAcceptWithDetails: (dragged) { //when a widget is dragged over the DisplayNode we check if we can accept it
           return dragged.data != node && node.canAddChild && dragged.data.canDropOn(node); //if its not the same node and if the node can accept children, we return true
@@ -210,7 +247,8 @@ class DisplayNode extends StatelessWidget { //a widget to display a single Layou
               child: Row( //the content of the container is a row
                 mainAxisSize: MainAxisSize.min, //it takes as little space as needed
                 children: [ //the children of the row are the icon and the id of the node
-                  Icon(Icons.widgets, size: 16, color: Colors.blue.shade700), //an icon in a blue color
+                  Icon(Icons.keyboard_arrow_up, size: 16, color: (node.parent?.children.indexOf(node) ?? 0) > 0 ? Colors.blue.shade700 : Colors.grey.shade400), //an icon to indicate that the node can be moved up, if its not the first child, otherwise its greyed out
+                  Icon(Icons.keyboard_arrow_down, size: 16, color: (node.parent?.children.indexOf(node) ?? 0) < (node.parent?.children.length ?? 0)-1 ? Colors.blue.shade700 : Colors.grey.shade400),
                   const SizedBox(width: 4), //a little space between the icon and the text
                   Text( //the text that displays the id of the node
                     node.id, //the id of the node
@@ -220,6 +258,7 @@ class DisplayNode extends StatelessWidget { //a widget to display a single Layou
                       color: Colors.blue.shade800, //the text color is a darker blue
                     ),
                   ),
+                  const SizedBox(width: 4),
                 ],
               ),
             ),
@@ -240,9 +279,9 @@ class DisplayNode extends StatelessWidget { //a widget to display a single Layou
   }
 
 
-  static bool isMenuShown = false; //a static variable to check if a menu is currently shown
+  static bool hasTapped = false; //a static variable to check if a menu is currently shown
   void _showContextMenu(BuildContext context, TapDownDetails details) { //a function to show a context menu when the user right clicks on the DisplayNode
-    isMenuShown = true; //set the static variable to true to indicate that a menu is shown
+    hasTapped = true; //set the static variable to true to indicate that a menu is shown
     showMenu( //show a menu with options
       context: context, //the context of the widget
       position: RelativeRect.fromLTRB(details.globalPosition.dx, details.globalPosition.dy, details.globalPosition.dx, details.globalPosition.dy), //the position of the menu (we can change this to be relative to the DisplayNode)
