@@ -11,6 +11,9 @@ class WidgetOptions {
 
   WidgetOptions(this.widgetType, {required this.options});
 
+  WidgetOptions.from(WidgetOptions other, this.widgetType)
+      : options = List<WidgetOption>.from(other.options);
+
   WidgetOption? getOptionByName(String name) {
     return options.where((option) => option.name == name).cast<WidgetOption?>().firstOrNull; // Using firstOrNull to avoid exceptions if nothing is found
   }
@@ -68,6 +71,8 @@ class WidgetOption<T> {
   final String? description;
 
   final dynamic defaultValue;
+
+  final Type type = T;
 
   final T? Function(dynamic type) parser; // Optional parser function to convert string input to the desired type
 

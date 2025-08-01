@@ -124,6 +124,8 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       WidgetOption<double>(parseDouble, name: "flex", defaultValue: 1.0, description: "The flex factor of the expanded widget. If not set, 1.0 will be used."), //the flex factor is used to determine how much space the widget should take up in the row or column
     ]).register();
 
+    WidgetOptions.from(WidgetOptions.fromType(Row), Column).register();
+
   }
 
 

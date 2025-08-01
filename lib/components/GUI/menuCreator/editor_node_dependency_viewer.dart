@@ -309,12 +309,9 @@ class DisplayNode extends StatelessWidget { //a widget to display a single Layou
       context: context,
       barrierDismissible: true,
       builder: (context) {
-        return OptionEditorMenu(node: node);
+        return OptionEditorMenu(node: node, updateView: () => updateViewport());
       },
     );
-
-
-
   }
 
 }
