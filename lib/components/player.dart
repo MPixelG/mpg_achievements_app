@@ -70,7 +70,9 @@ class Player extends SpriteAnimationGroupComponent
     //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
     if (other is Collectable) other.collidedWithPlayer();
     if (other is Saw && !debugImmortalMode) _respawn();
-    if (other is Collectable && other.interactiveTask) {game.showDialogue = true;
+    if (other is Collectable && other.interactiveTask) {
+      game.showDialogue = true;
+      game.overlays.add('DialogueScreen');
     print('Board1');}
     super.onCollision(intersectionPoints, other);
   }

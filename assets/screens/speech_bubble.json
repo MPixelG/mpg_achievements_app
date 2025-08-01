@@ -1,0 +1,11 @@
+{
+  "type": "SpeechBubble",
+  "properties": {
+    "text": "Hey! Welcome to the game.",       // The text to show
+    "alignment": "bottom",                    // Where to position the bubble
+    "color": "#FFFFFF",                       // Background color
+    "textColor": "#000000",                   // Text color
+    "padding": { "l": 12, "t": 8, "r": 12, "b": 8 } // Inner spacing
+  },
+  "children": []
+}
