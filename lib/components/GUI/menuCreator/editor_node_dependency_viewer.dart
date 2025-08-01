@@ -21,9 +21,9 @@ class NodeViewerState extends State<NodeViewer> { //the state for the NodeViewer
     }
 
     final parent = findParent(widget.root!, dragged); //get the parent of the dragged widget
-    parent?.children.remove(dragged); //remove the dragged widget from its parent
+    parent?.removeChild(dragged); //remove the dragged widget from its parent
 
-    target.children.add(dragged); //and add it to the target widgets children
+    target.addChild(dragged); //and add it to the target widgets children
     setState(() {}); //refresh the state to update the gui
 
     if(widget.updateViewport != null) { //if there is a function to update the viewport, call it
@@ -81,11 +81,11 @@ class NodeViewerState extends State<NodeViewer> { //the state for the NodeViewer
       ),
 
       body: Container( //the actual body of the NodeViewer
-        padding: const EdgeInsets.all(16), //padding around the content so that it doesnt touch the edges
+        padding: const EdgeInsets.all(8), //padding around the content so that it doesnt touch the edges
         child: InteractiveViewer( //allows us to zoom and move the content
           constrained: false, //we dont want to constrain the size of the content
-          boundaryMargin: const EdgeInsets.all(10), //the margin around the content so that we can scroll a bit outside the content
-          minScale: 0.4, //the minimum scale we can zoom out to
+          boundaryMargin: const EdgeInsets.all(600), //the margin around the content so that we can scroll a bit outside the content
+          minScale: 0.01, //the minimum scale we can zoom out to
           maxScale: 8.0, //the maximum scale we can zoom in to
           child: SingleChildScrollView( //allows to scroll horizontally
             scrollDirection: Axis.horizontal,
@@ -135,51 +135,56 @@ class DisplayNode extends StatelessWidget { //a widget to display a single Layou
       );
     }
 
-    return DragTarget<LayoutWidget>( //the DisplayNode is also a DragTarget so that we can drop widgets onto it
-      onWillAcceptWithDetails: (dragged) { //when a widget is dragged over the DisplayNode we check if we can accept it
-        return dragged.data != node && node.canAddChild; //if its not the same node and if the node can accept children, we return true
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onSecondaryTapDown: (details) {
+        if(!isMenuShown) { //if no menu is currently shown, we show the context menu. we need to do this to prevent multiple menus from parents of this widgets from being shown at the same time
+          isMenuShown = true; //set the static variable to true to indicate that a menu is shown
+          _showContextMenu(context, details); //show the context menu at the position of the tap
+          Future.delayed(Duration(milliseconds: 10), () => isMenuShown = false); // reset the static variable after a short delay to allow the menu to be shown again
+        }
       },
-      onAcceptWithDetails: (dragged) { //when a widget is dropped onto the DisplayNode
-        if (onReorder != null) onReorder!(dragged.data, node); //we call the function to reorder the nodes
-      },
-      builder: (context, candidateData, rejectedData) { //build the widget tree for the DisplayNode
-        bool isHovering = candidateData.isNotEmpty; //check if the DisplayNode is currently being hovered over by a dragged widget
+      child: DragTarget<LayoutWidget>( //the DisplayNode is also a DragTarget so that we can drop widgets onto it
+        onWillAcceptWithDetails: (dragged) { //when a widget is dragged over the DisplayNode we check if we can accept it
+          return dragged.data != node && node.canAddChild; //if its not the same node and if the node can accept children, we return true
+        },
+        onAcceptWithDetails: (dragged) { //when a widget is dropped onto the DisplayNode
+          if (onReorder != null) onReorder!(dragged.data, node); //we call the function to reorder the nodes
+        },
+        builder: (context, candidateData, rejectedData) { //build the widget tree for the DisplayNode
+          bool isHovering = candidateData.isNotEmpty; //check if the DisplayNode is currently being hovered over by a dragged widget
 
-        return Draggable<LayoutWidget>( //the DisplayNode is also a Draggable widget so that we can drag it around
-          data: node, //the data we want to drag is the node
-          feedback: Material( //the feedback widget that is displayed while dragging
-            elevation: 8, //with a little bit of elevation
-            borderRadius: BorderRadius.circular(8), //and a border radius of 8
-            child: GestureDetector(
-              onSecondaryTap: () { //when the user right clicks on the feedback widget,
+          return Draggable<LayoutWidget>( //the DisplayNode is also a Draggable widget so that we can drag it around
+            data: node, //the data we want to drag is the node
+            feedback: Material( //the feedback widget that is displayed while dragging
+              elevation: 8, //with a little bit of elevation
+              borderRadius: BorderRadius.circular(8), //and a border radius of 8
 
-              },
-
-              child: Container( //the container that holds the feedback widget
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), //with some padding (its used to add some space around the text)
-                decoration: BoxDecoration( //the decoration of the container
-                  color: Colors.blue.shade100, //a light blue background color
-                  borderRadius: BorderRadius.circular(8), //with a border radius of 8
-                  border: Border.all(color: Colors.blue, width: 2), //and a blue border
-                ),
-                child: Text( //the text that is displayed while dragging
-                  node.id, //it displays the id of the node for now //TODO
-                  style: const TextStyle( //the style of the text
-                    color: Colors.blue, //the text color is blue
-                    fontWeight: FontWeight.bold, //in bold
-                    fontSize: 14, //with a font size of 14
+                child: Container( //the container that holds the feedback widget
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), //with some padding (its used to add some space around the text)
+                  decoration: BoxDecoration( //the decoration of the container
+                    color: Colors.blue.shade100, //a light blue background color
+                    borderRadius: BorderRadius.circular(8), //with a border radius of 8
+                    border: Border.all(color: Colors.blue, width: 2), //and a blue border
+                  ),
+                  child: Text( //the text that is displayed while dragging
+                    node.id, //it displays the id of the node for now //TODO
+                    style: const TextStyle( //the style of the text
+                      color: Colors.blue, //the text color is blue
+                      fontWeight: FontWeight.bold, //in bold
+                      fontSize: 14, //with a font size of 14
+                    ),
                   ),
                 ),
               ),
+            childWhenDragging: Opacity( //the widget that is displayed while dragging the DisplayNode has a lower opacity
+              opacity: 0.5, //of 0.5
+              child: _buildNodeContent(context, isHovering, displayedChildren), //the content of the DisplayNode is still displayed while dragging
             ),
-          ),
-          childWhenDragging: Opacity( //the widget that is displayed while dragging the DisplayNode has a lower opacity
-            opacity: 0.5, //of 0.5
-            child: _buildNodeContent(context, isHovering, displayedChildren), //the content of the DisplayNode is still displayed while dragging
-          ),
-          child: _buildNodeContent(context, isHovering, displayedChildren), //the content of the DisplayNode is displayed normally when not dragging
-        );
-      },
+            child: _buildNodeContent(context, isHovering, displayedChildren), //the content of the DisplayNode is displayed normally when not dragging
+          );
+        },
+      ),
     );
   }
 
@@ -240,4 +245,23 @@ class DisplayNode extends StatelessWidget { //a widget to display a single Layou
       ),
     );
   }
+
+
+  static bool isMenuShown = false; //a static variable to check if a menu is currently shown
+  void _showContextMenu(BuildContext context, TapDownDetails details) { //a function to show a context menu when the user right clicks on the DisplayNode
+    isMenuShown = true; //set the static variable to true to indicate that a menu is shown
+    showMenu( //show a menu with options
+      context: context, //the context of the widget
+      position: RelativeRect.fromLTRB(details.globalPosition.dx, details.globalPosition.dy, details.globalPosition.dx, details.globalPosition.dy), //the position of the menu (we can change this to be relative to the DisplayNode)
+      items: [ //the items in the menu
+        PopupMenuItem( //a menu item to delete the node
+          child: const Text("Delete Node"), //the text of the menu item
+          onTap: () { //when the user taps on the menu item
+            node.removeFromParent(node); //remove the node from its parent if it has a removeFromParent function
+          },
+        ),
+      ],
+    );
+  }
+
 }

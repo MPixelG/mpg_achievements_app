@@ -121,8 +121,6 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       WidgetOption<int>(parseInt, name: "borderX2", defaultValue: 3, description: "The second border size of the nine patch image in the x direction."),
       WidgetOption<int>(parseInt, name: "borderY2", defaultValue: 3, description: "The second border size of the nine patch image in the y direction."),
     ]).register();
-
-
   }
 
 
@@ -193,7 +191,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       ],
           onSelected: (value) { //this is called when an item is selected from the popup menu
             switch(value){ //we switch on the value of the selected item
-              case "positioned": addWidget(addPositioned(root)); //if the value is positioned, we add a positioned widget to the root widget
+              case "positioned": addWidget(addPositioned(getNearestStackRecursive(root))); //if the value is positioned, we add a positioned widget to the root widget
               case "container": addWidget(addContainer(root)); //if the value is container, we add a container widget to the root widget
               case "text": showTextAlertDialog(context); //same for text
               case "row": addWidget(addRow(root)); //and row
@@ -247,7 +245,9 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
   /// Adds a widget to the layout.
   /// The widget is built using the provided LayoutWidget.
-  void addWidget(LayoutWidget layoutWidget) async{
+  void addWidget(LayoutWidget? layoutWidget) async{
+    if(layoutWidget == null) return; //if the layoutWidget is null, we return and do not add anything
+
     setState(() { //we call setState to rebuild the widget tree and show the new widget
       root.addChild(layoutWidget); //we add the new widget to the root widget's children
     });
@@ -256,6 +256,17 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
   List<Widget> toWidgetList(List<LayoutWidget> widgets) {
     return widgets.map((widget) => widget.build(context)).toList();
+  }
+
+
+  LayoutWidget? getNearestStackRecursive(LayoutWidget widget) {
+    for (var value in widget.children) {
+      if (value.widgetType == Stack) { //if the widget is a stack, we return it
+        return value; //we return the stack widget
+      }
+      getNearestStackRecursive(value);
+    }
+    return null; //if we reach here, it means that the widget has no parent or no children, so we return null
   }
 
 
@@ -274,8 +285,6 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
       double availableWidth = currentParentBox == null ? MediaQuery.of(context).size.width : (currentParentBox.size.width); //we get the available width of the parent widget, if no parent is provided, we use the screen width
       double availableHeight = currentParentBox == null ? MediaQuery.of(context).size.height : (currentParentBox.size.height); //same for the height
-
-      print("availableWidth: $availableWidth, availableHeight: $availableHeight"); //debugging output to see the available width and height of the parent widget
 
       properties["width"] ??= options.getDefaultValue("width"); //we set the width property to the default value defined in the widget options, so that we can use it in the widget
       properties["height"] ??= options.getDefaultValue("height"); //same for the height
@@ -296,7 +305,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       );
     }, id: 'container${containerIndex++}', //the container id is set to a unique id based on the containerIndex. it also increments the index so that the next container will have a different id
         type: ContainerType.single, //sets the type of the container to single, meaning it can only have one child
-        removeFromParent: parent?.removeChild); // we set the removeFromParent function to the parent's removeChild function, so that we can remove the container from the parent if needed
+        removeFromParent: parent?.removeChild, parent: parent, widgetType: Container); // we set the removeFromParent function to the parent's removeChild function, so that we can remove the container from the parent if needed
 
     return widget; //return the created widget
   }
@@ -321,7 +330,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       );
     }, id: 'row${rowIndex++}', //same as the container
         type: ContainerType.unlimited, //sets the type of the row to unlimited, meaning it can have multiple children
-        removeFromParent: parent?.removeChild); //same as the container
+        removeFromParent: parent?.removeChild, parent: parent, widgetType: Row); //same as the container
 
     return widget; //return the created widget
   }
@@ -347,7 +356,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       );
     }, id: 'column${columnIndex++}', //same as the container
         type: ContainerType.unlimited, //sets the type of the row to unlimited, meaning it can have multiple children
-        removeFromParent: parent?.removeChild); //same as the container
+        removeFromParent: parent?.removeChild, parent: parent, widgetType: Column); //same as the container
 
     return widget; //return the created widget
   }
@@ -360,13 +369,14 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       );
     }, id: 'stack${stackIndex++}', //same as the container
         type: ContainerType.unlimited, //sets the type of the stack to unlimited, so it can have multiple children
-        removeFromParent: parent?.removeChild); //same as the container
+        removeFromParent: parent?.removeChild, parent: parent, widgetType: Stack); //same as the container
 
     return widget; //return the created widget
   }
 
   int positionedIndex = 0; //this is used to give the positioned widgets a unique id
-  LayoutWidget addPositioned(LayoutWidget? parent) { //this is used to add a positioned widget to the layout
+  LayoutWidget? addPositioned(LayoutWidget? parent) { //this is used to add a positioned widget to the layout
+    if(parent == null || !parent.canAddChild) return null;
     LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
 
       WidgetOptions options = WidgetOptions.fromType(Positioned);
@@ -385,7 +395,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       );
     }, id: 'positioned${positionedIndex++}', //same as the container and row
         type: ContainerType.single, //sealed means that this widget cannot have any children
-        removeFromParent: parent?.removeChild); //same as the container and row
+        removeFromParent: parent.removeChild, parent: parent, widgetType: Positioned); //same as the container and row
 
     return widget; //return the created widget
   }
@@ -410,7 +420,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       );
     }, id: 'text${textIndex++}', //same as the container and row
         type: ContainerType.sealed, //sealed means that the text widget cannot have any children
-        removeFromParent: parent?.removeChild); //same as the container and row
+        removeFromParent: parent?.removeChild, parent: parent, widgetType: Text); //same as the container and row
 
     return widget; //return the created widget
   }
@@ -442,8 +452,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       );
     }, id: 'ninepatch_button${ninepatchButtonIndex++}',
         type: ContainerType.single,
-        removeFromParent: parent?.removeChild);
-
+        removeFromParent: parent?.removeChild, parent: parent, widgetType: NinePatchButton);
     return widget;
   }
 
