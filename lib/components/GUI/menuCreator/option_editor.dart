@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/editor_node_dependency_viewer.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/button_action.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/layout_widget.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_options.dart';
+import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_button.dart';
 
 class OptionEditorMenu extends StatefulWidget {
   const OptionEditorMenu({super.key, required this.node, required this.updateView});
@@ -188,6 +189,9 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
           ),
         ],
       );
+    } else if (option.type == ButtonAction){
+      print("ButtonAction detected: ${option.name}");
+      return _buildButtonAction(option, widget.node.properties[option.name]);
     }
 
     return Text(
@@ -217,6 +221,54 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
           labelText: name,
           border: OutlineInputBorder(),
         ),
+      ),
+    );
+  }
+
+
+  Widget _buildButtonAction(WidgetOption option, dynamic value) {
+    return SizedBox(
+      width: 120,
+      height: 40,
+      child: ElevatedButton(
+        onPressed: () {
+          showDialog(context: context,
+              builder: (context) {
+                return SizedBox(
+                  width: 600,
+                  height: 400,
+                  child: Scaffold(
+                    backgroundColor: Colors.transparent,
+                    appBar: AppBar(
+                      title: Text("Button Action Editor"),
+                      backgroundColor: CupertinoColors.systemGrey4,
+                    ),
+
+                    body: Container(color: Colors.white,
+                      child: SingleChildScrollView(
+
+                        child: Column(
+
+
+
+
+
+                        ),
+
+
+
+                      ),
+
+                    ),
+
+
+
+                  )
+                );
+              });
+
+        },
+        child: Text(option.name),
       ),
     );
   }

@@ -13,6 +13,8 @@ class LayoutWidget {
   late void Function(LayoutWidget child) removeFromParent; // Function to remove this widget from its parent, if needed
   LayoutWidget? parent; // Reference to the parent widget, if any
 
+  late bool Function(LayoutWidget other)? dropCondition; // Function to drop a prerequisite widget, if needed
+
   Type widgetType; // The type of the widget this LayoutWidget represents
 
   ContainerType type; //the amount of children this container can have, unlimited, sealed (no children can be added), single (only one child can be added)
@@ -25,7 +27,8 @@ class LayoutWidget {
     required this.type,
     required void Function(LayoutWidget child)? removeFromParent,
         required this.parent,
-        required this.widgetType
+        required this.widgetType,
+        this.dropCondition
   }) {
     this.children = children ?? [];
     this.properties = properties ?? {};
@@ -101,7 +104,7 @@ class LayoutWidget {
 
   bool canDropOn(LayoutWidget other){
 
-    if(widgetType == Positioned && other.widgetType != Stack) return false; // Cannot drop a Positioned widget on a Widget that is not a Stack
+    if(dropCondition != null && !dropCondition!(other)) return false; // Cannot drop a Positioned widget on a Widget that is not a Stack
 
 
     //if(isDescendant(this, other)) return false; // Cannot drop a widget on itself or its descendants

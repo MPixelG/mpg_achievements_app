@@ -404,12 +404,11 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
   int positionedIndex = 0; //this is used to give the positioned widgets a unique id
   LayoutWidget? addPositioned(LayoutWidget? parent) { //this is used to add a positioned widget to the layout
-    print("testing positioned widget: ${parent?.id}, ${parent?.canAddChild}");
     if(parent == null || !parent.canAddChild) return null;
-    print("passed");
     LayoutWidget widget = LayoutWidget((context, children, properties) { //this is the builder function that builds the widget
 
       WidgetOptions options = WidgetOptions.fromType(Positioned);
+
 
       properties["left"] ??= options.getDefaultValue("left"); //we set the left property to the default value defined in the widget options, so that we can use it in the widget
       properties["top"] ??= options.getDefaultValue("top"); //we set the top property to the default value defined in the widget options, so that we can use it in the widget
@@ -417,15 +416,15 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       properties["bottom"] ??= options.getDefaultValue("bottom"); //we set the bottom property to the default value defined in the widget options, so that we can use it in the widget
 
       return Positioned( //the actual positioned widget that will be displayed
-        left: options.getValue("left", properties["left"]), //the left position of the widget in the stack
-        top: options.getValue("top", properties["top"]), //the top position of the widget in the stack
-        right: options.getValue("right", properties["right"]), //the right position of the widget in the stack
-        bottom: options.getValue("bottom", properties["bottom"]), //the bottom position of the widget in the stack
+        left: options.getValue("left", properties["left"]) * screenWidth, //the left position of the widget in the stack
+        top: options.getValue("top", properties["top"]) * screenHeight, //the top position of the widget in the stack
+        right: options.getValue("right", properties["right"]) * screenWidth, //the right position of the widget in the stack
+        bottom: options.getValue("bottom", properties["bottom"]) * screenHeight, //the bottom position of the widget in the stack
         child: children.isNotEmpty ? children.first : Container(), //we only allow one child in a positioned widget, so we take the first child from the children list. if no child is provided, we give null
       );
     }, id: 'positioned${positionedIndex++}', //same as the container and row
         type: ContainerType.single, //sealed means that this widget cannot have any children
-        removeFromParent: parent.removeChild, parent: parent, widgetType: Positioned); //same as the container and row
+        removeFromParent: parent.removeChild, parent: parent, widgetType: Positioned, dropCondition: (other) => other.widgetType is Stack,); //same as the container and row
 
     return widget; //return the created widget
   }
@@ -445,7 +444,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       );
     }, id: 'expanded${containerIndex++}', //same as the container and row
         type: ContainerType.single, //sealed means that this widget cannot have any children
-        removeFromParent: parent.removeChild, parent: parent, widgetType: Expanded); //same as the container and row
+        removeFromParent: parent.removeChild, parent: parent, widgetType: Expanded, dropCondition: (other) => other.widgetType == Row || other.widgetType == Column); //same as the container and row
 
     return widget; //return the created widget
   }
