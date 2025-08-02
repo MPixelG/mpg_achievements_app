@@ -1,0 +1,24 @@
+<<character "Task" Board>>
+<<character "Player" Player>>
+
+title: Start
+---
+Board: Hello there!
+
+-> How are you?
+    <<playeryes>>
+    <<jump Happy>>
+-> Go away!
+    <<playerno>>
+    <<jump Angry>>
+===
+
+title: Happy
+---
+Board: I'm glad to hear that!
+===
+
+title: Angry
+---
+Board: Oh... sorry to bother you.
+===

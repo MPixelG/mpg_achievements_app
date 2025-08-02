@@ -11,7 +11,7 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
 
   late final PixelAdventure game;
   late final YarnProject _project;
-  late final DialogueYarnCreator yarnCreator;
+  late DialogueYarnCreator _yarnCreator;
   late final _script;
   late DialogueRunner _dialogueRunner;
   DialogueLine? _currentLine;
@@ -19,101 +19,120 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
   Completer<bool>? _finishedReadingCompleter;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _loadYarnProject();
-
 
   }
 
   Future<void> _loadYarnProject() async {
-    _project = await yarnCreator.yarn_project;
+    _yarnCreator = DialogueYarnCreator();
+    await _yarnCreator.loadYarnFile('assets/yarn/test.yarn');
+    _project = _yarnCreator.project;
+    _script = _yarnCreator.script;
     _dialogueRunner = DialogueRunner(
         yarnProject: _project,
         dialogueViews: [this]);
-    _script = await yarnCreator.script;
     _dialogueRunner.startDialogue('Start');
-
-      }
+    print(_project);
+  }
 
   @override
   Widget build(BuildContext context) {
     final line = _currentLine;
     if (line == null) {
-      return ColoredBox(
-        color: Colors.black,
-        child: Center(
-          child: Text(
-            'Loading...',
-            style: Theme
-                .of(context)
-                .textTheme
-                .displayMedium,
-          ),
-        ),
-      );
+      return SizedBox.shrink();
     }
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .inversePrimary,
-        title: Text(game.platform),
-        actions: [
-          FilledButton(onPressed: _showScript,
-            child: Text('ShowYarnScript'),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 10,
-            children: <Widget>[
-              Text(line.character?.name ?? ''),
-              Card(
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .inversePrimary,
+      // We make the background transparent so the overlay doesn't block the game view
+      backgroundColor: Colors.transparent,
+
+      // Stack allows layering widgets — we'll place the semi-transparent background and the dialogue box on top
+      body: Stack(
+        children: [
+         // Dialogue UI, positioned at the bottom center with some horizontal padding
+          Positioned(
+            left: 20,    // Left padding
+            right: 20,   // Right padding
+            bottom: 40,  // Distance from the bottom of the screen
+            child: Opacity(
+              opacity: 0.5, // The whole dialogue box is 50% transparent
+
+              child: Card(
+                color: Theme.of(context).colorScheme.inversePrimary, // Use theme color for styling
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16), // Rounded corners
+                ),
+
+                // Padding inside the card for its content
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Text(
-                    line.text,
-                    textAlign: TextAlign.center,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .headlineMedium,
+                  padding: const EdgeInsets.all(12.0),
+
+                  // This Column holds the character name, dialogue text, and button
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min, // Only take up as much space as needed
+                    children: [
+
+                      // Character name (if available)
+                      Text(
+                        line.character?.name ?? '',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(fontFamily: "gameFont"),
+                      ),
+
+                      const SizedBox(height: 6),
+
+                      // Main dialogue line text
+                      Text(
+                        line.text,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontSize: 14, // Slightly smaller text
+                          fontFamily: "gameFont",
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      // Show different buttons depending on dialogue state
+                      _dialogueFinished
+                      // Show a 'Close' button when the dialogue is finished
+                          ? FilledButton.icon(
+                        onPressed: () => setState(() {
+                          _dialogueFinished = false;
+                        }),
+                        icon: const Icon(Icons.close, size: 18),
+                        label: const Text('Close', style: TextStyle(fontSize: 14, fontFamily: "gameFont")),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(80, 36), // Small button
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        ),
+                      )
+                          : (_finishedReadingCompleter != null
+                      // Show a 'Next' button if we're waiting for the player to finish reading
+                          ? FilledButton.icon(
+                        onPressed: _finishedReadingLine,
+                        icon: const Icon(Icons.arrow_forward, size: 18),
+                        label: const Text('Next', style: TextStyle(fontSize: 14, fontFamily: "gameFont")),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(80, 36),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        ),
+                      )
+                          : const SizedBox.shrink()), // No button if there's no completer
+                    ],
                   ),
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
-      floatingActionButton: _dialogueFinished ? FilledButton.icon(
-        onPressed: () =>
-            setState(() {
-              _dialogueFinished = false;
-            }),
-        icon: Icon(Icons.close),
-        label: Text('Close'),
-      )
-          : (_finishedReadingCompleter != null
-          ? FilledButton.icon(
-        onPressed: _finishedReadingLine,
-        icon: Icon(Icons.arrow_forward),
-        label: Text('Next'),
-      )
-          : null),
     );
   }
 
+Future<String> _getscript() =>  DefaultAssetBundle.of(context).loadString('assets/yarn/test.yarn');
 
 
   //part which is implemented in DialogueView mixin
@@ -168,15 +187,15 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
   FutureOr<void> onDialogueFinish(){
     setState((){
       _dialogueFinished = true;
+      // Notify the parent that dialogue is finished
+      widget.onDialogueFinished();
     });
 
   }
 
    Future<void> _showScript() async {
 
-    _script = await _getScript(_project);
     if (!mounted) return;
-
     showDialog(
         context: context,
         builder: (_) => SimpleDialog(
@@ -191,13 +210,6 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
           ],
         ),
     );
-  }
-
-  Future<String> _getScript(YarnProject yarn) {
-
-    return yarnCreator.yarnpath;
-
-
   }
 
   void _finishedReadingLine() {
