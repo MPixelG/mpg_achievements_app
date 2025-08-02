@@ -14,39 +14,148 @@ import 'json_factory/widgetFactory.dart';
 import 'menuCreator/layout_widget.dart';
 
 abstract class Screen extends StatelessWidget {
-
   final Map<String, Screen> children = {};
-
   Screen({super.key, children});
 }
 
-class MainMenuScreen extends StatelessWidget {
+class MainMenuScreen extends StatefulWidget {
   const MainMenuScreen({super.key});
 
   @override
+  State<MainMenuScreen> createState() => _MainMenuScreenState();
+}
+
+class _MainMenuScreenState extends State<MainMenuScreen> {
+  LayoutWidget? loadedWidget;
+  bool isLoading = true;
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadScreen();
+  }
+
+  Future<void> _loadScreen() async {
+    try {
+      setState(() {
+        isLoading = true;
+        errorMessage = null;
+      });
+
+      // Add a small delay to ensure the widget tree is fully built
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      final widget = await WidgetJsonUtils.importScreen("test", context: context);
+
+      setState(() {
+        loadedWidget = widget;
+        isLoading = false;
+      });
+
+      print("Screen loaded successfully. Properties: ${widget.properties}");
+
+    } catch (e, stackTrace) {
+      print("Error loading screen: $e");
+      print("Stack trace: $stackTrace");
+
+      setState(() {
+        errorMessage = e.toString();
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    print("MainMenuScreen build called. Screen size: $screenSize");
+
     return Scaffold(
       backgroundColor: Colors.black,
-      body: FutureBuilder<LayoutWidget>(
-        future: WidgetJsonUtils.importScreen("test"),
-        builder: (context, snapshot) {
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Fehler: ${snapshot.error}"));
-          } else if (snapshot.hasData) {
-            return snapshot.data!.build(context);
-          } else {
-            return const Center(child: Text("Unbekannter Zustand"));
-          }
-
-        },
+      // Remove any default padding from Scaffold
+      body: Container(
+        width: screenSize.width,
+        height: screenSize.height,
+        // Explicitly remove all padding and margin
+        padding: EdgeInsets.zero,
+        margin: EdgeInsets.zero,
+        child: _buildContent(context, screenSize),
       ),
     );
   }
 
+  Widget _buildContent(BuildContext context, Size screenSize) {
+    if (isLoading) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text("Loading GUI...", style: TextStyle(color: Colors.white)),
+          ],
+        ),
+      );
+    }
+
+    if (errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Error loading GUI:",
+              style: TextStyle(color: Colors.red, fontSize: 18),
+            ),
+            SizedBox(height: 8),
+            Text(
+              errorMessage!,
+              style: TextStyle(color: Colors.white, fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadScreen,
+              child: Text("Retry"),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (loadedWidget == null) {
+      return const Center(
+        child: Text(
+          "No widget loaded",
+          style: TextStyle(color: Colors.white),
+        ),
+      );
+    }
+
+    // Direct widget building without LayoutBuilder to avoid padding issues
+    print("Building loaded widget directly. Screen size: $screenSize");
+
+    try {
+      return SizedBox(
+        width: screenSize.width,
+        height: screenSize.height,
+        child: loadedWidget!.build(context),
+      );
+    } catch (e, stackTrace) {
+      print("Error building widget: $e");
+      print("Stack trace: $stackTrace");
+      return Center(
+        child: Text(
+          "Error building GUI: $e",
+          style: TextStyle(color: Colors.red),
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+  }
 }
+
 class GameScreen extends StatelessWidget {
   final PixelAdventure game;
 
@@ -56,30 +165,31 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Stack(
-        children: [GameWidget(game: game,
-          overlayBuilderMap: {
-            "guiEditor": (BuildContext context, PixelAdventure game){
-              return game.guiEditor;
+          children: [
+            GameWidget(
+              game: game,
+              overlayBuilderMap: {
+                "guiEditor": (BuildContext context, PixelAdventure game) {
+                  return game.guiEditor;
+                },
+                'TextOverlay': (BuildContext context, PixelAdventure game) {
+                  return TextOverlay(game: game);
+                },
+                'DialogueScreen': (BuildContext context, PixelAdventure game) {
+                  return DialogueScreen(
+                    game: game,
+                    onDialogueFinished: () {
+                      game.overlays.remove('DialogueScreen');
+                    },
+                  );
+                }
               },
-            //Overlay is registered in overlayBuilderMap
-            'TextOverlay':(BuildContext context, PixelAdventure game){
-              return TextOverlay(game: game);
-            },
-            'DialogueScreen':(BuildContext context, PixelAdventure game){
-              return DialogueScreen(game: game,
-                onDialogueFinished: () {
-                game.overlays.remove('DialogueScreen'); },);
-            }
-          },
-
-        ),]
+            ),
+          ]
       ),
       debugShowCheckedModeBanner: false,
     );
   }
-
-
-
 }
 
 class JsonScreenBuilder {

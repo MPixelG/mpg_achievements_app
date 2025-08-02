@@ -26,10 +26,9 @@ LayoutWidget addContainer(LayoutWidget? parent, {Map<String, dynamic>? propertie
 
     WidgetOptions options = WidgetOptions.fromType(Container); //we get the widget options for the container widget, which defines the properties that can be set in the GUI editor
 
-    RenderBox? currentParentBox = context.findRenderObject() as RenderBox?;
 
-    double availableWidth = currentParentBox == null ? MediaQuery.of(context).size.width : (currentParentBox.size.width); //we get the available width of the parent widget, if no parent is provided, we use the screen width
-    double availableHeight = currentParentBox == null ? MediaQuery.of(context).size.height : (currentParentBox.size.height); //same for the height
+    double availableWidth =MediaQuery.of(context).size.width;//we get the available width of the parent widget, if no parent is provided, we use the screen width
+    double availableHeight =MediaQuery.of(context).size.height;
 
     properties["width"] ??= options.getDefaultValue("width"); //we set the width property to the default value defined in the widget options, so that we can use it in the widget
     properties["height"] ??= options.getDefaultValue("height"); //same for the height

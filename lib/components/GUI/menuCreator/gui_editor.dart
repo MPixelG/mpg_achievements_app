@@ -1,17 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart' hide Matrix4;
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/json_exporter.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_builder.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/button_action.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/editor_node_dependency_viewer.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/layout_widget.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_option_definitions.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_options.dart';
-import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_button.dart';
 class GuiEditor extends StatefulWidget { //the GUI editor lets us create guis and later export them as a json TODO
   const GuiEditor({super.key});
 
@@ -22,7 +17,7 @@ class GuiEditor extends StatefulWidget { //the GUI editor lets us create guis an
 class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI editor.
 
   double get screenWidth => MediaQuery.of(context).size.width; //getter for the screen width, so we can use it to calculate the size of the widgets
-  double get screenHeight => MediaQuery.of(context).size.width; //same for the width
+  double get screenHeight => MediaQuery.of(context).size.height; //same for the width
 
   late LayoutWidget root; //just temp to be initialized later in initState()
 
@@ -45,6 +40,8 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   bool doneLoading = false;
   Future<void> initEditor() async {
     doneLoading = false;
+
+
 
     root = await WidgetJsonUtils.importScreen("test");
 
@@ -73,6 +70,9 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
     if (nodeViewer == null) {
       return const Center(child: CircularProgressIndicator());
     }
+
+    print("Screen size: ${MediaQuery.of(context).size}");
+
 
 
     return Scaffold( //we use a scaffold bc it lets us easily add components with some presets.

@@ -1,17 +1,22 @@
 {
-  "id": "container6",
+  "id": "container0",
   "widgetType": "Container",
   "properties": {
     "width": 0.1,
     "height": 0.1,
-    "color": null,
+    "color": {
+      "a": 1.0,
+      "r": 0.6941176470588235,
+      "g": 0.0196078431372549,
+      "b": 0.6627450980392157
+    },
     "padding": null,
     "margin": null,
     "alignment": null
   },
   "children": [
     {
-      "id": "row2",
+      "id": "row0",
       "widgetType": "Row",
       "properties": {
         "mainAxisSize": "MainAxisSize.min",
@@ -20,7 +25,7 @@
       },
       "children": [
         {
-          "id": "column2",
+          "id": "column0",
           "widgetType": "Column",
           "properties": {
             "mainAxisSize": "MainAxisSize.min",
@@ -29,7 +34,7 @@
           },
           "children": [
             {
-              "id": "container7",
+              "id": "container1",
               "widgetType": "Container",
               "properties": {
                 "width": 0.1,
@@ -47,14 +52,14 @@
               "children": []
             },
             {
-              "id": "expanded4",
+              "id": "expanded0",
               "widgetType": "Expanded",
               "properties": {
                 "flex": 1.0
               },
               "children": [
                 {
-                  "id": "container8",
+                  "id": "container2",
                   "widgetType": "Container",
                   "properties": {
                     "width": 0.1,
@@ -76,14 +81,14 @@
           ]
         },
         {
-          "id": "expanded5",
+          "id": "expanded1",
           "widgetType": "Expanded",
           "properties": {
             "flex": 1.0
           },
           "children": [
             {
-              "id": "ninepatch_button2",
+              "id": "ninepatch_button0",
               "widgetType": "NinePatchButton",
               "properties": {
                 "text": "",
@@ -96,6 +101,19 @@
               "children": []
             }
           ]
+        },
+        {
+          "id": "container3",
+          "widgetType": "Container",
+          "properties": {
+            "width": 0.1,
+            "height": 0.1,
+            "color": null,
+            "padding": null,
+            "margin": null,
+            "alignment": null
+          },
+          "children": []
         }
       ]
     }
