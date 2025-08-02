@@ -84,7 +84,7 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
   }
 
 
-  Map<String, TextEditingController> _textControllers = {};
+  final Map<String, TextEditingController> _textControllers = {};
 
   TextEditingController _getTextController(String name) {
     if (!_textControllers.containsKey(name)) {

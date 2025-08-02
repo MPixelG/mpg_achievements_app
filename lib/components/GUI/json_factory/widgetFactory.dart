@@ -9,7 +9,7 @@ import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_button.da
 import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
 
 import '../../../mpg_pixel_adventure.dart';
-import '../Menus.dart';
+import '../menus.dart';
 
 class WidgetFactory{
 
@@ -34,6 +34,8 @@ class WidgetFactory{
       "Column" => _buildColumn(properties, children, context),
       "Row" => _buildRow(properties, children, context),
       "Button" => _buildButton(properties, children, context),
+      //"SpeechBubble" => _buildSpeechBubble(properties, children, context),
+
       _ => throw UnimplementedError("Component $type not implemented!")
     };
   }
@@ -217,7 +219,62 @@ class WidgetFactory{
     return (val ?? defaultVal);
   }
 
+  // Builds a SpeechBubble widget from JSON data.
+  // Accepts optional styling such as alignment, bubble color, text color, and padding.
+ /* static Widget _buildSpeechBubble(
+      Map<String, dynamic>? properties,
+      List<dynamic> children,
+      BuildContext context,
+      ) {
+    // Read the message text
+    final String text = properties?["text"] ?? "";
 
+    // Parse optional bubble background and text color
+    final Color bubbleColor = parseHexColor(properties?["color"]) ?? Colors.white;
+    final Color textColor = parseHexColor(properties?["textColor"]) ?? Colors.black;
+
+    // Parse optional alignment value (default: bottom center)
+    final alignment = parseAlignment(properties?["alignment"]) ?? Alignment.bottomCenter;
+
+    // Get custom or default padding
+    final padding = getPaddingProperty(properties);
+
+    return SpeechBubble(
+      text: text,
+      bubbleColor: bubbleColor,
+      textColor: textColor,
+      alignment: alignment,
+      padding: padding,
+    );
+  }*/
+
+  // Converts a hex color string (e.g. "#FFAA00") to a [Color] object.
+  // If alpha is missing (e.g. 6-digit hex), assumes full opacity (FF).
+  static Color? parseHexColor(String? hex) {
+    if (hex == null) return null;
+    hex = hex.replaceAll("#", "");
+    if (hex.length == 6) hex = "FF$hex"; // Add full alpha if missing
+    return Color(int.parse("0x$hex"));
+  }
+
+
+  /// Converts a string like "top", "bottom", or "center" into an [Alignment] constant.
+  static Alignment? parseAlignment(String? value) {
+    switch (value) {
+      case "top":
+        return Alignment.topCenter;
+      case "bottom":
+        return Alignment.bottomCenter;
+      case "center":
+        return Alignment.center;
+      case "left":
+        return Alignment.centerLeft;
+      case "right":
+        return Alignment.centerRight;
+      default:
+        return Alignment.center;
+    }
+  }
 
 
 

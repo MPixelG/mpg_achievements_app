@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/gui_editor.dart';
-import 'package:mpg_achievements_app/components/util/dialogue_utils/dialogue_overlay.dart';
+import 'package:mpg_achievements_app/components/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-
+import '../dialogue_utils/text_overlay.dart';
 import 'json_factory/widgetFactory.dart';
 
 abstract class Screen extends StatelessWidget {
@@ -19,7 +20,6 @@ abstract class Screen extends StatelessWidget {
 
 class MainMenuScreen extends StatelessWidget {
   const MainMenuScreen({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,6 @@ class GameScreen extends StatelessWidget {
 
   const GameScreen({super.key, required this.game});
 
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -53,8 +52,13 @@ class GameScreen extends StatelessWidget {
               return game.guiEditor;
               },
             //Overlay is registered in overlayBuilderMap
-            'DialogueOverlay':(BuildContext context, PixelAdventure game){
-              return DialogueOverlay(game: game);
+            'TextOverlay':(BuildContext context, PixelAdventure game){
+              return TextOverlay(game: game);
+            },
+            'DialogueScreen':(BuildContext context, PixelAdventure game){
+              return DialogueScreen(game: game,
+                onDialogueFinished: () {
+                game.overlays.remove('DialogueScreen'); },);
             }
           },
 
@@ -63,6 +67,9 @@ class GameScreen extends StatelessWidget {
       debugShowCheckedModeBanner: false,
     );
   }
+
+
+
 }
 
 class JsonScreenBuilder {
