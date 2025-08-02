@@ -1,3 +1,8 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/components/GUI/menus.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
 class ButtonAction {
   late final String actionType; // Default action type for button actions
 
@@ -6,12 +11,14 @@ class ButtonAction {
     actionType = "default";
   }
 
-  void press() {}
+  void press(BuildContext context) {}
 
   factory ButtonAction.fromJson(Map<String, dynamic> json) {
     switch (json["actionType"]) {
       case "debug":
-        return DebugButtonAction(printText: json["text"] ?? "Debug Button Pressed!");
+        return DebugButtonAction(json);
+      case "screenChange":
+        return ScreenChangeButtonAction(json);
       default:
         return ButtonAction();
     }
@@ -27,13 +34,21 @@ class ButtonAction {
 
 class DebugButtonAction extends ButtonAction {
 
-  String printText;
+  late String printText;
 
 
-  DebugButtonAction({this.printText = "Debug Button Pressed!"});
+  DebugButtonAction([Map<String, dynamic>? properties]){
+    properties ??= {};
+
+    properties.removeWhere((key, value) => key != "printText" && key != "actionType");
+
+    properties["printText"] ??= "Debug button pressed!";
+
+    printText = properties["printText"];
+  }
 
   @override
-  void press() {
+  void press(BuildContext context) {
     print(printText);
   }
 
@@ -45,8 +60,55 @@ class DebugButtonAction extends ButtonAction {
   @override
   Map<String, dynamic> toJson() {
     return {
-      "text": printText,
+      "printText": printText,
       "actionType": actionType,
     };
   }
+}
+
+class ScreenChangeButtonAction extends ButtonAction{
+  late String screen;
+
+  ScreenChangeButtonAction([Map<String, dynamic>? properties]){
+    properties ??= {};
+
+    properties.removeWhere((key, value) => key != "screen" && key != "actionType");
+
+    properties["screen"] ??= "";
+
+    screen = properties["screen"];
+  }
+
+
+  @override
+  void press(BuildContext context) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            GameScreen(game: PixelAdventure()),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+
+  }
+
+
+  @override
+  void init() {
+    actionType = "screenChange";
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      "screen": screen,
+      "actionType": actionType,
+    };
+  }
+
+
+
 }
