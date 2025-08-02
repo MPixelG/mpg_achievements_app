@@ -11,7 +11,7 @@ class ButtonAction {
   factory ButtonAction.fromJson(Map<String, dynamic> json) {
     switch (json["actionType"]) {
       case "debug":
-        return DebugButtonAction(printText: json["text"] ?? "Debug Button Pressed!");
+        return DebugButtonAction(json);
       default:
         return ButtonAction();
     }
@@ -27,10 +27,18 @@ class ButtonAction {
 
 class DebugButtonAction extends ButtonAction {
 
-  String printText;
+  late String printText;
 
 
-  DebugButtonAction({this.printText = "Debug Button Pressed!"});
+  DebugButtonAction([Map<String, dynamic>? properties]){
+    properties ??= {};
+
+    properties.removeWhere((key, value) => key != "printText" && key != "actionType");
+
+    properties["printText"] ??= "Debug button pressed!";
+
+    printText = properties["printText"];
+  }
 
   @override
   void press() {
@@ -45,7 +53,7 @@ class DebugButtonAction extends ButtonAction {
   @override
   Map<String, dynamic> toJson() {
     return {
-      "text": printText,
+      "printText": printText,
       "actionType": actionType,
     };
   }

@@ -93,7 +93,7 @@
               "properties": {
                 "text": "",
                 "onPressed": {
-                  "text": "Debug Button Pressed!",
+                  "printText": "Debug Button Pressed!",
                   "actionType": "debug"
                 },
                 "imageName": "button_0"

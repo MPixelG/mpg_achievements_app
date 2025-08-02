@@ -309,7 +309,7 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
 
 
 
-  SizedBox _buildInputField(String name, Map<String, dynamic> properties, TextInputType? textInputType, {String? controllerName}) {
+  SizedBox _buildInputField(String name, Map<String, dynamic> properties, TextInputType? textInputType, {String? controllerName, void Function(dynamic)? onChange}) {
     TextEditingController controller = _getTextController(name, controllerName: controllerName ?? "", properties); //if a controllerName is provided, use it as a prefix for the controller name. if not, use the name directly
 
     return SizedBox(
@@ -319,6 +319,7 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
         controller: controller,
         keyboardType: textInputType,
         onChanged: (dynamic newValue) {
+          if(onChange != null) onChange(newValue);
           setState(() {
             dynamic parsedValue = newValue;
             Type expectedType = properties[name]?.runtimeType ?? String;
@@ -345,44 +346,98 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
 
 
 
-  Widget _buildButtonAction(WidgetOption option, dynamic value) {
+  Widget _buildButtonAction(WidgetOption option, Map<String, dynamic> propertiesFull) {
+
+    propertiesFull["onPressed"] ??= <String, dynamic>{};
+
+    Map<String, dynamic> pressProperties = propertiesFull["onPressed"];
+
     return SizedBox(
       width: 120,
       height: 40,
       child: ElevatedButton(
         onPressed: () {
-          showDialog(context: context,
-              builder: (context) {
-                return SizedBox(
-                  width: 600,
-                  height: 400,
-                  child: Scaffold(
-                    backgroundColor: Colors.transparent,
-                    appBar: AppBar(
-                      title: Text("Button Action Editor"),
-                      backgroundColor: CupertinoColors.systemGrey4,
-                    ),
+          showDialog(
+            context: context,
+            builder: (context) {
+              return Dialog(
+                child: StatefulBuilder(
+                  builder: (context, setDialogState) {
+                    Map<String, dynamic> pressProperties = propertiesFull["onPressed"];
 
-                    body: Container(color: Colors.white,
-                      child: SingleChildScrollView(
+                    return SizedBox(
+                      width: 600,
+                      height: 400,
+                      child: Scaffold(
+                        backgroundColor: Colors.transparent,
+                        appBar: AppBar(
+                          title: Text("Button Action Editor"),
+                          backgroundColor: CupertinoColors.systemGrey4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                        ),
+                        body: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("Type"),
+                                    _buildInputField("actionType", pressProperties, TextInputType.text, onChange: (newVal) {
+                                      propertiesFull["onPressed"]["actionType"] = newVal;
 
-                        child: Column(
+                                      setDialogState(() {
+                                        propertiesFull["onPressed"] = {...ButtonAction.fromJson(propertiesFull["onPressed"]).toJson()};
+                                      });
+
+                                      setState(() {});
+                                      widget.updateView();
+                                    }),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                ...pressProperties.entries
+                                    .where((entry) => entry.key != "actionType")
+                                    .map((entry) => _buildButtonEntry(entry, pressProperties))
+                                    .toList(),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                );
-              });
-
+                    );
+                  },
+                ),
+              );
+            },
+          );
         },
+
         child: Text(option.name),
       ),
     );
   }
 
+  Row _buildButtonEntry(MapEntry<String, dynamic> entry, Map<String, dynamic> properties){
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(entry.key),
+
+        _buildInputField(entry.key, properties, TextInputType.text)
+
+
+      ],
+    );
+
+  }
+
   @override
   void dispose() {
-
     _textControllers.entries.forEach((element) => element.value.dispose());
 
     super.dispose();
