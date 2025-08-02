@@ -3,6 +3,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/CharacterStateManager.dart';
+import 'package:mpg_achievements_app/components/level_components/checkpoint.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -23,6 +24,8 @@ class Player extends SpriteAnimationGroupComponent
   bool debugImmortalMode = false;
 
   bool gotHit = false;
+
+  late Checkpoint lastCheckpoint;
 
   //starting position
   Vector2 startingPosition = Vector2.zero();
@@ -94,7 +97,7 @@ class Player extends SpriteAnimationGroupComponent
     current = PlayerState.disappearing; //display a disappear animation
     await Future.delayed(
         Duration(milliseconds: 320)); //wait for the animation to finish
-    position = startingPosition - Vector2(40,
+    position = lastCheckpoint.position - Vector2(40,
         32); //position the player at the spawn point and also add the displacement of the animation
     scale = Vector2.all(0); //hide the player
     await Future.delayed(Duration(

@@ -20,6 +20,7 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'background/scrolling_background.dart';
 import 'level_components/saw.dart';
+import 'level_components/checkpoint.dart';
 
 class Level extends World
     with HasGameReference<PixelAdventure>, KeyboardHandler, PointerMoveCallbacks, TapCallbacks {
@@ -119,7 +120,6 @@ class Level extends World
         switch (spawnPoint.class_) {
           case 'Player':
             //player spawning
-            player.position = Vector2(spawnPoint.x, spawnPoint.y);
             add(player);
             break;
           case 'Collectable':
@@ -155,6 +155,21 @@ class Level extends World
             //saw rotates in the other direction
             saw.scale.x = -1;
             add(saw);
+            break;
+          case "Checkpoint":
+            final id = spawnPoint.properties.getValue('id');
+            final isActivated = spawnPoint.properties.getValue('isActivated');
+            final checkpoint = Checkpoint(
+              id: id,
+              isActivated: isActivated,
+              position: Vector2(spawnPoint.x, spawnPoint.y)
+            );
+            if (isActivated == true) {
+              player.lastCheckpoint = checkpoint;
+              player.position = checkpoint.position;
+            };
+            add(checkpoint);
+            print("Checkpoint added");
             break;
           case "Enemy":
             //enemy spawning

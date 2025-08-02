@@ -23,51 +23,51 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 320,
-                "y": 183.66666666666663
+                "y": 183.99999999999994
             }
         },
         "Level_1.tmx": {
             "expandedObjectLayers": [
-                2,
-                3
+                3,
+                2
             ],
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 320.5,
-                "y": 184.25
+                "x": 388.5,
+                "y": 438.5
             }
         },
         "Level_2.tmx": {
             "expandedObjectLayers": [
-                2,
-                4
+                4,
+                2
             ],
-            "scale": 1.5,
-            "selectedLayer": 8,
+            "scale": 1.1154,
+            "selectedLayer": 9,
             "viewCenter": {
-                "x": 522.6666666666666,
-                "y": 543.6666666666666
+                "x": 823.9196700735163,
+                "y": 1066.8818361126055
             }
         },
         "Level_3.tmx": {
             "expandedObjectLayers": [
-                2,
-                3
+                3,
+                2
             ],
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 512,
-                "y": 512.3333333333333
+                "x": -56.66666666666663,
+                "y": 451.99999999999994
             }
         },
         "Level_4.tmx": {
             "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 161.83333333333334,
-                "y": 444.66666666666663
+                "x": 1024,
+                "y": 447.99999999999994
             }
         },
         "Level_5.tmx": {
@@ -106,7 +106,7 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 1024,
-                "y": 447
+                "y": 448
             }
         },
         "crystal stuff.tsx": {
@@ -180,7 +180,7 @@
         "IndustrialTile_81.png.tsx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
-    "property.type": "string",
+    "property.type": "int",
     "recentFiles": [
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",
