@@ -7,6 +7,7 @@ import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'components/GUI/menuCreator/widget_option_definitions.dart';
+
 // must be async because device loads fullScreen and setsLandscape and then at last the joystick
 void main() async {
   //Wait until the Flutter Widget is initialised
@@ -23,11 +24,6 @@ void main() async {
   registerWidgetOptions();
 
   runApp(MainApp());
-
-
-
-
-  
 }
 
 class MainApp extends StatelessWidget {

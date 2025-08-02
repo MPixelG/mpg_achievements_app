@@ -18,7 +18,9 @@ class CameraAwareLightingRenderer {
 
   Future<void> initializeShader() async {
     try {
-      final program = await FragmentProgram.fromAsset("assets/shaders/lighting.glsl");
+      final program = await FragmentProgram.fromAsset(
+        "assets/shaders/lighting.glsl",
+      );
       lightingShader = program.fragmentShader();
       isShaderReady = true;
       print("Camera-aware lighting shader loaded!");
@@ -26,29 +28,33 @@ class CameraAwareLightingRenderer {
       print("Lighting shader error: $e");
       isShaderReady = false;
     }
-
   }
 
-  void addShadowObjectWorld(double worldX, double worldY, double width, double height) {
+  void addShadowObjectWorld(
+    double worldX,
+    double worldY,
+    double width,
+    double height,
+  ) {
     shadowObjectsWorld.add(Rect.fromLTWH(worldX, worldY, width, height));
   }
 
   void extractObjectsFromTiledMap(TiledComponent tiledMap) {
     shadowObjectsWorld.clear();
 
-    for (final objectGroup in tiledMap.tileMap.renderableLayers.where((element) => element.layer is ObjectGroup,)) {
+    for (final objectGroup in tiledMap.tileMap.renderableLayers.where(
+      (element) => element.layer is ObjectGroup,
+    )) {
       for (final object in (objectGroup.layer as ObjectGroup).objects) {
-          shadowObjectsWorld.add(Rect.fromLTWH(
-            object.x,
-            object.y,
-            object.width,
-            object.height,
-          ));
-
+        shadowObjectsWorld.add(
+          Rect.fromLTWH(object.x, object.y, object.width, object.height),
+        );
       }
     }
 
-    print("Found ${shadowObjectsWorld.length} shadow objects in world coordinates");
+    print(
+      "Found ${shadowObjectsWorld.length} shadow objects in world coordinates",
+    );
     print("Layers: " + tiledMap.tileMap.renderableLayers.toString());
   }
 
@@ -57,7 +63,11 @@ class CameraAwareLightingRenderer {
     lightWorldPosition = lightWorldPos;
   }
 
-  Vector2 worldToScreen(Vector2 worldPos, AdvancedCamera camera, Vector2 screenSize) {
+  Vector2 worldToScreen(
+    Vector2 worldPos,
+    AdvancedCamera camera,
+    Vector2 screenSize,
+  ) {
     final cameraPos = camera.pos;
     final zoom = camera.viewfinder.zoom;
 
@@ -65,33 +75,46 @@ class CameraAwareLightingRenderer {
 
     final screenPixel = screenSize / 2 + relative;
 
-    return Vector2(
-      screenPixel.x / screenSize.x,
-      screenPixel.y / screenSize.y,
-    );
+    return Vector2(screenPixel.x / screenSize.x, screenPixel.y / screenSize.y);
   }
 
-
-
-  Rect worldRectToScreen(Rect worldRect, AdvancedCamera camera, Vector2 screenSize) {
-    final topLeft = worldToScreen(Vector2(worldRect.left, worldRect.top), camera, screenSize);
-    final bottomRight = worldToScreen(Vector2(worldRect.right, worldRect.bottom), camera, screenSize);
-
-    return Rect.fromLTRB(
-      topLeft.x,
-      topLeft.y,
-      bottomRight.x,
-      bottomRight.y,
+  Rect worldRectToScreen(
+    Rect worldRect,
+    AdvancedCamera camera,
+    Vector2 screenSize,
+  ) {
+    final topLeft = worldToScreen(
+      Vector2(worldRect.left, worldRect.top),
+      camera,
+      screenSize,
     );
+    final bottomRight = worldToScreen(
+      Vector2(worldRect.right, worldRect.bottom),
+      camera,
+      screenSize,
+    );
+
+    return Rect.fromLTRB(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
   }
 
-
-  void updateShaderUniforms(AdvancedCamera camera, Vector2 screenSize, double gameTime) {
+  void updateShaderUniforms(
+    AdvancedCamera camera,
+    Vector2 screenSize,
+    double gameTime,
+  ) {
     if (!isShaderReady) return;
 
     try {
-      Vector2 playerScreen = worldToScreen(playerWorldPosition, camera, screenSize);
-      Vector2 lightScreen = worldToScreen(lightWorldPosition, camera, screenSize);
+      Vector2 playerScreen = worldToScreen(
+        playerWorldPosition,
+        camera,
+        screenSize,
+      );
+      Vector2 lightScreen = worldToScreen(
+        lightWorldPosition,
+        camera,
+        screenSize,
+      );
 
       int paramIndex = 0;
 
@@ -131,7 +154,12 @@ class CameraAwareLightingRenderer {
     }
   }
 
-  void renderLighting(Canvas canvas, AdvancedCamera camera, Vector2 screenSize, double gameTime) {
+  void renderLighting(
+    Canvas canvas,
+    AdvancedCamera camera,
+    Vector2 screenSize,
+    double gameTime,
+  ) {
     if (!isShaderReady) return;
 
     updateShaderUniforms(camera, screenSize, gameTime);
@@ -143,7 +171,11 @@ class CameraAwareLightingRenderer {
     canvas.drawRect(Rect.fromLTWH(0, 0, screenSize.x, screenSize.y), paint);
   }
 
-  void renderDebugObjects(Canvas canvas, AdvancedCamera camera, Vector2 screenSize) {
+  void renderDebugObjects(
+    Canvas canvas,
+    AdvancedCamera camera,
+    Vector2 screenSize,
+  ) {
     final debugPaint = Paint()
       ..color = Colors.red.withOpacity(0.9)
       ..style = PaintingStyle.stroke
@@ -152,18 +184,18 @@ class CameraAwareLightingRenderer {
     for (Rect worldRect in shadowObjectsWorld) {
       Rect screenRect = worldRectToScreen(worldRect, camera, screenSize);
 
-
-      if (screenRect.left < 1.0 && screenRect.right > 0.0 &&
-          screenRect.top < 1.0 && screenRect.bottom > 0.0) {
-
+      if (screenRect.left < 1.0 &&
+          screenRect.right > 0.0 &&
+          screenRect.top < 1.0 &&
+          screenRect.bottom > 0.0) {
         canvas.drawRect(
-            Rect.fromLTWH(
-              screenRect.left * screenSize.x,
-              screenRect.top * screenSize.y,
-              screenRect.width * screenSize.x,
-              screenRect.height * screenSize.y,
-            ),
-            debugPaint
+          Rect.fromLTWH(
+            screenRect.left * screenSize.x,
+            screenRect.top * screenSize.y,
+            screenRect.width * screenSize.x,
+            screenRect.height * screenSize.y,
+          ),
+          debugPaint,
         );
       }
     }
@@ -181,9 +213,14 @@ class PixelAdventureWithCameraLighting extends PixelAdventure {
     lightingRenderer = CameraAwareLightingRenderer();
     await lightingRenderer.initializeShader();
 
-    lightingRenderer.addShadowObjectWorld(200, 400, 300, 50);   // Plattform
-    lightingRenderer.addShadowObjectWorld(600, 300, 100, 200);  // Wand
-    lightingRenderer.addShadowObjectWorld(900, 500, 200, 30);   // Weitere Plattform
+    lightingRenderer.addShadowObjectWorld(200, 400, 300, 50); // Plattform
+    lightingRenderer.addShadowObjectWorld(600, 300, 100, 200); // Wand
+    lightingRenderer.addShadowObjectWorld(
+      900,
+      500,
+      200,
+      30,
+    ); // Weitere Plattform
 
     debugMode = true;
 
@@ -198,10 +235,7 @@ class PixelAdventureWithCameraLighting extends PixelAdventure {
 
     Vector2 playerWorldPos = player.position;
 
-    Vector2 lightWorldPos = Vector2(
-      playerWorldPos.x,
-      playerWorldPos.y,
-    );
+    Vector2 lightWorldPos = Vector2(playerWorldPos.x, playerWorldPos.y);
 
     lightingRenderer.updateWorldPositions(playerWorldPos, lightWorldPos);
   }

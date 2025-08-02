@@ -14,8 +14,12 @@ import 'components/level.dart';
 
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame
-    with HasKeyboardHandlerComponents, DragCallbacks, HasCollisionDetection, ScrollDetector, CollisionCallbacks{
-
+    with
+        HasKeyboardHandlerComponents,
+        DragCallbacks,
+        HasCollisionDetection,
+        ScrollDetector,
+        CollisionCallbacks {
   late final AdvancedCamera cam;
 
   //Player variable
@@ -29,13 +33,10 @@ class PixelAdventure extends FlameGame
 
   late final Level level;
 
-
   final GuiEditor guiEditor = GuiEditor();
 
   //needs to go into the overlay_controller later
   bool showDialogue = true;
-
-
 
   //Future is a value that is returned even thought a value of the method is not computed immediately, but later
   //FutureOr works same here either returns a Future or <void>
@@ -56,8 +57,11 @@ class PixelAdventure extends FlameGame
     //add overlays
     overlays.add('TextOverlay');
 
-
-    cam.setFollowPlayer(true, player: player, accuracy: 50); //follows the player.
+    cam.setFollowPlayer(
+      true,
+      player: player,
+      accuracy: 50,
+    ); //follows the player.
     if (showJoystick == true) {
       addJoystick();
     } else {
@@ -104,7 +108,7 @@ class PixelAdventure extends FlameGame
       case JoystickDirection.downRight:
       case JoystickDirection.upRight:
       case JoystickDirection.up:
-      player.jump();
+        player.jump();
       default:
         player.horizontalMovement = 0;
     }
@@ -122,7 +126,4 @@ class PixelAdventure extends FlameGame
     }
     return os;
   }
-
-
-
 }

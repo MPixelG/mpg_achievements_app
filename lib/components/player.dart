@@ -14,12 +14,14 @@ import 'level_components/saw.dart';
 //with is used to additonal classes here our game class
 //import/reference to Keyboardhandler
 class Player extends SpriteAnimationGroupComponent
-    with HasGameReference<PixelAdventure>,
+    with
+        HasGameReference<PixelAdventure>,
         KeyboardHandler,
-        CollisionCallbacks, HasCollisions,
-        BasicMovement, KeyboardControllableMovement, CharacterStateManager {
-
-
+        CollisionCallbacks,
+        HasCollisions,
+        BasicMovement,
+        KeyboardControllableMovement,
+        CharacterStateManager {
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
 
@@ -29,7 +31,6 @@ class Player extends SpriteAnimationGroupComponent
 
   //starting position
   Vector2 startingPosition = Vector2.zero();
-
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required String playerCharacter, super.position}) {
@@ -45,16 +46,15 @@ class Player extends SpriteAnimationGroupComponent
 
   //dt means deltatime and is adjusting the framspeed to make game playable even tough there might be high framrates
 
-
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (keysPressed.contains(
-        LogicalKeyboardKey.keyR)) {
+    if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
       _respawn(); //press r to reset player
     }
     if (keysPressed.contains(LogicalKeyboardKey.keyX)) {
-      print(hitbox
-        .isColliding); //press x to print if the player is currently in a wall
+      print(
+        hitbox.isColliding,
+      ); //press x to print if the player is currently in a wall
     }
     if (keysPressed.contains(LogicalKeyboardKey.keyC)) {
       debugNoClipMode = !debugNoClipMode;
@@ -76,7 +76,8 @@ class Player extends SpriteAnimationGroupComponent
     if (other is Collectable && other.interactiveTask) {
       game.showDialogue = true;
       game.overlays.add('DialogueScreen');
-    print('Board1');}
+      print('Board1');
+    }
     super.onCollision(intersectionPoints, other);
   }
 
@@ -88,33 +89,44 @@ class Player extends SpriteAnimationGroupComponent
     velocity = Vector2.zero(); //reset velocity
     setGravityEnabled(false); //temporarily disable gravity for this player
 
-    await Future.delayed(Duration(
-        milliseconds: 250)); //wait a quarter of a second for the animation to finish
+    await Future.delayed(
+      Duration(milliseconds: 250),
+    ); //wait a quarter of a second for the animation to finish
     position -= Vector2.all(
-        32); //center the player so that the animation displays correctly (its 96*96 and the player is 32*32)
+      32,
+    ); //center the player so that the animation displays correctly (its 96*96 and the player is 32*32)
     scale.x =
-    1; //flip the player to the right side and a third of the size because the animation is triple of the size
+        1; //flip the player to the right side and a third of the size because the animation is triple of the size
     current = PlayerState.disappearing; //display a disappear animation
     await Future.delayed(
-        Duration(milliseconds: 320)); //wait for the animation to finish
-    position = lastCheckpoint.position - Vector2(40,
-        32); //position the player at the spawn point and also add the displacement of the animation
+      Duration(milliseconds: 320),
+    ); //wait for the animation to finish
+    position =
+        lastCheckpoint.position -
+        Vector2(
+          40,
+          32,
+        ); //position the player at the spawn point and also add the displacement of the animation
     scale = Vector2.all(0); //hide the player
-    await Future.delayed(Duration(
-        milliseconds: 800)); //wait a bit for the camera to position and increase the annoyance of the player XD
+    await Future.delayed(
+      Duration(milliseconds: 800),
+    ); //wait a bit for the camera to position and increase the annoyance of the player XD
     scale = Vector2.all(1); //show the player
     current = PlayerState.appearing; //display an appear animation
     await Future.delayed(
-        Duration(milliseconds: 300)); //wait for the animation to finish
+      Duration(milliseconds: 300),
+    ); //wait for the animation to finish
 
     updatePlayerstate(); //update the players feet to the ground
     gotHit = false; //indicate, that the respawn process is over
     position += Vector2.all(
-        32); //reposition the player, because it had a bit of displacement because of the respawn animation
+      32,
+    ); //reposition the player, because it had a bit of displacement because of the respawn animation
     setGravityEnabled(true); //re-enable gravity
     updateMovement = true;
   }
- //Getters
+
+  //Getters
   @override
   ShapeHitbox getHitbox() => hitbox;
 
@@ -129,7 +141,7 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   Vector2 getVelocity() => velocity;
- //setters
+  //setters
   @override
   void setIsOnGround(bool val) => isOnGround = val;
 

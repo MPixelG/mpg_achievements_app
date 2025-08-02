@@ -12,7 +12,6 @@ class Checkpoint extends SpriteComponent
 
   @override
   Future<void> onLoad() async {
-
     sprite = await game.loadSprite('objects/Flag.png');
     size = Vector2(32, 64);
     anchor = Anchor.center;

@@ -54,7 +54,6 @@ class Enemy extends SpriteAnimationGroupComponent
   late GoalManager manager;
   @override
   FutureOr<void> onLoad() {
-
     startingPosition = Vector2(position.x, position.y);
 
     manager = GoalManager();
@@ -68,7 +67,6 @@ class Enemy extends SpriteAnimationGroupComponent
 
     return super.onLoad();
   }
-
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
@@ -197,10 +195,11 @@ class Enemy extends SpriteAnimationGroupComponent
   @override
   bool get isClimbing => climbing;
 
-
   @override
   Level get level => parent as Level;
 
   @override
-  bool get isTryingToGetDownLadder {return isShifting;}
+  bool get isTryingToGetDownLadder {
+    return isShifting;
+  }
 }

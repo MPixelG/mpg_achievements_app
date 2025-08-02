@@ -26,8 +26,9 @@ class PerlinNoise1D {
 
   void _initializeGradient(int? seed) {
     final random = math.Random(seed);
-    _gradient = List.generate(_tableSize, (i) =>
-    random.nextDouble() * 2.0 - 1.0
+    _gradient = List.generate(
+      _tableSize,
+      (i) => random.nextDouble() * 2.0 - 1.0,
     );
 
     _gradient = [..._gradient, ..._gradient];
