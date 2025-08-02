@@ -45,56 +45,40 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       WidgetOption<double>(parseDouble, name: "width", defaultValue: 0.1, description: "The width of the container as a percentage of the screen width"),
       WidgetOption<double>(parseDouble, name: "height", defaultValue: 0.1, description: "The height of the container as a percentage of the screen height"),
       WidgetOption<Color>(parseColor, name: "color", defaultValue: null, description: "The color of the container."),
-      WidgetOption<EdgeInsetsGeometry?>(parseEdgeInsets, name: "padding", defaultValue: null, description: "The padding of the container. If not set, no padding will be used.", options: [
-        null,
-        EdgeInsets.all(5),
-        EdgeInsets.all(10),
-        EdgeInsets.all(20),
-        EdgeInsets.all(30),
-        EdgeInsets.all(50),
-        EdgeInsets.all(100),
-      ]),
-      WidgetOption<EdgeInsetsGeometry?>(parseEdgeInsets, name: "margin", defaultValue: null, description: "The margin of the container. If not set, no margin will be used.", options: [
-        null,
-        EdgeInsets.all(5),
-        EdgeInsets.all(10),
-        EdgeInsets.all(20),
-        EdgeInsets.all(30),
-        EdgeInsets.all(50),
-        EdgeInsets.all(100),
-      ]),
-      WidgetOption<Alignment?>(parseAlignment, name: "alignment", defaultValue: null, description: "The alignment of the container. If not set, center will be used.", options: [
-        null,
-        Alignment.center,
-        Alignment.topLeft,
-        Alignment.topRight,
-        Alignment.bottomLeft,
-        Alignment.bottomRight,
-        Alignment.topCenter,
-        Alignment.bottomCenter,
-      ]),
+      WidgetOption<EdgeInsetsGeometry?>(parseEdgeInsets, name: "padding", defaultValue: null, description: "The padding of the container. If not set, no padding will be used."),
+      WidgetOption<EdgeInsetsGeometry?>(parseEdgeInsets, name: "margin", defaultValue: null, description: "The margin of the container. If not set, no margin will be used."),
+      WidgetOption<Alignment?>(parseAlignment, name: "alignment", defaultValue: null, description: "The alignment of the container. If not set, center will be used.", options: {
+        "default": null,
+        "center": Alignment.center,
+        "top left": Alignment.topLeft,
+        "top right": Alignment.topRight,
+        "bottom left": Alignment.bottomLeft,
+        "bottom right": Alignment.bottomRight,
+        "top center": Alignment.topCenter,
+        "bottom center": Alignment.bottomCenter,
+      }),
     ]).register();
 
     WidgetOptions(Row, options: [
-      WidgetOption<MainAxisAlignment>(parseMainAxisAlignment, name: "mainAxisAlignment", defaultValue: MainAxisAlignment.center, description: "The main axis alignment of the row. If not set, center will be used.", options: [
-        MainAxisAlignment.start,
-        MainAxisAlignment.end,
-        MainAxisAlignment.center,
-        MainAxisAlignment.spaceBetween,
-        MainAxisAlignment.spaceAround,
-        MainAxisAlignment.spaceEvenly,
-      ]),
-      WidgetOption<CrossAxisAlignment>(parseCrossAxisAlignment, name: "crossAxisAlignment", defaultValue: CrossAxisAlignment.center, description: "The cross axis alignment of the row. If not set, center will be used.", options: [
-        CrossAxisAlignment.start,
-        CrossAxisAlignment.end,
-        CrossAxisAlignment.center,
-        CrossAxisAlignment.stretch,
-        CrossAxisAlignment.baseline,
-      ]),
-      WidgetOption<MainAxisSize>(parseMainAxisSize, name: "mainAxisSize", defaultValue: MainAxisSize.min, description: "The main axis size of the row. If not set, min will be used.", options: [
-        MainAxisSize.min,
-        MainAxisSize.max,
-      ]),
+      WidgetOption<MainAxisAlignment>(parseMainAxisAlignment, name: "mainAxisAlignment", defaultValue: MainAxisAlignment.center, description: "The main axis alignment of the row. If not set, center will be used.", options: {
+          "start": MainAxisAlignment.start,
+          "end": MainAxisAlignment.end,
+          "center": MainAxisAlignment.center,
+          "space between": MainAxisAlignment.spaceBetween,
+          "space around": MainAxisAlignment.spaceAround,
+          "space evenly": MainAxisAlignment.spaceEvenly,
+        }),
+      WidgetOption<CrossAxisAlignment>(parseCrossAxisAlignment, name: "crossAxisAlignment", defaultValue: CrossAxisAlignment.center, description: "The cross axis alignment of the row. If not set, center will be used.", options: {
+          "start": CrossAxisAlignment.start,
+          "end": CrossAxisAlignment.end,
+          "center": CrossAxisAlignment.center,
+          "stretch": CrossAxisAlignment.stretch,
+          "baseline": CrossAxisAlignment.baseline,
+        }),
+      WidgetOption<MainAxisSize>(parseMainAxisSize, name: "mainAxisSize", defaultValue: MainAxisSize.min, description: "The main axis size of the row. If not set, min will be used.", options: {
+          "min": MainAxisSize.min,
+          "max": MainAxisSize.max,
+        }),
     ]).register();
 
     WidgetOptions(Positioned, options: [

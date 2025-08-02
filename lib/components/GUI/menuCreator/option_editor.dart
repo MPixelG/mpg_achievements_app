@@ -5,7 +5,6 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/button_action.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/layout_widget.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_options.dart';
-import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_button.dart';
 
 class OptionEditorMenu extends StatefulWidget {
   const OptionEditorMenu({super.key, required this.node, required this.updateView});
@@ -97,102 +96,24 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
   Widget _buildValueEditor(WidgetOption option) {
 
     if(option.options != null){
-
-      String currentValue = widget.node.properties[option.name]?.toString() ?? "";
-
-
-      String prefix = currentValue.contains(".") ? currentValue.split(".").first : "";
-
-      return DropdownButton<String>(
-        value: widget.node.properties[option.name]?.toString(),
-        alignment: Alignment.centerRight,
-        underline: Container(color: CupertinoColors.systemBackground,),
-
-        items: [for (dynamic value in option.options!)
-
-          DropdownMenuItem<String>(
-            value: value.toString(),
-            alignment: Alignment.center, child: Text(value.toString().replaceAll("$prefix.", ""))
-          )],
-
-        onChanged: (String? newValue) {
-          setState(() {
-            widget.node.properties[option.name] = newValue;
-            widget.updateView();
-          });
-        },
-        hint: Text(currentValue.replaceAll("$prefix.", "")),
-      );
-
-    }
-
-    if(option.type == String) {
-      return _buildInputField(option.name, widget.node.properties[option.name], TextInputType.text);
+      return _buildDropdownButton(option);
+    } else if(option.type == String) {
+      return _buildInputField(option.name, widget.node.properties, TextInputType.text);
     } else if (option.type == int) {
-      return _buildInputField(option.name, widget.node.properties[option.name], TextInputType.numberWithOptions(decimal: false));
+      return _buildInputField(option.name, widget.node.properties, TextInputType.numberWithOptions(decimal: false));
     } else if (option.type == double) {
-    return _buildInputField(option.name, widget.node.properties[option.name], TextInputType.numberWithOptions(decimal: true));
+      return _buildInputField(option.name, widget.node.properties, TextInputType.numberWithOptions(decimal: true));
     } else if (option.type == bool) {
-      return Switch(
-        value: widget.node.properties[option.name] ?? false,
-        onChanged: (bool newValue) {
-          setState(() {
-            widget.node.properties[option.name] = newValue;
-            widget.updateView();
-          });
-        },
-      );
+      return _buildSwitch(option);
     } else if (option.type == Color) {
-      Color currentColor = widget.node.properties[option.name] ?? Colors.black;
-      return Row(
-        children: [
-          GestureDetector(
-            onTap: () async {
-              Color pickedColor = currentColor;
-              await showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    content: SingleChildScrollView(
-                      child: ColorPicker(
-                        pickerColor: currentColor,
-                        onColorChanged: (Color color) {
-                          pickedColor = color;
-                        },
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                        child: Text('OK'),
-                        onPressed: () {
-                          setState(() {
-                            widget.node.properties[option.name] = pickedColor;
-                            widget.updateView();
-                          });
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            child: Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: currentColor,
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-          ),
-        ],
-      );
+      return _buildColorPicker(option);
     } else if (option.type == ButtonAction){
-      print("ButtonAction detected: ${option.name}");
-      return _buildButtonAction(option, widget.node.properties[option.name]);
+      return _buildButtonAction(option, widget.node.properties);
+    } else if (option.defaultValue is EdgeInsetsGeometry?) {
+      return _buildEdgeInsetsEditor(context, option, widget.node.properties);
     }
+
+
 
     return Text(
       'Unsupported type: ${option.type}',
@@ -202,8 +123,181 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
   }
 
 
-  SizedBox _buildInputField(String name, dynamic value, TextInputType? textInputType) {
-    TextEditingController controller = _getTextController(name);
+  DropdownButton _buildDropdownButton(WidgetOption option) {
+    String currentValue = widget.node.properties[option.name]?.toString() ?? "";
+
+
+    String prefix = currentValue.contains(".") ? currentValue.split(".").first : "";
+
+    return DropdownButton<String>(
+      value: widget.node.properties[option.name]?.toString(),
+      alignment: Alignment.centerRight,
+      underline: Container(color: CupertinoColors.systemBackground,),
+
+      items: [for (MapEntry<String, dynamic> entry in option.options!.entries)
+
+        DropdownMenuItem<String>(
+            value: entry.value.toString(),
+            alignment: Alignment.center, child: Text(entry.key)
+        )],
+
+      onChanged: (String? newValue) {
+        setState(() {
+          widget.node.properties[option.name] = option.parser(newValue);
+          widget.updateView();
+        });
+      },
+      hint: Text(currentValue.replaceAll("$prefix.", "")),
+    );
+  }
+
+  Row _buildColorPicker(WidgetOption option) {
+    Color currentColor = widget.node.properties[option.name] ?? Colors.black;
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: () async {
+            Color pickedColor = currentColor;
+            await showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  content: SingleChildScrollView(
+                    child: ColorPicker(
+                      pickerColor: currentColor,
+                      onColorChanged: (Color color) {
+                        pickedColor = color;
+                      },
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        setState(() {
+                          widget.node.properties[option.name] = pickedColor;
+                          widget.updateView();
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          child: Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: currentColor,
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Switch _buildSwitch(WidgetOption option) {
+    return Switch(
+      value: widget.node.properties[option.name] ?? false,
+      onChanged: (bool newValue) {
+        setState(() {
+          widget.node.properties[option.name] = newValue;
+          widget.updateView();
+        });
+      },
+    );
+  }
+
+
+  Widget _buildEdgeInsetsEditor(BuildContext context, WidgetOption option, Map<String, dynamic> properties) {
+    return FloatingActionButton(onPressed: (){
+      _showEdgeInsetsDialog(context, option, properties);
+    });
+  }
+
+
+  void _showEdgeInsetsDialog(BuildContext context, WidgetOption option, Map<String, dynamic> properties) {
+
+    properties[option.name] ??= <String, double>{};
+
+    properties[option.name]["left"] ??= 0.0;
+    properties[option.name]["top"] ??= 0.0;
+    properties[option.name]["right"] ??= 0.0;
+    properties[option.name]["bottom"] ??= 0.0;
+
+    print("properties: $properties");
+
+    showDialog(context: context, builder: (context) => Dialog(
+
+      backgroundColor: Colors.white,
+      child: SizedBox(
+        width: 480,
+          height: 300,
+          child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: Text("EdgeInsets Editor for ${option.name}"),
+          backgroundColor: CupertinoColors.systemGrey4,
+        ),
+        body: Container(
+          padding: EdgeInsets.all(32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildInputField("left", properties[option.name], TextInputType.numberWithOptions(decimal: true), controllerName: option.name),
+                  _buildInputField("top", properties[option.name], TextInputType.numberWithOptions(decimal: true), controllerName: option.name),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildInputField("right", properties[option.name], TextInputType.numberWithOptions(decimal: true), controllerName: option.name),
+                  _buildInputField("bottom", properties[option.name], TextInputType.numberWithOptions(decimal: true), controllerName: option.name),
+                ],
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    properties[option.name] = {
+                      "left": double.tryParse(
+                          properties[option.name]["left"]?.toString() ?? "0") ?? 0.0,
+                      "top": double.tryParse(
+                          properties[option.name]["top"]?.toString() ?? "0") ?? 0.0,
+                      "right": double.tryParse(
+                          properties[option.name]["right"]?.toString() ?? "0") ?? 0.0,
+                      "bottom": double.tryParse(
+                          properties[option.name]["bottom"]?.toString() ?? "0") ?? 0.0,
+                    };
+                    widget.updateView();
+                  });
+                  Navigator.of(context).pop();
+                },
+                child: Text("Apply"),
+              ),
+            ],
+          ),
+        ),
+      )
+      )
+      )
+    );
+  }
+
+
+
+
+
+  SizedBox _buildInputField(String name, Map<String, dynamic> properties, TextInputType? textInputType, {String? controllerName}) {
+    TextEditingController controller = _getTextController("${controllerName == null ? "" : "$controllerName:" }$name"); //if a controllerName is provided, use it as a prefix for the controller name. if not, use the name directly
+    print("using controller ${controllerName == null ? "" : "$controllerName:" }$name");
 
     return SizedBox(
       width: 130,
@@ -211,9 +305,18 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
       child: TextField(
         controller: controller,
         keyboardType: textInputType,
-        onChanged: (String newValue) {
+        onChanged: (dynamic newValue) {
           setState(() {
-            widget.node.properties[name] = newValue;
+            dynamic parsedValue = newValue;
+            Type expectedType = properties[name]?.runtimeType ?? String;
+
+            if (expectedType == int) {
+              parsedValue = int.tryParse(newValue) ?? 0;
+            } else if (expectedType == double) {
+              parsedValue = double.tryParse(newValue) ?? 0.0;
+            }
+
+            properties[name] = parsedValue;
             widget.updateView();
           });
         },
@@ -224,6 +327,9 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
       ),
     );
   }
+
+
+
 
 
   Widget _buildButtonAction(WidgetOption option, dynamic value) {
@@ -248,21 +354,9 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
                       child: SingleChildScrollView(
 
                         child: Column(
-
-
-
-
-
                         ),
-
-
-
                       ),
-
                     ),
-
-
-
                   )
                 );
               });

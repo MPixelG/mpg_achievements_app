@@ -76,7 +76,7 @@ class WidgetOption<T> {
 
   final T? Function(dynamic type) parser; // Optional parser function to convert string input to the desired type
 
-  final List<dynamic>? options; // For dropdowns or multiple choice options but only if there are a limited set of options
+  final Map<String, dynamic>? options; // For dropdowns or multiple choice options but only if there are a limited set of options
 
   WidgetOption(this.parser, {
     required this.name,
@@ -136,6 +136,7 @@ Alignment parseAlignment(dynamic value) {
   if (value is Alignment) {
     return value;
   } else if (value is String) {
+    value = value.replaceAll("Alignment.", ""); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'topleft':
         return Alignment.topLeft;
@@ -156,8 +157,9 @@ Alignment parseAlignment(dynamic value) {
       case 'bottomright':
         return Alignment.bottomRight;
       default:
-        return Alignment.center; // Default to center if no match
+          return Alignment.center; // Default to center if no match
     }
+
   }
   return Alignment.center; // Default to center for any other type
 }
@@ -166,6 +168,7 @@ MainAxisAlignment parseMainAxisAlignment(dynamic value) {
   if (value is MainAxisAlignment) {
     return value;
   } else if (value is String) {
+    value = value.replaceAll("MainAxisAlignment.", ""); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'start':
         return MainAxisAlignment.start;
@@ -190,6 +193,7 @@ CrossAxisAlignment parseCrossAxisAlignment(dynamic value) {
   if (value is CrossAxisAlignment) {
     return value;
   } else if (value is String) {
+    value = value.replaceAll("CrossAxisAlignment.", ""); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'start':
         return CrossAxisAlignment.start;
@@ -212,6 +216,7 @@ MainAxisSize parseMainAxisSize(dynamic value) {
   if (value is MainAxisSize) {
     return value;
   } else if (value is String) {
+    value = value.replaceAll("MainAxisSize.", ""); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'min':
         return MainAxisSize.min;
@@ -228,6 +233,7 @@ TextAlign parseTextAlign(dynamic value) {
   if (value is TextAlign) {
     return value;
   } else if (value is String) {
+    value = value.replaceAll("TextAlign.", ""); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'left':
         return TextAlign.left;
