@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/json_exporter.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/gui_editor.dart';
@@ -10,6 +11,7 @@ import 'package:mpg_achievements_app/components/dialogue_utils/text_overlay.dart
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../dialogue_utils/text_overlay.dart';
 import 'json_factory/widgetFactory.dart';
+import 'menuCreator/layout_widget.dart';
 
 abstract class Screen extends StatelessWidget {
 
@@ -25,17 +27,25 @@ class MainMenuScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: FutureBuilder<Widget>(
-        future: WidgetFactory.loadFromJson('assets/screens/test.json', context),
+      body: FutureBuilder<LayoutWidget>(
+        future: WidgetJsonUtils.importScreen("test"),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data!;
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Fehler: ${snapshot.error}"));
+          } else if (snapshot.hasData) {
+            return snapshot.data!.build(context);
+          } else {
+            return const Center(child: Text("Unbekannter Zustand"));
           }
-          return Center(child: CircularProgressIndicator());
+
         },
       ),
     );
   }
+
 }
 class GameScreen extends StatelessWidget {
   final PixelAdventure game;

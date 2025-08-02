@@ -79,7 +79,7 @@ class NodeViewerState extends State<NodeViewer> { //the state for the NodeViewer
         padding: const EdgeInsets.all(8), //padding around the content so that it doesnt touch the edges
         child: InteractiveViewer( //allows us to zoom and move the content
           constrained: false, //we dont want to constrain the size of the content
-          boundaryMargin: const EdgeInsets.all(100), //the margin around the content so that we can scroll a bit outside the content
+          boundaryMargin: const EdgeInsets.all(200), //the margin around the content so that we can scroll a bit outside the content
           minScale: 0.01, //the minimum scale we can zoom out to
           maxScale: 8.0, //the maximum scale we can zoom in to
           child: SingleChildScrollView( //allows to scroll horizontally

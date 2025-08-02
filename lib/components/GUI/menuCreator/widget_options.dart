@@ -97,11 +97,9 @@ double? parseDouble(dynamic value) {
 }
 
 Color? parseColor(dynamic value) {
-  if (value is Color) {
-    return value;
-  } else if (value is String) {
-    return Color(int.parse(value.replaceFirst('#', '0xFF')));
-  } else if (value is Map<String, dynamic>){
+  if(value is Color) return value;
+
+  if (value is Map<String, dynamic>){
 
     double r = parseDouble(value['r']) ?? 0;
     double g = parseDouble(value['g']) ?? 0;
@@ -119,9 +117,7 @@ Color? parseColor(dynamic value) {
 }
 
 EdgeInsetsGeometry? parseEdgeInsets(dynamic value) {
-  if (value is EdgeInsetsGeometry) {
-    return value;
-  } else if (value is Map<String, dynamic>) {
+  if (value is Map<String, dynamic>) {
     double left = parseDouble(value['left']) ?? 0.0;
     double top = parseDouble(value['top']) ?? 0.0;
     double right = parseDouble(value['right']) ?? 0.0;
@@ -133,9 +129,7 @@ EdgeInsetsGeometry? parseEdgeInsets(dynamic value) {
 }
 
 Alignment parseAlignment(dynamic value) {
-  if (value is Alignment) {
-    return value;
-  } else if (value is String) {
+  if (value is String) {
     value = value.replaceAll("Alignment.", ""); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'topleft':
@@ -165,9 +159,7 @@ Alignment parseAlignment(dynamic value) {
 }
 
 MainAxisAlignment parseMainAxisAlignment(dynamic value) {
-  if (value is MainAxisAlignment) {
-    return value;
-  } else if (value is String) {
+  if (value is String) {
     value = value.replaceAll("MainAxisAlignment.", ""); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'start':
@@ -190,9 +182,7 @@ MainAxisAlignment parseMainAxisAlignment(dynamic value) {
 }
 
 CrossAxisAlignment parseCrossAxisAlignment(dynamic value) {
-  if (value is CrossAxisAlignment) {
-    return value;
-  } else if (value is String) {
+  if (value is String) {
     value = value.replaceAll("CrossAxisAlignment.", ""); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'start':
@@ -213,9 +203,7 @@ CrossAxisAlignment parseCrossAxisAlignment(dynamic value) {
 }
 
 MainAxisSize parseMainAxisSize(dynamic value) {
-  if (value is MainAxisSize) {
-    return value;
-  } else if (value is String) {
+  if (value is String) {
     value = value.replaceAll("MainAxisSize.", ""); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'min':
@@ -230,9 +218,7 @@ MainAxisSize parseMainAxisSize(dynamic value) {
 }
 
 TextAlign parseTextAlign(dynamic value) {
-  if (value is TextAlign) {
-    return value;
-  } else if (value is String) {
+  if (value is String) {
     value = value.replaceAll("TextAlign.", ""); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'left':
@@ -255,9 +241,7 @@ TextAlign parseTextAlign(dynamic value) {
 }
 
 TextStyle parseTextStyle(dynamic value) {
-  if (value is TextStyle) {
-    return value;
-  } else if (value is Map<String, dynamic>) {
+  if (value is Map<String, dynamic>) {
     return TextStyle(
       color: parseColor(value['color']) ?? Colors.black,
       fontSize: parseDouble(value['fontSize']) ?? 14.0,
@@ -283,9 +267,7 @@ int? parseInt(dynamic value) {
 }
 
 ButtonAction? parseButtonAction(dynamic value) {
-  if (value is ButtonAction) {
-    return value;
-  } else if (value is Map<String, dynamic>) {
+  if (value is Map<String, dynamic>) {
     return ButtonAction.fromJson(value);
   }
   return null;
@@ -293,9 +275,7 @@ ButtonAction? parseButtonAction(dynamic value) {
 
 
 BoxFit parseBoxFit(dynamic value) {
-  if (value is BoxFit) {
-    return value;
-  } else if (value is String) {
+  if (value is String) {
     value = value.replaceAll("BoxFit.", ""); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'fill':

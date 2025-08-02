@@ -1,43 +1,101 @@
 {
-  "id": "mainScreen",
-  "type": "Column",
+  "id": "container6",
+  "widgetType": "Container",
   "properties": {
-    "mainAxisAlignment": "center",
-    "crossAxisAlignment": "center"
+    "width": 0.1,
+    "height": 0.1,
+    "color": null,
+    "padding": null,
+    "margin": null,
+    "alignment": null
   },
   "children": [
     {
-      "id": "playButtonContainer",
-      "type": "Container",
+      "id": "row2",
+      "widgetType": "Row",
+      "properties": {
+        "mainAxisSize": "MainAxisSize.min",
+        "crossAxisAlignment": "CrossAxisAlignment.center",
+        "mainAxisAlignment": "MainAxisAlignment.center"
+      },
       "children": [
         {
-          "id": "playButton",
-          "type": "Button",
+          "id": "column2",
+          "widgetType": "Column",
           "properties": {
-            "text": "PLAY",
-            "action": {
-              "type": "start_game"
-            }
+            "mainAxisSize": "MainAxisSize.min",
+            "crossAxisAlignment": "CrossAxisAlignment.center",
+            "mainAxisAlignment": "MainAxisAlignment.center"
           },
-          "children": []
-        }
-      ]
-    },
-    {
-      "id": "settingsButtonContainer",
-      "type": "Container",
-      "children": [
+          "children": [
+            {
+              "id": "container7",
+              "widgetType": "Container",
+              "properties": {
+                "width": 0.1,
+                "height": 0.1,
+                "color": {
+                  "a": 1.0,
+                  "r": 0.09019607843137255,
+                  "g": 0.3843137254901961,
+                  "b": 0.7254901960784313
+                },
+                "padding": null,
+                "margin": null,
+                "alignment": null
+              },
+              "children": []
+            },
+            {
+              "id": "expanded4",
+              "widgetType": "Expanded",
+              "properties": {
+                "flex": 1.0
+              },
+              "children": [
+                {
+                  "id": "container8",
+                  "widgetType": "Container",
+                  "properties": {
+                    "width": 0.1,
+                    "height": 0.1,
+                    "color": {
+                      "a": 1.0,
+                      "r": 0.054901960784313725,
+                      "g": 0.7568627450980392,
+                      "b": 0.4980392156862745
+                    },
+                    "padding": null,
+                    "margin": null,
+                    "alignment": null
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
         {
-          "id": "settingsButton",
-          "type": "Button",
+          "id": "expanded5",
+          "widgetType": "Expanded",
           "properties": {
-            "text": "SETTINGS",
-            "action": {
-              "type": "screen_change",
-              "val": "settings"
-            }
+            "flex": 1.0
           },
-          "children": []
+          "children": [
+            {
+              "id": "ninepatch_button2",
+              "widgetType": "NinePatchButton",
+              "properties": {
+                "text": "",
+                "onPressed": {
+                  "text": "Debug Button Pressed!",
+                  "actionType": "debug"
+                },
+                "imageName": "button_0"
+              },
+              "children": []
+            }
+          ]
         }
       ]
     }

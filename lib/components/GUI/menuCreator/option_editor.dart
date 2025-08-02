@@ -73,7 +73,7 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
             crossAxisAlignment: CrossAxisAlignment.center,
             spacing: 20,
             children: [
-              Text(option.name, style: TextStyle(fontSize: 18)),
+              Stack(children: [Text(option.name, style: TextStyle(fontSize: 18)), SizedBox(width: 160, height: 32, child: Tooltip(message: option.description ?? "", ))]),
               _buildValueEditor(option),
             ],
           ),
@@ -136,7 +136,7 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
 
 
   DropdownButton _buildDropdownButton(WidgetOption option) {
-    String currentValue = widget.node.properties[option.name]?.toString() ?? "";
+    String currentValue = widget.node.properties[option.name]?.toString() ?? "none";
 
 
     String prefix = currentValue.contains(".") ? currentValue.split(".").first : "";
@@ -155,7 +155,7 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
 
       onChanged: (String? newValue) {
         setState(() {
-          widget.node.properties[option.name] = option.parser(newValue);
+          widget.node.properties[option.name] = newValue;
           widget.updateView();
         });
       },
@@ -318,7 +318,7 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
       child: TextField(
         controller: controller,
         keyboardType: textInputType,
-        onSubmitted: (dynamic newValue) {
+        onChanged: (dynamic newValue) {
           setState(() {
             dynamic parsedValue = newValue;
             Type expectedType = properties[name]?.runtimeType ?? String;
