@@ -5,6 +5,7 @@
     "width": 0.1,
     "height": 0.1,
     "color": {
+      "_type": "Color",
       "a": 1.0,
       "r": 0.6941176470588235,
       "g": 0.0196078431372549,
@@ -40,6 +41,7 @@
                 "width": 0.1,
                 "height": 0.1,
                 "color": {
+                  "_type": "Color",
                   "a": 1.0,
                   "r": 0.09019607843137255,
                   "g": 0.3843137254901961,
@@ -65,6 +67,7 @@
                     "width": 0.1,
                     "height": 0.1,
                     "color": {
+                      "_type": "Color",
                       "a": 1.0,
                       "r": 0.054901960784313725,
                       "g": 0.7568627450980392,
@@ -93,8 +96,8 @@
               "properties": {
                 "text": "",
                 "onPressed": {
-                  "printText": "Debug Button Pressed!",
-                  "actionType": "debug"
+                  "screen": "PixelAdventure",
+                  "actionType": "screenChange"
                 },
                 "imageName": "button_0"
               },

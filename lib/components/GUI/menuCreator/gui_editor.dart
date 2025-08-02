@@ -87,7 +87,9 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
       floatingActionButton: Row(mainAxisAlignment: MainAxisAlignment.end,children: [
 
-        FloatingActionButton(onPressed: () {
+        FloatingActionButton(
+          heroTag: null,
+          onPressed: () {
           String json = WidgetJsonUtils.exportWidgetToJson(root); //we convert the root widget to a json string
           print("json: $json");
         }, child: Icon(Icons.outbond_outlined),),

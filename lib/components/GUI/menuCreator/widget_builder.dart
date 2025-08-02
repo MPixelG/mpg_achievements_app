@@ -208,7 +208,7 @@ LayoutWidget addNinepatchButton(LayoutWidget? parent, {Map<String, dynamic>? pro
 
     return NinePatchButton(
         text: options.getValue("text", properties["text"]), //the text that will be displayed on the button
-        onPressed: options.getValue("onPressed", properties["onPressed"]).press, //the onPressed function is set to the action that was passed to the function, so that we can use it in the widget
+        onPressed: () => options.getValue("onPressed", properties["onPressed"]).press(context), //the onPressed function is set to the action that was passed to the function, so that we can use it in the widget
         textureName: options.getValue("imageName", properties["imageName"]) //the image name is set to the image name that was passed to the function, so that we can use it in the widget
     );
   }, id: 'ninepatch_button${ninepatchButtonIndex++}',
