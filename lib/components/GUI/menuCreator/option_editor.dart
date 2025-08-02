@@ -66,15 +66,18 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
 
     for (var option in widgetOptions.options) {
       propertyWidgets.add(
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          spacing: 20,
-          children: [
-            Text(option.name, style: TextStyle(fontSize: 18)),
-            _buildValueEditor(option),
-          ],
-        ),
+        SizedBox(
+          height: 64,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: 20,
+            children: [
+              Text(option.name, style: TextStyle(fontSize: 18)),
+              _buildValueEditor(option),
+            ],
+          ),
+        )
       );
     }
 
@@ -83,14 +86,23 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
   }
 
 
-  Map<String, TextEditingController> _textControllers = {};
+  final Map<String, TextEditingController> _textControllers = {};
 
-  TextEditingController _getTextController(String name) {
-    if (!_textControllers.containsKey(name)) {
-      _textControllers[name] = TextEditingController(text: widget.node.properties[name]?.toString());
+  TextEditingController _getTextController(String name, Map<String, dynamic> properties, {String controllerName = ""}) {
+    final value = properties[name]?.toString() ?? "";
+
+    if (_textControllers.containsKey(controllerName + name)) {
+      if (_textControllers[controllerName + name]!.text != value &&
+          !_textControllers[controllerName + name]!.selection.isValid) {
+        _textControllers[controllerName + name]!.text = value;
+      }
+    } else {
+      _textControllers[controllerName + name] = TextEditingController(text: value);
     }
-    return _textControllers[name]!;
+
+    return _textControllers[controllerName + name]!;
   }
+
 
 
   Widget _buildValueEditor(WidgetOption option) {
@@ -216,7 +228,9 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
   Widget _buildEdgeInsetsEditor(BuildContext context, WidgetOption option, Map<String, dynamic> properties) {
     return FloatingActionButton(onPressed: (){
       _showEdgeInsetsDialog(context, option, properties);
-    });
+    },
+      child: Icon(Icons.edit_note_outlined),
+    );
   }
 
 
@@ -229,7 +243,6 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
     properties[option.name]["right"] ??= 0.0;
     properties[option.name]["bottom"] ??= 0.0;
 
-    print("properties: $properties");
 
     showDialog(context: context, builder: (context) => Dialog(
 
@@ -242,6 +255,7 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
         appBar: AppBar(
           title: Text("EdgeInsets Editor for ${option.name}"),
           backgroundColor: CupertinoColors.systemGrey4,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(24)),
         ),
         body: Container(
           padding: EdgeInsets.all(32),
@@ -296,8 +310,7 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
 
 
   SizedBox _buildInputField(String name, Map<String, dynamic> properties, TextInputType? textInputType, {String? controllerName}) {
-    TextEditingController controller = _getTextController("${controllerName == null ? "" : "$controllerName:" }$name"); //if a controllerName is provided, use it as a prefix for the controller name. if not, use the name directly
-    print("using controller ${controllerName == null ? "" : "$controllerName:" }$name");
+    TextEditingController controller = _getTextController(name, controllerName: controllerName ?? "", properties); //if a controllerName is provided, use it as a prefix for the controller name. if not, use the name directly
 
     return SizedBox(
       width: 130,
@@ -305,7 +318,7 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
       child: TextField(
         controller: controller,
         keyboardType: textInputType,
-        onChanged: (dynamic newValue) {
+        onSubmitted: (dynamic newValue) {
           setState(() {
             dynamic parsedValue = newValue;
             Type expectedType = properties[name]?.runtimeType ?? String;

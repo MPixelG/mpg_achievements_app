@@ -41,6 +41,12 @@ class LayoutWidget {
     child.removeFromParent = removeChild;
   }
 
+  void addChildren(List<LayoutWidget> newChildren) {
+    for (var child in newChildren) {
+      addChild(child);
+    }
+  }
+
   void moveTo(LayoutWidget newParent) {
     // Remove from current parent if it exists
     removeFromParent(this);

@@ -298,6 +298,16 @@ class DisplayNode extends StatelessWidget { //a widget to display a single Layou
         PopupMenuItem(
           onTap: () => showPropertiesEditor(context), //a menu item to show the properties editor
           child: const Text("edit properties"),
+        ),
+        PopupMenuItem(
+          child: const Text("pop node"), //a menu item to pop the node (remove it and add its children to the parent)
+          onTap: () {
+            if (node.parent != null) { //if the node has a parent
+              node.parent!.addChildren(node.children); //add the children of the node to the parent
+              node.removeFromParent(node); //remove the node from its parent
+              updateViewport(); //update the viewport to reflect the changes
+            }
+          },
         )
       ],
     );

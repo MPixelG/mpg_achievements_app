@@ -290,3 +290,31 @@ ButtonAction? parseButtonAction(dynamic value) {
   }
   return null;
 }
+
+
+BoxFit parseBoxFit(dynamic value) {
+  if (value is BoxFit) {
+    return value;
+  } else if (value is String) {
+    value = value.replaceAll("BoxFit.", ""); //remove the enum prefix if present
+    switch (value.toLowerCase()) {
+      case 'fill':
+        return BoxFit.fill;
+      case 'contain':
+        return BoxFit.contain;
+      case 'cover':
+        return BoxFit.cover;
+      case 'fitwidth':
+        return BoxFit.fitWidth;
+      case 'fitheight':
+        return BoxFit.fitHeight;
+      case 'none':
+        return BoxFit.none;
+      case 'scale-down':
+        return BoxFit.scaleDown;
+      default:
+        return BoxFit.contain; // Default to contain for any other type
+    }
+  }
+  return BoxFit.contain; // Default to contain for any other type
+}

@@ -1,5 +1,6 @@
 import 'package:flame/extensions.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Matrix4;
+import "package:vector_math/vector_math_64.dart" as vm64;
 import 'package:mpg_achievements_app/components/GUI/menuCreator/button_action.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/editor_node_dependency_viewer.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/layout_widget.dart';
@@ -56,6 +57,8 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
         "bottom right": Alignment.bottomRight,
         "top center": Alignment.topCenter,
         "bottom center": Alignment.bottomCenter,
+        "center left": Alignment.centerLeft,
+        "center right": Alignment.centerRight,
       }),
     ]).register();
 
@@ -92,7 +95,14 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
     WidgetOptions(Text, options: [
       WidgetOption<String>((type) => type.toString(), name: "text", defaultValue: "", description: "The text to display in the text widget."),
       WidgetOption<TextStyle?>(parseTextStyle, name: "style", defaultValue: null, description: "The style of the text. If not set, a default style will be used."),
-      WidgetOption<TextAlign>(parseTextAlign, name: "textAlign", defaultValue: TextAlign.center, description: "The alignment of the text. If not set, center will be used."),
+      WidgetOption<TextAlign>(parseTextAlign, name: "textAlign", defaultValue: TextAlign.center, description: "The alignment of the text. If not set, center will be used.", options: {
+        "left": TextAlign.left,
+        "right": TextAlign.right,
+        "center": TextAlign.center,
+        "justify": TextAlign.justify,
+        "start": TextAlign.start,
+        "end": TextAlign.end,
+      }),
     ]).register();
 
 
@@ -109,6 +119,59 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
     ]).register();
 
     WidgetOptions.from(WidgetOptions.fromType(Row), Column).register();
+
+
+    WidgetOptions(FittedBox, options: [
+      WidgetOption<Alignment>(parseAlignment, name: "alignment", defaultValue: Alignment.center, description: "The alignment of the child within the FittedBox. If not set, center will be used.", options: {
+        "center": Alignment.center,
+        "top left": Alignment.topLeft,
+        "top right": Alignment.topRight,
+        "bottom left": Alignment.bottomLeft,
+        "bottom right": Alignment.bottomRight,
+        "top center": Alignment.topCenter,
+        "bottom center": Alignment.bottomCenter,
+      }),
+      WidgetOption<BoxFit>(parseBoxFit, name: "fit", defaultValue: BoxFit.contain, description: "The fit of the child within the FittedBox. If not set, contain will be used.", options: {
+        "fill": BoxFit.fill,
+        "contain": BoxFit.contain,
+        "cover": BoxFit.cover,
+        "fit width": BoxFit.fitWidth,
+        "fit height": BoxFit.fitHeight,
+        "none": BoxFit.none,
+      }),
+    ]).register();
+
+
+    WidgetOptions(Transform, options: [
+      WidgetOption<double>(parseDouble, name: "rotation", defaultValue: 0.0, description: "The rotation of the widget in radians. If not set, no rotation will be applied."),
+      WidgetOption<double>(parseDouble, name: "scale", defaultValue: 1.0, description: "The scale of the widget. If not set, no scaling will be applied."),
+      WidgetOption<Alignment>(parseAlignment, name: "alignment", defaultValue: Alignment.center, description: "The alignment of the child within the Transform. If not set, center will be used.", options: {
+        "center": Alignment.center,
+        "top left": Alignment.topLeft,
+        "top right": Alignment.topRight,
+        "bottom left": Alignment.bottomLeft,
+        "bottom right": Alignment.bottomRight,
+        "top center": Alignment.topCenter,
+        "bottom center": Alignment.bottomCenter,
+      }),
+    ]).register();
+
+    WidgetOptions(Opacity, options: [
+      WidgetOption<double>(parseDouble, name: "opacity", defaultValue: 0.5, description: "The opacity of the widget. If not set, 0.5 will be used."),
+    ]).register();
+
+    WidgetOptions(Card, options: [
+      WidgetOption<Color>(parseColor, name: "color", defaultValue: Colors.white, description: "The color of the card. If not set, white will be used."),
+      WidgetOption<EdgeInsetsGeometry?>(parseEdgeInsets, name: "margin", defaultValue: EdgeInsets.all(8.0), description: "The margin of the card. If not set, 8.0 will be used."),
+    ]).register();
+
+    WidgetOptions(GridView, options: [
+      WidgetOption<int>(parseInt, name: "crossAxisCount", defaultValue: 2, description: "The number of columns in the grid. If not set, 2 will be used."),
+      WidgetOption<double>(parseDouble, name: "childAspectRatio", defaultValue: 1.0, description: "The aspect ratio of the children in the grid. If not set, 1.0 will be used."),
+    ]).register();
+
+
+
 
   }
 
@@ -127,6 +190,34 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
         ),
 
       floatingActionButton: PopupMenuButton(itemBuilder: (context) => [ //this is the floating action button that opens a popup menu with the options to add widgets
+        PopupMenuItem( //this is the popup menu item that lets us add a positioned widget
+          value: 'fitted_box', //the value of the popup menu item is used to identify which widget to add
+          child: ListTile( //the ListTile is used to display the icon and the text of the popup menu item
+            leading: Icon(Icons.fit_screen), //the icon of the ListTile is the icon that is displayed next to the text
+            title: Text('Fitted Box'), //the displayed text
+          ),
+        ),
+        PopupMenuItem( //this is the popup menu item that lets us add a grid view widget
+          value: 'grid_view', //the value of the popup menu item is used to identify which widget to add
+          child: ListTile( //the ListTile is used to display the icon and the text of the popup menu item
+            leading: Icon(Icons.grid_view), //the icon of the ListTile is the icon that is displayed next to the text
+            title: Text('Grid View'), //the displayed text
+          ),
+        ),
+        PopupMenuItem( //this is the popup menu item that lets us add a transform widget
+          value: 'transform', //the value of the popup menu item is used to identify which widget to add
+          child: ListTile( //the ListTile is used to display the icon and the text of the popup menu item
+            leading: Icon(Icons.transform), //the icon of the ListTile is the icon that is displayed next to the text
+            title: Text('Transform'), //the displayed text
+          ),
+        ),
+        PopupMenuItem( //this is the popup menu item that lets us add an opacity widget
+          value: 'opacity', //the value of the popup menu item is used to identify which widget to add
+          child: ListTile( //the ListTile is used to display the icon and the text of the popup menu item
+            leading: Icon(Icons.opacity), //the icon of the ListTile is the icon that is displayed next to the text
+            title: Text('Opacity'), //the displayed text
+          ),
+        ),
         PopupMenuItem(
           value: 'expanded', //another option for positioned
           child: ListTile(
@@ -195,9 +286,13 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
               case "stack": addWidget(addStack(root)); //and stack
               case "ninepatch_button": addWidget(addNinepatchButton(root)); //and nine patch button
               case "expanded": {
-                LayoutWidget? parent = getNearestFlexRecursive(root); //we get the nearest stack widget to add the expanded widget to
+                LayoutWidget? parent = getNearestFlexRecursive(root); //we get the nearest stack widget to add the expanded widget to, because you can only add expanded widgets to a row or column
                 addWidget(addExpanded(parent), root: parent);
               }
+              case "fitted_box": addWidget(addFittedBox(root));
+              case "grid_view": addWidget(addGridView(root));
+              case "transform": addWidget(addTransform(root));
+              case "opacity": addWidget(addOpacity(root));
             }
 
             _nodeViewerKey.currentState?.setState(() {}); //this updates the node viewer to show the new widget that was added
@@ -480,5 +575,99 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
         removeFromParent: parent?.removeChild, parent: parent, widgetType: NinePatchButton);
     return widget;
   }
+
+
+  LayoutWidget addFittedBox(LayoutWidget? parent) {
+    LayoutWidget widget = LayoutWidget((context, children, properties) {
+
+      WidgetOptions options = WidgetOptions.fromType(FittedBox);
+
+      properties["alignment"] ??= options.getDefaultValue("alignment");
+      properties["fit"] ??= options.getDefaultValue("fit");
+
+      return FittedBox(
+        alignment: options.getValue("alignment", properties["alignment"]),
+        fit: options.getValue("fit", properties["fit"]),
+        child: children.isNotEmpty ? children.first : Container(),
+      );
+    }, id: 'fitted_box', type: ContainerType.single,
+        removeFromParent: parent?.removeChild, parent: parent, widgetType: FittedBox);
+    return widget;
+  }
+
+  LayoutWidget addTransform(LayoutWidget? parent) {
+    LayoutWidget widget = LayoutWidget((context, children, properties) {
+
+      WidgetOptions options = WidgetOptions.fromType(Transform);
+
+      properties["rotation"] ??= options.getDefaultValue("rotation");
+      properties["scale"] ??= options.getDefaultValue("scale");
+      properties["alignment"] ??= options.getDefaultValue("alignment");
+
+      return Transform(
+        alignment: options.getValue("alignment", properties["alignment"]),
+        transform: vm64.Matrix4.identity()
+          ..rotateZ(options.getValue("rotation", properties["rotation"]))
+          ..scale(options.getValue("scale", properties["scale"])),
+        child: children.isNotEmpty ? children.first : Container(),
+      );
+    }, id: 'transform', type: ContainerType.single,
+        removeFromParent: parent?.removeChild, parent: parent, widgetType: Transform);
+    return widget;
+  }
+
+
+  LayoutWidget addOpacity(LayoutWidget? parent) {
+    LayoutWidget widget = LayoutWidget((context, children, properties) {
+
+      WidgetOptions options = WidgetOptions.fromType(Opacity);
+
+      properties["opacity"] ??= options.getDefaultValue("opacity");
+
+      return Opacity(
+        opacity: options.getValue("opacity", properties["opacity"]),
+        child: children.isNotEmpty ? children.first : Container(),
+      );
+    }, id: 'opacity', type: ContainerType.single,
+        removeFromParent: parent?.removeChild, parent: parent, widgetType: Opacity);
+    return widget;
+  }
+
+  LayoutWidget addCard(LayoutWidget? parent) {
+    LayoutWidget widget = LayoutWidget((context, children, properties) {
+
+      WidgetOptions options = WidgetOptions.fromType(Card);
+
+      properties["color"] ??= options.getDefaultValue("color");
+      properties["margin"] ??= options.getDefaultValue("margin");
+
+      return Card(
+        color: options.getValue("color", properties["color"]),
+        margin: options.getValue("margin", properties["margin"]),
+        child: children.isNotEmpty ? children.first : Container(),
+      );
+    }, id: 'card', type: ContainerType.single,
+        removeFromParent: parent?.removeChild, parent: parent, widgetType: Card);
+    return widget;
+  }
+
+  LayoutWidget addGridView(LayoutWidget? parent) {
+    LayoutWidget widget = LayoutWidget((context, children, properties) {
+
+      WidgetOptions options = WidgetOptions.fromType(GridView);
+
+      properties["crossAxisCount"] ??= options.getDefaultValue("crossAxisCount");
+      properties["childAspectRatio"] ??= options.getDefaultValue("childAspectRatio");
+
+      return GridView.count(
+        crossAxisCount: options.getValue("crossAxisCount", properties["crossAxisCount"]),
+        childAspectRatio: options.getValue("childAspectRatio", properties["childAspectRatio"]),
+        children: children,
+      );
+    }, id: 'grid_view', type: ContainerType.unlimited,
+        removeFromParent: parent?.removeChild, parent: parent, widgetType: GridView);
+    return widget;
+  }
+
 
 }
