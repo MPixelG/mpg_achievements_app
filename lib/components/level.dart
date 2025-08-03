@@ -20,10 +20,14 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'background/scrolling_background.dart';
 import 'level_components/saw.dart';
+import 'level_components/checkpoint/checkpoint.dart';
 
 class Level extends World
-    with HasGameReference<PixelAdventure>, KeyboardHandler, PointerMoveCallbacks, TapCallbacks {
-
+    with
+        HasGameReference<PixelAdventure>,
+        KeyboardHandler,
+        PointerMoveCallbacks,
+        TapCallbacks {
   final String levelName;
   late TiledComponent level;
   final Player player;
@@ -74,14 +78,12 @@ class Level extends World
     // Set their scale and render priority so they display correctly.
     add(debugOverlays);
     debugOverlays.scale = Vector2.zero(); // Start hidden/scaled down
-    debugOverlays.priority = 2; // Ensure overlays draw above the rest of the game
+    debugOverlays.priority =
+        2; // Ensure overlays draw above the rest of the game
 
-/*    if (level != null) {
+    /*    if (level != null) {
       game.lightingRenderer.extractObjectsFromTiledMap(level);
     }*/
-
-
-
 
     // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
     game.cam.setMoveBounds(Vector2.zero(), level.size);
@@ -95,7 +97,8 @@ class Level extends World
     final backgroundLayer = level.tileMap.getLayer('Level');
     String backgroundColor = "Green";
     if (backgroundLayer != null) {
-      backgroundColor = backgroundLayer.properties.getValue('BackgroundColor') ?? "Green";
+      backgroundColor =
+          backgroundLayer.properties.getValue('BackgroundColor') ?? "Green";
     }
 
     ScrollingBackground background = ScrollingBackground(
@@ -109,7 +112,9 @@ class Level extends World
 
   void _spawningObjects() {
     //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list
-    final ObjectGroup? spawnPointsLayer = level.tileMap.getLayer<ObjectGroup>('Spawnpoints');
+    final ObjectGroup? spawnPointsLayer = level.tileMap.getLayer<ObjectGroup>(
+      'Spawnpoints',
+    );
 
     //if there is no Spawnpoint-layer the game can never the less run and does not crash / Nullcheck-Safety
     if (spawnPointsLayer != null) {
@@ -156,9 +161,23 @@ class Level extends World
             saw.scale.x = -1;
             add(saw);
             break;
+          case "Checkpoint":
+            final id = spawnPoint.properties.getValue('id');
+            final isActivated = spawnPoint.properties.getValue('isActivated');
+            final checkpoint = Checkpoint(
+              id: id,
+              isActivated: isActivated,
+              position: Vector2(spawnPoint.x, spawnPoint.y),
+            );
+            // if checkpoint is already activated in tiled, the original spawnpoint is overridden
+            if (isActivated == true) {
+              player.lastCheckpoint = checkpoint;
+              player.position = checkpoint.position;
+            }
+            add(checkpoint);
+            break;
           case "Enemy":
             //enemy spawning
-
             enemy = Enemy(enemyCharacter: "Virtual Guy");
             enemy.position = Vector2(spawnPoint.x, spawnPoint.y);
             add(enemy);
@@ -192,7 +211,7 @@ class Level extends World
               hasCollisionDown: false,
               hasCollisionUp: true,
               hasHorizontalCollision: false,
-              isLadder: true
+              isLadder: true,
             );
             add(ladder);
           default:
@@ -230,7 +249,8 @@ class Level extends World
       );
     } //press V to toggle the visibility of the overlays
 
-    if(keysPressed.contains(LogicalKeyboardKey.keyH)) game.overlays.toggle("guiEditor");
+    if (keysPressed.contains(LogicalKeyboardKey.keyH))
+      game.overlays.toggle("guiEditor");
 
     return super.onKeyEvent(event, keysPressed);
   }
@@ -259,13 +279,10 @@ class Level extends World
     debugOverlays.text =
         "Player: $playerCoords\nMouse: $mouseCoords\nGrid Mouse Coords: ${(mouseCoords / 32)..floor()}";
     debugOverlays.position =
-        game.cam.pos -
-        game.cam.visibleWorldRect.size.toVector2() / 2;
+        game.cam.pos - game.cam.visibleWorldRect.size.toVector2() / 2;
 
     super.update(dt);
   }
-
-
 
   //sets the visibility of all of the hitboxes of all of the components in the level (except for background tiles)
   void setDebugMode(bool val) {
@@ -308,13 +325,16 @@ class Level extends World
       // Retrieve the custom parallax factor property from the image layer.
       // If not found, default to 0.3.
       parralaxFactors.add(
-        Vector2(imageLayer.parallaxX.toDouble(), imageLayer.parallaxY.toDouble()),
+        Vector2(
+          imageLayer.parallaxX.toDouble(),
+          imageLayer.parallaxY.toDouble(),
+        ),
       );
-      startPositions.add(Vector2(imageLayer.offsetX.toDouble(), imageLayer.offsetY.toDouble()));
-      print("added parralax " + parralaxFactors.last.toString());
+      startPositions.add(
+        Vector2(imageLayer.offsetX.toDouble(), imageLayer.offsetY.toDouble()),
+      );
     }
 
-    print("startPositions: " + startPositions.toString());
 
     // Add a custom LayeredImageBackground component that will handle rendering
     // parallax background images with different scrolling speeds.
@@ -328,9 +348,4 @@ class Level extends World
       ),
     );
   }
-
-
-
-
-
 }

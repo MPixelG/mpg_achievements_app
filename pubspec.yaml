@@ -82,6 +82,11 @@ flutter:
       - assets/images/Main Characters/
       - assets/images/HUD/
       - assets/images/Items/Fruits/
+      - assets/images/Items/Checkpoints/
+      - assets/images/Items/Checkpoints/Checkpoint/
+      - assets/images/Items/Checkpoints/Checkpoint/Checkpoint (Flag Idle) (64x64).png
+      - assets/images/Items/Checkpoints/Checkpoint/Checkpoint (Flag Out) (64x64).png
+      - assets/images/Items/Checkpoints/Checkpoint/Checkpoint (No Flag) (64x64).png
       - assets/images/Traps/Saw/
       - assets/images/Background/
       - assets/images/Background/City_Clean/
@@ -92,6 +97,7 @@ flutter:
       - assets/images/Menu/
       - assets/images/Menu/Buttons/
       - assets/screens/
+      - assets/yarn/test.yarn
   shaders:
     - assets/shaders/lighting.glsl
   # An image asset can refer to one or more resolution-specific "variants", see

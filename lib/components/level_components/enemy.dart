@@ -1,15 +1,12 @@
 import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/extensions.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/ai/goals/follow_player_goal.dart';
 import 'package:mpg_achievements_app/components/ai/goals/goal_manager.dart';
 import 'package:mpg_achievements_app/components/ai/goals/pathtracing_goal.dart';
 import 'package:mpg_achievements_app/components/ai/goals/player_locating_goal.dart';
-import 'package:mpg_achievements_app/components/animation/CharacterStateManager.dart';
-import 'package:mpg_achievements_app/components/level.dart';
+import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/level_components/saw.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import '../../mpg_pixel_adventure.dart';
@@ -33,7 +30,7 @@ class Enemy extends SpriteAnimationGroupComponent
         CollisionCallbacks,
         HasCollisions,
         BasicMovement,
-        CharacterStateManager {
+        AnimationManager, HasMovementAnimations {
   bool gotHit = false;
 
   //debug switches for special modes
@@ -54,7 +51,6 @@ class Enemy extends SpriteAnimationGroupComponent
   late GoalManager manager;
   @override
   FutureOr<void> onLoad() {
-
     startingPosition = Vector2(position.x, position.y);
 
     manager = GoalManager();
@@ -68,7 +64,6 @@ class Enemy extends SpriteAnimationGroupComponent
 
     return super.onLoad();
   }
-
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
@@ -125,7 +120,7 @@ class Enemy extends SpriteAnimationGroupComponent
   void _respawn() async {
     if (gotHit) return; //if the enemy is already being respawned, stop
     gotHit = true; //indicate, that the enemy is being respawned
-    current = PlayerState.hit; //hit animation
+    playAnimation("hit");
     velocity = Vector2.zero(); //reset velocity
     setGravityEnabled(false); //temporarily disable gravity for this enemy
 
@@ -137,7 +132,7 @@ class Enemy extends SpriteAnimationGroupComponent
     ); //center the enemy so that the animation displays correctly (its 96*96 and the enemy is 32*32)
     scale.x =
         1; //flip the enemy to the right side and a third of the size because the animation is triple of the size
-    current = PlayerState.disappearing; //display a disappear animation
+    current = playAnimation("disappearing"); //display a disappear animation
     await Future.delayed(
       Duration(milliseconds: 320),
     ); //wait for the animation to finish
@@ -152,7 +147,7 @@ class Enemy extends SpriteAnimationGroupComponent
       Duration(milliseconds: 800),
     ); //wait a bit for the camera to position and increase the annoyance of the player XD
     scale = Vector2.all(1); //show the enemy
-    current = PlayerState.appearing; //display an appear animation
+    current = playAnimation("appearing"); //display an appear animation
     await Future.delayed(
       Duration(milliseconds: 300),
     ); //wait for the animation to finish
@@ -183,11 +178,7 @@ class Enemy extends SpriteAnimationGroupComponent
   @override
   void setPos(Vector2 newPos) => position = newPos;
 
-  @override
-  String getCharacter() => enemyCharacter;
 
-  @override
-  bool isInHitFrames() => gotHit;
 
   bool climbing = false;
 
@@ -197,10 +188,26 @@ class Enemy extends SpriteAnimationGroupComponent
   @override
   bool get isClimbing => climbing;
 
+  @override
+  bool get isTryingToGetDownLadder {
+    return isShifting;
+  }
 
   @override
-  Level get level => parent as Level;
+  List<AnimationLoadOptions> get animationOptions => [
+    AnimationLoadOptions("appearing", "Main Characters/Appearing", textureSize: 96, loop: false),
+    AnimationLoadOptions("disappearing", "Main Characters/Disappearing", textureSize: 96, loop: false),
+    AnimationLoadOptions("hit", "$componentSpriteLocation/Hit" , textureSize: 32, loop: false),
+
+    ...movementAnimationDefaultOptions
+  ];
 
   @override
-  bool get isTryingToGetDownLadder {return isShifting;}
+  String get componentSpriteLocation => "Main Characters/Virtual Guy";
+
+  @override
+  AnimatedComponentGroup get group => AnimatedComponentGroup.entity;
+
+  @override
+  bool get isInHitFrames => gotHit;
 }

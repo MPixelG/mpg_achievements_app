@@ -10,7 +10,6 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 class Collectable extends SpriteAnimationComponent
     with HasGameReference<PixelAdventure>, CollisionCallbacks {
-
   //name of the collectable and tape of collect -> those will be more than fruit in the future
   late String collectable;
   bool _collected = false;
@@ -22,9 +21,9 @@ class Collectable extends SpriteAnimationComponent
   final hitbox = RectangleHitbox(
     position: Vector2(10, 10),
     size: Vector2(12, 12),
-    collisionType: CollisionType.passive, // Detects collisions but doesn't block.
+    collisionType:
+        CollisionType.passive, // Detects collisions but doesn't block.
   );
-
 
   //constructor
   Collectable({
@@ -33,7 +32,8 @@ class Collectable extends SpriteAnimationComponent
     required this.collectablePath,
     required this.animated,
     super.position,
-    super.size});
+    super.size,
+  });
 
   static final List<String> collectableNames = [
     "Apple",
@@ -43,23 +43,20 @@ class Collectable extends SpriteAnimationComponent
     "Melon",
     "Orange",
     "Pineapple",
-    "Strawberry"
+    "Strawberry",
   ];
-
 
   @override
   FutureOr<void> onLoad() {
     priority = 1; // Draw behind other components. default is 0
-    if(animated) {
+    if (animated) {
       amount = 17;
     } else {
       amount = 1;
     }
 
-    if(collectable == ""){
-
+    if (collectable == "") {
       collectable = collectableNames.random();
-
     }
 
     add(hitbox);
@@ -76,9 +73,13 @@ class Collectable extends SpriteAnimationComponent
   }
 
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+  void onCollisionStart(
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
     super.onCollisionStart(intersectionPoints, other);
-    if (other is Player && !interactiveTask) { // Check if the colliding object is the Player.
+    if (other is Player && !interactiveTask) {
+      // Check if the colliding object is the Player.
       collidedWithPlayer();
     }
   }
@@ -96,8 +97,19 @@ class Collectable extends SpriteAnimationComponent
       );
       _collected = true;
       (parent as Level).totalCollectables--;
-      if((parent as Level).totalCollectables == 0) parent?.add(generateConfetti(position));
-      Future.delayed(const Duration(milliseconds: 400), () => removeFromParent()); // Remove after animation.
+      if ((parent as Level).totalCollectables == 0) {
+        parent?.add(generateConfetti(position));
+      }
+      Future.delayed(
+        const Duration(milliseconds: 400),
+        () => removeFromParent(),
+      ); // Remove after animation.
+    } else if(interactiveTask && !_collected) {
+      (parent as Level).totalCollectables--;
+      _collected = true;
+      if ((parent as Level).totalCollectables == 0) {
+        parent?.add(generateConfetti(position));
+      }
     }
   }
 }

@@ -4,9 +4,10 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 
 //this dialogueOverlay is added in mpg_pixel_adventure_class
-class DialogueOverlay extends StatelessWidget{
+class TextOverlay extends StatelessWidget{
   final PixelAdventure game;
-  const DialogueOverlay({super.key,required this.game});
+  final VoidCallback onTextOverlayDone;
+  const TextOverlay({super.key,required this.game, required this.onTextOverlayDone});
 
 
   @override
@@ -23,8 +24,9 @@ class DialogueOverlay extends StatelessWidget{
       isRepeatingAnimation: false,
 
       onFinished: (){
-        print('success texttyping');
-        game.showDialogue = false;},
+        game.showDialogue = false;
+        onTextOverlayDone();
+        },
             ),//Animatedtextkit
         ): Container();
     }
