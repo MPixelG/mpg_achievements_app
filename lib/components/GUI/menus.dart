@@ -178,6 +178,7 @@ class GameScreen extends StatelessWidget {
                 'DialogueScreen': (BuildContext context, PixelAdventure game) {
                   return DialogueScreen(
                     game: game,
+                    //when Dialogue is finishes screen is removed form map
                     onDialogueFinished: () {
                       game.overlays.remove('DialogueScreen');
                     },
