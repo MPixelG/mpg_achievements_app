@@ -62,7 +62,7 @@ void registerWidgetOptions() { //this is used to register the widget options for
   WidgetOptions(Text, options: [
     WidgetOption<String>((type) => type.toString(), name: "text", defaultValue: "", description: "The text to display in the text widget."),
     WidgetOption<TextStyle?>(parseTextStyle, name: "style", defaultValue: null, description: "The style of the text. If not set, a default style will be used."),
-    WidgetOption<TextAlign>(parseTextAlign, name: "textAlign", defaultValue: "center", description: "The alignment of the text. If not set, center will be used.", options: {
+    WidgetOption<TextAlign>(parseTextAlign, name: "textAlign", defaultValue: "TextAlign.center", description: "The alignment of the text. If not set, center will be used.", options: {
       "left": TextAlign.left,
       "right": TextAlign.right,
       "center": TextAlign.center,
@@ -89,7 +89,7 @@ void registerWidgetOptions() { //this is used to register the widget options for
 
 
   WidgetOptions(FittedBox, options: [
-    WidgetOption<Alignment>(parseAlignment, name: "alignment", defaultValue: "center", description: "The alignment of the child within the FittedBox. If not set, center will be used.", options: {
+    WidgetOption<Alignment>(parseAlignment, name: "alignment", defaultValue: "Alignment.center", description: "The alignment of the child within the FittedBox. If not set, center will be used.", options: {
       "center": Alignment.center,
       "top left": Alignment.topLeft,
       "top right": Alignment.topRight,
@@ -98,7 +98,7 @@ void registerWidgetOptions() { //this is used to register the widget options for
       "top center": Alignment.topCenter,
       "bottom center": Alignment.bottomCenter,
     }),
-    WidgetOption<BoxFit>(parseBoxFit, name: "fit", defaultValue: "contain", description: "The fit of the child within the FittedBox. If not set, contain will be used.", options: {
+    WidgetOption<BoxFit>(parseBoxFit, name: "fit", defaultValue: "BoxFit.contain", description: "The fit of the child within the FittedBox. If not set, contain will be used.", options: {
       "fill": BoxFit.fill,
       "contain": BoxFit.contain,
       "cover": BoxFit.cover,
@@ -112,7 +112,7 @@ void registerWidgetOptions() { //this is used to register the widget options for
   WidgetOptions(Transform, options: [
     WidgetOption<double>(parseDouble, name: "rotation", defaultValue: 0.0, description: "The rotation of the widget in radians. If not set, no rotation will be applied."),
     WidgetOption<double>(parseDouble, name: "scale", defaultValue: 1.0, description: "The scale of the widget. If not set, no scaling will be applied."),
-    WidgetOption<Alignment>(parseAlignment, name: "alignment", defaultValue: "center", description: "The alignment of the child within the Transform. If not set, center will be used.", options: {
+    WidgetOption<Alignment>(parseAlignment, name: "alignment", defaultValue: "Alignment.center", description: "The alignment of the child within the Transform. If not set, center will be used.", options: {
       "center": Alignment.center,
       "top left": Alignment.topLeft,
       "top right": Alignment.topRight,
@@ -138,4 +138,35 @@ void registerWidgetOptions() { //this is used to register the widget options for
   ]).register();
 
   WidgetOptions(Stack, options: []).register(); //no options for stack, because it is just a container for other widgets
+
+
+  WidgetOptions(Image, options: [
+    WidgetOption<String>((type) => type.toString(), name: "path", defaultValue: ""),
+    WidgetOption<double>(parseDouble, name: "width", defaultValue: 0.1),
+    WidgetOption<double>(parseDouble, name: "height", defaultValue: 0.1),
+    WidgetOption<Alignment>(parseAlignment, name: "alignment", defaultValue: "Alignment.center", options: {
+  "center": Alignment.center,
+  "top left": Alignment.topLeft,
+  "top right": Alignment.topRight,
+  "bottom left": Alignment.bottomLeft,
+  "bottom right": Alignment.bottomRight,
+  "top center": Alignment.topCenter,
+  "bottom center": Alignment.bottomCenter,
+  }),
+  ]).register();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

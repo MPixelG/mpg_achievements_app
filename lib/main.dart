@@ -30,7 +30,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: GameScreen(game: PixelAdventure()),
+      home: MainMenuScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

@@ -97,12 +97,19 @@ class Collectable extends SpriteAnimationComponent
       );
       _collected = true;
       (parent as Level).totalCollectables--;
-      if ((parent as Level).totalCollectables == 0)
+      if ((parent as Level).totalCollectables == 0) {
         parent?.add(generateConfetti(position));
+      }
       Future.delayed(
         const Duration(milliseconds: 400),
         () => removeFromParent(),
       ); // Remove after animation.
+    } else if(interactiveTask && !_collected) {
+      (parent as Level).totalCollectables--;
+      _collected = true;
+      if ((parent as Level).totalCollectables == 0) {
+        parent?.add(generateConfetti(position));
+      }
     }
   }
 }

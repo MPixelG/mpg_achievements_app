@@ -164,7 +164,7 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
   }
 
   Row _buildColorPicker(WidgetOption option) {
-    Color currentColor = widget.node.properties[option.name] ?? Colors.black;
+    Color currentColor = parseColor(widget.node.properties[option.name]) ?? Colors.black;
     return Row(
       children: [
         GestureDetector(

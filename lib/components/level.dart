@@ -333,10 +333,8 @@ class Level extends World
       startPositions.add(
         Vector2(imageLayer.offsetX.toDouble(), imageLayer.offsetY.toDouble()),
       );
-      print("added parralax " + parralaxFactors.last.toString());
     }
 
-    print("startPositions: " + startPositions.toString());
 
     // Add a custom LayeredImageBackground component that will handle rendering
     // parallax background images with different scrolling speeds.

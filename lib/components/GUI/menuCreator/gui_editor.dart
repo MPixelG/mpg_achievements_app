@@ -71,7 +71,6 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
       return const Center(child: CircularProgressIndicator());
     }
 
-    print("Screen size: ${MediaQuery.of(context).size}");
 
 
 
@@ -124,6 +123,15 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
             title: Text('Opacity'), //the displayed text
           ),
         ),
+
+        PopupMenuItem(
+          value: "image",
+          child: ListTile(leading:
+              Icon(Icons.image),
+              title: Text("Image"),
+          )
+        ),
+
         PopupMenuItem(
           value: 'expanded', //another option for positioned
           child: ListTile(
@@ -198,6 +206,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
               case "grid_view": addWidget(addGridView(root));
               case "transform": addWidget(addTransform(root));
               case "opacity": addWidget(addOpacity(root));
+              case "image": addWidget(addImage(root));
             }
 
             _nodeViewerKey.currentState?.setState(() {}); //this updates the node viewer to show the new widget that was added

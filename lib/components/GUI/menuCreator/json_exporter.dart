@@ -131,11 +131,6 @@ class WidgetJsonUtils {
     // Ensure properties are properly restored
     final restoredProps = restoreProperties(data['properties']);
 
-    // Debug logging
-    print("Importing widget: ${data['widgetType']}");
-    print("Original properties: ${data['properties']}");
-    print("Restored properties: $restoredProps");
-
     Type widgetType = parseWidgetType(data['widgetType']);
 
     LayoutWidget widget = switch(widgetType){
@@ -152,6 +147,7 @@ class WidgetJsonUtils {
       Opacity => addOpacity(parent, properties: restoredProps),
       Card => addCard(parent, properties: restoredProps),
       GridView => addGridView(parent, properties: restoredProps),
+      Image => addImage(parent, properties: restoredProps),
       _ => throw UnimplementedError("the widget type $widgetType cant be created yet! please add it first!")
     };
 

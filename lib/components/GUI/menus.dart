@@ -173,7 +173,11 @@ class GameScreen extends StatelessWidget {
                   return game.guiEditor;
                 },
                 'TextOverlay': (BuildContext context, PixelAdventure game) {
-                  return TextOverlay(game: game);
+                  return TextOverlay(
+                      game: game, onTextOverlayDone: () {game.overlays.remove("TextOverlay");},
+
+
+                  );
                 },
                 'DialogueScreen': (BuildContext context, PixelAdventure game) {
                   return DialogueScreen(

@@ -1,122 +1,193 @@
 {
-  "id": "container0",
+  "id": "container6",
   "widgetType": "Container",
   "properties": {
     "width": 0.1,
     "height": 0.1,
     "color": {
       "_type": "Color",
-      "a": 1.0,
-      "r": 0.6941176470588235,
-      "g": 0.0196078431372549,
-      "b": 0.6627450980392157
+      "a": 0.0,
+      "r": 0.0,
+      "g": 0.0,
+      "b": 0.0
     },
-    "padding": null,
+    "padding": {
+      "left": 0.0,
+      "top": 0.0,
+      "right": 0.0,
+      "bottom": 0.0
+    },
     "margin": null,
     "alignment": null
   },
   "children": [
     {
-      "id": "row0",
-      "widgetType": "Row",
-      "properties": {
-        "mainAxisSize": "MainAxisSize.min",
-        "crossAxisAlignment": "CrossAxisAlignment.center",
-        "mainAxisAlignment": "MainAxisAlignment.center"
-      },
+      "id": "stack0",
+      "widgetType": "Stack",
+      "properties": {},
       "children": [
         {
-          "id": "column0",
-          "widgetType": "Column",
+          "id": "image0",
+          "widgetType": "Image",
           "properties": {
-            "mainAxisSize": "MainAxisSize.min",
-            "crossAxisAlignment": "CrossAxisAlignment.center",
-            "mainAxisAlignment": "MainAxisAlignment.center"
+            "path": "assets/images/Background/main_menu.png",
+            "width": 1.0,
+            "height": 1.0,
+            "alignment": "Alignment.center"
           },
-          "children": [
-            {
-              "id": "container1",
-              "widgetType": "Container",
-              "properties": {
-                "width": 0.1,
-                "height": 0.1,
-                "color": {
-                  "_type": "Color",
-                  "a": 1.0,
-                  "r": 0.09019607843137255,
-                  "g": 0.3843137254901961,
-                  "b": 0.7254901960784313
-                },
-                "padding": null,
-                "margin": null,
-                "alignment": null
-              },
-              "children": []
-            },
-            {
-              "id": "expanded0",
-              "widgetType": "Expanded",
-              "properties": {
-                "flex": 1.0
-              },
-              "children": [
-                {
-                  "id": "container2",
-                  "widgetType": "Container",
-                  "properties": {
-                    "width": 0.1,
-                    "height": 0.1,
-                    "color": {
-                      "_type": "Color",
-                      "a": 1.0,
-                      "r": 0.054901960784313725,
-                      "g": 0.7568627450980392,
-                      "b": 0.4980392156862745
-                    },
-                    "padding": null,
-                    "margin": null,
-                    "alignment": null
-                  },
-                  "children": []
-                }
-              ]
-            }
-          ]
+          "children": []
         },
         {
-          "id": "expanded1",
-          "widgetType": "Expanded",
-          "properties": {
-            "flex": 1.0
-          },
-          "children": [
-            {
-              "id": "ninepatch_button0",
-              "widgetType": "NinePatchButton",
-              "properties": {
-                "text": "",
-                "onPressed": {
-                  "screen": "PixelAdventure",
-                  "actionType": "screenChange"
-                },
-                "imageName": "button_0"
-              },
-              "children": []
-            }
-          ]
-        },
-        {
-          "id": "container3",
+          "id": "container12",
           "widgetType": "Container",
           "properties": {
-            "width": 0.1,
-            "height": 0.1,
+            "width": 1.0,
+            "height": 1.0,
             "color": null,
             "padding": null,
             "margin": null,
             "alignment": null
           },
-          "children": []
+          "children": [
+            {
+              "id": "container7",
+              "widgetType": "Container",
+              "properties": {
+                "width": 0.4,
+                "height": 0.5,
+                "color": null,
+                "padding": null,
+                "margin": null,
+                "alignment": null
+              },
+              "children": [
+                {
+                  "id": "column1",
+                  "widgetType": "Column",
+                  "properties": {
+                    "mainAxisSize": "MainAxisSize.max",
+                    "crossAxisAlignment": "CrossAxisAlignment.center",
+                    "mainAxisAlignment": "MainAxisAlignment.spaceAround"
+                  },
+                  "children": [
+                    {
+                      "id": "transform",
+                      "widgetType": "Transform",
+                      "properties": {
+                        "rotation": 0.08,
+                        "scale": 4.0,
+                        "alignment": "Alignment.center"
+                      },
+                      "children": [
+                        {
+                          "id": "text1",
+                          "widgetType": "Text",
+                          "properties": {
+                            "text": "MPG PIXEL ADVENTURE"
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "container8",
+                      "widgetType": "Container",
+                      "properties": {
+                        "width": 0.1,
+                        "height": 0.05,
+                        "color": null,
+                        "padding": null,
+                        "margin": null,
+                        "alignment": null
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "container9",
+                      "widgetType": "Container",
+                      "properties": {
+                        "width": 0.24,
+                        "height": 0.05,
+                        "color": null,
+                        "padding": null,
+                        "margin": null,
+                        "alignment": null
+                      },
+                      "children": [
+                        {
+                          "id": "ninepatch_button3",
+                          "widgetType": "NinePatchButton",
+                          "properties": {
+                            "text": "PLAY",
+                            "onPressed": {
+                              "screen": "PixelAdventure",
+                              "actionType": "screenChange"
+                            },
+                            "imageName": "button_0"
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "container10",
+                      "widgetType": "Container",
+                      "properties": {
+                        "width": 0.24,
+                        "height": 0.05,
+                        "color": null,
+                        "padding": null,
+                        "margin": null,
+                        "alignment": null
+                      },
+                      "children": [
+                        {
+                          "id": "ninepatch_button4",
+                          "widgetType": "NinePatchButton",
+                          "properties": {
+                            "text": "SETTINGS",
+                            "onPressed": {
+                              "screen": "Settings",
+                              "actionType": "screenChange"
+                            },
+                            "imageName": "button_0"
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "container11",
+                      "widgetType": "Container",
+                      "properties": {
+                        "width": 0.24,
+                        "height": 0.05,
+                        "color": null,
+                        "padding": null,
+                        "margin": null,
+                        "alignment": null
+                      },
+                      "children": [
+                        {
+                          "id": "ninepatch_button5",
+                          "widgetType": "NinePatchButton",
+                          "properties": {
+                            "text": "CREDITS",
+                            "onPressed": {
+                              "screen": "Credits",
+                              "actionType": "screenChange"
+                            },
+                            "imageName": "button_0"
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     }

@@ -5,8 +5,22 @@ import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_options.d
 import 'package:vector_math/vector_math_64.dart' as vm64;
 
 import '../widgets/nine_patch_button.dart';
-import 'button_action.dart';
 import 'layout_widget.dart';
+
+
+EdgeInsetsGeometry? convertToAbsolute(EdgeInsetsGeometry? current, double screenWidth, double screenHeight) {
+  if(current == null) return current;
+
+  EdgeInsets resolved = current.resolve(TextDirection.ltr);
+  return EdgeInsets.fromLTRB(
+      resolved.left * screenWidth,
+      resolved.top * screenHeight,
+      resolved.right * screenWidth,
+      resolved.bottom * screenHeight
+  );
+}
+
+
 
 
 int containerIndex = 0; //this is used to give the container widgets a unique id
@@ -14,10 +28,6 @@ int containerIndex = 0; //this is used to give the container widgets a unique id
 /// The container will fill a percentage of the screen size based on the properties provided.
 /// If no properties are provided, it defaults to 30% of the screen width and height.
 /// The container will have a random color from the Colors.primaries list.
-
-
-
-
 
 
 LayoutWidget addContainer(LayoutWidget? parent, {Map<String, dynamic>? properties}) {
@@ -42,8 +52,8 @@ LayoutWidget addContainer(LayoutWidget? parent, {Map<String, dynamic>? propertie
         color: options.getValue("color", properties["color"]), //if the color is provided, we use it, otherwise we use a random color. we defined that above
         width: options.getValue("width", properties["width"]) * availableWidth, //the width of the container is set to a percentage of the screen width, if no width is provided, we use the default value defined in the widget options
         height: options.getValue("height", properties["height"]) * availableHeight, //same for the height
-        padding: options.getValue("padding", properties["padding"]), //the padding of the container is set to the value provided in the properties, if no padding is provided, we use the default value defined in the widget options
-        margin: options.getValue("margin", properties["margin"]), //the margin of the container is set to the value provided in the properties, if no margin is provided, we use the default value defined in the widget options
+        padding: convertToAbsolute(options.getValue("padding", properties["padding"]), availableWidth, availableHeight), //the padding of the container is set to the value provided in the properties, if no padding is provided, we use the default value defined in the widget options
+        margin: convertToAbsolute(options.getValue("margin", properties["margin"]), availableWidth, availableHeight), //the margin of the container is set to the value provided in the properties, if no margin is provided, we use the default value defined in the widget options
         alignment: options.getValue("alignment", properties["alignment"]), //the alignment of the container is set to the value provided in the properties, if no alignment is provided, we use the default value defined in the widget options
         child: children.isNotEmpty ? children.first : null //we only allow one child in a container, so we take the first child from the children list. if no child is provided, we give null
     );
@@ -194,6 +204,28 @@ LayoutWidget addText(String text, LayoutWidget? parent, {Map<String, dynamic>? p
   return widget; //return the created widget
 }
 
+int imageIndex = 0;
+LayoutWidget addImage(LayoutWidget? parent, {Map<String, dynamic>? properties}) {
+  LayoutWidget widget = LayoutWidget((context, children, properties) {
+    WidgetOptions options = WidgetOptions.fromType(Image);
+
+    double screenWidth = MediaQuery.of(context).size.width; //getter for the screen width, so we can use it to calculate the size of the widgets
+    double screenHeight = MediaQuery.of(context).size.width; //same for the width
+
+
+    properties["path"] ??= options.getDefaultValue("path");
+    properties["width"] ??= options.getDefaultValue("width");
+    properties["height"] ??= options.getDefaultValue("height");
+    properties["alignment"] ??= options.getDefaultValue("alignment");
+
+
+    return Image.asset(options.getValue("path", properties["path"]), width: options.getValue("width", properties["width"]) * screenWidth, height: options.getValue("height", properties["height"]) * screenHeight, alignment: options.getValue("alignment", properties["alignment"]),);
+  }, id: 'image${imageIndex++}',
+      type: ContainerType.sealed,
+      removeFromParent: parent?.removeChild, parent: parent, widgetType: Image, properties: properties);
+  return widget;
+}
+
 
 int ninepatchButtonIndex = 0; //this is used to give the nine patch button widgets a unique id
 LayoutWidget addNinepatchButton(LayoutWidget? parent, {Map<String, dynamic>? properties}) {
@@ -282,9 +314,12 @@ LayoutWidget addCard(LayoutWidget? parent, {Map<String, dynamic>? properties}) {
     properties["color"] ??= options.getDefaultValue("color");
     properties["margin"] ??= options.getDefaultValue("margin");
 
+    double availableWidth = MediaQuery.of(context).size.width;//we get the available width of the parent widget, if no parent is provided, we use the screen width
+    double availableHeight = MediaQuery.of(context).size.height;
+
     return Card(
       color: options.getValue("color", properties["color"]),
-      margin: options.getValue("margin", properties["margin"]),
+      margin: convertToAbsolute(options.getValue("margin", properties["margin"]), availableWidth, availableHeight),
       child: children.isNotEmpty ? children.first : Container(),
     );
   }, id: 'card', type: ContainerType.single,
