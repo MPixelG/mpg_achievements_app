@@ -20,7 +20,7 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'background/scrolling_background.dart';
 import 'level_components/saw.dart';
-import 'level_components/checkpoint.dart';
+import 'level_components/checkpoint/checkpoint.dart';
 
 class Level extends World
     with
@@ -124,6 +124,7 @@ class Level extends World
         switch (spawnPoint.class_) {
           case 'Player':
             //player spawning
+            player.position = Vector2(spawnPoint.x, spawnPoint.y);
             add(player);
             break;
           case 'Collectable':

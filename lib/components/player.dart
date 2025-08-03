@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/animation/CharacterStateManager.dart';
-import 'package:mpg_achievements_app/components/level_components/checkpoint.dart';
+import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
+import 'package:mpg_achievements_app/components/level_components/checkpoint/checkpoint.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -21,26 +21,25 @@ class Player extends SpriteAnimationGroupComponent
         HasCollisions,
         BasicMovement,
         KeyboardControllableMovement,
-        CharacterStateManager {
+        AnimationManager, HasMovementAnimations {
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
 
   bool gotHit = false;
 
   // variable to store the latest checkpoint (used for respawning)
-  late Checkpoint lastCheckpoint;
+  Checkpoint? lastCheckpoint;
 
   //starting position
   Vector2 startingPosition = Vector2.zero();
 
+  String playerCharacter;
+
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
-  Player({required String playerCharacter, super.position}) {
-    character = playerCharacter;
-  }
+  Player({required this.playerCharacter, super.position});
 
   @override
   FutureOr<void> onLoad() {
-    //using an underscore is making things private
     startingPosition = Vector2(position.x, position.y);
     return super.onLoad();
   }
@@ -86,7 +85,7 @@ class Player extends SpriteAnimationGroupComponent
     if (gotHit) return; //if the player is already being respawned, stop
     updateMovement = false;
     gotHit = true; //indicate, that the player is being respawned
-    current = PlayerState.hit; //hit animation
+    playAnimation("hit");
     velocity = Vector2.zero(); //reset velocity
     setGravityEnabled(false); //temporarily disable gravity for this player
 
@@ -98,23 +97,26 @@ class Player extends SpriteAnimationGroupComponent
     ); //center the player so that the animation displays correctly (its 96*96 and the player is 32*32)
     scale.x =
         1; //flip the player to the right side and a third of the size because the animation is triple of the size
-    current = PlayerState.disappearing; //display a disappear animation
+    playAnimation("disappearing"); //display a disappear animation
     await Future.delayed(
       Duration(milliseconds: 320),
     ); //wait for the animation to finish
     // respawn position is the last checkpoints position
-    position =
-        lastCheckpoint.position -
-        Vector2(
-          40,
-          32,
-        ); //position the player at the spawn point and also add the displacement of the animation
+
+    if(lastCheckpoint != null) {
+      position =
+          lastCheckpoint!.position -
+              Vector2(
+                40,
+                32,
+              );
+    } //position the player at the spawn point and also add the displacement of the animation
     scale = Vector2.all(0); //hide the player
     await Future.delayed(
       Duration(milliseconds: 800),
     ); //wait a bit for the camera to position and increase the annoyance of the player XD
     scale = Vector2.all(1); //show the player
-    current = PlayerState.appearing; //display an appear animation
+    playAnimation("appearing"); //display an appear animation
     await Future.delayed(
       Duration(milliseconds: 300),
     ); //wait for the animation to finish
@@ -133,9 +135,6 @@ class Player extends SpriteAnimationGroupComponent
   ShapeHitbox getHitbox() => hitbox;
 
   @override
-  String getCharacter() => character;
-
-  @override
   Vector2 getPosition() => position;
 
   @override
@@ -150,9 +149,6 @@ class Player extends SpriteAnimationGroupComponent
   @override
   void setPos(Vector2 newPos) => position = newPos;
 
-  @override
-  bool isInHitFrames() => gotHit; //if the player is currently getting respawned
-
   bool climbing = false;
 
   @override
@@ -163,4 +159,22 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   bool get isTryingToGetDownLadder => isShifting;
+
+  @override
+  List<AnimationLoadOptions> get animationOptions => [
+    AnimationLoadOptions("appearing", "Main Characters/Appearing", textureSize: 96, loop: false),
+    AnimationLoadOptions("disappearing", "Main Characters/Disappearing", textureSize: 96, loop: false),
+    AnimationLoadOptions("hit", "$componentSpriteLocation/Hit" , textureSize: 32, loop: false),
+
+    ...movementAnimationDefaultOptions
+  ];
+
+  @override
+  String get componentSpriteLocation => "Main Characters/Ninja Frog";
+
+  @override
+  AnimatedComponentGroup get group => AnimatedComponentGroup.entity;
+
+  @override
+  bool get isInHitFrames => gotHit;
 }

@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "IndustrialTile_81.png.tsx",
+    "activeFile": "Level_2.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -23,43 +23,43 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 320,
-                "y": 183.99999999999994
+                "y": 183.66666666666663
             }
         },
         "Level_1.tmx": {
             "expandedObjectLayers": [
-                3,
-                2
+                2,
+                3
             ],
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 388.5,
-                "y": 438.5
+                "x": 320.5,
+                "y": 184.25
             }
         },
         "Level_2.tmx": {
             "expandedObjectLayers": [
-                4,
-                2
+                2,
+                4
             ],
-            "scale": 1.1154,
-            "selectedLayer": 9,
+            "scale": 2,
+            "selectedLayer": 10,
             "viewCenter": {
-                "x": 823.9196700735163,
-                "y": 1066.8818361126055
+                "x": 520,
+                "y": 531.75
             }
         },
         "Level_3.tmx": {
             "expandedObjectLayers": [
-                3,
-                2
+                2,
+                3
             ],
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": -56.66666666666663,
-                "y": 451.99999999999994
+                "x": 512,
+                "y": 512.3333333333333
             }
         },
         "Level_4.tmx": {
@@ -67,7 +67,7 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 1024,
-                "y": 447.99999999999994
+                "y": 448.16666666666663
             }
         },
         "Level_5.tmx": {
@@ -106,7 +106,7 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 1024,
-                "y": 448
+                "y": 447
             }
         },
         "crystal stuff.tsx": {
@@ -183,16 +183,16 @@
     "property.type": "int",
     "recentFiles": [
         "MPG_pixel_adventure.tsx",
-        "Level_2.tmx",
-        "Level_1.tmx",
-        "Level_0.tmx",
-        "Level_3.tmx",
-        "backgrounds.tsx",
-        "parralax_city_0.tsx",
-        "city_night.tmx",
-        "Level_4.tmx",
-        "industrial_tiles_2.tsx",
         "IndustrialTile_81.png.tsx",
+        "industrial_tiles_2.tsx",
+        "Level_4.tmx",
+        "city_night.tmx",
+        "parralax_city_0.tsx",
+        "backgrounds.tsx",
+        "Level_3.tmx",
+        "Level_0.tmx",
+        "Level_1.tmx",
+        "Level_2.tmx",
         "industrial_tiles_3.tsx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
