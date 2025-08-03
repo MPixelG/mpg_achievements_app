@@ -168,6 +168,7 @@ class Level extends World
               isActivated: isActivated,
               position: Vector2(spawnPoint.x, spawnPoint.y),
             );
+            // if checkpoint is already activated in tiled, the original spawnpoint is overridden
             if (isActivated == true) {
               player.lastCheckpoint = checkpoint;
               player.position = checkpoint.position;
@@ -176,7 +177,6 @@ class Level extends World
             break;
           case "Enemy":
             //enemy spawning
-
             enemy = Enemy(enemyCharacter: "Virtual Guy");
             enemy.position = Vector2(spawnPoint.x, spawnPoint.y);
             add(enemy);

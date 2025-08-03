@@ -27,6 +27,7 @@ class Player extends SpriteAnimationGroupComponent
 
   bool gotHit = false;
 
+  // variable to store the latest checkpoint (used for respawning)
   late Checkpoint lastCheckpoint;
 
   //starting position
@@ -101,6 +102,7 @@ class Player extends SpriteAnimationGroupComponent
     await Future.delayed(
       Duration(milliseconds: 320),
     ); //wait for the animation to finish
+    // respawn position is the last checkpoints position
     position =
         lastCheckpoint.position -
         Vector2(

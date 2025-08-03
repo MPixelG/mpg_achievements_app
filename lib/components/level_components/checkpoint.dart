@@ -24,13 +24,13 @@ class Checkpoint extends SpriteComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
-
+    // if the checkpoint hasn't yet been activated and the player is colliding, we continue
     if (!isActivated && other is Player) {
+      // id (represents gameplay progress) has to be higher so that the player always spawns at the latest checkpoint
       if (other.lastCheckpoint.id < id) {
         isActivated = true;
         other.lastCheckpoint = this;
-
-        print('Checkpoint $id aktiviert!');
+        // print('Checkpoint $id aktiviert!');
       }
     }
   }
