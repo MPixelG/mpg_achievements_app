@@ -79,9 +79,6 @@ class Player extends SpriteAnimationGroupComponent
     if (other is Enemy && !debugImmortalMode) _hit();
     if (other is Collectable && other.interactiveTask) {
       game.showDialogue = true;
-
-    if (lives <= 0) _respawn();
-
       game.overlays.add('DialogueScreen');
       print('Board1');
     }
@@ -90,7 +87,10 @@ class Player extends SpriteAnimationGroupComponent
   void _hit() async {
     if (gotHit) return;
     lives = lives - 1;
-    if (lives <= 0) return;
+    if (lives <= 0) {
+      _respawn();
+      return;
+    }
     print(lives);
     gotHit = true;
     playAnimation('hit');
@@ -143,6 +143,7 @@ class Player extends SpriteAnimationGroupComponent
         32); //reposition the player, because it had a bit of displacement because of the respawn animation
     setGravityEnabled(true); //re-enable gravity
     updateMovement = true;
+    lives = startHP;
   }
 
   //Getters

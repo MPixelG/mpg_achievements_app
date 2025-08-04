@@ -15,7 +15,11 @@ import '../../physics/collision_block.dart';
 class MoveGoal extends Goal {
 
 
-  MoveGoal(super.prequisite, super.goalPriority);
+  late int goalKey;
+  static int nextKeyIndex = 0;
+  MoveGoal(super.prequisite, super.goalPriority){
+    goalKey = nextKeyIndex++;
+  }
 
   Vector2 get position => (parent!.parent! as PositionComponent).position;
   Vector2 get absoluteCenter => (parent!.parent! as PositionComponent).absoluteCenter;
@@ -60,11 +64,6 @@ class MoveGoal extends Goal {
   @override
   void updateGoal(double dt) { //the update funktion
 
-    Vector2? lastPlayerPos = attributes!.attributes["nearestPlayerPosition"];
-    if(lastPlayerPos != null) {
-      if((lastPlayerPos / tilesize).distanceTo(endPos) > 2) recalculatePath((lastPlayerPos / tilesize)..floor());
-    }
-
 
     attributes!.attributes["entityPos"] = position;
 
@@ -83,7 +82,7 @@ class MoveGoal extends Goal {
     }
 
     //if the currently targeted node has been surpassed, we move forward to the next one by increasing the step index.
-    if (absoluteCenter.distanceTo(currentStepPosCenter) < 15 && // if were 15 px close to the node, we can already skip to the next one, to get a more fluid animation between the nodes.
+    if (absoluteCenter.distanceTo(currentStepPosCenter) < 25 && // if were 15 px close to the node, we can already skip to the next one, to get a more fluid animation between the nodes.
         stepIndex < path!.length - 1) {
       stepIndex++; //increase the step index
     } else if (stepIndex >= path!.length - 1 &&
@@ -199,7 +198,7 @@ class MoveGoal extends Goal {
   void adjustHorizontalMovementIfNeeded(Vector2 goalPos) {
     double difference = (position - goalPos).x; // the difference between the current pos and the given one.
 
-    double random = (Random().nextInt(accuracy)).toDouble(); //get a random val from 0 to accuracy.
+    double random = (Random(goalKey).nextInt(accuracy)).toDouble(); //get a random val from 0 to accuracy.
 
     bool move = random + 5 < difference.abs(); //if the difference is smaller than a random val between 0 and accuracy, we dont move.
     // this simulates a bit of randomness and makes you walk not exactly at the destination but only at the area.
