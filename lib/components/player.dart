@@ -9,7 +9,6 @@ import 'package:mpg_achievements_app/components/level_components/collectables.da
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-
 import 'level_components/saw.dart';
 
 //using SpriteAnimationGroupComponent is better for a lot of animations
@@ -94,9 +93,8 @@ class Player extends SpriteAnimationGroupComponent
     if (lives <= 0) return;
     print(lives);
     gotHit = true;
-    current = PlayerState.hit;
+    playAnimation('hit');
     await Future.delayed(Duration(milliseconds: 250));
-    current = PlayerState.appearing;
     gotHit = false;
   }
   void _respawn() async {
