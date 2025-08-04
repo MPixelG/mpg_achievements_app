@@ -66,7 +66,7 @@ class PixelAdventure extends FlameGame
       addJoystick();
     } else {
       if (kDebugMode) {
-        print("Kein Joystick");
+        //print("Kein Joystick");
       }
     }
 

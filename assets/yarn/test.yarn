@@ -946,3 +946,146 @@ Board: What is your final choice?
 -> Embrace the unknown
     <<jump CosmicJourney>>
 ===
+title: Skeptical
+---
+Player: I don't believe any of this...
+Board: Skepticism is just another path to understanding.
+
+-> Rational doubt
+    <<jump RationalSkepticism>>
+-> Emotional disbelief
+    <<jump EmotionalSkepticism>>
+-> Scientific investigation
+    <<jump ScientificSkepticism>>
+-> Passive resistance
+    <<jump PassiveSkepticism>>
+===
+
+title: RationalSkepticism
+---
+Player applies logical analysis to the board's claims
+
+-> Demand concrete evidence
+    <<jump EvidenceChallenge>>
+-> Deconstruct board's arguments
+    <<jump LogicalCounterattack>>
+-> Seek external verification
+    <<jump ExternalPerspective>>
+-> Analyze logical inconsistencies
+    <<jump ErrorAnalysis>>
+===
+
+title: EvidenceChallenge
+---
+*Complex data streams appear*
+Board: Evidence is a matter of perspective.
+
+-> Critically examine data
+    <<jump SecretTechnology>>
+-> Request peer review
+    <<jump ITSupportScene>>
+-> Challenge data methodology
+    <<jump ScientificChallenge>>
+-> Seek alternative explanations
+    <<jump BoardOrigins>>
+===
+
+title: EmotionalSkepticism
+---
+Player responds with emotional disbelief and resistance
+
+-> Create emotional barriers
+    <<jump EmotionalBarrier>>
+-> Express frustration
+    <<jump SarcasticDisengagement>>
+-> Emotional self-protection
+    <<jump PsychologicalShield>>
+-> Challenge emotional manipulation
+    <<jump MindGameEscalation>>
+===
+
+title: ScientificSkepticism
+---
+Systematic and methodical investigation of the board's claims
+
+-> Develop research hypothesis
+    <<jump QuantumErrorTrace>>
+-> Collect empirical data
+    <<jump SystemAnomalies>>
+-> Apply scientific method
+    <<jump ErrorAnalysis>>
+-> Challenge theoretical framework
+    <<jump LogicalCounterattack>>
+===
+
+title: PassiveSkepticism
+---
+Subtle, non-confrontational approach to doubt
+
+-> Observe without engagement
+    <<jump MinimalEngagement>>
+-> Maintain critical distance
+    <<jump NormalRoutine>>
+-> Subtle investigation
+    <<jump ParanoidInvestigation>>
+-> Cautious curiosity
+    <<jump BoardSecrets>>
+===
+
+title: SkepticalInvestigation
+---
+Deep dive into the nature of the board's claims
+
+-> Trace information sources
+    <<jump DocumentaryEvidence>>
+-> Map potential scenarios
+    <<jump CodeReveal>>
+-> Challenge foundational assumptions
+    <<jump PersonalReality>>
+-> Explore alternative explanations
+    <<jump ExternalPerspective>>
+===
+
+title: UltimateSkepticalOutcome
+---
+*Moment of critical reflection*
+Board: Doubt is a gateway to understanding.
+
+-> Maintain skeptical stance
+    <<jump RationalSkepticism>>
+-> Open to new possibilities
+    <<jump BoardOrigins>>
+-> Seek deeper truth
+    <<jump UltimateMission>>
+-> Reject all narratives
+    <<jump TotalRejection>>
+===
+
+title: SkepticalResolution
+---
+Player reaches a critical decision point
+
+-> Cautious acceptance
+    <<jump SecretAlliance>>
+-> Complete rejection
+    <<jump Dismissal>>
+-> Continued investigation
+    <<jump SkepticalInvestigation>>
+-> Transcend skepticism
+    <<jump CosmicJourney>>
+===
+
+title: FinalSkepticalStage
+---
+*Profound moment of uncertainty*
+Board: What lies beyond your doubt?
+
+-> Embrace uncertainty
+    <<jump PersonalReality>>
+-> Seek definitive answers
+    <<jump ScientificChallenge>>
+-> Accept multiple perspectives
+    <<jump ExternalPerspective>>
+-> Challenge the nature of knowledge
+    <<jump MindGameEscalation>>
+===

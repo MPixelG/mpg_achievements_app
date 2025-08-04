@@ -80,7 +80,6 @@ class Player extends SpriteAnimationGroupComponent
     if (other is Collectable && other.interactiveTask) {
       game.showDialogue = true;
       game.overlays.add('DialogueScreen');
-      print('Board1');
     }
     super.onCollision(intersectionPoints, other);
   }
@@ -91,7 +90,6 @@ class Player extends SpriteAnimationGroupComponent
       _respawn();
       return;
     }
-    print(lives);
     gotHit = true;
     playAnimation('hit');
     await Future.delayed(Duration(milliseconds: 250));

@@ -34,7 +34,6 @@ class Checkpoint extends SpriteAnimationGroupComponent
       if (other.lastCheckpoint == null || other.lastCheckpoint!.id < id) {
         isActivated = true;
         other.lastCheckpoint = this;
-        print('Checkpoint $id aktiviert!');
         playFlagOutAnimation();
       }
     }

@@ -5,6 +5,12 @@ import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_options.d
 import '../widgets/nine_patch_button.dart';
 import 'button_action.dart';
 
+Map<String, dynamic> defaultFont = {
+  "fontSize": 0.01
+};
+
+
+
 void registerWidgetOptions() { //this is used to register the widget options for the widgets that can be added to the layout
 
   if(WidgetOptions.isRegistered(Container)) return; //if the widget options for the container are already registered, we return and do not register them again. this is to prevent duplicate registrations.
@@ -61,7 +67,7 @@ void registerWidgetOptions() { //this is used to register the widget options for
 
   WidgetOptions(Text, options: [
     WidgetOption<String>((type) => type.toString(), name: "text", defaultValue: "", description: "The text to display in the text widget."),
-    WidgetOption<TextStyle?>(parseTextStyle, name: "style", defaultValue: null, description: "The style of the text. If not set, a default style will be used."),
+    WidgetOption<TextStyle>(parseTextStyle, name: "style", defaultValue: defaultFont, description: "The style of the text. If not set, a default style will be used."),
     WidgetOption<TextAlign>(parseTextAlign, name: "textAlign", defaultValue: "TextAlign.center", description: "The alignment of the text. If not set, center will be used.", options: {
       "left": TextAlign.left,
       "right": TextAlign.right,

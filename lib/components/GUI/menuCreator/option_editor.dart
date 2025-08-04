@@ -123,15 +123,14 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
       return _buildButtonAction(option, widget.node.properties);
     } else if (option.defaultValue is EdgeInsetsGeometry?) {
       return _buildEdgeInsetsEditor(context, option, widget.node.properties);
+    } else if (option.type == TextStyle) {
+      return _buildTextStyleEditor(option, widget.node.properties);
     }
-
-
 
     return Text(
       'Unsupported type: ${option.type}',
       style: TextStyle(color: Colors.red),
     );
-
   }
 
 
@@ -163,8 +162,10 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
     );
   }
 
-  Row _buildColorPicker(WidgetOption option) {
-    Color currentColor = parseColor(widget.node.properties[option.name]) ?? Colors.black;
+  Row _buildColorPicker(WidgetOption option, {Map<String, dynamic>? properties, String? customOptionName, StateSetter? stateSetter}) {
+    properties ??= widget.node.properties;
+
+    Color currentColor = parseColor(properties![customOptionName ?? option.name]) ?? Colors.black;
     return Row(
       children: [
         GestureDetector(
@@ -186,10 +187,21 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
                     TextButton(
                       child: Text('OK'),
                       onPressed: () {
+                        // 1. Aktualisiere den Wert im properties-Map.
+                        properties![customOptionName ?? option.name] = pickedColor;
+
+                        // 2. Wenn ein stateSetter übergeben wurde (d.h. wir sind im TextStyle-Dialog),
+                        // rufe ihn auf, um die UI des Dialogs zu aktualisieren.
+                        if (stateSetter != null) {
+                          stateSetter(() {});
+                        }
+
+                        // 3. Rufe immer das globale setState auf, um die Haupt-View zu aktualisieren
+                        // und sicherzustellen, dass die Änderungen persistent sind.
                         setState(() {
-                          widget.node.properties[option.name] = pickedColor;
                           widget.updateView();
                         });
+
                         Navigator.of(context).pop();
                       },
                     ),
@@ -350,8 +362,6 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
 
     propertiesFull["onPressed"] ??= <String, dynamic>{};
 
-    Map<String, dynamic> pressProperties = propertiesFull["onPressed"];
-
     return SizedBox(
       width: 120,
       height: 40,
@@ -401,7 +411,7 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
                                 const SizedBox(height: 16),
                                 ...pressProperties.entries
                                     .where((entry) => entry.key != "actionType")
-                                    .map((entry) => _buildButtonEntry(entry, pressProperties))
+                                    .map((entry) => _buildButtonEntry(entry, pressProperties, setDialogState))
                                     .toList(),
                               ],
                             ),
@@ -415,26 +425,89 @@ class _OptionEditorMenuState extends State<OptionEditorMenu> {
             },
           );
         },
-
         child: Text(option.name),
       ),
     );
   }
 
-  Row _buildButtonEntry(MapEntry<String, dynamic> entry, Map<String, dynamic> properties){
-
+  Row _buildButtonEntry(MapEntry<String, dynamic> entry, Map<String, dynamic> properties, StateSetter setDialogState, {WidgetOption? option, String? customOptionName}){
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(entry.key),
-
-        _buildInputField(entry.key, properties, TextInputType.text)
-
-
+        switch (entry.value.runtimeType){
+          Color => _buildColorPicker(option!, properties: properties, customOptionName: customOptionName, stateSetter: setDialogState),
+          Type() => _buildInputField(entry.key, properties, TextInputType.text)
+        }
       ],
     );
-
   }
+
+
+
+  Widget _buildTextStyleEditor(WidgetOption option, Map<String, dynamic> properties){
+
+    Map<String, dynamic> newStyle = {
+      ...?properties["style"],
+      "color": Colors.black,
+      "fontFamily": "gameFont",
+      "backgroundColor": Colors.transparent,
+      "wordSpacing": null,
+      "letterSpacing": null
+    };
+
+    return SizedBox(
+      width: 120,
+      height: 40,
+      child: ElevatedButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return Dialog(
+                child: StatefulBuilder(
+                  // setDialogState wird hier vom Builder bereitgestellt
+                  builder: (context, setDialogState) {
+                    return SizedBox(
+                      width: 600,
+                      height: 400,
+                      child: Scaffold(
+                        // ... (dein AppBar Code)
+                        appBar: AppBar(
+                          title: Text("TextStyle Editor"),
+                          backgroundColor: CupertinoColors.systemGrey4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                        ),
+                        body: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 16),
+                                ...newStyle.entries
+                                // Reiche setDialogState hier an _buildButtonEntry weiter
+                                    .map((entry) => _buildButtonEntry(entry, properties["style"], setDialogState, option: option, customOptionName: entry.key))
+                                    .toList(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        },
+        child: Text(option.name),
+      ),
+    );
+  }
+
+
 
   @override
   void dispose() {
