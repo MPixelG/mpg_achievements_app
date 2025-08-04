@@ -15,10 +15,26 @@ Board: Hello there!
 
 title: Happy
 ---
-Board: I'm glad to hear that!
+Board: I'm fine, how about you?
+
+-> I'm fine too, thanks!
+    <<playeryes>>
+    <<jump Happy2>>
+-> I'm not feeling well...
+    <<playerno>>
+    <<jump Angry2>>
 ===
 
 title: Angry
 ---
 Board: Oh... sorry to bother you.
+===
+
+title: Happy2
+---
+Board: Oh great, Let's go on an adventure!
+===
+title: Angry2
+---
+Board: Oh, I'm sorry to hear that.
 ===

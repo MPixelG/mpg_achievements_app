@@ -31,9 +31,9 @@ class Player extends SpriteAnimationGroupComponent
 
   // variable to store the latest checkpoint (used for respawning)
   Checkpoint? lastCheckpoint;
-
-  int lives = 3;
+  // HP values, if we decide to include these (if not set both to 1)
   int startHP = 3;
+  int lives = 3;
   //starting position
   Vector2 startingPosition = Vector2.zero();
 
@@ -94,9 +94,9 @@ class Player extends SpriteAnimationGroupComponent
     if (lives <= 0) return;
     print(lives);
     gotHit = true;
-    current = PlayerState.hit;
+    playAnimation("hit");
     await Future.delayed(Duration(milliseconds: 250));
-    current = PlayerState.appearing;
+    playAnimation("appearing");
     gotHit = false;
   }
   void _respawn() async {
