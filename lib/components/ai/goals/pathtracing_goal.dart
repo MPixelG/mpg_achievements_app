@@ -63,9 +63,9 @@ class PathtracingGoal extends Goal{
 
 
         if(candidate.parent is CollisionBlock){
-          return (!(candidate.parent as CollisionBlock).isLadder);
+          return !(candidate.parent as CollisionBlock).isLadder;
         }
-        return candidate.parent is! Enemy;
+        return candidate.parent is Player;
 
 
       },
@@ -86,6 +86,7 @@ class PathtracingGoal extends Goal{
         return;
       }
     });
+
 
     attributes!.attributes["playerPositions"] = results;
     if(shortestPlayerDistancePos != null) attributes!.attributes["nearestPlayerPosition"] = shortestPlayerDistancePos;

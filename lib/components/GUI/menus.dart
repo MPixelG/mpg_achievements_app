@@ -53,8 +53,6 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
         isLoading = false;
       });
 
-      print("Screen loaded successfully. Properties: ${widget.properties}");
-
     } catch (e, stackTrace) {
       print("Error loading screen: $e");
       print("Stack trace: $stackTrace");
@@ -69,7 +67,6 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    print("MainMenuScreen build called. Screen size: $screenSize");
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -133,8 +130,6 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       );
     }
 
-    // Direct widget building without LayoutBuilder to avoid padding issues
-    print("Building loaded widget directly. Screen size: $screenSize");
 
     try {
       return SizedBox(

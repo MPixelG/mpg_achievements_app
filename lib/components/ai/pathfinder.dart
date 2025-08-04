@@ -307,7 +307,6 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
     }
 
     if (startNode == endNode) { // if the start is the end, the path is empty, because were already there.
-      print("same pos!");
       return [PathStep(PathfindingNode(startNode, 0, getEstimatedDistanceToEnd(startNode.position, endNode.position)), PathfindingAction.walk)]; //we return one empty step.
     }
 
@@ -376,8 +375,6 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
     }
 
     //there was no path found, because its not possible
-
-    print("No path found from $startPos from $endPos"); //debug logging
     return null;
   }
 

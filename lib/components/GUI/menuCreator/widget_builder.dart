@@ -20,6 +20,22 @@ EdgeInsetsGeometry? convertToAbsolute(EdgeInsetsGeometry? current, double screen
   );
 }
 
+TextStyle? convertToAbsoluteTextSize(TextStyle? current, double screenWidth, double screenHeight){
+  if(current == null) return null;
+  return TextStyle(
+    color: current.color,
+    fontFamily: current.fontFamily,
+    height: current.height,
+    background: current.background,
+    backgroundColor: current.backgroundColor,
+    decoration: current.decoration,
+    fontSize: current.fontSize != null ? (current.fontSize! * ((screenWidth + screenHeight) / 2)) : null,
+    foreground: current.foreground,
+    wordSpacing: current.wordSpacing,
+    letterSpacing: current.letterSpacing,
+  );
+}
+
 
 
 
@@ -189,12 +205,16 @@ LayoutWidget addText(String text, LayoutWidget? parent, {Map<String, dynamic>? p
 
     WidgetOptions options = WidgetOptions.fromType(Text);
 
+    double screenWidth = MediaQuery.of(context).size.width; //getter for the screen width, so we can use it to calculate the size of the widgets
+    double screenHeight = MediaQuery.of(context).size.width; //same for the width
 
     properties["text"] ??= text; //we set the text property to the text that was passed to the function, so that we can use it in the widget
+    properties["style"] ??= options.getDefaultValue("style");
+    properties["alignment"] ??= options.getDefaultValue("alignment");
 
     return Text(
         options.getValue("text", properties["text"]), //the text that will be displayed in the widget
-        style: options.getValue("style", properties["style"]), //the text style is set to a font size of 18, black color and the pixel art font
+        style: convertToAbsoluteTextSize(options.getValue("style", properties["style"]), screenWidth, screenHeight), //the text style is set to a font size of 18, black color and the pixel art font
         textAlign: options.getValue("textAlign", properties["textAlign"]) //the text is centered in the widget
     );
   }, id: 'text${textIndex++}', //same as the container and row
@@ -241,7 +261,9 @@ LayoutWidget addNinepatchButton(LayoutWidget? parent, {Map<String, dynamic>? pro
     return NinePatchButton(
         text: options.getValue("text", properties["text"]), //the text that will be displayed on the button
         onPressed: () => options.getValue("onPressed", properties["onPressed"]).press(context), //the onPressed function is set to the action that was passed to the function, so that we can use it in the widget
-        textureName: options.getValue("imageName", properties["imageName"]) //the image name is set to the image name that was passed to the function, so that we can use it in the widget
+        textureName: options.getValue("imageName", properties["imageName"]), //the image name is set to the image name that was passed to the function, so that we can use it in the widget
+        child: children.isNotEmpty ? children.first : null,
+
     );
   }, id: 'ninepatch_button${ninepatchButtonIndex++}',
       type: ContainerType.single,

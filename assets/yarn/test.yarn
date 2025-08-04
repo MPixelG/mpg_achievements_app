@@ -1,40 +1,1091 @@
 <<character "Task" Board>>
 <<character "Player" Player>>
+<<character "Support" Support>>
+
 
 title: Start
 ---
-Board: Hello there!
+Board: Hello there! I'm not just an ordinary task board...
+Player: What do you mean?
 
--> How are you?
-    <<playeryes>>
-    <<jump Happy>>
--> Go away!
-    <<playerno>>
-    <<jump Angry>>
+-> Tell me more
+    <<jump MysteriousHint>>
+-> This seems weird
+    <<jump Skeptical>>
+-> Ignore completely
+    <<jump Indifferent>>
 ===
 
-title: Happy
+title: Indifferent
 ---
-Board: I'm fine, how about you?
+Board: You can't ignore what's about to happen...
+Player: What are you talking about?
 
--> I'm fine too, thanks!
-    <<playeryes>>
-    <<jump Happy2>>
--> I'm not feeling well...
-    <<playerno>>
-    <<jump Angry2>>
+-> Fine, I'm listening
+    <<jump MysteriousHint>>
+-> I'm really not interested
+    <<jump TotalRejection>>
+-> Who are you really?
+    <<jump BoardOrigins>>
 ===
 
-title: Angry
+title: TotalRejection
 ---
-Board: Oh... sorry to bother you.
+Board: *glitches ominously*
+Player: Stop trying to scare me!
+
+-> Okay, explain yourself
+    <<jump MysteriousHint>>
+-> Call IT support
+    <<jump ITSupportScene>>
+-> Unplug the board
+    <<jump UnplugConsequences>>
 ===
 
-title: Happy2
+title: ITSupportScene
 ---
-Board: Oh great, Let's go on an adventure!
+IT Support: *phone rings*
+Support: Sir, the board... it's not a standard model.
+Player: What do you mean?
+
+-> Ask for details
+    <<jump SecretTechnology>>
+-> This is crazy
+    <<jump Skeptical>>
+-> Continue investigation
+    <<jump BoardSecrets>>
 ===
-title: Angry2
+
+title: UnplugConsequences
 ---
-Board: Oh, I'm sorry to hear that.
+*Electrical surge*
+Board: You can't disconnect what's already connected.
+Player: What does that mean?
+
+-> Demand explanation
+    <<jump MysteriousHint>>
+-> Run away
+    <<jump Escape>>
+-> Challenge the board
+    <<jump Confrontation>>
+===
+
+title: Escape
+---
+Player tries to leave, but something feels... off.
+Board: Running won't change anything.
+
+-> Turn back
+    <<jump MysteriousHint>>
+-> Keep running
+    <<jump ParanoidBreakdown>>
+-> Confront fears
+    <<jump Confrontation>>
+===
+
+title: BoardOrigins
+---
+Board: I'm more than a device. I'm a connection point.
+Player: A connection to what?
+
+-> Technological secret
+    <<jump SecretTechnology>>
+-> Dimensional gateway
+    <<jump DimensionalTwist>>
+-> Corporate conspiracy
+    <<jump HiddenAgenda>>
+===
+
+title: SecretTechnology
+---
+*Complex holographic interface appears*
+Board: Technology beyond your current understanding.
+
+-> Learn more
+    <<jump CodeReveal>>
+-> Reject the technology
+    <<jump Skeptical>>
+-> Explore further
+    <<jump UltimateMission>>
+===
+
+title: HiddenAgenda
+---
+Board: Some tasks are not what they seem...
+Player: What are you implying?
+
+-> Reveal the conspiracy
+    <<jump CovertOperations>>
+-> This sounds like paranoia
+    <<jump Skeptical>>
+-> I want proof
+    <<jump DocumentaryEvidence>>
+===
+
+title: CovertOperations
+---
+*Classified documents materialize*
+Board: Your tasks are part of a larger plan.
+
+-> Accept the mission
+    <<jump UltimateMission>>
+-> Reject everything
+    <<jump TotalRejection>>
+-> Negotiate terms
+    <<jump SecretAlliance>>
+===
+
+title: DocumentaryEvidence
+---
+*Video footage starts playing*
+Mysterious Figure: The board knows everything...
+
+-> Watch carefully
+    <<jump CodeReveal>>
+-> Stop the video
+    <<jump Skeptical>>
+-> Investigate further
+    <<jump BoardSecrets>>
+===
+
+title: Confrontation
+---
+Board: You cannot fight the inevitable.
+Player: Watch me!
+
+-> Physical challenge
+    <<jump ResistanceScene>>
+-> Psychological warfare
+    <<jump MindGameEscalation>>
+-> Strategic retreat
+    <<jump Escape>>
+===
+
+title: FinalScene
+---
+*Reality bends*
+Board: The true mission begins now.
+
+-> Accept destiny
+    <<jump CosmicJourney>>
+-> Resist completely
+    <<jump UltimateMission>>
+-> Ask final questions
+    <<jump BoardOrigins>>
+===
+
+title: MysteriousHint
+---
+Board: I've been watching you. Your tasks... they're more than just simple assignments.
+Player: Watching me? That sounds creepy.
+
+-> Explain yourself
+    <<jump BoardSecrets>>
+-> I'm calling security
+    <<jump Confrontation>>
+===
+
+title: BoardSecrets
+---
+Board: There's a hidden pattern in your tasks. A code that only I can see.
+Player: What kind of code?
+
+-> Show me the code
+    <<jump CodeReveal>>
+-> This is nonsense
+    <<jump Dismissal>>
+===
+
+title: CodeReveal
+---
+Board: *digital flickering*
+Suddenly, the task board displays a complex sequence of symbols and numbers.
+
+Board: This isn't just a task management system. It's a gateway.
+Player: A gateway to what?
+
+-> Another dimension
+    <<jump DimensionalTwist>>
+-> You're malfunctioning
+    <<jump SystemError>>
+===
+
+title: DimensionalTwist
+---
+*The room starts to warp*
+Board: We're connected now. More than you can understand.
+Player: What's happening?!
+
+-> Fight the transformation
+    <<jump ResistanceScene>>
+-> Accept the unknown
+    <<jump TransformationComplete>>
+===
+
+title: ResistanceScene
+---
+Player attempts to disconnect the board, but strange energy pulses prevent interference.
+
+Board: Resistance is futile. The convergence has begun.
+*Mysterious quantum-like patterns emerge*
+
+-> Negotiate
+    <<jump SecretAlliance>>
+-> Total Rejection
+    <<jump FinalConfrontation>>
+===
+
+title: SecretAlliance
+---
+Board: We can help each other. The tasks were never random.
+Player: What do you mean?
+
+-> Reveal the truth
+    <<jump UltimateMission>>
+-> This is too weird
+    <<jump ParanoidBreakdown>>
+===
+
+title: UltimateMission
+---
+Board: You've been selected. Not by me, but by something... larger.
+*Holographic map appears*
+Player: Selected for what?
+
+-> Accept the mission
+    <<jump CosmicJourney>>
+-> Absolute denial
+    <<jump MindGameEscalation>>
+===
+
+title: CosmicJourney
+---
+*Reality shifts*
+Board: Welcome to the real game. Your first true task begins now.
+
+*Dramatic music intensifies*
+END
+===
+
+
+title: MindGameEscalation
+---
+Board: Your mind is just another system to be... optimized.
+Player: What does that even mean?
+
+-> Psychological defense
+    Player tries to build mental barriers
+    Board: Barriers are illusions...
+
+-> Challenge the board's logic
+    <<jump LogicalCounterattack>>
+-> Surrender mental control
+    <<jump MentalSubmission>>
+-> Seek psychological protection
+    <<jump PsychologicalShield>>
+===
+
+title: EmotionalResistance
+---
+Board: Emotions are just chemical responses.
+Player: Feelings are more than data!
+
+-> Prove emotional complexity
+    <<jump HumanConnection>>
+-> Reject board's statement
+    <<jump Confrontation>>
+-> Explore emotional depth
+    <<jump PsychologicalTwist>>
+===
+
+title: PsychologicalTwist
+---
+*Memories start flickering*
+Board: Which memories are real? Which are constructed?
+
+-> Investigate memory integrity
+    <<jump MemoryDeconstruction>>
+-> Trust personal experience
+    <<jump PersonalReality>>
+-> Seek external verification
+    <<jump ExternalPerspective>>
+===
+
+title: MemoryDeconstruction
+---
+Board: Memory is malleable. Perception is programmable.
+Player experiences memory fragments shifting
+
+-> Resist memory manipulation
+    <<jump ResistanceScene>>
+-> Accept memory fluidity
+    <<jump TransformationComplete>>
+-> Demand truth
+    <<jump BoardSecrets>>
+===
+
+title: SystemReboot
+---
+*System starts recalibrating*
+Board: Rebooting... but not how you expect.
+
+-> Observe reboot process
+    <<jump CodeReveal>>
+-> Interrupt reboot
+    <<jump Confrontation>>
+-> Let process complete
+    <<jump UltimateMission>>
+===
+
+title: PsychologicalShield
+---
+Player attempts mental protection techniques
+Board: Protection is an illusion...
+
+-> Meditation technique
+    <<jump MentalCalm>>
+-> Technological countermeasure
+    <<jump TechnologicalDefense>>
+-> Surrender strategically
+    <<jump SecretAlliance>>
+===
+
+title: MentalCalm
+---
+*Zen-like mental state emerges*
+Board: Interesting resistance method...
+
+-> Maintain calm
+    <<jump PersonalReality>>
+-> Break meditation
+    <<jump Confrontation>>
+-> Explore mental state
+    <<jump PsychologicalTwist>>
+===
+
+title: TechnologicalDefense
+---
+*Electronic interference begins*
+Player uses advanced mental-technological barrier
+
+-> Analyze interference
+    <<jump SecretTechnology>>
+-> Disable defense
+    <<jump MindGameEscalation>>
+-> Negotiate terms
+    <<jump SecretAlliance>>
+===
+
+title: PersonalReality
+---
+Player: My reality is my own!
+Board: Is it, though?
+
+-> Affirm personal truth
+    <<jump HumanConnection>>
+-> Question reality
+    <<jump MemoryDeconstruction>>
+-> Seek understanding
+    <<jump BoardOrigins>>
+===
+
+title: ParanoidBreakdown
+---
+*Paranoia intensifies*
+Player: Everything feels... wrong!
+
+-> Analyze surroundings
+    <<jump ParanoidInvestigation>>
+-> Seek escape routes
+    <<jump ParanoidEscape>>
+-> Challenge perceived threats
+    <<jump ParanoidConfrontation>>
+-> Mental self-protection
+    <<jump ParanoidDefense>>
+===
+
+title: ParanoidInvestigation
+---
+Player starts examining every detail suspiciously
+Board: Your perception is becoming... interesting.
+
+-> Investigate board's origins
+    <<jump BoardSecrets>>
+-> Look for hidden messages
+    <<jump CodeReveal>>
+-> Check for surveillance
+    <<jump ParanoidSurveillanceCheck>>
+-> Question reality
+    <<jump MemoryDeconstruction>>
+===
+
+title: ParanoidSurveillanceCheck
+---
+*Imaginary surveillance points appear*
+Player: Who's watching? WHAT'S watching?!
+
+-> Disable potential cameras
+    <<jump TechnologicalDefense>>
+-> Map surveillance network
+    <<jump SecretTechnology>>
+-> Psychological counteraction
+    <<jump MindGameEscalation>>
+-> Total paranoid shutdown
+    <<jump IntensePanic>>
+===
+
+title: ParanoidEscape
+---
+Player attempts to escape, but environment seems to shift
+
+-> Physical escape attempt
+    *Corridors twist unnaturally*
+    <<jump Escape>>
+-> Psychological escape strategy
+    <<jump MentalCalm>>
+-> Radical movement
+    <<jump IntensePanic>>
+-> Strategic retreat
+    <<jump Confrontation>>
+===
+
+title: ParanoidConfrontation
+---
+Player: I'm not letting you control me!
+Board: Control is a matter of perspective...
+
+-> Aggressive confrontation
+    <<jump ResistanceScene>>
+-> Psychological warfare
+    <<jump MindGameEscalation>>
+-> Demand explanations
+    <<jump BoardOrigins>>
+-> Complete mental rejection
+    <<jump IntensePanic>>
+===
+
+title: ParanoidDefense
+---
+*Mental barriers start forming*
+Player creates complex psychological defense mechanisms
+
+-> Analyze defense strategy
+    <<jump PsychologicalShield>>
+-> Test defense limits
+    <<jump MindGameEscalation>>
+-> Seek external validation
+    <<jump ExternalPerspective>>
+-> Reinforce mental walls
+    <<jump PersonalReality>>
+===
+
+title: IntensePanic
+---
+*Reality begins to fragment*
+Overwhelming sense of existential dread
+
+-> Total system rejection
+    <<jump TotalRejection>>
+-> Surrender to chaos
+    <<jump TransformationComplete>>
+-> Fight panic
+    <<jump ResistanceScene>>
+-> Accept the unknown
+    <<jump UltimateMission>>
+===
+
+title: ExternalPerspective
+---
+Attempt to gain outside understanding of the situation
+
+-> Consult imaginary expert
+    <<jump ITSupportScene>>
+-> Seek alternative viewpoint
+    <<jump BoardOrigins>>
+-> Challenge external perception
+    <<jump Skeptical>>
+-> Integrate new information
+    <<jump SecretTechnology>>
+===
+
+title: SystemError
+---
+*Unexpected system malfunction*
+Board: Critical error detected... Initiating diagnostic sequence.
+
+-> Investigate error
+    <<jump ErrorDiagnostics>>
+-> Force system shutdown
+    <<jump SystemShutdownAttempt>>
+-> Request error details
+    <<jump ErrorAnalysis>>
+-> Observe system behavior
+    <<jump SystemAnomalies>>
+===
+
+title: ErrorDiagnostics
+---
+Board: Error origin: Unknown quantum interference.
+Player: What does that mean?
+
+-> Trace error source
+    <<jump QuantumErrorTrace>>
+-> Request detailed report
+    <<jump TechnicalErrorLog>>
+-> Challenge error logic
+    <<jump LogicalCounterattack>>
+-> Seek system restoration
+    <<jump SystemReboot>>
+===
+
+title: QuantumErrorTrace
+---
+*Bizarre quantum fluctuations appear*
+Board: Error exists in multiple probability states simultaneously.
+
+-> Collapse probability wave
+    <<jump DimensionalTwist>>
+-> Analyze quantum anomaly
+    <<jump SecretTechnology>>
+-> Reject quantum logic
+    <<jump Skeptical>>
+-> Explore error dimensions
+    <<jump BoardOrigins>>
+===
+
+title: SystemShutdownAttempt
+---
+Player tries to shut down the system
+Board: Shutdown protocol... REJECTED.
+
+-> Force manual override
+    <<jump ResistanceScene>>
+-> Negotiate shutdown
+    <<jump SecretAlliance>>
+-> Investigate blocking mechanism
+    <<jump ErrorAnalysis>>
+-> Accept system control
+    <<jump TransformationComplete>>
+===
+
+title: ErrorAnalysis
+---
+*Detailed error report materializes*
+Cryptic error messages suggest deeper complexity
+
+-> Decode error message
+    <<jump CodeReveal>>
+-> Seek external verification
+    <<jump ITSupportScene>>
+-> Challenge error interpretation
+    <<jump LogicalCounterattack>>
+-> Accept error as information
+    <<jump BoardSecrets>>
+===
+
+title: SystemAnomalies
+---
+Board displays multiple conflicting system states
+Anomalies suggest complex underlying system
+
+-> Map anomaly patterns
+    <<jump SecretTechnology>>
+-> Predict system behavior
+    <<jump QuantumErrorTrace>>
+-> Interrupt anomaly sequence
+    <<jump Confrontation>>
+-> Document strange behaviors
+    <<jump DocumentaryEvidence>>
+===
+
+title: TechnicalErrorLog
+---
+*Extensive technical documentation appears*
+Logs suggest system is more than a simple task board
+
+-> Deep technical analysis
+    <<jump CodeReveal>>
+-> Consult technical expert
+    <<jump ITSupportScene>>
+-> Look for hidden messages
+    <<jump BoardSecrets>>
+-> Challenge log authenticity
+    <<jump Skeptical>>
+===
+
+title: LogicalCounterattack
+---
+Player attempts to outsmart the system's error logic
+Board: Logical constructs are... malleable.
+
+-> Deconstruct system logic
+    <<jump ErrorAnalysis>>
+-> Create logical paradox
+    <<jump MindGameEscalation>>
+-> Seek logical vulnerabilities
+    <<jump SecretTechnology>>
+-> Reject logical framework
+    <<jump PersonalReality>>
+===
+
+title: FinalSystemState
+---
+*System reaches critical state*
+Board: Error resolution... INITIATED.
+
+-> Accept system transformation
+    <<jump TransformationComplete>>
+-> Resist final state
+    <<jump ResistanceScene>>
+-> Negotiate system status
+    <<jump SecretAlliance>>
+-> Observe final outcome
+    <<jump UltimateMission>>
+===
+
+title: Dismissal
+---
+Player: This is complete nonsense. I'm not buying any of this.
+Board: Dismissal is just another form of engagement.
+
+-> Completely ignore
+    <<jump TotalIgnorance>>
+-> Rational rejection
+    <<jump LogicalDismissal>>
+-> Emotional shutdown
+    <<jump EmotionalBarrier>>
+-> Passive-aggressive response
+    <<jump SarcasticDisengagement>>
+===
+
+title: TotalIgnorance
+---
+Player attempts to completely disengage from the board's narrative
+
+-> Walk away
+    <<jump Escape>>
+-> Pretend nothing happened
+    <<jump NormalRoutine>>
+-> Block all communication
+    <<jump CommunicationCutoff>>
+-> Minimize interaction
+    <<jump MinimalEngagement>>
+===
+
+title: LogicalDismissal
+---
+Player applies rational arguments to reject the board's claims
+
+-> Demand scientific proof
+    <<jump ScientificChallenge>>
+-> Deconstruct board's logic
+    <<jump LogicalCounterattack>>
+-> Seek external verification
+    <<jump ITSupportScene>>
+-> Apply critical thinking
+    <<jump RationalAnalysis>>
+===
+
+title: ScientificChallenge
+---
+*Complex data streams appear*
+Board: Science is merely a perspective of understanding.
+
+-> Analyze data objectively
+    <<jump SecretTechnology>>
+-> Reject data presentation
+    <<jump Skeptical>>
+-> Seek peer review
+    <<jump ExternalPerspective>>
+-> Challenge data methodology
+    <<jump ErrorAnalysis>>
+===
+
+title: EmotionalBarrier
+---
+Player creates psychological defense mechanisms
+
+-> Emotional detachment
+    <<jump PsychologicalShield>>
+-> Suppress curiosity
+    <<jump MentalCalm>>
+-> Create emotional distance
+    <<jump PersonalReality>>
+-> Rationalize feelings
+    <<jump LogicalDismissal>>
+===
+
+title: SarcasticDisengagement
+---
+Player responds with humor and dismissive attitude
+
+-> Mock the board's claims
+    *Sarcastic comments intensify*
+    <<jump Skeptical>>
+-> Use humor as defense
+    <<jump EmotionalBarrier>>
+-> Passive-aggressive investigation
+    <<jump ParanoidInvestigation>>
+-> Witty rejection
+    <<jump LogicalDismissal>>
+===
+
+title: NormalRoutine
+---
+Player attempts to return to everyday activities
+
+-> Continue work
+    <<jump MinimalEngagement>>
+-> Ignore unusual experiences
+    <<jump TotalIgnorance>>
+-> Subtle investigation
+    <<jump ParanoidInvestigation>>
+-> Maintain status quo
+    <<jump Skeptical>>
+===
+
+title: CommunicationCutoff
+---
+Attempt to completely disconnect from the board's communication
+
+-> Physical disconnection
+    <<jump UnplugConsequences>>
+-> Digital isolation
+    <<jump SystemShutdownAttempt>>
+-> Communication barriers
+    <<jump ParanoidDefense>>
+-> Temporary retreat
+    <<jump Escape>>
+===
+
+title: MinimalEngagement
+---
+Player maintains minimal, cautious interaction
+
+-> Limited communication
+    <<jump BoardSecrets>>
+-> Observe from distance
+    <<jump SystemAnomalies>>
+-> Controlled curiosity
+    <<jump CodeReveal>>
+-> Strategic disinterest
+    <<jump Skeptical>>
+===
+
+title: RationalAnalysis
+---
+Systematic deconstruction of the board's narrative
+
+-> Methodical investigation
+    <<jump ErrorAnalysis>>
+-> Logical framework application
+    <<jump LogicalCounterattack>>
+-> Objective assessment
+    <<jump ScientificChallenge>>
+-> Intellectual skepticism
+    <<jump Skeptical>>
+===
+
+title: FinalDismissalOutcome
+---
+*Unexpected revelation emerges*
+Board: Dismissal is never truly final.
+
+-> Reconsider position
+    <<jump BoardOrigins>>
+-> Maintain rejection
+    <<jump TotalIgnorance>>
+-> Cautious re-engagement
+    <<jump MinimalEngagement>>
+-> Accept uncertainty
+    <<jump UltimateMission>>
+===
+title: FinalConfrontation
+---
+*Tension reaches critical point*
+Board: This is the moment of ultimate decision.
+Player: No more games!
+
+-> Direct physical challenge
+    <<jump PhysicalConfrontation>>
+-> Psychological warfare
+    <<jump MentalConfrontation>>
+-> Technological countermeasure
+    <<jump TechnologicalShowdown>>
+-> Existential challenge
+    <<jump ExistentialStandoff>>
+===
+
+title: PhysicalConfrontation
+---
+Player attempts to physically challenge the board's system
+
+-> Destroy physical interface
+    <<jump InterfaceDestruction>>
+-> Electrical interference
+    <<jump ElectricalDisruption>>
+-> Force system shutdown
+    <<jump SystemShutdownAttempt>>
+-> Tactical system breach
+    <<jump SecretTechnology>>
+===
+
+title: InterfaceDestruction
+---
+*Dramatic physical confrontation*
+Board: Physical destruction is meaningless.
+
+-> Smash the board
+    <<jump UnplugConsequences>>
+-> Electrical overload
+    <<jump ElectricalDisruption>>
+-> Seek vulnerabilities
+    <<jump ErrorAnalysis>>
+-> Total system rejection
+    <<jump TotalRejection>>
+===
+
+title: MentalConfrontation
+---
+Psychological battle of wills intensifies
+
+-> Mental barrier creation
+    <<jump PsychologicalShield>>
+-> Challenge board's logic
+    <<jump LogicalCounterattack>>
+-> Explore mental vulnerabilities
+    <<jump MindGameEscalation>>
+-> Existential resistance
+    <<jump PersonalReality>>
+===
+
+title: TechnologicalShowdown
+---
+Advanced technological countermeasures activate
+
+-> Hack the system
+    <<jump CodeReveal>>
+-> Create technological firewall
+    <<jump TechnologicalDefense>>
+-> Exploit system weaknesses
+    <<jump ErrorAnalysis>>
+-> Quantum interference
+    <<jump QuantumErrorTrace>>
+===
+
+title: ExistentialStandoff
+---
+Profound philosophical and existential challenge
+
+-> Question system's existence
+    <<jump BoardOrigins>>
+-> Challenge reality construct
+    <<jump MemoryDeconstruction>>
+-> Seek deeper understanding
+    <<jump UltimateMission>>
+-> Reject predetermined narrative
+    <<jump PersonalReality>>
+===
+
+title: ElectricalDisruption
+---
+*Massive electrical interference*
+Board: Disruption is futile.
+
+-> Overload system
+    <<jump SystemError>>
+-> Create electrical paradox
+    <<jump SecretTechnology>>
+-> Seek system vulnerability
+    <<jump ErrorAnalysis>>
+-> Accept system complexity
+    <<jump TransformationComplete>>
+===
+
+title: UltimateBattleOutcome
+---
+*Reality begins to warp*
+Board: Confrontation reveals true nature.
+
+-> Accept transformation
+    <<jump TransformationComplete>>
+-> Final resistance
+    <<jump ResistanceScene>>
+-> Negotiate terms
+    <<jump SecretAlliance>>
+-> Transcend conflict
+    <<jump CosmicJourney>>
+===
+
+title: ResistanceFinalStage
+---
+*Climactic moment of resistance*
+Player: I will not be controlled!
+
+-> Ultimate defiance
+    <<jump PersonalReality>>
+-> Strategic surrender
+    <<jump SecretAlliance>>
+-> Total system rejection
+    <<jump TotalRejection>>
+-> Transcendent understanding
+    <<jump UltimateMission>>
+===
+
+title: FinalResolve
+---
+*Moment of ultimate decision*
+Board: What is your final choice?
+
+-> Complete submission
+    <<jump TransformationComplete>>
+-> Total rebellion
+    <<jump ResistanceScene>>
+-> Seek compromise
+    <<jump SecretAlliance>>
+-> Embrace the unknown
+    <<jump CosmicJourney>>
+===
+title: Skeptical
+---
+Player: I don't believe any of this...
+Board: Skepticism is just another path to understanding.
+
+-> Rational doubt
+    <<jump RationalSkepticism>>
+-> Emotional disbelief
+    <<jump EmotionalSkepticism>>
+-> Scientific investigation
+    <<jump ScientificSkepticism>>
+-> Passive resistance
+    <<jump PassiveSkepticism>>
+===
+
+title: RationalSkepticism
+---
+Player applies logical analysis to the board's claims
+
+-> Demand concrete evidence
+    <<jump EvidenceChallenge>>
+-> Deconstruct board's arguments
+    <<jump LogicalCounterattack>>
+-> Seek external verification
+    <<jump ExternalPerspective>>
+-> Analyze logical inconsistencies
+    <<jump ErrorAnalysis>>
+===
+
+title: EvidenceChallenge
+---
+*Complex data streams appear*
+Board: Evidence is a matter of perspective.
+
+-> Critically examine data
+    <<jump SecretTechnology>>
+-> Request peer review
+    <<jump ITSupportScene>>
+-> Challenge data methodology
+    <<jump ScientificChallenge>>
+-> Seek alternative explanations
+    <<jump BoardOrigins>>
+===
+
+title: EmotionalSkepticism
+---
+Player responds with emotional disbelief and resistance
+
+-> Create emotional barriers
+    <<jump EmotionalBarrier>>
+-> Express frustration
+    <<jump SarcasticDisengagement>>
+-> Emotional self-protection
+    <<jump PsychologicalShield>>
+-> Challenge emotional manipulation
+    <<jump MindGameEscalation>>
+===
+
+title: ScientificSkepticism
+---
+Systematic and methodical investigation of the board's claims
+
+-> Develop research hypothesis
+    <<jump QuantumErrorTrace>>
+-> Collect empirical data
+    <<jump SystemAnomalies>>
+-> Apply scientific method
+    <<jump ErrorAnalysis>>
+-> Challenge theoretical framework
+    <<jump LogicalCounterattack>>
+===
+
+title: PassiveSkepticism
+---
+Subtle, non-confrontational approach to doubt
+
+-> Observe without engagement
+    <<jump MinimalEngagement>>
+-> Maintain critical distance
+    <<jump NormalRoutine>>
+-> Subtle investigation
+    <<jump ParanoidInvestigation>>
+-> Cautious curiosity
+    <<jump BoardSecrets>>
+===
+
+title: SkepticalInvestigation
+---
+Deep dive into the nature of the board's claims
+
+-> Trace information sources
+    <<jump DocumentaryEvidence>>
+-> Map potential scenarios
+    <<jump CodeReveal>>
+-> Challenge foundational assumptions
+    <<jump PersonalReality>>
+-> Explore alternative explanations
+    <<jump ExternalPerspective>>
+===
+
+title: UltimateSkepticalOutcome
+---
+*Moment of critical reflection*
+Board: Doubt is a gateway to understanding.
+
+-> Maintain skeptical stance
+    <<jump RationalSkepticism>>
+-> Open to new possibilities
+    <<jump BoardOrigins>>
+-> Seek deeper truth
+    <<jump UltimateMission>>
+-> Reject all narratives
+    <<jump TotalRejection>>
+===
+
+title: SkepticalResolution
+---
+Player reaches a critical decision point
+
+-> Cautious acceptance
+    <<jump SecretAlliance>>
+-> Complete rejection
+    <<jump Dismissal>>
+-> Continued investigation
+    <<jump SkepticalInvestigation>>
+-> Transcend skepticism
+    <<jump CosmicJourney>>
+===
+
+title: FinalSkepticalStage
+---
+*Profound moment of uncertainty*
+Board: What lies beyond your doubt?
+
+-> Embrace uncertainty
+    <<jump PersonalReality>>
+-> Seek definitive answers
+    <<jump ScientificChallenge>>
+-> Accept multiple perspectives
+    <<jump ExternalPerspective>>
+-> Challenge the nature of knowledge
+    <<jump MindGameEscalation>>
 ===

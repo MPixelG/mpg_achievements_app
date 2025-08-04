@@ -57,7 +57,7 @@ class Enemy extends SpriteAnimationGroupComponent
     add(manager);
 
     PathtracingGoal goal = PlayerLocatingGoal(1);
-    MoveGoal moveGoal = FollowPlayerGoal(0);
+    MoveGoal moveGoal = FollowPlayerGoal(0, game.player);
 
     manager.addGoal(goal);
     manager.addGoal(moveGoal);

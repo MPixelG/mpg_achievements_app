@@ -244,6 +244,7 @@ TextStyle parseTextStyle(dynamic value) {
   if (value is Map<String, dynamic>) {
     return TextStyle(
       color: parseColor(value['color']) ?? Colors.black,
+      backgroundColor: parseColor(value['backgroundColor']),
       fontSize: parseDouble(value['fontSize']) ?? 14.0,
       fontWeight: FontWeight.values.firstWhere(
         (e) => e.toString().split('.').last == value['fontWeight'],
@@ -254,7 +255,7 @@ TextStyle parseTextStyle(dynamic value) {
       wordSpacing: parseDouble(value['wordSpacing']),
     );
   }
-  return const TextStyle(); // Return an empty TextStyle if the value cannot be parsed
+  return const TextStyle(); // Return an empty TextStyle if the value cant be parsed
 }
 
 int? parseInt(dynamic value) {

@@ -9,7 +9,6 @@ import 'package:mpg_achievements_app/components/level_components/collectables.da
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-
 import 'level_components/saw.dart';
 
 //using SpriteAnimationGroupComponent is better for a lot of animations
@@ -80,23 +79,20 @@ class Player extends SpriteAnimationGroupComponent
     if (other is Enemy && !debugImmortalMode) _hit();
     if (other is Collectable && other.interactiveTask) {
       game.showDialogue = true;
-
-    if (lives <= 0) _respawn();
-
       game.overlays.add('DialogueScreen');
-      print('Board1');
     }
     super.onCollision(intersectionPoints, other);
   }
   void _hit() async {
     if (gotHit) return;
     lives = lives - 1;
-    if (lives <= 0) return;
-    print(lives);
+    if (lives <= 0) {
+      _respawn();
+      return;
+    }
     gotHit = true;
-    playAnimation("hit");
+    playAnimation('hit');
     await Future.delayed(Duration(milliseconds: 250));
-    playAnimation("appearing");
     gotHit = false;
   }
   void _respawn() async {
@@ -145,6 +141,7 @@ class Player extends SpriteAnimationGroupComponent
         32); //reposition the player, because it had a bit of displacement because of the respawn animation
     setGravityEnabled(true); //re-enable gravity
     updateMovement = true;
+    lives = startHP;
   }
 
   //Getters
