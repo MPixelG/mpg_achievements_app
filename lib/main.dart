@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/GUI/menus.dart';
 import 'package:mpg_achievements_app/components/GUI/json_factory/widgetFactory.dart';
 import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_widgets.dart';
+import 'package:mpg_achievements_app/components/router/router.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
@@ -27,10 +28,12 @@ void main() async {
 }
 
 class MainApp extends StatelessWidget {
+  const MainApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MainMenuScreen(),
+    return MaterialApp.router(
+      routerConfig: AppRouter.router,
       debugShowCheckedModeBanner: false,
     );
   }

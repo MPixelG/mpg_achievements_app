@@ -96,6 +96,15 @@ double? parseDouble(dynamic value) {
   return null; // Default to 0.0 for any other type
 }
 
+bool? parseBoolean(dynamic value) {
+  if (value is bool) {
+    return value;
+  } else if (value is String) {
+    return bool.tryParse(value) ?? false; // Default to 0.0 if parsing fails
+  }
+  return null; // Default to 0.0 for any other type
+}
+
 Color? parseColor(dynamic value) {
   if(value is Color) return value;
 
@@ -153,10 +162,27 @@ Alignment parseAlignment(dynamic value) {
       default:
           return Alignment.center; // Default to center if no match
     }
-
   }
   return Alignment.center; // Default to center for any other type
 }
+
+PanAxis parsePanAxis(dynamic value){
+  if (value is String) {
+    value = value.replaceAll("PanAxis.", ""); //remove the enum prefix if present
+    switch (value.toLowerCase()) {
+      case 'vertical':
+        return PanAxis.vertical;
+      case 'horizontal':
+        return PanAxis.horizontal;
+      case 'aligned':
+        return PanAxis.aligned;
+      case 'free':
+        return PanAxis.free;
+    }
+  }
+  return PanAxis.free;
+}
+
 
 MainAxisAlignment parseMainAxisAlignment(dynamic value) {
   if (value is String) {
@@ -200,6 +226,19 @@ CrossAxisAlignment parseCrossAxisAlignment(dynamic value) {
     }
   }
   return CrossAxisAlignment.start; // Default to start for any other type
+}
+
+Axis parseAxis(dynamic value){
+  if (value is String) {
+    value = value.replaceAll("Axis.", ""); //remove the enum prefix if present
+    switch (value.toLowerCase()) {
+      case 'horizontal':
+        return Axis.horizontal;
+      case 'vertical':
+        return Axis.vertical;
+    }
+  }
+  return Axis.vertical;
 }
 
 MainAxisSize parseMainAxisSize(dynamic value) {

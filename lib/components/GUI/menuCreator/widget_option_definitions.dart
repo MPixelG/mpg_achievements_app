@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_options.dart';
+import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_widgets.dart';
 
 import '../widgets/nine_patch_button.dart';
 import 'button_action.dart';
@@ -79,12 +80,17 @@ void registerWidgetOptions() { //this is used to register the widget options for
   ]).register();
 
 
+  List<String> loadedTextureNames = NinePatchTexture.getLoadedTextureNames();
+
   WidgetOptions(NinePatchButton, options: [
 
     WidgetOption<String>((type) => type.toString(), name: "text", defaultValue: "", description: "The text to display on the button."),
     WidgetOption<ButtonAction>(parseButtonAction, name: "onPressed", defaultValue: DebugButtonAction().toJson(), description: "The function to call when the button is pressed. If not set, it will do nothing."),
 
-    WidgetOption<String>((type) => type.toString(), name: "imageName", defaultValue: "button_0", description: "The name of the nine patch image texture that will be used for the button."),
+    WidgetOption<String>((type) => type.toString(), name: "imageName", defaultValue: "button_0", description: "The name of the nine patch image texture that will be used for the button.", options: {
+          for (var value in loadedTextureNames) value : value,
+        }
+    ),
   ]).register();
 
   WidgetOptions(Expanded, options: [
@@ -159,6 +165,39 @@ void registerWidgetOptions() { //this is used to register the widget options for
   "top center": Alignment.topCenter,
   "bottom center": Alignment.bottomCenter,
   }),
+  ]).register();
+
+
+  WidgetOptions(InteractiveViewer, options: [
+    WidgetOption<bool>(parseBoolean, name: "panEnabled", defaultValue: true),
+    WidgetOption<bool>(parseBoolean, name: "scaleEnabled", defaultValue: true),
+    WidgetOption<Alignment>(parseAlignment, name: "alignment", defaultValue: "Alignment.center", options: {
+      "center": Alignment.center,
+      "top left": Alignment.topLeft,
+      "top right": Alignment.topRight,
+      "bottom left": Alignment.bottomLeft,
+      "bottom right": Alignment.bottomRight,
+      "top center": Alignment.topCenter,
+      "bottom center": Alignment.bottomCenter,
+    }),
+    WidgetOption<PanAxis>(parsePanAxis, name: "panAxis", defaultValue: "PanAxis.free", options: {
+      "free": PanAxis.free,
+      "vertical": PanAxis.vertical,
+      "horizontal": PanAxis.horizontal,
+      "aligned": PanAxis.aligned
+    }),
+    WidgetOption<double>(parseDouble, name: "minScale", defaultValue: 0.2),
+    WidgetOption<double>(parseDouble, name: "maxScale", defaultValue: 8.0),
+  ]).register();
+
+
+  WidgetOptions(SingleChildScrollView, options: [
+
+    WidgetOption<Axis>(parseAxis, name: "axis", defaultValue: "Axis.vertical", options: {
+      "horizontal": Axis.horizontal,
+      "vertical": Axis.vertical
+    })
+
   ]).register();
 
 

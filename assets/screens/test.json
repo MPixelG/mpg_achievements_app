@@ -1,5 +1,5 @@
 {
-  "id": "container14",
+  "id": "container7",
   "widgetType": "Container",
   "properties": {
     "width": 0.1,
@@ -22,12 +22,12 @@
   },
   "children": [
     {
-      "id": "stack2",
+      "id": "stack1",
       "widgetType": "Stack",
       "properties": {},
       "children": [
         {
-          "id": "image2",
+          "id": "image1",
           "widgetType": "Image",
           "properties": {
             "path": "assets/images/Background/main_menu.png",
@@ -38,7 +38,7 @@
           "children": []
         },
         {
-          "id": "container15",
+          "id": "container8",
           "widgetType": "Container",
           "properties": {
             "width": 1.0,
@@ -50,7 +50,7 @@
           },
           "children": [
             {
-              "id": "container16",
+              "id": "container9",
               "widgetType": "Container",
               "properties": {
                 "width": 0.4,
@@ -62,7 +62,7 @@
               },
               "children": [
                 {
-                  "id": "column2",
+                  "id": "column1",
                   "widgetType": "Column",
                   "properties": {
                     "mainAxisSize": "MainAxisSize.max",
@@ -80,7 +80,7 @@
                       },
                       "children": [
                         {
-                          "id": "text3",
+                          "id": "text4",
                           "widgetType": "Text",
                           "properties": {
                             "text": "MPG PIXEL ADVENTURE",
@@ -94,7 +94,7 @@
                       ]
                     },
                     {
-                      "id": "container17",
+                      "id": "container10",
                       "widgetType": "Container",
                       "properties": {
                         "width": 0.1,
@@ -107,7 +107,7 @@
                       "children": []
                     },
                     {
-                      "id": "container18",
+                      "id": "container11",
                       "widgetType": "Container",
                       "properties": {
                         "width": 0.24,
@@ -119,15 +119,15 @@
                       },
                       "children": [
                         {
-                          "id": "ninepatch_button6",
+                          "id": "ninepatch_button3",
                           "widgetType": "NinePatchButton",
                           "properties": {
                             "text": "PLAY",
                             "onPressed": {
-                              "screen": "PixelAdventure",
+                              "screen": "game",
                               "actionType": "screenChange"
                             },
-                            "imageName": "button_0"
+                            "imageName": "test_button_2"
                           },
                           "children": [
                             {
@@ -139,7 +139,7 @@
                               },
                               "children": [
                                 {
-                                  "id": "text6",
+                                  "id": "text5",
                                   "widgetType": "Text",
                                   "properties": {
                                     "text": "PLAY",
@@ -157,7 +157,7 @@
                       ]
                     },
                     {
-                      "id": "container19",
+                      "id": "container12",
                       "widgetType": "Container",
                       "properties": {
                         "width": 0.24,
@@ -169,7 +169,7 @@
                       },
                       "children": [
                         {
-                          "id": "ninepatch_button7",
+                          "id": "ninepatch_button4",
                           "widgetType": "NinePatchButton",
                           "properties": {
                             "text": "SETTINGS",
@@ -177,7 +177,7 @@
                               "screen": "Settings",
                               "actionType": "screenChange"
                             },
-                            "imageName": "button_0"
+                            "imageName": "test_button_2"
                           },
                           "children": [
                             {
@@ -189,7 +189,7 @@
                               },
                               "children": [
                                 {
-                                  "id": "text5",
+                                  "id": "text6",
                                   "widgetType": "Text",
                                   "properties": {
                                     "text": "SETTINGS",
@@ -207,7 +207,7 @@
                       ]
                     },
                     {
-                      "id": "container20",
+                      "id": "container13",
                       "widgetType": "Container",
                       "properties": {
                         "width": 0.24,
@@ -219,7 +219,7 @@
                       },
                       "children": [
                         {
-                          "id": "ninepatch_button8",
+                          "id": "ninepatch_button5",
                           "widgetType": "NinePatchButton",
                           "properties": {
                             "text": "CREDITS",
@@ -227,7 +227,7 @@
                               "screen": "Credits",
                               "actionType": "screenChange"
                             },
-                            "imageName": "button_0"
+                            "imageName": "test_button_2"
                           },
                           "children": [
                             {
@@ -239,7 +239,7 @@
                               },
                               "children": [
                                 {
-                                  "id": "text4",
+                                  "id": "text7",
                                   "widgetType": "Text",
                                   "properties": {
                                     "text": "CREDITS",

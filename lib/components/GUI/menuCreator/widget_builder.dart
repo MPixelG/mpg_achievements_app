@@ -271,7 +271,55 @@ LayoutWidget addNinepatchButton(LayoutWidget? parent, {Map<String, dynamic>? pro
   return widget;
 }
 
+int interactiveViewerId = 0;
+LayoutWidget addInteractiveViewer(LayoutWidget? parent, {Map<String, dynamic>? properties}) {
+  LayoutWidget widget = LayoutWidget((context, children, properties) {
 
+    WidgetOptions options = WidgetOptions.fromType(InteractiveViewer);
+
+    properties["panEnabled"] ??= options.getDefaultValue("panEnabled");
+    properties["scaleEnabled"] ??= options.getDefaultValue("scaleEnabled");
+    properties["alignment"] ??= options.getDefaultValue("alignment");
+    properties["panAxis"] ??= options.getDefaultValue("panAxis");
+    properties["minScale"] ??= options.getDefaultValue("minScale");
+    properties["maxScale"] ??= options.getDefaultValue("maxScale");
+
+    return InteractiveViewer(
+      panEnabled: options.getValue("panEnabled", properties["panEnabled"]),
+      scaleEnabled: options.getValue("scaleEnabled", properties["scaleEnabled"]),
+      alignment: options.getValue("alignment", properties["alignment"]),
+      panAxis: options.getValue("panAxis", properties["panAxis"]),
+      minScale: options.getValue("minScale", properties["minScale"]),
+      maxScale: options.getValue("maxScale", properties["maxScale"]),
+
+      constrained: false,
+      child: children.isNotEmpty ? children.first : Container(),
+    );
+  }, id: 'interactive_viewer${interactiveViewerId++}', type: ContainerType.single,
+      removeFromParent: parent?.removeChild, parent: parent, widgetType: InteractiveViewer, properties: properties);
+  return widget;
+}
+
+
+int singleChildScrollViewId = 0;
+LayoutWidget addSingleChildScrollView(LayoutWidget? parent, {Map<String, dynamic>? properties}) {
+  LayoutWidget widget = LayoutWidget((context, children, properties) {
+
+    WidgetOptions options = WidgetOptions.fromType(SingleChildScrollView);
+
+    properties["axis"] ??= options.getDefaultValue("axis");
+
+    return SingleChildScrollView(
+      scrollDirection: options.getValue("axis", properties["axis"]),
+      child: children.isNotEmpty ? children.first : Container(),
+    );
+  }, id: 'singleChildScrollView${singleChildScrollViewId++}', type: ContainerType.single,
+      removeFromParent: parent?.removeChild, parent: parent, widgetType: SingleChildScrollView, properties: properties);
+  return widget;
+}
+
+
+int fittedBoxId = 0;
 LayoutWidget addFittedBox(LayoutWidget? parent, {Map<String, dynamic>? properties}) {
   LayoutWidget widget = LayoutWidget((context, children, properties) {
 
@@ -285,11 +333,12 @@ LayoutWidget addFittedBox(LayoutWidget? parent, {Map<String, dynamic>? propertie
       fit: options.getValue("fit", properties["fit"]),
       child: children.isNotEmpty ? children.first : Container(),
     );
-  }, id: 'fitted_box', type: ContainerType.single,
+  }, id: 'fitted_box${fittedBoxId++}', type: ContainerType.single,
       removeFromParent: parent?.removeChild, parent: parent, widgetType: FittedBox, properties: properties);
   return widget;
 }
 
+int transformId = 0;
 LayoutWidget addTransform(LayoutWidget? parent, {Map<String, dynamic>? properties}) {
   LayoutWidget widget = LayoutWidget((context, children, properties) {
 
@@ -306,12 +355,13 @@ LayoutWidget addTransform(LayoutWidget? parent, {Map<String, dynamic>? propertie
         ..scale(options.getValue("scale", properties["scale"])),
       child: children.isNotEmpty ? children.first : Container(),
     );
-  }, id: 'transform', type: ContainerType.single,
+  }, id: 'transform${transformId++}', type: ContainerType.single,
       removeFromParent: parent?.removeChild, parent: parent, widgetType: Transform, properties: properties);
   return widget;
 }
 
 
+int opacityId = 0;
 LayoutWidget addOpacity(LayoutWidget? parent, {Map<String, dynamic>? properties}) {
   LayoutWidget widget = LayoutWidget((context, children, properties) {
 
@@ -323,11 +373,12 @@ LayoutWidget addOpacity(LayoutWidget? parent, {Map<String, dynamic>? properties}
       opacity: options.getValue("opacity", properties["opacity"]),
       child: children.isNotEmpty ? children.first : Container(),
     );
-  }, id: 'opacity', type: ContainerType.single,
+  }, id: 'opacity${opacityId++}', type: ContainerType.single,
       removeFromParent: parent?.removeChild, parent: parent, widgetType: Opacity, properties: properties);
   return widget;
 }
 
+int cardId = 0;
 LayoutWidget addCard(LayoutWidget? parent, {Map<String, dynamic>? properties}) {
   LayoutWidget widget = LayoutWidget((context, children, properties) {
 
@@ -344,11 +395,12 @@ LayoutWidget addCard(LayoutWidget? parent, {Map<String, dynamic>? properties}) {
       margin: convertToAbsolute(options.getValue("margin", properties["margin"]), availableWidth, availableHeight),
       child: children.isNotEmpty ? children.first : Container(),
     );
-  }, id: 'card', type: ContainerType.single,
+  }, id: 'card${cardId++}', type: ContainerType.single,
       removeFromParent: parent?.removeChild, parent: parent, widgetType: Card, properties: properties);
   return widget;
 }
 
+int gridViewId = 0;
 LayoutWidget addGridView(LayoutWidget? parent, {Map<String, dynamic>? properties}) {
   LayoutWidget widget = LayoutWidget((context, children, properties) {
 
@@ -362,7 +414,7 @@ LayoutWidget addGridView(LayoutWidget? parent, {Map<String, dynamic>? properties
       childAspectRatio: options.getValue("childAspectRatio", properties["childAspectRatio"]),
       children: children,
     );
-  }, id: 'grid_view', type: ContainerType.unlimited,
+  }, id: 'grid_view${gridViewId++}', type: ContainerType.unlimited,
       removeFromParent: parent?.removeChild, parent: parent, widgetType: GridView, properties: properties);
   return widget;
 }

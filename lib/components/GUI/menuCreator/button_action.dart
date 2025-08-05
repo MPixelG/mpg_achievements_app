@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/GUI/menus.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:go_router/go_router.dart';
 
 class ButtonAction {
   late final String actionType; // Default action type for button actions
@@ -82,17 +81,7 @@ class ScreenChangeButtonAction extends ButtonAction{
 
   @override
   void press(BuildContext context) {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            GameScreen(game: PixelAdventure()),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-      ),
-    );
-
+    context.goNamed(screen);
   }
 
 
