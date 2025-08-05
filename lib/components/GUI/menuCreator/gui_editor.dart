@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart' hide Matrix4;
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/json_exporter.dart';
@@ -10,7 +8,7 @@ import 'package:mpg_achievements_app/components/GUI/menuCreator/editor_node_depe
 import 'package:mpg_achievements_app/components/GUI/menuCreator/layout_widget.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_option_definitions.dart';
 
-class GuiEditor extends StatefulWidget { //the GUI editor lets us create guis and later export them as a json TODO
+class GuiEditor extends StatefulWidget { //the GUI editor lets us create guis and later export them as a json
   const GuiEditor({super.key});
 
   @override
@@ -24,7 +22,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
   late LayoutWidget root; //just temp to be initialized later in initState()
 
-  NodeViewer? nodeViewer; //this is the node viewer that will be used to show the dependencies of a node. TODO: implement this
+  NodeViewer? nodeViewer; //this is the node viewer that will be used to show the dependencies of a node.
   final GlobalKey<NodeViewerState> _nodeViewerKey = GlobalKey<NodeViewerState>();
 
   void updateViewport() { //this is used to update the viewport of the node viewer, so that it shows the current state of the layout

@@ -13,6 +13,7 @@ import 'package:mpg_achievements_app/components/background/background_tile.dart'
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
+import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
@@ -50,7 +51,7 @@ class Level extends World
 
   @override
   FutureOr<void> onLoad() async {
-    tilesize = await (await getTilesizeOfLevel(levelName)).toDouble();
+    tilesize = (await getTilesizeOfLevel(levelName)).toDouble();
 
     //await need to be there because it takes some time to load, that's why the method needs to be async
     //otherwise the rest of the programme would stop
@@ -66,6 +67,17 @@ class Level extends World
       _scrollingBackground();
     }
 
+    String side = level.tileMap.getLayer('Level')?.properties.getValue('Side') ?? "Side";
+
+    if (side == "Side") {
+      player.viewSide = ViewSide.side;
+      print("side");
+    } else if(side == "TopDown"){
+      player.viewSide = ViewSide.topDown;
+      print("top down");
+    } else print("nothing!");
+
+
     generator = POIGenerator(this);
     add(generator);
 
@@ -80,10 +92,6 @@ class Level extends World
     debugOverlays.scale = Vector2.zero(); // Start hidden/scaled down
     debugOverlays.priority =
         2; // Ensure overlays draw above the rest of the game
-
-    /*    if (level != null) {
-      game.lightingRenderer.extractObjectsFromTiledMap(level);
-    }*/
 
     // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
     game.cam.setMoveBounds(Vector2.zero(), level.size);

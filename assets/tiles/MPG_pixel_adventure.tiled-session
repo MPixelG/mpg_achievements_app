@@ -16,8 +16,8 @@
         },
         "Level_0.tmx": {
             "expandedObjectLayers": [
-                20,
-                17
+                17,
+                20
             ],
             "scale": 1.5,
             "selectedLayer": 1,
@@ -28,8 +28,8 @@
         },
         "Level_1.tmx": {
             "expandedObjectLayers": [
-                3,
-                2
+                2,
+                3
             ],
             "scale": 2,
             "selectedLayer": 1,
@@ -46,14 +46,14 @@
             "scale": 2,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 830.25,
-                "y": 339
+                "x": 674.25,
+                "y": 434.5
             }
         },
         "Level_3.tmx": {
             "expandedObjectLayers": [
-                3,
-                2
+                2,
+                3
             ],
             "scale": 1.5,
             "selectedLayer": 0,
@@ -66,16 +66,16 @@
             "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1024,
-                "y": 448.16666666666663
+                "x": 1024.1666666666665,
+                "y": 448.33333333333326
             }
         },
         "Level_5.tmx": {
-            "scale": 1,
-            "selectedLayer": 8,
+            "scale": 1.5,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 632.5,
-                "y": 309
+                "x": 964.3333333333333,
+                "y": 674
             }
         },
         "Lever_3.tmx": {
@@ -110,6 +110,9 @@
             }
         },
         "crystal stuff.tsx": {
+            "dynamicWrapping": false
+        },
+        "grass_concrete.tsx": {
             "dynamicWrapping": false
         },
         "industrialObjects.tsx": {
@@ -161,7 +164,7 @@
     "last.externalTilesetPath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/tiles",
     "last.imagePath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/images/tiles",
     "map.fixedSize": true,
-    "map.height": 28,
+    "map.height": 64,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 32,
     "map.tileWidth": 32,
@@ -180,7 +183,7 @@
         "IndustrialTile_81.png.tsx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
-    "property.type": "int",
+    "property.type": "bool",
     "recentFiles": [
         "MPG_pixel_adventure.tsx",
         "IndustrialTile_81.png.tsx",

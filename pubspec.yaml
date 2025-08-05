@@ -41,7 +41,6 @@ dependencies:
   reorderables: ^0.6.0
   flutter_colorpicker: ^1.1.0
   go_router: ^16.0.0
-  desktop_multi_window: ^0.2.1
 
 dev_dependencies:
   flutter_test:
