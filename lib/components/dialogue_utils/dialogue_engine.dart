@@ -84,6 +84,12 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
             ),
           ),
 
+          Positioned(
+            bottom: 50,     // Distance from top of screen (accounting for status bar)
+            right: 50,   // Distance from right edge
+            child: CloseButton(),
+            ),
+
           // Main dialogue UI positioned at the bottom center
           Positioned(
             left: 20,    // Left margin for dialogue box

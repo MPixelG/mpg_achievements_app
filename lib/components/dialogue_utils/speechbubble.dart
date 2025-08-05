@@ -1,21 +1,17 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble_state.dart';
 
 
 class SpeechBubble extends StatefulWidget {
 
   //text to display and postion
+  final String characterName;
   final String text;
-  final double xPosition;
-  final double yPosition;
-  //Current position of the character
-  final Offset targetPosition;
-  //offset from character(i.e. y/x position from head
-  final Offset bubbleOffset;
 
   //Duration between character appearing and text displaying
   final Duration typingSpeed;
   final Duration showDuration;
+  final Duration dismissDuration;
 
   //styling
   final Color textColor;
@@ -24,14 +20,17 @@ class SpeechBubble extends StatefulWidget {
   final BorderRadius borderRadius;
   final bool showTail;
   final bool autoDismiss;
+  final bool autoStart;
 
   //callback
   final VoidCallback? onComplete;
   final VoidCallback? onDismiss;
 
-  SpeechBubble(
+
+
+  const SpeechBubble(
       {super.key,
-        required this.text,
+        required this.characterName,
         required this.typingSpeed,
         required this.borderRadius,
         required this.autoDismiss,
@@ -41,11 +40,8 @@ class SpeechBubble extends StatefulWidget {
         required this.padding,
         required this.showDuration,
         required this.showTail,
-        required this.textColor,
-        required this.xPosition,
-        required this.yPosition,
-        required this.targetPosition,
-        required this.bubbleOffset,});
+        required this.textColor, required this.autoStart, required this.text, required this.dismissDuration,
+        });
 
 
 
