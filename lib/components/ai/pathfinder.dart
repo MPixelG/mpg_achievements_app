@@ -22,12 +22,12 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
   late List<POINode> nodes; //all of the POI nodes. a POI (Point of Interest) is a point in the world, that can be used to get from one point to another by chaining those together.
 
-  double get tilesize => level.tilesize;
+  Vector2 get tilesize => level.tilesize;
 
   POIGenerator(this.level) { //the constructor
     grid = TileGrid( //initialize the grid.
-      (level.level.width / tilesize).toInt(),
-      (level.level.height / tilesize).toInt(),
+      (level.level.width / tilesize.x).toInt(),
+      (level.level.height / tilesize.y).toInt(),
       tilesize,
       level.level.tileMap.getLayer("Collisions") as ObjectGroup,
     );
@@ -42,7 +42,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
   List<PathStep>? path;
 
   void onClick(TapDownEvent event) {
-    Vector2 gridPos = (level.mousePos / tilesize)
+    Vector2 gridPos = (level.mousePos..divide(tilesize))
       ..floor(); //converts the mouse position on the screen to a grid position
 
     POINode? node = getNodeAt(gridPos); //the node at the clicked field
@@ -255,11 +255,11 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
     Vector2 direction = (otherPos - firstPos).normalized(); //calculate the direction of the 2 points
 
-    Ray2 ray = Ray2(origin: firstPos * tilesize, direction: direction); //calculate the ray
+    Ray2 ray = Ray2(origin: firstPos..multiply(tilesize), direction: direction); //calculate the ray
 
     RaycastResult<ShapeHitbox>? result = game.collisionDetection.raycast( //and use it to raycast
       ray,
-      maxDistance: firstPos.distanceTo(otherPos) * tilesize, //multiply by the tilesize because the current positions are grid positions
+      maxDistance: firstPos.distanceTo(otherPos..multiply(tilesize)), //multiply by the tilesize because the current positions are grid positions
       hitboxFilter: (candidate) => candidate.parent is CollisionBlock && !(candidate.parent as CollisionBlock).isLadder,
     );
 
@@ -407,8 +407,8 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
     if (path.length < 2) return; //if the path is shorter than 2 points, it cant have any movements in it, because one of them is the start and the other one is the end point.
 
     for (int i = 0; i < path.length - 1; i++) { //for every point in the path
-      Vector2 from = path[i].node.poiNode.position * tilesize + Vector2.all(tilesize / 2); //calculate the position to use. add another 16 to center the point in the field
-      Vector2 to = path[i + 1].node.poiNode.position * tilesize + Vector2.all(tilesize / 2); //same for the destination point.
+      Vector2 from = (path[i].node.poiNode.position..multiply(tilesize)) + (tilesize / 2); //calculate the position to use. add another 16 to center the point in the field
+      Vector2 to = (path[i + 1].node.poiNode.position..multiply(tilesize)) + (tilesize / 2); //same for the destination point.
 
       Paint pathPaint = Paint()..strokeWidth = 3.0; //set the stroke width to 3
 
@@ -442,7 +442,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
     }
 
     if (path.isNotEmpty) { //also draw a yellow dot at the end of the path
-      Vector2 endPos = path.last.node.poiNode.position * tilesize + Vector2.all(tilesize / 2); //calculate the end pos with a little offset to center it
+      Vector2 endPos = (path.last.node.poiNode.position..multiply(tilesize)) + (tilesize / 2); //calculate the end pos with a little offset to center it
       Paint endPaint = Paint() // a custom paint
         ..color = Colors.yellow //in yellow
         ..style = PaintingStyle.fill; //and mark it as fill so that not only the outline of the circle will get drawn
@@ -467,7 +467,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
     if(!level.player.debugMode) return; // everything else only gets drawn in debug mode. so we return if thats not the case
 
-    Vector2 selectedGridPos = (level.mouseCoords / tilesize)..floor(); //convert the mouse pos to a grid pos
+    Vector2 selectedGridPos = (level.mouseCoords..divide(tilesize))..floor(); //convert the mouse pos to a grid pos
 
     POINode? selectedNode = getNodeAt(selectedGridPos); //and get the node at that position
 
@@ -484,7 +484,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
 
         connections.forEach((element) { //now draw a line for every connection from the node position to the target of the connection. also add a bit of offset for centering again.
-          canvas.drawLine(selectedNode.position.toOffset() * tilesize + Offset(tilesize / 2, tilesize / 2), element.target.position.toOffset() * tilesize + Offset(tilesize / 2, tilesize / 2), paint);
+          canvas.drawLine(((selectedNode.position..multiply(tilesize)) + tilesize / 2).toOffset(), ((element.target.position..multiply(tilesize)) + tilesize / 2).toOffset(), paint);
         });
 
       }

@@ -93,19 +93,25 @@ Vector2 safeNormalize(Vector2 vector) {
 }
 
 
-Future<int> getTilesizeOfLevel(String levelName) async{
+Future<Vector2> getTilesizeOfLevel(String levelName) async{
 
   String content = await rootBundle.loadString('assets/tiles/$levelName.tmx');
   List<String> lines = content.split('\n');
 
-  int indexOfTilesizeDeclaration = lines[1].indexOf("tilewidth=\"") + 11; //include the length of 'tilewidh="'
+  int indexOfTilesizeWidthDeclaration = lines[1].indexOf("tilewidth=\"") + 11; //include the length of 'tilewidh="'
+  int indexOfTilesizeHeightDeclaration = lines[1].indexOf("tileheight=\"") + 12; //include the length of 'tilewidh="'
 
-  int indexOfNextSemicolon = lines[1].indexOf("\"", indexOfTilesizeDeclaration);
+  int indexOfNextSemicolonWidth = lines[1].indexOf("\"", indexOfTilesizeWidthDeclaration);
+  int indexOfNextSemicolonHeight = lines[1].indexOf("\"", indexOfTilesizeHeightDeclaration);
 
-  String tilesizeString = lines[1].substring(indexOfTilesizeDeclaration, indexOfNextSemicolon);
+  String tilesizeWidthString = lines[1].substring(indexOfTilesizeWidthDeclaration, indexOfNextSemicolonWidth);
+  String tilesizeHeightString = lines[1].substring(indexOfTilesizeHeightDeclaration, indexOfNextSemicolonHeight);
+
+  print("width: $tilesizeWidthString ($indexOfNextSemicolonWidth)");
+  print("height: $tilesizeHeightString ($indexOfNextSemicolonHeight)");
 
 
-  return int.parse(tilesizeString);
+  return Vector2(double.parse(tilesizeWidthString), double.parse(tilesizeHeightString));
 }
 
 num max<T extends num>(List<T> vals){
