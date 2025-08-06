@@ -6,13 +6,11 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/cupertino.dart' hide AnimationStyle, Image;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
-import 'package:go_router/go_router.dart';
-import 'package:mpg_achievements_app/components/GUI/menus.dart';
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'components/GUI/menuCreator/gui_editor.dart';
 import 'components/level_components/enemy.dart';
-import 'components/level.dart';
+import 'components/level/level.dart';
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame
     with
@@ -48,7 +46,7 @@ class PixelAdventure extends FlameGame
     await images.loadAllImages();
     //world is loaded after initialising all images
 
-    level = Level(levelName: 'Level_2', player: player, enemy);
+    level = Level(levelName: 'Level_2', player: player);
 
     cam = AdvancedCamera(world: level);
     cam.player = player;

@@ -6,7 +6,7 @@ import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:mpg_achievements_app/components/ai/goals/goal.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
-import 'package:mpg_achievements_app/components/level.dart';
+import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 
 import '../../../mpg_pixel_adventure.dart';
@@ -169,7 +169,7 @@ class MoveGoal extends Goal {
       return true;
     }
 
-    PixelAdventure game = (level.game as PixelAdventure); //get the game
+    PixelAdventure game = level.game; //get the game
 
     Vector2 direction = (otherPos - firstPos)
         .normalized(); //calculate the direction of the 2 points

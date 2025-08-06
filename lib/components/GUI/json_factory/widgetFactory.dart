@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_button.dart';
-import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
 
 import '../../../mpg_pixel_adventure.dart';
 import '../menus.dart';
@@ -59,16 +58,6 @@ class WidgetFactory{
   }
 
   static NinePatchButton _buildButton(Map<String, dynamic>? properties, List<dynamic> children, BuildContext context){
-
-    Map<String, dynamic> borders = getOrDefault(properties, "textureBorders", {"x": 2, "x2": 2, "y": 2, "y2": 2});
-
-    int borderX = borders["x"] ?? 2;
-    int borderX2 = borders["x2"] ?? 2;
-    int borderY = borders["y"] ?? 2;
-    int borderY2 = borders["y2"] ?? 2;
-
-    String imageName = properties?["texture"] ?? "button_0";
-
     String text = properties?["text"] ?? "";
 
     Map<String, dynamic> actionProperties = properties?["action"] ?? {"type": ""};

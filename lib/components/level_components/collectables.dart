@@ -4,12 +4,15 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:mpg_achievements_app/components/particles/Particles.dart';
-import 'package:mpg_achievements_app/components/level.dart';
+import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 class Collectable extends SpriteAnimationComponent
     with HasGameReference<PixelAdventure>, CollisionCallbacks {
+
+  static int totalAmountOfCollectables = 0;
+
   //name of the collectable and tape of collect -> those will be more than fruit in the future
   late String collectable;
   bool _collected = false;

@@ -1,11 +1,7 @@
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/GUI/menus.dart';
-import 'package:mpg_achievements_app/components/GUI/json_factory/widgetFactory.dart';
 import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_widgets.dart';
 import 'package:mpg_achievements_app/components/router/router.dart';
-import 'package:mpg_achievements_app/components/util/utils.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'components/GUI/menuCreator/widget_option_definitions.dart';
 

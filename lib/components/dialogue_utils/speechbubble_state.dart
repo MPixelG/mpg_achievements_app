@@ -3,8 +3,6 @@ import 'dart:async'as async;
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble.dart';
-import 'package:mpg_achievements_app/components/physics/collisions.dart';
-import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 class SpeechBubbleState extends State<SpeechBubble> with TickerProviderStateMixin {

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:jenny/jenny.dart';
-import 'package:mpg_achievements_app/components/GUI/menus.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_yarn_creator.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
