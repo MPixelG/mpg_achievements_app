@@ -1,7 +1,5 @@
 
 import 'dart:async';
-import 'dart:ui';
-
 import 'package:flame/components.dart';
 import 'package:flame/src/collisions/hitboxes/rectangle_hitbox.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
@@ -15,7 +13,7 @@ class IsometricLevel extends Level{
 
   @override
   Vector2 toGridPos(Vector2 pos) {
-    return screenToTileIsometric(screenPosition: pos, cameraPosition: game.cam.pos);
+    return screenToTileIsometric(screenPosition: pos - Vector2(level.position.x + (level.width / 2), level.position.y), cameraPosition: game.cam.pos);
   }
 
   Vector2 screenToTileIsometric({
@@ -29,7 +27,7 @@ class IsometricLevel extends Level{
     final tileX = ((worldX / (tileSize.x / 2) + worldY / (tileSize.y / 2)) / 2);
     final tileY = ((worldY / (tileSize.y / 2) - worldX / (tileSize.x / 2)) / 2);
 
-    return Vector2(tileX.toDouble() - 7, tileY.toDouble() + 9);
+    return Vector2(tileX.toDouble() - (level.anchor.x / tileSize.x) + 1, tileY.toDouble() - (level.anchor.y / tileSize.y) + 1);
   }
 
 

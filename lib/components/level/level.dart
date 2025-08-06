@@ -53,6 +53,10 @@ abstract class Level extends World
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
     level = await TiledComponent.load('$levelName.tmx', tileSize);
 
+    level.position = Vector2(0, 0);
+
+    print("map origin: ${Vector2(level.width / 2, 0)}");
+
     add(level);
 
     // If level not Parallax, load level with  scrolling background, property is added in Tiled
@@ -134,8 +138,8 @@ abstract class Level extends World
 
     Vector2 gridPos = toGridPos(worldPosition);
 
-    print("Welt-Position: $worldPosition");
-    print("Umgerechnete Gitter-Position: $gridPos");
+    print("world pos: $worldPosition");
+    print("grid pos: $gridPos");
   }
 
   @override //update the overlays
@@ -155,13 +159,6 @@ abstract class Level extends World
 
     super.update(dt);
   }
-
-
-  Vector2 screenToTileIsometric({
-    required Vector2 screenPosition,
-    required Vector2 cameraPosition,
-    double zoom = 1,
-  });
 
 
   //sets the visibility of all of the hitboxes of all of the components in the level (except for background tiles)

@@ -25,9 +25,4 @@ class OrthogonalLevel extends Level{
     return RectangleHitbox(position: position, size: size);
   }
 
-  @override
-  Vector2 screenToTileIsometric({required Vector2 screenPosition, required Vector2 cameraPosition, double zoom = 1}) {
-    // TODO: implement screenToTileIsometric
-    throw UnimplementedError();
-  }
 }
