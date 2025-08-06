@@ -100,6 +100,7 @@ void generateCollisionsForLevel(Level level) {
             size: Vector2(collision.width, collision.height),
             hasCollisionDown: false,
             hasHorizontalCollision: false,
+            level: level
           );
           level.add(platform);
         case 'Ladder':
@@ -111,12 +112,14 @@ void generateCollisionsForLevel(Level level) {
             hasCollisionUp: true,
             hasHorizontalCollision: false,
             isLadder: true,
+            level: level
           );
           level.add(ladder);
         default:
           final block = CollisionBlock(
             position: Vector2(collision.x, collision.y),
             size: Vector2(collision.width, collision.height),
+            level: level
           );
           level.add(block);
       }

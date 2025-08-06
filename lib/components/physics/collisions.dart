@@ -58,8 +58,9 @@ mixin HasCollisions on Component, CollisionCallbacks {
 
   //main collision physics
   void checkCollision(PositionComponent other) {
-    if (other is! CollisionBlock)
+    if (other is! CollisionBlock) {
       return; //physics only work on the collision blocks (including the platforms)
+    }
 
     ShapeHitbox hitbox = getHitbox();
     Vector2 scale = getScale();
@@ -156,12 +157,13 @@ mixin BasicMovement on PositionComponent {
 
   // Updates movement logic based on input and physics
   void _updateMovement(double dt) {
-    if (hasJumped)
+    if (hasJumped) {
       if (isOnGround) {
         jump();
       } else {
         hasJumped = false;
       }
+    }
 
     // Horizontal movement and friction
     velocity.x += horizontalMovement * moveSpeed;
@@ -185,8 +187,9 @@ mixin BasicMovement on PositionComponent {
     if (!debugFlyMode && !isClimbing) {
       if (isClimbing) {
         velocity.y += _gravity * dt * 0.02; // Fall down
-      } else
+      } else {
         velocity.y += _gravity * dt;
+      }
     } else {
       velocity.y += verticalMovement * moveSpeed * (dt * 1000);
       velocity.y *= pow(0.01, dt); // Simulated drag
@@ -240,10 +243,11 @@ mixin KeyboardControllableMovement
       if (keysPressed.contains(LogicalKeyboardKey.space)) {
         if (debugFlyMode || isClimbing) {
           //when in debug mode move the player upwards
-          if (isClimbing)
+          if (isClimbing) {
             verticalMovement = -0.06;
-          else
+          } else {
             verticalMovement = -1;
+          }
         } else {
           hasJumped = true; //else jump
         }
@@ -251,9 +255,9 @@ mixin KeyboardControllableMovement
 
       if (keysPressed.contains(LogicalKeyboardKey.shiftLeft)) {
         //when in fly mode and shift is pressed, the player gets moved down
-        if (isClimbing)
+        if (isClimbing) {
           verticalMovement = 0.06;
-        else if (debugFlyMode)
+        } else if (debugFlyMode)
           verticalMovement = 1;
 
         isShifting = true;
@@ -272,8 +276,9 @@ mixin KeyboardControllableMovement
       if (isDownKeyPressed) verticalMovement++;
     }
 
-    if (keysPressed.contains(LogicalKeyboardKey.keyT))
+    if (keysPressed.contains(LogicalKeyboardKey.keyT)) {
       position = mouseCoords; //press T to teleport the player to the mouse
+    }
     if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
       debugMode = !debugMode;
       (parent as Level).setDebugMode(debugMode);

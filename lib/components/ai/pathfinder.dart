@@ -21,14 +21,14 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
   late List<POINode> nodes; //all of the POI nodes. a POI (Point of Interest) is a point in the world, that can be used to get from one point to another by chaining those together.
 
-  Vector2 get tilesize => level.tilesize;
+  Vector2 get tilesize => level.tileSize;
 
   POIGenerator(this.level) { //the constructor
     grid = TileGrid( //initialize the grid.
       (level.level.width / tilesize.x).toInt(),
       (level.level.height / tilesize.y).toInt(),
       tilesize,
-      level.level.tileMap.getLayer("Collisions") as ObjectGroup,
+      level.level.tileMap.getLayer("Collisions") as ObjectGroup?,
     );
     level.add(grid); //add the grid to the level to show some debug render stuff.
 

@@ -27,7 +27,7 @@ class MoveGoal extends Goal {
   bool get isShifting => (parent!.parent! as BasicMovement).isShifting;
   Level get level => (parent!.parent! as HasGameReference<PixelAdventure>).game.level;
 
-  Vector2 get tilesize => level.tilesize;
+  Vector2 get tilesize => level.tileSize;
 
 
   set horizontalMovement(double pos) => (parent!.parent! as BasicMovement).horizontalMovement = pos;

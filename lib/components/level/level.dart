@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
@@ -11,14 +12,13 @@ import 'package:mpg_achievements_app/components/background/LayeredImageBackgroun
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
-import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../background/scrolling_background.dart';
 
-class Level extends World
+abstract class Level extends World
     with
         HasGameReference<PixelAdventure>,
         KeyboardHandler,
@@ -31,13 +31,10 @@ class Level extends World
 
   int totalCollectables = 0;
 
-  late final Vector2 tilesize;
+  late final Vector2 tileSize;
 
   late final Background background;
 
-  //loads when the class instantiated
-  //In dart, late keyword is used to declare a variable or field that will be initialized at a later time.e.g. late String name
-  //
   //constructor
   Level(
       {required this.levelName, required this.player, Background? background}) {
@@ -48,13 +45,14 @@ class Level extends World
 
   @override
   FutureOr<void> onLoad() async {
-    tilesize = (await getTilesizeOfLevel(levelName));
+    tileSize = (await getTilesizeOfLevel(levelName));
 
     //await need to be there because it takes some time to load, that's why the method needs to be async
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
-    level = await TiledComponent.load('$levelName.tmx', tilesize);
+    level = await TiledComponent.load('$levelName.tmx', tileSize);
+
     add(level);
 
     // If level not Parallax, load level with  scrolling background, property is added in Tiled
@@ -65,17 +63,6 @@ class Level extends World
       _loadParallaxBackground();
     } else {
       _loadScrollingBackground();
-    }
-
-    String side = level.tileMap
-        .getLayer('Level')
-        ?.properties
-        .getValue('Side') ?? "Side";
-
-    if (side == "Side") {
-      player.viewSide = ViewSide.side;
-    } else if (side == "TopDown") {
-      player.viewSide = ViewSide.topDown;
     }
 
 
@@ -140,8 +127,15 @@ class Level extends World
 
   @override
   void onTapDown(TapDownEvent event) {
-    generator.onClick(event);
     super.onTapDown(event);
+    final Vector2 screenPosition = event.canvasPosition;
+
+    final Vector2 worldPosition = screenPosition + game.cam.pos;
+
+    Vector2 gridPos = toGridPos(worldPosition);
+
+    print("Welt-Position: $worldPosition");
+    print("Umgerechnete Gitter-Position: $gridPos");
   }
 
   @override //update the overlays
@@ -153,10 +147,9 @@ class Level extends World
 
     String playerCoords = roundedPlayerPos.toString();
     debugOverlays.text =
-    "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${(screenToTileIsometric(
-        screenPosition: _mouseCoords, cameraPosition: game.cam.pos))
-      ..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tilesize.x)
-        .floor()}, ${(mousePos.y / tilesize.y).floor()}";
+    "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${toGridPos(_mouseCoords - game.cam.pos)
+      ..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tileSize.x)
+        .floor()}, ${(mousePos.y / tileSize.y).floor()}";
     debugOverlays.position =
         game.cam.pos - game.cam.visibleWorldRect.size.toVector2() / 2;
 
@@ -168,15 +161,7 @@ class Level extends World
     required Vector2 screenPosition,
     required Vector2 cameraPosition,
     double zoom = 1,
-  }) {
-    final worldX = (screenPosition.x / zoom) + cameraPosition.x;
-    final worldY = (screenPosition.y / zoom) + cameraPosition.y;
-
-    final tileX = (worldX / (tilesize.x / 2) + worldY / (tilesize.y / 2)) / 2;
-    final tileY = (worldY / (tilesize.y / 2) - worldX / (tilesize.x / 2)) / 2;
-
-    return Vector2(tileX.floorToDouble(), tileY.floorToDouble());
-  }
+  });
 
 
   //sets the visibility of all of the hitboxes of all of the components in the level (except for background tiles)
@@ -194,6 +179,7 @@ class Level extends World
   //if parallax effect, this method is called
   void _loadParallaxBackground() {
     background = LayeredImageBackground.ofLevel(this, game.cam);
+    add(background);
   }
 
   void _loadScrollingBackground() {
@@ -212,5 +198,12 @@ class Level extends World
 
     add(background);
   }
+
+
+  RectangleHitbox createHitbox({Vector2? position, Vector2? size});
+  bool checkCollisionAt(Vector2 point, Vector2 center, Vector2 size);
+
+  Vector2 toWorldPos(Vector2 pos);
+  Vector2 toGridPos(Vector2 pos);
 
 }

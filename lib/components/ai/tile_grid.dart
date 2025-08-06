@@ -68,14 +68,14 @@ class TileGrid extends Component {
   void render(Canvas canvas) {
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
-        /*        bool val = grid[x][y];
-        if(val) {
+        TileType val = grid[x][y];
+        if(val != TileType.air) {
           canvas.drawRect(Rect.fromPoints(
-              (Vector2(x.toDouble(), y.toDouble()) * (tileSize)).toOffset(),
-              (Vector2(x.toDouble(), y.toDouble()) * (tileSize)).toOffset() +
-                  Offset(tileSize - 2, tileSize - 2)), Paint()
+              (Vector2(x.toDouble(), y.toDouble())..multiply(tileSize)).toOffset(),
+              (Vector2(x.toDouble(), y.toDouble())..multiply(tileSize)).toOffset() +
+                  Offset(tileSize.x - 2, tileSize.y - 2)), Paint()
             ..color = Colors.green);
-        }*/
+        }
 
         bool highlighted = highlightedSpots[x][y];
         if (highlighted) {

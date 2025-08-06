@@ -7,7 +7,6 @@ import 'package:mpg_achievements_app/components/GUI/menuCreator/json_exporter.da
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import 'json_factory/widgetFactory.dart';
 import 'menuCreator/layout_widget.dart';
 
 abstract class Screen extends StatelessWidget {
@@ -183,34 +182,6 @@ class GameScreen extends StatelessWidget {
           ]
       ),
       debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
-class JsonScreenBuilder {
-  static Future<Widget> buildScreen(String jsonPath, BuildContext context) async {
-    try {
-      final jsonString = await rootBundle.loadString(jsonPath);
-      final screenData = json.decode(jsonString);
-
-      return _buildWidgetsFromData(screenData, context);
-    } catch (e) {
-      return Container(child: Text('Error loading screen: $e', style: TextStyle(color: Colors.red, fontSize: 20)));
-    }
-  }
-
-  static Widget _buildWidgetsFromData(Map<String, dynamic> screenData, BuildContext context) {
-    return Stack(
-      children: screenData['widgets'].map<Widget>((widgetData) {
-        final widget = WidgetFactory.buildWidget(widgetData, context);
-        final position = widgetData['position'];
-
-        return Positioned(
-          left: position['x'].toDouble(),
-          top: position['y'].toDouble(),
-          child: widget,
-        );
-      }).toList(),
     );
   }
 }

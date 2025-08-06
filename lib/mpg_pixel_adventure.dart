@@ -7,7 +7,10 @@ import 'package:flame/game.dart';
 import 'package:flutter/cupertino.dart' hide AnimationStyle, Image;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
+import 'package:mpg_achievements_app/components/level/orthagonal/orthogonal_level.dart';
 import 'package:mpg_achievements_app/components/player.dart';
+import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'components/GUI/menuCreator/gui_editor.dart';
 import 'components/level_components/enemy.dart';
 import 'components/level/level.dart';
@@ -46,7 +49,19 @@ class PixelAdventure extends FlameGame
     await images.loadAllImages();
     //world is loaded after initialising all images
 
-    level = Level(levelName: 'Level_2', player: player);
+    String levelName = "level_7"  ;
+
+    String orientation = await getOrientationOfLevel(levelName);
+
+    if(orientation == "orthogonal"){
+      level = OrthogonalLevel(levelName: levelName, player: player);
+    } else if(orientation == "isometric"){
+      level = IsometricLevel(levelName: levelName, player: player);
+    } else {
+      throw UnimplementedError(
+          "an orientation of $orientation isnt implemented! please use either orthagonal or isometric!");
+    }
+
 
     cam = AdvancedCamera(world: level);
     cam.player = player;

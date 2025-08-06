@@ -96,7 +96,7 @@ Future<Vector2> getTilesizeOfLevel(String levelName) async{
   List<String> lines = content.split('\n');
 
   int indexOfTilesizeWidthDeclaration = lines[1].indexOf("tilewidth=\"") + 11; //include the length of 'tilewidh="'
-  int indexOfTilesizeHeightDeclaration = lines[1].indexOf("tileheight=\"") + 12; //include the length of 'tilewidh="'
+  int indexOfTilesizeHeightDeclaration = lines[1].indexOf("tileheight=\"") + 12; //include the length of 'tileheight="'
 
   int indexOfNextSemicolonWidth = lines[1].indexOf("\"", indexOfTilesizeWidthDeclaration);
   int indexOfNextSemicolonHeight = lines[1].indexOf("\"", indexOfTilesizeHeightDeclaration);
@@ -118,4 +118,16 @@ num max<T extends num>(List<T> vals){
   }
 
   return smallestVal ?? 0;
+}
+
+
+Future<String> getOrientationOfLevel(String levelName) async{
+
+  String content = await rootBundle.loadString('assets/tiles/$levelName.tmx');
+  List<String> lines = content.split('\n');
+
+  int indexOfOrientationDeclaration = lines[1].indexOf("orientation=\"") + 13; //include the length of 'orientation="'
+  int indexOfNextSemicolon = lines[1].indexOf("\"", indexOfOrientationDeclaration);
+
+  return lines[1].substring(indexOfOrientationDeclaration, indexOfNextSemicolon);
 }
