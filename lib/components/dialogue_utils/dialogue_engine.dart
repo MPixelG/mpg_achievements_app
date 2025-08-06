@@ -2,10 +2,8 @@ import 'dart:async'; // Required for async operations and the Completer class.
 import 'package:flutter/material.dart'; // Flutter's material design widget library.
 import 'package:jenny/jenny.dart'; // The core Jenny dialogue engine library.
 // The following are project-specific imports and may vary.
-import 'package:mpg_achievements_app/components/GUI/menus.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_yarn_creator.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 // Manages the state for the [DialogueScreen] widget.
 //

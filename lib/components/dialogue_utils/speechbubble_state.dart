@@ -1,63 +1,78 @@
-
-import 'dart:async'as async;
+import 'dart:async' as async;
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble.dart';
-import 'package:mpg_achievements_app/components/physics/collisions.dart';
-import 'package:mpg_achievements_app/components/player.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-class SpeechBubbleState extends State<SpeechBubble> with TickerProviderStateMixin {
 
+class SpeechBubbleState extends State<SpeechBubble>
+    with TickerProviderStateMixin {
   ///Position reference
 
-  late PixelAdventure game;
   late Vector2 _playerPosition;
-  late double xPosition;
-  late double yPosition;
-  //Current position of the character
-  late  Offset targetPosition;
-  //offset from character(i.e. y/x position from head
-  late  Offset bubbleOffset;
 
-  ///state variables
+  //Current position of the character
+  late Offset _targetPosition;
+
+  //offset from character(i.e. y/x position from head
+  late Offset _bubbleOffset;
+  late Offset _currentPosition;
+
+  ///State variables
   //currently displayed text
   String _displayedText = '';
-
-  //Timers
-  late async.Timer _typingTimer;
-  late async.Timer _dismissTimer;
-  //Typing-related values current character index _displayedtext TODO: Check if typeranimatedtext plugin is better
+  //text to display
+  late String text = 'Hello, this is a speech bubble example!';
   int _currentIndex = 0;
   bool _isTypingComplete = false;
   bool _isSpeechBubbleVisible = false;
+  late final String characterName = widget.characterName;
+
+  //Timers
+  late async.Timer? _typingTimer;
+  late async.Timer? _dismissTimer;
+
+
+  //Configuation of Widget and Animations
+  //Duration between character appearing and text displaying
+  late final Duration typingSpeed = const Duration(milliseconds: 100);
+  late final Duration showDuration = const Duration(seconds: 5);
+  late final Duration dismissDuration = const Duration(seconds: 3);
+  late final bool autoDismiss = true;
+  late final bool autoStart = false;
+
+
+  //styling
+  late final Color textColor = Colors.black;
+  late final double fontSize = 12;
+  late final EdgeInsets padding = const EdgeInsets.all(8.0);
+  late final BorderRadius borderRadius = BorderRadius.circular(8.0);
+  late final bool showTail = true;
+
+
 
   ///Animationcontrollers
   //controls scaling-in
   late AnimationController _scaleController;
+
   //controls fading-out
   late AnimationController _fadeController;
-  //controls movement
-  late AnimationController _positionController;
 
+  ///Animations
   //scale for entrance
-  late Animation<Animation> _scaleAnimation;
+  late Animation<double> _scaleAnimation;
+
   //scale for exit
-  late Animation<Animation> _fadeAnimation;
-  //position controller
-  late Animation<Offset> _positionAnimation;
+  late Animation<double> _fadeAnimation;
+
+
+
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
 
     // Initialize the game reference
-    _playerPosition = game.player.position;
-
-    xPosition = _playerPosition.x;
-    yPosition = _playerPosition.y;
-    targetPosition = Offset(xPosition, yPosition);
-    bubbleOffset = Offset(0, -50); // Adjust this offset as needed relative to
+    _playerPosition = widget.game.player.position;
 
     // Initialize the scale controller for entrance animation
     _scaleController = AnimationController(
@@ -72,86 +87,135 @@ class SpeechBubbleState extends State<SpeechBubble> with TickerProviderStateMixi
       duration: const Duration(milliseconds: 300),
     );
 
-    // Initialize the position controller for movement animation
-    _positionController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
 
-    // Initialize the scale animation for entrance
     //A Tween is used to define the range of the animation, smoothly transitioning from begin value to end value
-    _scaleAnimation = Tween<double>(
-      begin: 0.0,//Start invisible
-      end: 1.0,  // End fully visible
-    ).animate(CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut)) as Animation<Animation>;
+    _scaleAnimation = CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.elasticOut,);
 
     // Initialize the fade animation for exit
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-        parent: _fadeController,
-        curve: Curves.elasticOut)) as Animation<Animation>;
+    _fadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(
+          parent: _fadeController,
+          curve: Curves.linear),
+    );
 
-    // Initialize the position animation for movement
-    _positionAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: Offset(bubbleOffset.dx, bubbleOffset.dy),
-    ).animate(CurvedAnimation(parent: _positionController, curve: Curves.easeInOut));
-
-    //start the animation if autostart is true
-    if(widget.autoStart) {
-      _startAnimationSpeechBubble();
-
-     }
+       //start the animation if autostart is true
+    if (autoStart) {
+      //Use WidgetsBinding to ensure the widget is fully built before starting the animation
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Start the speech bubble animation
+        _startAnimationSpeechBubble();
+      });
 
     }
+  }
 
-
-    @override
-    void dispose() {
-      super.dispose();
+  @override
+  void dispose() {
+    super.dispose();
     // Dispose of the controllers to free up resources
     _scaleController.dispose();
     _fadeController.dispose();
-    _positionController.dispose();
-    _typingTimer.cancel();
-    _dismissTimer.cancel();
+    _typingTimer?.cancel();
+    _dismissTimer?.cancel();
+  }
 
-    }
 
-    void _startAnimationSpeechBubble() {
-      //Visibility true
-      setState(() {
-        _isSpeechBubbleVisible = true;
-      });
-      //Start the scale animation forward start the animation, then happens after thje animation completes
-      _scaleController.forward().then((_) {
-        // Start typing the text after the scale animation completes
-        _startTypingText();
 
-    });
-
-          }
+  /// Updates the target position of the speech bubble based on the player's position
 
   @override
+  void didUpdateWidget(SpeechBubble oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.game.player.position != _playerPosition) {
+      // If the player's position has changed, update the target position
+      setState((){_playerPosition = widget.game.player.position;});
+    }
+  }
+
+
+
+// UI Building
+  /// Builds the speech bubble widget
+  @override
   Widget build(BuildContext context) {
-   throw UnimplementedError();
+    if (!_isSpeechBubbleVisible) {
+      return const SizedBox.shrink(); // Render nothing if not visible
+    }
+
+    return AnimatedPositioned(
+      // The position is now directly derived from the character's state vector
+      left: _playerPosition.x,
+      top: _playerPosition.y - 60, // Bubble offset (adjust as needed)
+      duration: const Duration(milliseconds: 300),
+      child: FadeTransition(
+        //as the speech bubble fades out, it will also scale down
+        opacity: _fadeAnimation,
+        child: ScaleTransition(
+          scale: _scaleAnimation,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withAlpha(128),
+                  blurRadius: 5,
+                  offset: const Offset(0, 2),
+                )
+              ],
+            ),
+            child: Text(
+              _displayedText,
+              style: const TextStyle(color: Colors.black, fontSize: 14),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+//Animation and Typing Logic
+
+  void _startAnimationSpeechBubble() {
+    //Visibility true
+    setState(() {
+      _isSpeechBubbleVisible = true;
+      _displayedText = ''; // Clear the displayed text
+      _currentIndex = 0; // Reset the current index for typing
+      _isTypingComplete = false; // Reset typing completion state
+
+    });
+    //fade animation controller reset because it was used for exit animation of the speech bubble
+    _fadeController.reset();
+    //scaleController reset because it was used for entrance animation of the speech bubble
+    _scaleController.reset();
+
+    _scaleController.forward().then((_) {
+      if(_isSpeechBubbleVisible) {
+        // After the scale animation completes, start the typing text
+        _startTypingText();
+        // After the scale animation completes, start typing the text
+      _startTypingText();}
+    });
   }
 
 
   void _startTypingText() {
-  if(_displayedText.isEmpty) {
-    _isTypingComplete = true;
-    return; // If there's no text to type, do nothing
-  }
+    if (text.isEmpty) {
+      _onTypingComplete();
+      return;
+      }
 
-    _typingTimer = async.Timer.periodic(widget.typingSpeed, (timer){
-        //check if there is still text to display
-      if(_currentIndex < widget.text.length) {
+      _typingTimer = async.Timer.periodic(typingSpeed, (timer) {
+      //check if there is still text to display
+      if (_currentIndex < text.length) {
         setState(() {
           // Append the next character to the displayed text
-          _displayedText = widget.text.substring(0, _currentIndex + 1);
+          _displayedText = text.substring(0, _currentIndex + 1);
 
           _currentIndex++;
         });
@@ -160,33 +224,31 @@ class SpeechBubbleState extends State<SpeechBubble> with TickerProviderStateMixi
         timer.cancel();
         // Start the dismiss timer after typing is complete
         _onTypingComplete();
-
       }
-
     });
   }
-
 
   void _onTypingComplete() {
     setState(() {
       _isTypingComplete = true;
     });
 
-    widget.onComplete?.call(); // Call the callback if provided to notify that typing is complete
+    widget.onComplete!(); // Call the callback if provided to notify that typing is complete
 
     // If autoDismiss is false, the speech bubble will remain visible until manually dismissed
-    if(!widget.autoDismiss) {
+    if (!autoDismiss) {
       // If autoDismiss is false, the speech bubble will remain visible until manually dismissed
       // You can add any additional logic here if needed
       print("Speech bubble typing complete, waiting for manual dismissal.");
     }
 
-    if(widget.autoDismiss) {// If autoDismiss is true, start the dismiss timer
-     _dismissTimer = async.Timer(widget.dismissDuration, () {
-      _dismissSpeechBubble();});
+    if (autoDismiss) {
+      // If autoDismiss is true, start the dismiss timer
+      _dismissTimer = async.Timer(dismissDuration, () {
+        _dismissSpeechBubble();
+      });
     }
-    }
-
+  }
 
   void _dismissSpeechBubble() {
     // Start the fade animation
@@ -196,11 +258,10 @@ class SpeechBubbleState extends State<SpeechBubble> with TickerProviderStateMixi
         _isSpeechBubbleVisible = false;
         _displayedText = ''; // Clear the displayed text
         _currentIndex = 0; // Reset the current index for next use
-        widget.onDismiss?.call();
+        widget.onDismiss!();
       });
-          });
-        }
-
+    });
+  }
 
   void restartSpeechBubble() {
     // Reset the state of the speech bubble
@@ -212,19 +273,14 @@ class SpeechBubbleState extends State<SpeechBubble> with TickerProviderStateMixi
     });
 
     // Cancel any existing timers
-    _typingTimer.cancel();
-    _dismissTimer.cancel();
+    _typingTimer?.cancel();
+    _dismissTimer?.cancel();
 
     // Reset the animation controllers
     _scaleController.reset();
     _fadeController.reset();
-    _positionController.reset();
 
     // Restart the animation
     _startAnimationSpeechBubble();
-
   }
-
 }
-
-
