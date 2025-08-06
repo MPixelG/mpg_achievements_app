@@ -8,7 +8,7 @@ class TileGrid extends Component {
   int width;
   int height;
 
-  double tileSize;
+  Vector2 tileSize;
 
   List<List<TileType>> grid = [];
   List<List<bool>> highlightedSpots = [];
@@ -28,7 +28,7 @@ class TileGrid extends Component {
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
         grid[x][y] = getTileTypeAt(
-          Vector2(x.toDouble(), y.toDouble()) * tileSize,
+          Vector2(x.toDouble(), y.toDouble())..multiply(tileSize),
         );
       }
     }
@@ -59,7 +59,7 @@ class TileGrid extends Component {
           gridPos.y >= height);
 
   void setAtWorldPos(Vector2 worldPos, [TileType val = TileType.solid]) {
-    Vector2 gridPos = (worldPos / tileSize)..floor();
+    Vector2 gridPos = (worldPos..divide(tileSize))..floor();
 
     setVal(gridPos, val);
   }
@@ -81,9 +81,9 @@ class TileGrid extends Component {
         if (highlighted) {
           canvas.drawRect(
             Rect.fromPoints(
-              (Vector2(x.toDouble(), y.toDouble()) * (tileSize)).toOffset(),
-              (Vector2(x.toDouble(), y.toDouble()) * (tileSize)).toOffset() +
-                  Offset(tileSize - 2, tileSize - 2),
+              (Vector2(x.toDouble(), y.toDouble())..multiply(tileSize)).toOffset(),
+              (Vector2(x.toDouble(), y.toDouble())..multiply(tileSize)).toOffset() +
+                  Offset(tileSize.x - 2, tileSize.y - 2),
             ),
             Paint()..color = Colors.red,
           );
@@ -100,7 +100,7 @@ class TileGrid extends Component {
     for (final obj in collisionLayer!.objects) {
       final rect = Rect.fromLTWH(obj.x, obj.y, obj.width, obj.height);
       if (rect.contains(
-        worldPos.toOffset() + Offset(tileSize / 2, tileSize / 2),
+        worldPos.toOffset() + Offset(tileSize.x / 2, tileSize.y / 2),
       )) {
         return switch (obj.class_) {
           "" => TileType.solid,

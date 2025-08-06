@@ -38,12 +38,18 @@ class NinePatchTexture {
     throw Exception('NinePatchTexture for $imageName not found in cache. Please create it first.');
   }
 
+  static bool existsInCache(String name) => _cache[name] != null;
+
+  static List<String> getLoadedTextureNames() => _cache.keys.toList();
+
 
   static bool currentlyLoading = false;
   static void loadTextures() async{
 
     List<NinePatchTexture> textures = [
       NinePatchTexture("button_0", 3, 3, 3, 3),
+      NinePatchTexture("test_button", 3, 3, 3, 3),
+      NinePatchTexture("test_button_2", 3, 3, 3, 3),
     ];
     Future.doWhile(() async {
       await Future.delayed(const Duration(milliseconds: 10)); // Check every 100ms

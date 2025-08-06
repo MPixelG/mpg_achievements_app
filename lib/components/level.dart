@@ -13,6 +13,7 @@ import 'package:mpg_achievements_app/components/background/background_tile.dart'
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
+import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
@@ -35,7 +36,7 @@ class Level extends World
 
   int totalCollectables = 0;
 
-  late final double tilesize;
+  late final Vector2 tilesize;
 
   //Todo add feature to make levels with and without scrolling background //added via Tiled
   final bool scrollingBackground = false;
@@ -50,21 +51,30 @@ class Level extends World
 
   @override
   FutureOr<void> onLoad() async {
-    tilesize = await (await getTilesizeOfLevel(levelName)).toDouble();
+    tilesize = (await getTilesizeOfLevel(levelName));
 
     //await need to be there because it takes some time to load, that's why the method needs to be async
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
-    level = await TiledComponent.load('$levelName.tmx', Vector2.all(tilesize));
+    level = await TiledComponent.load('$levelName.tmx', tilesize);
     add(level);
 
     // If level not Parallax, load level with  scrolling background, property is added in Tiled
-    if (level.tileMap.getLayer('Level')?.properties.getValue('Parallax')) {
+    if (level.tileMap.getLayer('Level')?.properties.getValue('Parallax') ?? false) {
       _loadParallaxLevel();
     } else {
       _scrollingBackground();
     }
+
+    String side = level.tileMap.getLayer('Level')?.properties.getValue('Side') ?? "Side";
+
+    if (side == "Side") {
+      player.viewSide = ViewSide.side;
+    } else if(side == "TopDown"){
+      player.viewSide = ViewSide.topDown;
+    }
+
 
     generator = POIGenerator(this);
     add(generator);
@@ -80,10 +90,6 @@ class Level extends World
     debugOverlays.scale = Vector2.zero(); // Start hidden/scaled down
     debugOverlays.priority =
         2; // Ensure overlays draw above the rest of the game
-
-    /*    if (level != null) {
-      game.lightingRenderer.extractObjectsFromTiledMap(level);
-    }*/
 
     // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
     game.cam.setMoveBounds(Vector2.zero(), level.size);

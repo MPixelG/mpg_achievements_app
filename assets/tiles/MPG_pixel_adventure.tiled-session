@@ -16,8 +16,8 @@
         },
         "Level_0.tmx": {
             "expandedObjectLayers": [
-                20,
-                17
+                17,
+                20
             ],
             "scale": 1.5,
             "selectedLayer": 1,
@@ -28,8 +28,8 @@
         },
         "Level_1.tmx": {
             "expandedObjectLayers": [
-                3,
-                2
+                2,
+                3
             ],
             "scale": 2,
             "selectedLayer": 1,
@@ -44,16 +44,16 @@
                 2
             ],
             "scale": 2,
-            "selectedLayer": 10,
+            "selectedLayer": 7,
             "viewCenter": {
-                "x": 520,
-                "y": 531.75
+                "x": 674.25,
+                "y": 434.5
             }
         },
         "Level_3.tmx": {
             "expandedObjectLayers": [
-                3,
-                2
+                2,
+                3
             ],
             "scale": 1.5,
             "selectedLayer": 0,
@@ -66,16 +66,19 @@
             "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1024,
-                "y": 448.16666666666663
+                "x": 1024.1666666666665,
+                "y": 448.33333333333326
             }
         },
         "Level_5.tmx": {
-            "scale": 1,
-            "selectedLayer": 8,
+            "expandedObjectLayers": [
+                3
+            ],
+            "scale": 1.5,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 632.5,
-                "y": 309
+                "x": 964.3333333333333,
+                "y": 674
             }
         },
         "Lever_3.tmx": {
@@ -112,6 +115,9 @@
         "crystal stuff.tsx": {
             "dynamicWrapping": false
         },
+        "grass_concrete.tsx": {
+            "dynamicWrapping": false
+        },
         "industrialObjects.tsx": {
             "dynamicWrapping": true,
             "scaleInDock": 1.4
@@ -144,6 +150,11 @@
             "scaleInDock": 1,
             "scaleInEditor": 3
         },
+        "isometric.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "parralax_city_0.tsx": {
             "dynamicWrapping": true,
             "scaleInDock": 1,
@@ -159,13 +170,14 @@
         }
     },
     "last.externalTilesetPath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/tiles",
-    "last.imagePath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/images/tiles",
+    "last.imagePath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/images/Pixel_ArtTop_Down",
     "map.fixedSize": true,
-    "map.height": 28,
+    "map.height": 128,
     "map.lastUsedFormat": "tmx",
+    "map.orientation": "2",
     "map.tileHeight": 32,
     "map.tileWidth": 32,
-    "map.width": 64,
+    "map.width": 128,
     "openFiles": [
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",
@@ -180,8 +192,9 @@
         "IndustrialTile_81.png.tsx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
-    "property.type": "int",
+    "property.type": "bool",
     "recentFiles": [
+        "isometric.tsx",
         "MPG_pixel_adventure.tsx",
         "IndustrialTile_81.png.tsx",
         "industrial_tiles_2.tsx",
@@ -192,8 +205,7 @@
         "Level_3.tmx",
         "Level_0.tmx",
         "Level_1.tmx",
-        "Level_2.tmx",
-        "industrial_tiles_3.tsx"
+        "Level_2.tmx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",

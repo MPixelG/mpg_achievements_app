@@ -5,11 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/json_exporter.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';
-import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/gui_editor.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import '../dialogue_utils/text_overlay.dart';
+import '../dialogue_utils/speechbubble.dart';
 import 'json_factory/widgetFactory.dart';
 import 'menuCreator/layout_widget.dart';
 
@@ -170,8 +168,6 @@ class GameScreen extends StatelessWidget {
                 'TextOverlay': (BuildContext context, PixelAdventure game) {
                   return TextOverlay(
                       game: game, onTextOverlayDone: () {game.overlays.remove("TextOverlay");},
-
-
                   );
                 },
                 'DialogueScreen': (BuildContext context, PixelAdventure game) {
@@ -182,7 +178,21 @@ class GameScreen extends StatelessWidget {
                       game.overlays.remove('DialogueScreen');
                     },
                   );
-                }
+                },
+                'SpeechBubble': (BuildContext context, PixelAdventure game) {
+                  return SpeechBubble(
+                    game: game,
+                    characterName: game.player.playerCharacter,
+                    targetPosition: game.player.position.toOffset(),
+                    currentPosition: game.player.position.toOffset(),
+                    onComplete: () {
+                      game.overlays.remove('SpeechBubble');
+                    },
+                    onDismiss: () {
+                      game.overlays.remove('SpeechBubble');
+                    },
+                  );
+                },
               },
             ),
           ]

@@ -1,312 +1,374 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:jenny/jenny.dart';
-import 'package:mpg_achievements_app/components/GUI/menus.dart';
+import 'dart:async'; // Required for async operations and the Completer class.
+import 'package:flutter/material.dart'; // Flutter's material design widget library.
+import 'package:jenny/jenny.dart'; // The core Jenny dialogue engine library.
+// The following are project-specific imports and may vary.
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_yarn_creator.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-// State class for DialogueScreen that handles dialogue display and interaction
-// Implements DialogueView mixin to integrate with the Jenny dialogue system
+// Manages the state for the [DialogueScreen] widget.
+//
+// This class is responsible for:
+// - Loading and running Yarn dialogue scripts using the Jenny library.
+// - Displaying dialogue lines, character names, and choices.
+// - Handling user input to advance the dialogue or make choices.
+// - Providing a debug view for the raw Yarn script.
+//
+// It uses the `with DialogueView` mixin to register itself as a listener
+// to the Jenny `DialogueRunner`, allowing it to respond to dialogue events
+// like `onLineStart`, `onChoiceStart`, and `onDialogueFinish`.
+
 class DialogueScreenState extends State<DialogueScreen> with DialogueView {
 
-  // Game instance reference for potential game state interactions
-  late final PixelAdventure game;
+  // General layout and positioning constants.
+  static const EdgeInsets _dialogueCardPadding = EdgeInsets.all(16.0);
+  static const double _dialogueCardOpacity = 0.85;
+  static final BorderRadius _dialogueBorderRadius = BorderRadius.circular(16.0);
+  static const double _buttonSpacing = 16.0;
+  static const double _outerPadding = 20.0;
 
-  // Jenny dialogue system components
-  late final YarnProject _project;        // Contains the compiled dialogue data
-  late DialogueYarnCreator _yarnCreator;  // Helper class to load and create yarn projects
-  late final _script;                     // Raw script content for debugging/display
-  late DialogueRunner _dialogueRunner;    // Manages dialogue execution and flow
+  // Typography definitions. Using a getter `=>` allows access to `context`.
+  static const String _gameFont = "gameFont";
+  TextStyle get _characterNameStyle =>
+      Theme.of(context).textTheme.titleMedium!.copyWith(
+        fontFamily: _gameFont,
+        fontWeight: FontWeight.bold,
+      );
+  TextStyle get _dialogueTextStyle =>
+      Theme.of(context).textTheme.bodyLarge!.copyWith(
+        fontFamily: _gameFont,
+      );
+  TextStyle get _buttonTextStyle => const TextStyle(fontFamily: _gameFont);
 
-  // Current dialogue state
-  DialogueLine? _currentLine;             // The currently displayed dialogue line
-  bool _dialogueFinished = false;         // Flag to track if dialogue sequence is complete
-  Completer<bool>? _finishedReadingCompleter; // Async completer to wait for user input
+  // Color definitions. Using getters allows theme-dependent color resolution.
+  Color get _dialogueCardColor => Theme.of(context).colorScheme.inversePrimary;
+  Color get _scriptButtonColor =>
+      Theme.of(context).colorScheme.secondary.withAlpha((255*0.8).round());
+  Color get _choiceSheetColor => Colors.blueGrey.shade800;
+
+
+  // region State Variables
+  // These variables hold the state of the dialogue system at any given time.
+
+
+  // The compiled Yarn project containing all nodes, lines, and commands.
+  late final YarnProject _project;
+
+  // The raw string content of the loaded .yarn file, used for the script viewer.
+  late final String _rawYarnScript;
+
+  // The Jenny engine instance that executes the dialogue logic.
+  late DialogueRunner? _dialogueRunner;
+
+  //A completer that pauses the [DialogueRunner].
+  //
+  // When `onLineStart` is called, a new completer is created. The runner
+  // waits until `completer.complete()` is called, which happens when the user
+  // clicks the "Next" button.
+
+  Completer<bool>? _lineCompleter;
+
+  // The current [DialogueLine] being displayed to the user.
+  // If `null`, the dialogue UI is hidden.
+  DialogueLine? _currentLine;
+
+  // A flag indicating whether the entire dialogue sequence has finished.
+  // When `true`, a "Close" button is shown instead of a "Next" button.
+  bool _isDialogueFinished = false;
+
+
+  // region Widget Lifecycle
 
   @override
   void initState() {
     super.initState();
-    // Initialize the dialogue system when the widget is created
-    _loadYarnProject();
+    // Start the process of loading the Yarn file and setting up the dialogue runner.
+    _initializeDialogue();
   }
 
-  // Loads the Yarn project file and initializes the dialogue system
-  Future<void> _loadYarnProject() async {
-    // Create the yarn creator helper
-    _yarnCreator = DialogueYarnCreator();
+  /// Asynchronously loads the Yarn file from assets, compiles it, and
+  /// initializes the [DialogueRunner].
+  Future<void> _initializeDialogue() async {
+    // Helper class to load and parse the .yarn file.
+    final yarnCreator = DialogueYarnCreator();
+    await yarnCreator.loadYarnFile('assets/yarn/test.yarn');
 
-    // Load the yarn file from assets
-    await _yarnCreator.loadYarnFile('assets/yarn/test.yarn');
+    // Store the compiled project and the raw script text.
+    _project = yarnCreator.project;
+    _rawYarnScript = yarnCreator.script;
 
-    // Extract the compiled project and raw script
-    _project = _yarnCreator.project;
-    _script = _yarnCreator.script;
+    // Create the DialogueRunner, providing it with the project and a
+    // list of views. `[this]` means this class will handle UI events.
+    _dialogueRunner = DialogueRunner(yarnProject: _project, dialogueViews: [this]);
 
-    // Create the dialogue runner with this widget as a dialogue view
-    _dialogueRunner = DialogueRunner(
-        yarnProject: _project,
-        dialogueViews: [this]);
-
-    // Start the dialogue from the 'Start' node
-    _dialogueRunner.startDialogue('Start');
-
-    // Debug print to verify project loading
-    print(_project);
+    // Start the dialogue from the node named 'Start'.
+    _dialogueRunner?.startDialogue('Start');
   }
 
   @override
   Widget build(BuildContext context) {
-    // Get the current dialogue line
-    final line = _currentLine;
-
-    // If there's no current line, don't show anything
-    if (line == null) {
-      return SizedBox.shrink();
+    // If there is no current line, it means the dialogue is not active or has
+    // been closed. We return an empty, zero-sized widget.
+    if (_currentLine == null) {
+      return const SizedBox.shrink();
     }
 
+    // The main UI is a Scaffold with a transparent background to allow the
+    // game behind it to be visible.
     return Scaffold(
-      // Transparent background so the game view remains visible underneath
       backgroundColor: Colors.transparent,
-
-      // Stack allows us to layer the dialogue UI over the game
+      // A Stack allows us to layer widgets on top of each other, perfect for
+      // an overlay UI like a dialogue screen.
       body: Stack(
         children: [
-          // Show Script button positioned in the upper left corner
+          _buildShowScriptButton(),
           Positioned(
-            top: 20,     // Distance from top of screen (accounting for status bar)
-            left: 20,    // Distance from left edge
+            top: _outerPadding,
+            right: _outerPadding,
             child: FloatingActionButton.small(
-              onPressed: _showScript,
-              backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
-              tooltip: 'Show Script',
-              child: const Icon(Icons.code, size: 20), // Accessibility tooltip
-            ),
-          ),
-
-          // Main dialogue UI positioned at the bottom center
-          Positioned(
-            left: 20,    // Left margin for dialogue box
-            right: 20,   // Right margin for dialogue box
-            bottom: 40,  // Distance from bottom of screen
-            child: Opacity(
-              opacity: 0.5, // Semi-transparent dialogue box for game visibility
-
-              child: Card(
-                // Use theme colors for consistent styling
-                color: Theme.of(context).colorScheme.inversePrimary,
-                elevation: 4, // Drop shadow for depth
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16), // Rounded corners for modern look
-                ),
-
-                // Internal padding for dialogue content
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-
-                  // Column layout for dialogue elements
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min, // Only take necessary vertical space
-                    children: [
-
-                      // Character name display (if available)
-                      Text(
-                        line.character?.name ?? '', // Show character name or empty string
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            fontFamily: "gameFont" // Custom font for game consistency
-                        ),
-                      ),
-
-                      const SizedBox(height: 6), // Spacing between name and dialogue
-
-                      // Main dialogue text
-                      Text(
-                        line.text,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 14, // Readable size for dialogue
-                          fontFamily: "gameFont", // Consistent game font
-                        ),
-                      ),
-
-                      const SizedBox(height: 10), // Spacing before button
-
-                      // Dynamic button display based on dialogue state
-                      _dialogueFinished
-                      // Close button when dialogue sequence is complete
-                          ? FilledButton.icon(
-                        onPressed: () => setState(() {
-                          _dialogueFinished = false; // Reset dialogue state
-                        }),
-                        icon: const Icon(Icons.close, size: 18),
-                        label: const Text('Close',
-                            style: TextStyle(fontSize: 14, fontFamily: "gameFont")),
-                        style: FilledButton.styleFrom(
-                          minimumSize: const Size(80, 36), // Compact button size
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        ),
-                      )
-                      // Next button when waiting for user to continue reading
-                          : (_finishedReadingCompleter != null
-                          ? FilledButton.icon(
-                        onPressed: _finishedReadingLine, // Continue to next line
-                        icon: const Icon(Icons.arrow_forward, size: 18),
-                        label: const Text('Next',
-                            style: TextStyle(fontSize: 14, fontFamily: "gameFont")),
-                        style: FilledButton.styleFrom(
-                          minimumSize: const Size(80, 36),
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        ),
-                      )
-                      // No button when dialogue is processing
-                          : const SizedBox.shrink()),
-                    ],
-                  ),
-                ),
+              onPressed: _closeDialogue,
+              backgroundColor: _scriptButtonColor,
+              tooltip: 'Close Dialogue',
+              child: const Icon(Icons.close,size:20),
               ),
-            ),
           ),
-        ],
+      _buildDialogueCard(_currentLine!),
+
+         ],
       ),
     );
   }
 
 
+  // region Widget Builder Methods
+  // These methods break down the UI into smaller, manageable pieces.
 
 
-  // Called when a new dialogue line should be displayed
-  // Returns a Future<bool> that completes when the user is ready to continue
+  // Builds the small floating button used to display the raw script.
+  Widget _buildShowScriptButton() {
+    return Positioned(
+      top: _outerPadding,
+      left: _outerPadding,
+      child: FloatingActionButton.small(
+        onPressed: _showScript,
+        backgroundColor: _scriptButtonColor,
+        tooltip: 'Show Script',
+        child: const Icon(Icons.code, size: 20),
+      ),
+    );
+  }
+
+  /// Builds the main card that displays the character name and dialogue text.
+  Widget _buildDialogueCard(DialogueLine line) {
+    return Positioned(
+      left: _outerPadding,
+      right: _outerPadding,
+      bottom: _outerPadding + 20,
+      child: Opacity(
+        opacity: _dialogueCardOpacity,
+        child: Card(
+          color: _dialogueCardColor,
+          elevation: 4,
+          shape: RoundedRectangleBorder(borderRadius: _dialogueBorderRadius),
+          child: Padding(
+            padding: _dialogueCardPadding,
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // The card should only be as tall as its content.
+              children: [
+                // Display the character's name, or an empty string if none.
+                Text(line.character?.name ?? '', style: _characterNameStyle),
+                const SizedBox(height: 8),
+                // Display the actual dialogue text.
+                Text(line.text, textAlign: TextAlign.center, style: _dialogueTextStyle),
+                const SizedBox(height: _buttonSpacing),
+                // This method will decide whether to show a "Next" or "Close" button.
+                _buildActionButton(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Builds the primary action button based on the current dialogue state.
+  Widget _buildActionButton() {
+    // If the dialogue sequence is completely finished, show a "Close" button.
+    if (_isDialogueFinished) {
+      return FilledButton.icon(
+        onPressed: _closeDialogue,
+        icon: const Icon(Icons.close, size: 18),
+        label: Text('Close', style: _buttonTextStyle),
+      );
+    }
+
+    // If we are waiting for the user to advance the line, show a "Next" button.
+    // `_lineCompleter` is not null only when `onLineStart` has been called and
+    // `_advanceDialogue` has not yet been called.
+    if (_lineCompleter != null) {
+      return FilledButton.icon(
+        onPressed: _advanceDialogue,
+        icon: const Icon(Icons.arrow_forward, size: 18),
+        label: Text('Next', style: _buttonTextStyle),
+      );
+    }
+
+    // If neither of the above, it means the runner is processing. Show nothing.
+    return const SizedBox.shrink();
+  }
+
+
+  // region DialogueView Implementation
+  // These methods are called by the `DialogueRunner` to interact with the UI.
+
+
   @override
   Future<bool> onLineStart(DialogueLine line) {
-    // Ensure we don't have multiple completers active
-    assert(_finishedReadingCompleter == null);
-
-    // Create a new completer to wait for user input
+    // Create a new completer. The DialogueRunner will `await` this completer's future.
     final completer = Completer<bool>();
 
-    // Update the UI to show the new dialogue line
+    // Update the state to display the new line and store the completer.
+    // `setState` triggers a rebuild, showing the new text and the "Next" button.
     setState(() {
       _currentLine = line;
+      _isDialogueFinished = false; // A new line means the dialogue is not finished.
+      _lineCompleter = completer;
     });
 
-    // Store the completer so the Next button can complete it
-    _finishedReadingCompleter = completer;
-
-    // Return the future that will be completed when user clicks Next
+    // Return the future. The runner is now paused.
     return completer.future;
   }
 
-  // Called when the dialogue system needs to present choices to the player
-  // Returns the index of the selected choice
   @override
-  Future<int?> onChoiceStart(DialogueChoice choice) async {
+  Future<int?> onChoiceStart(DialogueChoice choice) {
     final completer = Completer<int>();
 
-    // Show a modal bottom sheet with choice options
-    showModalBottomSheet(
+    // Use a ModalBottomSheet to display the choices to the user.
+    // This sheet appears from the bottom of the screen.
+    showModalBottomSheet<void>(
       context: context,
-      isDismissible: false, // Force user to make a choice
-      builder: (context) {
-        return Container(
-
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.white10,width: 2),
-            borderRadius: BorderRadius.circular(15),
-            color: Colors.cyanAccent, // Distinctive color for choices
-          ),
-          child: Column(
-            spacing: 20,
-            children: [
-              // Create a button for each choice option
-              for (final (index, option) in choice.options.indexed)
-                OutlinedButton(
-                  // Only enable button if the choice is available
-                  onPressed: option.isAvailable
-                      ? () {
-                    // Complete with the selected choice index
-                    completer.complete(index);
-                    Navigator.pop(context); // Close the modal
-                  }
-                      : null, // Disabled if choice is not available
-                  child: Text(option.text, style: TextStyle(fontSize: 12, fontFamily: "gameFont")),
-                )
-            ],
-          ),
-        );
-      },
+      isDismissible: false, // The user must make a choice to proceed.
+      backgroundColor: Colors.transparent, // Allows our custom container to define the look.
+      builder: (context) => _buildChoiceSheet(choice, completer),
     );
 
-    // Return the future that completes with the chosen option index
+    // Return the completer's future. The runner will await the user's choice.
     return completer.future;
   }
 
-  // Called when the entire dialogue sequence is finished
   @override
-  FutureOr<void> onDialogueFinish() {
+  void onDialogueFinish() {
+    // The DialogueRunner has finished all nodes in the conversation.
+
     setState(() {
-      _dialogueFinished = true; // Mark dialogue as complete
-      // Notify the parent widget that dialogue has finished
+      widget.onDialogueFinished();
+      // Mark the dialogue as finished to show the "Close" button.
+      _isDialogueFinished = true;
+
+    });
+  }
+
+
+  // region UI Actions and Helpers
+  // Methods called in response to user interaction (button presses).
+
+
+  // Hides the entire dialogue UI and resets its visible state.
+  void _closeDialogue() {
+    setState(() {
+      _isDialogueFinished = false;
       widget.onDialogueFinished();
     });
   }
 
-  // Shows a debug dialog displaying the raw script content
-  // Useful for development and debugging dialogue scripts
+  // Signals to the DialogueRunner that the user has finished reading the line.
+  void _advanceDialogue() {
+    // Check if the completer is valid and has not already been completed.
+    if (_lineCompleter != null && !_lineCompleter!.isCompleted) {
+      // Complete the future. This unpauses the DialogueRunner.
+      _lineCompleter!.complete(true);
+
+      // Set the completer to null and rebuild to hide the "Next" button while
+      // the runner processes the next step.
+      setState(() {
+        _lineCompleter = null;
+      });
+    }
+  }
+
+  // Shows a debug dialog displaying the raw content of the Yarn script.
   Future<void> _showScript() async {
-    // Safety check to ensure widget is still mounted
+    // Ensure the widget is still in the tree before showing a dialog.
     if (!mounted) return;
 
-    showDialog(
+    //pause game
+    widget.game.pauseEngine();
+
+    await showDialog<void>(
       context: context,
-      builder: (_) => SimpleDialog(
-        title: Text('Script Content'),
-        contentPadding: const EdgeInsets.all(24),
+      // The builder provides a `dialogContext` which is crucial for closing.
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('Script Content'),
+        contentPadding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
         children: [
-          // Display the raw script in a scrollable container
           Container(
-            constraints: BoxConstraints(
-              maxHeight: 400, // Limit height for long scripts
-              maxWidth: 300,  // Limit width for readability
-            ),
+            constraints: const BoxConstraints(maxHeight: 400, maxWidth: 300),
             child: SingleChildScrollView(
-              child: Text(
-                _script,
-                style: TextStyle(
-                  fontFamily: 'monospace', // Monospace font for code readability
-                  fontSize: 12,
-                ),
-              ),
+              child: Text(_rawYarnScript, style: const TextStyle(fontFamily: 'monospace')),
             ),
           ),
-
-          const SizedBox(height: 16),
-
-          // Close button for the dialog
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              CloseButton(),
-
-            ],
+          const SizedBox(height: _buttonSpacing),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              // Using `dialogContext` ensures we only pop the dialog itself,
+              // not the entire dialogue screen or game view.
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Close'),
+            ),
           ),
         ],
       ),
     );
+
+    if(mounted) {
+      // Resume the game engine after the dialog is closed.
+      widget.game.resumeEngine();
+    }
   }
 
-  // Completes the current line reading and moves to the next dialogue element
-  // Called when user clicks the Next button
-  void _finishedReadingLine() {
-    // Get the current completer (should never be null when this is called)
-    final completer = _finishedReadingCompleter!;
-
-    // Complete the future with true (indicating successful read)
-    completer.complete(true);
-
-    // Clear the completer and update UI
-    setState(() {
-      _finishedReadingCompleter = null;
-    });
+  // Builds the UI for the modal sheet that displays choices.
+  Widget _buildChoiceSheet(DialogueChoice choice, Completer<int> completer) {
+    return Container(
+      padding: _dialogueCardPadding,
+      margin: const EdgeInsets.all(_outerPadding),
+      decoration: BoxDecoration(
+        color: _choiceSheetColor,
+        borderRadius: _dialogueBorderRadius,
+        border: Border.all(color: Colors.white24, width: 2),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Create a button for each option in the choice.
+          for (final (index, option) in choice.options.indexed) ...[
+            OutlinedButton(
+              // A choice can be unavailable if its condition (e.g., `<<if $seen_key>>`) is false.
+              onPressed: option.isAvailable
+                  ? () {
+                // Complete the future with the index of the chosen option.
+                completer.complete(index);
+                // Close the bottom sheet.
+                Navigator.pop(context);
+              }
+                  : null, // `null` onPressed disables the button.
+              child: Text(option.text, style: _buttonTextStyle),
+            ),
+            // Add spacing between buttons, but not after the last one.
+            if (index < choice.options.length - 1) const SizedBox(height: 10),
+          ],
+        ],
+      ),
+    );
   }
 }

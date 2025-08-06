@@ -15,12 +15,12 @@ class FollowPlayerGoal extends MoveGoal{
     Vector2? lastPlayerPos = attributes!.attributes["nearestPlayerPosition"];
     lastPlayerSighting += dt;
     if(lastPlayerPos != null) {
-      if((lastPlayerPos / tilesize).distanceTo(endPos) > 2) recalculatePath((lastPlayerPos / tilesize)..floor());
+      if((lastPlayerPos..divide(tilesize)).distanceTo(endPos) > 2) recalculatePath((lastPlayerPos..divide(tilesize))..floor());
       lastPlayerSighting = 0;
       attributes!.attributes["nearestPlayerPosition"] = null;
 
     } else if(lastPlayerSighting > 0.5 && lastPlayerSighting < 2){
-      recalculatePath((playerToFollow.absoluteCenter / tilesize)..floor());
+      recalculatePath((playerToFollow.absoluteCenter..divide(tilesize))..floor());
       lastPlayerSighting = double.infinity;
     }
 

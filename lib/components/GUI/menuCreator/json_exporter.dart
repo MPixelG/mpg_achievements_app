@@ -148,6 +148,8 @@ class WidgetJsonUtils {
       Card => addCard(parent, properties: restoredProps),
       GridView => addGridView(parent, properties: restoredProps),
       Image => addImage(parent, properties: restoredProps),
+      InteractiveViewer => addInteractiveViewer(parent, properties: restoredProps),
+      SingleChildScrollView => addSingleChildScrollView(parent, properties: restoredProps),
       _ => throw UnimplementedError("the widget type $widgetType cant be created yet! please add it first!")
     };
 
@@ -232,6 +234,10 @@ class WidgetJsonUtils {
         return Opacity;
       case 'Card':
         return Card;
+      case 'InteractiveViewer':
+        return InteractiveViewer;
+      case 'SingleChildScrollView':
+        return SingleChildScrollView;
       default:
         throw Exception('Unknown widget type: $widgetType');
     }

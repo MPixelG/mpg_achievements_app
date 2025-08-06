@@ -7,7 +7,8 @@ import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_builder.d
 import 'package:mpg_achievements_app/components/GUI/menuCreator/editor_node_dependency_viewer.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/layout_widget.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_option_definitions.dart';
-class GuiEditor extends StatefulWidget { //the GUI editor lets us create guis and later export them as a json TODO
+
+class GuiEditor extends StatefulWidget { //the GUI editor lets us create guis and later export them as a json
   const GuiEditor({super.key});
 
   @override
@@ -21,7 +22,7 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
 
   late LayoutWidget root; //just temp to be initialized later in initState()
 
-  NodeViewer? nodeViewer; //this is the node viewer that will be used to show the dependencies of a node. TODO: implement this
+  NodeViewer? nodeViewer; //this is the node viewer that will be used to show the dependencies of a node.
   final GlobalKey<NodeViewerState> _nodeViewerKey = GlobalKey<NodeViewerState>();
 
   void updateViewport() { //this is used to update the viewport of the node viewer, so that it shows the current state of the layout
@@ -41,8 +42,6 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   Future<void> initEditor() async {
     doneLoading = false;
 
-
-
     root = await WidgetJsonUtils.importScreen("test");
 
     setState(() {
@@ -61,17 +60,9 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
     return Map<String, dynamic>.from(jsonMap);
   }
 
-
-
-
   @override
   Widget build(BuildContext context) { //here we actually build the stuff thats being rendered
-
-    if (nodeViewer == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-
+    if (nodeViewer == null) return const Center(child: CircularProgressIndicator());
 
 
     return Scaffold( //we use a scaffold bc it lets us easily add components with some presets.
@@ -93,8 +84,24 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
           print("json: $json");
         }, child: Icon(Icons.outbond_outlined),),
 
-
         PopupMenuButton(itemBuilder: (context) => [ //this is the floating action button that opens a popup menu with the options to add widgets
+          PopupMenuItem( //this is the popup menu item that lets us add a positioned widget
+            value: 'interactive_viewer', //the value of the popup menu item is used to identify which widget to add
+            child: ListTile( //the ListTile is used to display the icon and the text of the popup menu item
+              leading: Icon(Icons.dashboard_customize_outlined), //the icon of the ListTile is the icon that is displayed next to the text
+              title: Text('Interactive Viewer'), //the displayed text
+            ),
+          ),
+          PopupMenuItem( //this is the popup menu item that lets us add a positioned widget
+            value: 'single_child_scroll_view', //the value of the popup menu item is used to identify which widget to add
+            child: ListTile( //the ListTile is used to display the icon and the text of the popup menu item
+              leading: Icon(Icons.expand_rounded), //the icon of the ListTile is the icon that is displayed next to the text
+              title: Text('Single Child Scroll View'), //the displayed text
+            ),
+          ),
+
+
+
         PopupMenuItem( //this is the popup menu item that lets us add a positioned widget
           value: 'fitted_box', //the value of the popup menu item is used to identify which widget to add
           child: ListTile( //the ListTile is used to display the icon and the text of the popup menu item
@@ -207,6 +214,8 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
               case "transform": addWidget(addTransform(root));
               case "opacity": addWidget(addOpacity(root));
               case "image": addWidget(addImage(root));
+              case "interactive_viewer": addWidget(addInteractiveViewer(root));
+              case "single_child_scroll_view": addWidget(addSingleChildScrollView(root));
             }
 
             _nodeViewerKey.currentState?.setState(() {}); //this updates the node viewer to show the new widget that was added

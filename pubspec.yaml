@@ -40,7 +40,9 @@ dependencies:
   animated_text_kit: ^4.2.3
   reorderables: ^0.6.0
   flutter_colorpicker: ^1.1.0
+  go_router: ^16.0.0
 
+  vector_math: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -87,6 +89,7 @@ flutter:
       - assets/images/Items/Checkpoints/Checkpoint/Checkpoint (Flag Idle) (64x64).png
       - assets/images/Items/Checkpoints/Checkpoint/Checkpoint (Flag Out) (64x64).png
       - assets/images/Items/Checkpoints/Checkpoint/Checkpoint (No Flag) (64x64).png
+      - assets/images/Pixel_ArtTop_Down/iso_tile_export.png
       - assets/images/Traps/Saw/
       - assets/images/Background/
       - assets/images/Background/City_Clean/
@@ -96,6 +99,7 @@ flutter:
       - assets/images/objects/
       - assets/images/Menu/
       - assets/images/Menu/Buttons/
+      - assets/images/Menu/Buttons/test_button.png
       - assets/screens/
       - assets/yarn/test.yarn
   shaders:

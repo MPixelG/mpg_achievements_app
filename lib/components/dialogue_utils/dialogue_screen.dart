@@ -5,11 +5,11 @@ import 'dialogue_engine.dart';
 
 class DialogueScreen extends StatefulWidget {
   final VoidCallback onDialogueFinished;
+  final PixelAdventure game;
 
   const DialogueScreen({
     super.key,
-    required PixelAdventure game,
-    required this.onDialogueFinished,
+    required this.onDialogueFinished, required this.game,
   });
 
   @override
