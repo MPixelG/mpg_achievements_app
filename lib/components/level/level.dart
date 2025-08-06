@@ -136,10 +136,10 @@ abstract class Level extends World
 
     final Vector2 worldPosition = screenPosition + game.cam.pos;
 
-    Vector2 gridPos = toGridPos(worldPosition);
+    print(generator.grid.isBlocked(toGridPos(_mouseCoords)..floor()));
 
     print("world pos: $worldPosition");
-    print("grid pos: $gridPos");
+    print("grid pos: ${toGridPos(_mouseCoords)}\n\n\n");
   }
 
   @override //update the overlays
@@ -151,7 +151,7 @@ abstract class Level extends World
 
     String playerCoords = roundedPlayerPos.toString();
     debugOverlays.text =
-    "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${toGridPos(_mouseCoords - game.cam.pos)
+    "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${toGridPos(_mouseCoords)
       ..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tileSize.x)
         .floor()}, ${(mousePos.y / tileSize.y).floor()}";
     debugOverlays.position =

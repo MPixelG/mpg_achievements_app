@@ -1,9 +1,7 @@
 
 import 'dart:async';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/src/collisions/hitboxes/rectangle_hitbox.dart';
-import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
-import 'package:vector_math/vector_math.dart';
 
 import '../../physics/collisions.dart';
 import '../level.dart';
@@ -12,30 +10,27 @@ class IsometricLevel extends Level{
   IsometricLevel({required super.levelName, required super.player});
 
   @override
-  Vector2 toGridPos(Vector2 pos) {
-    return screenToTileIsometric(screenPosition: pos - Vector2(level.position.x + (level.width / 2), level.position.y), cameraPosition: game.cam.pos);
+  Vector2 toGridPos(Vector2 worldPos) {
+    // Remove the offset and width/2 translation for cleaner conversion
+    Vector2 adjustedPos = worldPos - Vector2(level.position.x, level.position.y);
+    return worldToTileIsometric(adjustedPos - Vector2(level.position.x + (level.width / 2), level.position.y)) + Vector2(1, 1);
   }
 
-  Vector2 screenToTileIsometric({
-    required Vector2 screenPosition,
-    required Vector2 cameraPosition,
-    double zoom = 1,
-  }) {
-    final worldX = (screenPosition.x / zoom) + cameraPosition.x;
-    final worldY = (screenPosition.y / zoom) + cameraPosition.y;
+  Vector2 worldToTileIsometric(Vector2 worldPos) {
+    // Standard isometric world-to-tile conversion
+    final tileX = (worldPos.x / (tileSize.x / 2) + worldPos.y / (tileSize.y / 2)) / 2;
+    final tileY = (worldPos.y / (tileSize.y / 2) - worldPos.x / (tileSize.x / 2)) / 2;
 
-    final tileX = ((worldX / (tileSize.x / 2) + worldY / (tileSize.y / 2)) / 2);
-    final tileY = ((worldY / (tileSize.y / 2) - worldX / (tileSize.x / 2)) / 2);
-
-    return Vector2(tileX.toDouble() - (level.anchor.x / tileSize.x) + 1, tileY.toDouble() - (level.anchor.y / tileSize.y) + 1);
+    return Vector2(tileX, tileY);
   }
 
 
   @override
-  Vector2 toWorldPos(Vector2 grid) {
+  Vector2 toWorldPos(Vector2 gridPos) {
+    // Standard isometric tile-to-world conversion
     return Vector2(
-      (grid.x - grid.y) * (tileSize.x / 2),
-      (grid.x + grid.y) * (tileSize.y / 2),
+      (gridPos.x - gridPos.y) * (tileSize.x / 2),
+      (gridPos.x + gridPos.y) * (tileSize.y / 2),
     );
   }
 
@@ -52,7 +47,7 @@ class IsometricLevel extends Level{
 
   @override
   RectangleHitbox createHitbox({Vector2? position, Vector2? size}) {
-    return IsometricRectangleHitbox(position: position, size: size);
+    return RectangleHitbox(position: position, size: size);
   }
 
 

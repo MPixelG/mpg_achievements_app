@@ -4,18 +4,21 @@ import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 
+import '../level/level.dart';
+
 class TileGrid extends Component {
   int width;
   int height;
 
   Vector2 tileSize;
+  Level level;
 
   List<List<TileType>> grid = [];
   List<List<bool>> highlightedSpots = [];
 
   ObjectGroup? collisionLayer;
 
-  TileGrid(this.width, this.height, this.tileSize, this.collisionLayer) {
+  TileGrid(this.width, this.height, this.tileSize, this.collisionLayer, this.level) {
     grid = List.generate(
       width,
       (_) => List.filled(height, TileType.air),
@@ -25,10 +28,16 @@ class TileGrid extends Component {
       (_) => List.filled(height, false),
     ); //fills the 2d grid list with false
 
+    addCollisions();
+
+  }
+
+  void addCollisions(){
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
+
         grid[x][y] = getTileTypeAt(
-          Vector2(x.toDouble(), y.toDouble())..multiply(tileSize),
+          level.toWorldPos(Vector2(x.toDouble(), y.toDouble())),
         );
       }
     }
@@ -39,6 +48,7 @@ class TileGrid extends Component {
     if (isInBounds(pos)) {
       return grid[pos.x.toInt()][pos.y.toInt()];
     } else {
+      print("not in bounds!");
       return TileType.solid;
     }
   }
@@ -65,7 +75,13 @@ class TileGrid extends Component {
   }
 
   @override
-  void render(Canvas canvas) {
+  void renderDebugMode(Canvas canvas) {
+    renderDebugTiles(canvas);
+    super.render(canvas);
+  }
+  
+  void renderDebugTiles(Canvas canvas){
+
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
         TileType val = grid[x][y];
@@ -90,14 +106,17 @@ class TileGrid extends Component {
         }
       }
     }
-
-    super.render(canvas);
   }
+
+
+
+
 
   TileType getTileTypeAt(Vector2 worldPos) {
     if (collisionLayer == null) return TileType.air;
 
     for (final obj in collisionLayer!.objects) {
+
       final rect = Rect.fromLTWH(obj.x, obj.y, obj.width, obj.height);
       if (rect.contains(
         worldPos.toOffset() + Offset(tileSize.x / 2, tileSize.y / 2),

@@ -131,3 +131,11 @@ Future<String> getOrientationOfLevel(String levelName) async{
 
   return lines[1].substring(indexOfOrientationDeclaration, indexOfNextSemicolon);
 }
+
+
+Vector2 orthogonalToIsometric(Vector2 ortho) {
+  return Vector2(
+      ortho.x - ortho.y,
+      (ortho.x + ortho.y) / 2
+  );
+}

@@ -7,7 +7,9 @@ import 'package:flame/events.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/ai/tile_grid.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -24,12 +26,24 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
   Vector2 get tilesize => level.tileSize;
 
   POIGenerator(this.level) { //the constructor
-    grid = TileGrid( //initialize the grid.
-      (level.level.width / tilesize.x).toInt(),
-      (level.level.height / tilesize.y).toInt(),
-      tilesize,
-      level.level.tileMap.getLayer("Collisions") as ObjectGroup?,
-    );
+
+    if(level is IsometricLevel){
+      grid = IsometricTileGrid(
+          (level.level.width / tilesize.x).toInt(),
+          (level.level.height / tilesize.y).toInt(),
+          tilesize,
+          level.level.tileMap.getLayer("Collisions") as ObjectGroup?,
+          level);
+
+    }else {
+      grid = TileGrid( //initialize the grid.
+          (level.level.width / tilesize.x).toInt(),
+          (level.level.height / tilesize.y).toInt(),
+          tilesize,
+          level.level.tileMap.getLayer("Collisions") as ObjectGroup?,
+          level
+      );
+    }
     level.add(grid); //add the grid to the level to show some debug render stuff.
 
     nodes = []; //initialize the nodes with an empty list.
