@@ -48,7 +48,7 @@ class PixelAdventure extends FlameGame
     await images.loadAllImages();
     //world is loaded after initialising all images
 
-    level = Level(levelName: 'Level_6', player: player, enemy);
+    level = Level(levelName: 'Level_2', player: player, enemy);
 
     cam = AdvancedCamera(world: level);
     cam.player = player;

@@ -84,7 +84,6 @@ class Level extends World
     //add collision objects
     _addCollisions();
 
-    // Add UI overlays to the game (e.g., score, health bar).
     // Set their scale and render priority so they display correctly.
     add(debugOverlays);
     debugOverlays.scale = Vector2.zero(); // Start hidden/scaled down
@@ -261,12 +260,12 @@ class Level extends World
     return super.onKeyEvent(event, keysPressed);
   }
 
-  Vector2 mouseCoords = Vector2.zero();
+  Vector2 _mouseCoords = Vector2.zero();
 
   @override
   void onPointerMove(PointerMoveEvent event) {
-    mouseCoords = event.localPosition..round();
-    player.mouseCoords = mouseCoords;
+    _mouseCoords = event.localPosition..round();
+    player.mouseCoords = _mouseCoords;
   }
 
   @override
@@ -283,12 +282,29 @@ class Level extends World
 
     String playerCoords = roundedPlayerPos.toString();
     debugOverlays.text =
-        "Player: $playerCoords\nMouse: $mouseCoords\nGrid Mouse Coords: ${(mouseCoords / 32)..floor()}";
+        "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${(screenToTileIsometric(screenPosition: _mouseCoords, cameraPosition: game.cam.pos))..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tilesize.x).floor()}, ${(mousePos.y / tilesize.y).floor()}";
     debugOverlays.position =
         game.cam.pos - game.cam.visibleWorldRect.size.toVector2() / 2;
 
     super.update(dt);
   }
+
+
+  Vector2 screenToTileIsometric({
+    required Vector2 screenPosition,
+    required Vector2 cameraPosition,
+    double zoom = 1,
+  }) {
+    final worldX = (screenPosition.x / zoom) + cameraPosition.x;
+    final worldY = (screenPosition.y / zoom) + cameraPosition.y;
+
+    final tileX = (worldX / (tilesize.x / 2) + worldY / (tilesize.y / 2)) / 2;
+    final tileY = (worldY / (tilesize.y / 2) - worldX / (tilesize.x / 2)) / 2;
+
+    return Vector2(tileX.floorToDouble(), tileY.floorToDouble());
+  }
+
+
 
   //sets the visibility of all of the hitboxes of all of the components in the level (except for background tiles)
   void setDebugMode(bool val) {
@@ -300,7 +316,7 @@ class Level extends World
   }
 
   //gets mouse position Vector2
-  Vector2 get mousePos => mouseCoords;
+  Vector2 get mousePos => _mouseCoords;
 
   //if parallax effect, this method is called
   void _loadParallaxLevel() {
