@@ -18,6 +18,7 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 // It uses the `with DialogueView` mixin to register itself as a listener
 // to the Jenny `DialogueRunner`, allowing it to respond to dialogue events
 // like `onLineStart`, `onChoiceStart`, and `onDialogueFinish`.
+
 class DialogueScreenState extends State<DialogueScreen> with DialogueView {
 
   // General layout and positioning constants.
@@ -43,7 +44,7 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
   // Color definitions. Using getters allows theme-dependent color resolution.
   Color get _dialogueCardColor => Theme.of(context).colorScheme.inversePrimary;
   Color get _scriptButtonColor =>
-      Theme.of(context).colorScheme.secondary.withOpacity(0.8);
+      Theme.of(context).colorScheme.secondary.withAlpha((255*0.8).round());
   Color get _choiceSheetColor => Colors.blueGrey.shade800;
 
 
@@ -60,19 +61,20 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
   // The Jenny engine instance that executes the dialogue logic.
   late DialogueRunner? _dialogueRunner;
 
-  /// A completer that pauses the [DialogueRunner].
-  ///
-  /// When `onLineStart` is called, a new completer is created. The runner
-  /// waits until `completer.complete()` is called, which happens when the user
-  /// clicks the "Next" button.
+  //A completer that pauses the [DialogueRunner].
+  //
+  // When `onLineStart` is called, a new completer is created. The runner
+  // waits until `completer.complete()` is called, which happens when the user
+  // clicks the "Next" button.
+
   Completer<bool>? _lineCompleter;
 
-  /// The current [DialogueLine] being displayed to the user.
-  /// If `null`, the dialogue UI is hidden.
+  // The current [DialogueLine] being displayed to the user.
+  // If `null`, the dialogue UI is hidden.
   DialogueLine? _currentLine;
 
-  /// A flag indicating whether the entire dialogue sequence has finished.
-  /// When `true`, a "Close" button is shown instead of a "Next" button.
+  // A flag indicating whether the entire dialogue sequence has finished.
+  // When `true`, a "Close" button is shown instead of a "Next" button.
   bool _isDialogueFinished = false;
 
 
@@ -122,22 +124,28 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
         children: [
           _buildShowScriptButton(),
           Positioned(
-            top: _outerPadding + 30,
+            top: _outerPadding,
             right: _outerPadding,
-            child: CloseButton(onPressed: _closeDialogue),
+            child: FloatingActionButton.small(
+              onPressed: _closeDialogue,
+              backgroundColor: _scriptButtonColor,
+              tooltip: 'Close Dialogue',
+              child: const Icon(Icons.close,size:20),
+              ),
           ),
-          _buildDialogueCard(_currentLine!),
-        ],
+      _buildDialogueCard(_currentLine!),
+
+         ],
       ),
     );
   }
 
-  //----------------------------------------------------------------------------
+
   // region Widget Builder Methods
   // These methods break down the UI into smaller, manageable pieces.
-  //----------------------------------------------------------------------------
 
-  /// Builds the small floating button used to display the raw script.
+
+  // Builds the small floating button used to display the raw script.
   Widget _buildShowScriptButton() {
     return Positioned(
       top: _outerPadding,
@@ -184,7 +192,7 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
     );
   }
 
-  /// Builds the primary action button based on the current dialogue state.
+  // Builds the primary action button based on the current dialogue state.
   Widget _buildActionButton() {
     // If the dialogue sequence is completely finished, show a "Close" button.
     if (_isDialogueFinished) {
@@ -254,12 +262,9 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
     // The DialogueRunner has finished all nodes in the conversation.
 
     setState(() {
+      widget.onDialogueFinished();
       // Mark the dialogue as finished to show the "Close" button.
       _isDialogueFinished = true;
-      // The last line is done, so we no longer need a completer.
-      _lineCompleter = null;
-      _dialogueRunner = null; // Clear the runner since the dialogue is done.
-      _currentLine = null; // Clear the current line to hide the dialogue UI.
 
     });
   }
@@ -272,7 +277,8 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
   // Hides the entire dialogue UI and resets its visible state.
   void _closeDialogue() {
     setState(() {
-      onDialogueFinish(); // Call the finish method to clean up.
+      _isDialogueFinished = false;
+      widget.onDialogueFinished();
     });
   }
 
