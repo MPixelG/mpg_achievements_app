@@ -46,8 +46,8 @@ class IsometricTileGrid extends TileGrid{
 
   Vector2 _orthogonalToIsometric(Vector2 orthoPos) {
     return Vector2(
-        (orthoPos.x - orthoPos.y) * 1.0,
-        (orthoPos.x + orthoPos.y) * 0.5
+        ((orthoPos.x - orthoPos.y) * 1.0),
+        (orthoPos.x + orthoPos.y) * 0.5 + 1
     );
   }
 
