@@ -4,12 +4,15 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
+import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'collision_block.dart';
 import '../level/level.dart';
 
 /// Mixin for adding collision detection behavior to a component.
 /// Requires implementing methods to provide hitbox, position, velocity, etc
-mixin HasCollisions on Component, CollisionCallbacks {
+mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdventure> {
   ShapeHitbox getHitbox();
   Vector2 getScale();
   Vector2 getVelocity();
@@ -21,13 +24,24 @@ mixin HasCollisions on Component, CollisionCallbacks {
 
   bool _debugNoClipMode = false;
 
-  RectangleHitbox hitbox = RectangleHitbox(
-    position: Vector2(4, 6),
-    size: Vector2(24, 26),
-  );
+  late ShapeHitbox hitbox;
 
   @override
   FutureOr<void> onLoad() {
+
+    if(game.level is IsometricLevel) {
+      hitbox = IsometricHitbox(
+          Vector2.all(1),
+          game.level
+      );
+      hitbox.position = Vector2(0, 16);
+    } else {
+      hitbox = RectangleHitbox(
+        position: Vector2(4, 6),
+        size: Vector2(24, 26),
+      );
+    }
+
     add(hitbox);
     return super.onLoad();
   }
