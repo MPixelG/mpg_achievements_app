@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Level_6.tmx",
+    "activeFile": "Level_7.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -16,8 +16,8 @@
         },
         "Level_0.tmx": {
             "expandedObjectLayers": [
-                20,
-                17
+                17,
+                20
             ],
             "scale": 1.5,
             "selectedLayer": 1,
@@ -46,8 +46,8 @@
             "scale": 2,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 520,
-                "y": 531.75
+                "x": 512,
+                "y": 496.25
             }
         },
         "Level_3.tmx": {
@@ -77,16 +77,27 @@
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1024,
+                "x": 1023.9999999999999,
                 "y": 1024.3333333333333
             }
         },
         "Level_6.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
             "scale": 0.75,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 2272.6666666666665,
-                "y": 1276
+                "x": 2047.9999999999998,
+                "y": 1024.6666666666665
+            }
+        },
+        "Level_7.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 190.66666666666666,
+                "y": 27
             }
         },
         "Lever_3.tmx": {
@@ -203,7 +214,8 @@
         "Level_5.tmx",
         "grass_concrete.tsx",
         "Level_6.tmx",
-        "industrial_tiles_bg_2.tsx"
+        "industrial_tiles_bg_2.tsx",
+        "Level_7.tmx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
     "property.type": "string",

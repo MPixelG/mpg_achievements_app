@@ -196,11 +196,11 @@ abstract class Level extends World
     add(background);
   }
 
-
-  RectangleHitbox createHitbox({Vector2? position, Vector2? size});
+  ///checks the collision at a given point with a given center and size
   bool checkCollisionAt(Vector2 point, Vector2 center, Vector2 size);
 
   Vector2 toWorldPos(Vector2 pos);
+  ///converts a given world pos to a grid pos. if its an isometric level, it overwrites it so that it gives correct vals
   Vector2 toGridPos(Vector2 pos);
 
 }

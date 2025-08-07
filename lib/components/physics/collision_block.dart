@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
+import 'package:mpg_achievements_app/components/util/utils.dart';
 
 //A positionComponent can have an x, y , width and height
 class CollisionBlock extends PositionComponent with CollisionCallbacks {
@@ -33,11 +34,26 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks {
   @override
   FutureOr<void> onLoad() {
     if (level != null && level is IsometricLevel) {
-      print("size before: $size, size after: " + level!.toGridPos(size).toString());
-      hitbox = IsometricHitbox(size / 16, level!);
+      final transformedPosition = _orthogonalToIsometricGrid(position);
+
+      final finalPosition = transformedPosition + Vector2(level!.level.width / 2, 0) + level!.tileSize;
+
+      position = finalPosition;
+
+      final transformedSize = size / 16;
+      hitbox = IsometricHitbox(transformedSize, level!, anchor: Anchor.topCenter);
     } else {
+      // Regular orthogonal hitbox
       hitbox = RectangleHitbox(position: Vector2(0, 0), size: size);
     }
     add(hitbox);
+  }
+
+  // Use the same transformation as IsometricTileGrid
+  Vector2 _orthogonalToIsometricGrid(Vector2 orthoPos) {
+    return Vector2(
+        ((orthoPos.x - orthoPos.y) * 1.0),
+        (orthoPos.x + orthoPos.y) * 0.5 + 1
+    );
   }
 }

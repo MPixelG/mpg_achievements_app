@@ -92,39 +92,46 @@ void generateCollisionsForLevel(Level level) {
 
   if (collisionsLayer != null) {
     for (final collision in collisionsLayer.objects) {
-      //makes a list of all the collision object that are in the level and creates CollisionBlockObject-List with the respective attribute values
+      // Debug: Print original collision coordinates from Tiled
+      print("Original collision from Tiled at ${collision.position} with size ${Vector2(collision.width, collision.height)}");
+
       switch (collision.class_) {
         case 'Platform':
           final platform = CollisionBlock(
-            position: Vector2(collision.x, collision.y),
-            size: Vector2(collision.width, collision.height),
-            hasCollisionDown: false,
-            hasHorizontalCollision: false,
-            level: level
+            // Use original Tiled coordinates - transformation happens in CollisionBlock.onLoad()
+              position: Vector2(collision.x, collision.y),
+              size: Vector2(collision.width, collision.height),
+              hasCollisionDown: false,
+              hasHorizontalCollision: false,
+              level: level
           );
           level.add(platform);
+          break;
+
         case 'Ladder':
           final ladder = CollisionBlock(
-            position: Vector2(collision.x, collision.y),
-            size: Vector2(collision.width - 10, collision.height),
-            climbable: true,
-            hasCollisionDown: false,
-            hasCollisionUp: true,
-            hasHorizontalCollision: false,
-            isLadder: true,
-            level: level
+              position: Vector2(collision.x, collision.y),
+              size: Vector2(collision.width - 10, collision.height),
+              climbable: true,
+              hasCollisionDown: false,
+              hasCollisionUp: true,
+              hasHorizontalCollision: false,
+              isLadder: true,
+              level: level
           );
           level.add(ladder);
+          break;
+
         default:
           final block = CollisionBlock(
-            position: Vector2(collision.x, collision.y),
-            size: Vector2(collision.width, collision.height),
-            level: level
+              position: Vector2(collision.x, collision.y),
+              size: Vector2(collision.width, collision.height),
+              level: level
           );
           level.add(block);
       }
     }
   }
+}
   //all collisionsBlocks are given to the player and now the player has a reference
   //player.collisionsBlockList = collisionsBlockList;
-}
