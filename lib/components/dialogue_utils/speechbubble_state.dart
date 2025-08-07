@@ -12,7 +12,7 @@ class SpeechBubbleState extends State<SpeechBubble>
   late double _playerWidth;
 
   //offset from character(i.e. y/x position from head
-  late final double _bubbleOffset = 60;
+  late final double _bubbleOffset = 30;
 
   ///State variables
   //currently displayed text
@@ -51,7 +51,7 @@ class SpeechBubbleState extends State<SpeechBubble>
   static const double tailWidth = 20.0;
   static const double tailHeight = 15.0;
   final Color borderColor = Colors.black; // Color of the tail border
-  final double borderWidth = 2.0; // Width of the tail border
+  final double borderWidth = 1.0; // Width of the tail border
 
   ///Animationcontrollers
   //controls scaling-in
@@ -150,8 +150,10 @@ class SpeechBubbleState extends State<SpeechBubble>
 
     return AnimatedPositioned(
       // The position is now directly derived from the character's state vector
-      left: _playerPosition.x - _playerWidth*3, // Center the bubble horizontally
+      left: _playerPosition.x - _playerWidth,
+      // Center the bubble horizontally
       top: _playerPosition.y - _playerHeight - _bubbleOffset,
+      // Position above the character
       // Position above the character
       // Use the bubbleOffset to adjust the position if needed
       duration: const Duration(milliseconds: 300),
@@ -161,11 +163,12 @@ class SpeechBubbleState extends State<SpeechBubble>
         opacity: _fadeAnimation,
         child: ScaleTransition(
           scale: _scaleAnimation,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          child: Stack(
+            clipBehavior: Clip.none,
+            // Allow the tail to extend outside the bubble
             children: [
               Container(
-                 padding: const EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 12.0,
                   vertical: 8.0,
                 ),
@@ -185,14 +188,18 @@ class SpeechBubbleState extends State<SpeechBubble>
                   style: const TextStyle(color: Colors.black, fontSize: 14),
                 ),
               ),
-              CustomPaint(
-                // CustomPaint is used to draw the tail of the speech bubble
-                size: const Size(tailWidth, tailHeight),
-                painter: SpeechBubbleTailPainter(
-                  bubbleColor: Colors.white,
-                  borderColor: borderColor,
-                  borderWidth: borderWidth,
-                ), // Color of the tail
+              Positioned(
+                left: 5,
+                bottom: -tailHeight,
+                child: CustomPaint(
+                  // CustomPaint is used to draw the tail of the speech bubble
+                  size: const Size(tailWidth, tailHeight),
+                  painter: SpeechBubbleTailPainter(
+                    bubbleColor: Colors.white,
+                    borderColor: borderColor,
+                    borderWidth: borderWidth,
+                  ), // Color of the tail
+                ),
               ),
             ],
           ),
@@ -319,7 +326,11 @@ class SpeechBubbleTailPainter extends CustomPainter {
   final Color borderColor;
   final double borderWidth;
 
-  SpeechBubbleTailPainter({required this.borderColor, required this.borderWidth, required this.bubbleColor});
+  SpeechBubbleTailPainter({
+    required this.borderColor,
+    required this.borderWidth,
+    required this.bubbleColor,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -330,7 +341,8 @@ class SpeechBubbleTailPainter extends CustomPainter {
 
     final borderPaint = Paint()
       ..color = borderColor
-      ..style = PaintingStyle.stroke// Set the border color and style
+      ..style = PaintingStyle
+          .stroke // Set the border color and style
       ..strokeWidth = borderWidth; // Set the border width
     // Create a Path object to define the shape of the triangle.
 
@@ -345,14 +357,15 @@ class SpeechBubbleTailPainter extends CustomPainter {
 
     // Draw the path on the canvas.
     canvas.drawPath(path, fillPaint);
+    canvas.drawPath(path, borderPaint); // Draw the border of the tail
   }
 
   @override
   // This method is called to determine if the painter should repaint.
   bool shouldRepaint(covariant SpeechBubbleTailPainter oldDelegate) {
     // The painter should only repaint if the color changes.
-    return  oldDelegate.bubbleColor != bubbleColor ||
-            oldDelegate.borderColor != borderColor ||
-            oldDelegate.borderWidth != borderWidth;
+    return oldDelegate.bubbleColor != bubbleColor ||
+        oldDelegate.borderColor != borderColor ||
+        oldDelegate.borderWidth != borderWidth;
   }
 }
