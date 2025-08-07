@@ -74,7 +74,9 @@ class Player extends SpriteAnimationGroupComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
-    if (other is Collectable) other.collidedWithPlayer();
+    if (other is Collectable) {other.collidedWithPlayer();
+    game.overlays.add('SpeechBubble');}
+
     if (other is Saw && !debugImmortalMode) _hit();
     if (other is Enemy && !debugImmortalMode) _hit();
     if (other is Collectable && other.interactiveTask) {

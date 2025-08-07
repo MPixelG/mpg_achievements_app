@@ -219,34 +219,6 @@ class WidgetFactory{
     return (val ?? defaultVal);
   }
 
-  // Builds a SpeechBubble widget from JSON data.
-  // Accepts optional styling such as alignment, bubble color, text color, and padding.
- /* static Widget _buildSpeechBubble(
-      Map<String, dynamic>? properties,
-      List<dynamic> children,
-      BuildContext context,
-      ) {
-    // Read the message text
-    final String text = properties?["text"] ?? "";
-
-    // Parse optional bubble background and text color
-    final Color bubbleColor = parseHexColor(properties?["color"]) ?? Colors.white;
-    final Color textColor = parseHexColor(properties?["textColor"]) ?? Colors.black;
-
-    // Parse optional alignment value (default: bottom center)
-    final alignment = parseAlignment(properties?["alignment"]) ?? Alignment.bottomCenter;
-
-    // Get custom or default padding
-    final padding = getPaddingProperty(properties);
-
-    return SpeechBubble(
-      text: text,
-      bubbleColor: bubbleColor,
-      textColor: textColor,
-      alignment: alignment,
-      padding: padding,
-    );
-  }*/
 
   // Converts a hex color string (e.g. "#FFAA00") to a [Color] object.
   // If alpha is missing (e.g. 6-digit hex), assumes full opacity (FF).
