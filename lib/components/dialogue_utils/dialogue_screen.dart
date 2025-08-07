@@ -9,7 +9,8 @@ class DialogueScreen extends StatefulWidget {
 
   const DialogueScreen({
     super.key,
-    required this.onDialogueFinished, required this.game,
+    required this.onDialogueFinished,
+    required this.game,
   });
 
   @override
