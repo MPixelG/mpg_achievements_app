@@ -43,6 +43,8 @@ dependencies:
   go_router: ^16.0.0
 
   vector_math: any
+  flame_riverpod: ^5.4.17
+  flutter_riverpod: ^2.6.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

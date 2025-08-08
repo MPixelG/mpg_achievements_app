@@ -4,6 +4,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/cupertino.dart' hide AnimationStyle, Image;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:go_router/go_router.dart';
@@ -20,7 +21,8 @@ class PixelAdventure extends FlameGame
         DragCallbacks,
         HasCollisionDetection,
         ScrollDetector,
-        CollisionCallbacks {
+        CollisionCallbacks,
+        RiverpodGameMixin {
   late final AdvancedCamera cam;
 
   //Player variable

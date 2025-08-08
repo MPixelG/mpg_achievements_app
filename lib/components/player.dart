@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/level_components/checkpoint/checkpoint.dart';
@@ -22,7 +22,9 @@ class Player extends SpriteAnimationGroupComponent
         HasCollisions,
         BasicMovement,
         KeyboardControllableMovement,
-        AnimationManager, HasMovementAnimations {
+        AnimationManager,
+        HasMovementAnimations
+                                {
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
 
