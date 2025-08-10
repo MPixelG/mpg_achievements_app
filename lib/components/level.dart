@@ -13,7 +13,7 @@ import 'package:mpg_achievements_app/components/background/background_tile.dart'
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
-import 'package:mpg_achievements_app/components/physics/collisions.dart';
+import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
@@ -316,7 +316,7 @@ class Level extends World
     // Lists to store background images and their corresponding parallax factors.
     // Lists (not Sets) are used to preserve the order — each image must match its parallax factor by index.
     Set<TiledImage> images = {};
-    List<Vector2> parralaxFactors = [];
+    List<Vector2> parallaxFactors = [];
     List<Vector2> startPositions = [];
     ImageLayer? imageLayer;
 
@@ -330,7 +330,7 @@ class Level extends World
       images.add(imageLayer.image);
       // Retrieve the custom parallax factor property from the image layer.
       // If not found, default to 0.3.
-      parralaxFactors.add(
+      parallaxFactors.add(
         Vector2(
           imageLayer.parallaxX.toDouble(),
           imageLayer.parallaxY.toDouble(),
@@ -349,7 +349,7 @@ class Level extends World
       LayeredImageBackground(
         images,
         game.cam,
-        parallaxFactors: parralaxFactors,
+        parallaxFactors: parallaxFactors,
         startPositions: startPositions,
       ),
     );

@@ -8,7 +8,7 @@ import 'package:mpg_achievements_app/components/ai/goals/pathtracing_goal.dart';
 import 'package:mpg_achievements_app/components/ai/goals/player_locating_goal.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/level_components/saw.dart';
-import 'package:mpg_achievements_app/components/physics/collisions.dart';
+import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import '../../mpg_pixel_adventure.dart';
 import '../particles/Particles.dart';
 import '../ai/goals/move_goal.dart';

@@ -1,13 +1,13 @@
 import 'package:flame/flame.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/GUI/menus.dart';
-import 'package:mpg_achievements_app/components/GUI/json_factory/widgetFactory.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_widgets.dart';
 import 'package:mpg_achievements_app/components/router/router.dart';
-import 'package:mpg_achievements_app/components/util/utils.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-
 import 'components/GUI/menuCreator/widget_option_definitions.dart';
+
+//a global key to access the game widget state
+final GlobalKey<RiverpodAwareGameWidgetState> gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState>();
 
 // must be async because device loads fullScreen and setsLandscape and then at last the joystick
 void main() async {
@@ -24,7 +24,7 @@ void main() async {
 
   registerWidgetOptions();
 
-  runApp(MainApp());
+  runApp(const ProviderScope(child: MainApp(),));
 }
 
 class MainApp extends StatelessWidget {

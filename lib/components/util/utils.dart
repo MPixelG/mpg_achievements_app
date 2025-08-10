@@ -6,6 +6,7 @@
 import 'dart:io';
 
 import 'package:flame/components.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import '../physics/collision_block.dart';
@@ -121,4 +122,20 @@ num max<T extends num>(List<T> vals){
   }
 
   return smallestVal ?? 0;
+}
+
+
+//Check OS for Joystick support
+
+//check which platform is used and if the touch controls must be shown, TODO right settings must be set here
+bool getPlatform() {
+  bool os = false;
+  if (kIsWeb) {
+    os = false;
+  } else if (Platform.isAndroid) {
+    os = true;
+  } else if (Platform.isIOS) {
+    os = true;
+  }
+  return os;
 }

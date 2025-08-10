@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -7,13 +6,13 @@ import 'package:flame/game.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/cupertino.dart' hide AnimationStyle, Image;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
-import 'package:go_router/go_router.dart';
-import 'package:mpg_achievements_app/components/GUI/menus.dart';
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'components/GUI/menuCreator/gui_editor.dart';
 import 'components/level_components/enemy.dart';
 import 'components/level.dart';
+import 'components/util/utils.dart' as util;
+
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame
     with
@@ -23,30 +22,30 @@ class PixelAdventure extends FlameGame
         ScrollDetector,
         CollisionCallbacks,
         RiverpodGameMixin {
+
+
+  ///Game components
   late final AdvancedCamera cam;
-
-  //Player variable
   Player player = Player(playerCharacter: 'Pink Man');
-
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
+  late final Level level;
+  final GuiEditor guiEditor = GuiEditor();
+  late JoystickComponent joystick;
+
+  //bools for game logic
+  //needs to go into the overlay_controller later
+  bool showDialogue = true;
+
   //can be added for touch support
   late String platform;
   bool showJoystick = false;
-  late JoystickComponent joystick;
-
-  late final Level level;
-
-  final GuiEditor guiEditor = GuiEditor();
-
-  //needs to go into the overlay_controller later
-  bool showDialogue = true;
 
   //Future is a value that is returned even thought a value of the method is not computed immediately, but later
   //FutureOr works same here either returns a Future or <void>
   @override
   FutureOr<void> onLoad() async {
     //all images for the game are loaded into cache when the game start -> could take long at a later stage, but here it is fine for moment being
-    showJoystick = _getPlatform();
+    showJoystick = util.getPlatform();
     await images.loadAllImages();
     //world is loaded after initialising all images
 
@@ -79,21 +78,23 @@ class PixelAdventure extends FlameGame
     if (showJoystick == true) {
       updateJoystick();
     }
-
     super.update(dt);
   }
 
-  //Making a Joystick
+
+  ///Joystick Component
+  //Making a Joystick if the platform is not web or desktop
   void addJoystick() async {
     joystick = JoystickComponent(
-      knob: SpriteComponent(sprite: Sprite(images.fromCache('HUD/Knob.png'))),
+      knob: SpriteComponent(sprite: await Sprite.load('HUD/Knob.png'),
+          size: Vector2(40, 40)),
       background: SpriteComponent(
-        sprite: Sprite(images.fromCache('HUD/Joystick.png')),
+        sprite: await Sprite.load('HUD/Joystick.png'),
+        size: Vector2(128, 128),
       ),
-      //Joystick needs a margin
       margin: const EdgeInsets.only(left: 32, bottom: 32),
     );
-    add(joystick);
+    cam.add(joystick);
   }
 
   void updateJoystick() {
@@ -115,16 +116,4 @@ class PixelAdventure extends FlameGame
     }
   }
 
-  //check which platform is used and if the touch controls must be shown, TODO right settings must be set here
-  bool _getPlatform() {
-    bool os = false;
-    if (kIsWeb) {
-      os = false;
-    } else if (Platform.isAndroid) {
-      os = true;
-    } else if (Platform.isIOS) {
-      os = true;
-    }
-    return os;
   }
-}
