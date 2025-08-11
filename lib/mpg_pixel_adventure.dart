@@ -3,10 +3,13 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flame/input.dart';
+import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/cupertino.dart' hide AnimationStyle, Image;
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
+import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'components/GUI/menuCreator/gui_editor.dart';
 import 'components/level_components/enemy.dart';
@@ -21,7 +24,8 @@ class PixelAdventure extends FlameGame
         HasCollisionDetection,
         ScrollDetector,
         CollisionCallbacks,
-        RiverpodGameMixin {
+        RiverpodGameMixin
+        {
 
 
   ///Game components
@@ -64,20 +68,12 @@ class PixelAdventure extends FlameGame
       player: player,
       accuracy: 50,
     ); //follows the player.
-    if (showJoystick == true) {
-      addJoystick();
-    } else {
-      if (kDebugMode) {}
-    }
 
     return super.onLoad();
   }
 
   @override
   void update(double dt) {
-    if (showJoystick == true) {
-      updateJoystick();
-    }
     super.update(dt);
   }
 
@@ -85,7 +81,27 @@ class PixelAdventure extends FlameGame
   ///Joystick Component
   //Making a Joystick if the platform is not web or desktop
   void addJoystick() async {
+    final knobPaint = BasicPalette.blue.withAlpha(200).paint();
+    final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
     joystick = JoystickComponent(
+      knob: CircleComponent(radius: 20, paint: knobPaint),
+      background: CircleComponent(radius: 80, paint: backgroundPaint),
+      margin: const EdgeInsets.only(left: 40, bottom: 40),
+    );
+
+    final buttonComponent = ButtonComponent(
+      button: CircleComponent(radius: 20, paint: knobPaint),
+      buttonDown: RectangleComponent(
+        size: Vector2(40, 40),
+        paint: BasicPalette.red.withAlpha(200).paint(),
+      ),
+      position: Vector2(500, size.y - 380),
+      onPressed: () {
+      print('Button Pressed');
+      },
+    );
+
+    /*oystick = JoystickComponent(
       knob: SpriteComponent(sprite: await Sprite.load('HUD/Knob.png'),
           size: Vector2(40, 40)),
       background: SpriteComponent(
@@ -93,27 +109,11 @@ class PixelAdventure extends FlameGame
         size: Vector2(128, 128),
       ),
       margin: const EdgeInsets.only(left: 32, bottom: 32),
-    );
-    cam.add(joystick);
+    );*/
+    cam.viewport.add(joystick);
+    cam.viewport.add(buttonComponent);
   }
 
-  void updateJoystick() {
-    switch (joystick.direction) {
-      case JoystickDirection.left:
-        player.velocity.x += -1;
-        break;
-      case JoystickDirection.upLeft:
-      case JoystickDirection.downLeft:
-      case JoystickDirection.right:
-        player.horizontalMovement = 1;
-        break;
-      case JoystickDirection.downRight:
-      case JoystickDirection.upRight:
-      case JoystickDirection.up:
-        player.jump();
-      default:
-        player.horizontalMovement = 0;
-    }
-  }
+
 
   }

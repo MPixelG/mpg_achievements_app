@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/input.dart';
+import 'package:flame/palette.dart';
+import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/components/util/utils.dart' as util;
 import 'package:flutter/services.dart';
+import '../../mpg_pixel_adventure.dart';
 import 'collision_block.dart';
 import '../level.dart';
 
@@ -11,8 +15,11 @@ import '../level.dart';
 /// Requires implementing methods to provide hitbox, position, velocity, etc
 mixin HasCollisions on Component, CollisionCallbacks {
   ShapeHitbox getHitbox();
+
   Vector2 getScale();
+
   Vector2 getVelocity();
+
   Vector2 getPosition();
 
   void setClimbing(bool val);
@@ -34,6 +41,7 @@ mixin HasCollisions on Component, CollisionCallbacks {
 
   // Sets the new position of the object after a collision.
   void setPos(Vector2 newPos);
+
   void setIsOnGround(bool val);
 
   // Called automatically by Flame when a collision begins.
@@ -69,8 +77,8 @@ mixin HasCollisions on Component, CollisionCallbacks {
 
     Vector2 posDiff =
         hitbox.absolutePosition -
-        other
-            .absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
+            other
+                .absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
 
     //if the player faces in the other direction, we want to measure the distances from the other side of the hitbox. so we just add the width of it to the value.
     if (scale.x < 0) {
@@ -141,6 +149,7 @@ mixin BasicMovement on PositionComponent {
   ViewSide viewSide = ViewSide.side;
 
   bool updateMovement = true;
+
   @override
   void update(double dt) {
     if (updateMovement) {
@@ -167,8 +176,8 @@ mixin BasicMovement on PositionComponent {
     velocity.x += horizontalMovement * moveSpeed;
     velocity.x *=
         _friction *
-        (dt +
-            1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+            (dt +
+                1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
     position.x += velocity.x * dt;
 
     if (viewSide == ViewSide.side && gravityEnabled) {
@@ -210,7 +219,7 @@ mixin BasicMovement on PositionComponent {
 }
 
 mixin KeyboardControllableMovement
-    on PositionComponent, BasicMovement, KeyboardHandler {
+on PositionComponent, BasicMovement, KeyboardHandler {
   bool active = true;
   Vector2 mouseCoords = Vector2.zero();
 
@@ -223,10 +232,10 @@ mixin KeyboardControllableMovement
 
     final isLeftKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.keyA) ||
-        keysPressed.contains(LogicalKeyboardKey.arrowLeft);
+            keysPressed.contains(LogicalKeyboardKey.arrowLeft);
     final isRightKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
-        keysPressed.contains(LogicalKeyboardKey.keyD);
+            keysPressed.contains(LogicalKeyboardKey.keyD);
 
     //ternary statement if left key pressed then add -1 to horizontal movement if not add 0 = not moving
     if (isLeftKeyPressed) horizontalMovement--;
@@ -263,10 +272,10 @@ mixin KeyboardControllableMovement
     } else if (viewSide == ViewSide.topDown) {
       final isUpKeyPressed =
           keysPressed.contains(LogicalKeyboardKey.keyW) ||
-          keysPressed.contains(LogicalKeyboardKey.arrowUp);
+              keysPressed.contains(LogicalKeyboardKey.arrowUp);
       final isDownKeyPressed =
           keysPressed.contains(LogicalKeyboardKey.keyS) ||
-          keysPressed.contains(LogicalKeyboardKey.arrowDown);
+              keysPressed.contains(LogicalKeyboardKey.arrowDown);
 
       if (isUpKeyPressed) verticalMovement--;
       if (isDownKeyPressed) verticalMovement++;
@@ -281,7 +290,136 @@ mixin KeyboardControllableMovement
 
     return super.onKeyEvent(event, keysPressed);
   }
-
-  // Enable/disable player control
+// Enable/disable player control
   bool setControllable(bool val) => active = val;
 }
+
+
+
+mixin JoystickControllableMovement
+on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
+
+  bool active = util.getPlatform();
+
+  // Joystick component for movement
+  late JoystickComponent joystick;
+  late ButtonComponent buttonComponent;
+
+  @override
+  void update(double dt) {
+    if (!active) return super.update(dt);
+
+    updateJoystick();
+    super.update(dt);
+  }
+
+
+  @override
+  Future<void> onMount() async{
+    ///Joystick Component
+    //Making a Joystick if the platform is not web or desktop
+    if(!active) return super.onMount();
+
+      final knobPaint = BasicPalette.blue.withAlpha(200).paint();
+      final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
+      joystick = JoystickComponent(
+        knob: CircleComponent(radius: 10, paint: knobPaint),
+        background: CircleComponent(radius: 40, paint: backgroundPaint),
+        margin: const EdgeInsets.only(left: 40, bottom: 40),
+      );
+
+      buttonComponent = ButtonComponent(
+        button: CircleComponent(radius: 20, paint: knobPaint),
+        buttonDown: RectangleComponent(
+          size: Vector2.all(2*30),
+          paint: BasicPalette.red.withAlpha(200).paint(),
+        ),
+
+        onPressed: () {
+
+          if (debugFlyMode || isClimbing) {
+            //when in debug mode move the player upwards
+            if (isClimbing)
+              verticalMovement = -0.06;
+            else
+              verticalMovement = -1;
+          } else {
+            hasJumped = true; //else jump
+          }
+
+        },
+      );
+    final marginWrapper = HudMarginComponent(
+      // Define the margin to anchor it to the bottom-right corner.
+      margin: const EdgeInsets.only(
+        right: 40,
+        bottom: 40,
+      ),
+    );
+
+    // 3. Add the button as a child of the wrapper.
+    marginWrapper.add(buttonComponent);
+
+    // 4. Add the wrapper (which now contains the button) to the viewport.
+    game.camera.viewport.add(marginWrapper);
+      /*
+      Old Joystick
+      joystick = JoystickComponent(
+      knob: SpriteComponent(sprite: await Sprite.load('HUD/Knob.png'),
+          size: Vector2(40, 40)),
+      background: SpriteComponent(
+        sprite: await Sprite.load('HUD/Joystick.png'),
+        size: Vector2(128, 128),
+      ),
+      margin: const EdgeInsets.only(left: 32, bottom: 32),
+    );*/
+      game.cam.viewport.add(joystick);
+      game.cam.viewport.add(buttonComponent);
+    }
+  void updateJoystick() {
+    //define the horizontal and vertical movement based on the joystick direction
+    final direction = joystick.direction;
+    //define the horizontal and vertical movement based on the joystich intensity 0 to 1
+    final intensity = joystick.intensity;
+
+    switch (joystick.direction) {
+
+      case JoystickDirection.upLeft:
+      case JoystickDirection.downLeft:
+      case JoystickDirection.left:
+        horizontalMovement = -1 * intensity;
+        break;
+      case JoystickDirection.downRight:
+      case JoystickDirection.upRight:
+      case JoystickDirection.right:
+        horizontalMovement = 1 * intensity;
+        break;
+      case JoystickDirection.up:
+        if (debugFlyMode || isClimbing) {
+          //when in debug mode move the player upwards
+          if (isClimbing)
+            verticalMovement = -0.06;
+          else
+            verticalMovement = -1;
+        } else {
+          hasJumped = true; //else jump
+        }
+
+        break;
+      case JoystickDirection.down:
+        if (isClimbing)
+          verticalMovement = 0.06;
+        else if (debugFlyMode)
+          verticalMovement = 1;
+
+      default:
+      //No movement
+        horizontalMovement = 0;
+    }
+  }
+
+  }
+  //
+
+
+

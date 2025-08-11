@@ -129,9 +129,9 @@ num max<T extends num>(List<T> vals){
 
 //check which platform is used and if the touch controls must be shown, TODO right settings must be set here
 bool getPlatform() {
-  bool os = false;
+  bool os = true;
   if (kIsWeb) {
-    os = false;
+    os = true;
   } else if (Platform.isAndroid) {
     os = true;
   } else if (Platform.isIOS) {

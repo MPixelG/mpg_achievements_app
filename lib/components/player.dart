@@ -23,21 +23,24 @@ class Player extends SpriteAnimationGroupComponent
         BasicMovement,
         KeyboardControllableMovement,
         AnimationManager,
-        HasMovementAnimations
-                                {
+        HasMovementAnimations,
+        JoystickControllableMovement {
+  //bools
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
 
-  bool gotHit = false;
-
   // variable to store the latest checkpoint (used for respawning)
   Checkpoint? lastCheckpoint;
-  // HP values, if we decide to include these (if not set both to 1)
+
+  // HP variables, if we decide to include these (if not set both to 1)
   int startHP = 3;
   int lives = 3;
+  bool gotHit = false;
+
   //starting position
   Vector2 startingPosition = Vector2.zero();
 
+  //Player name
   String playerCharacter;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
@@ -48,8 +51,6 @@ class Player extends SpriteAnimationGroupComponent
     startingPosition = Vector2(position.x, position.y);
     return super.onLoad();
   }
-
-  //dt means deltatime and is adjusting the framspeed to make game playable even tough there might be high framrates
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
@@ -68,6 +69,9 @@ class Player extends SpriteAnimationGroupComponent
     if (keysPressed.contains(LogicalKeyboardKey.keyY)) {
       debugImmortalMode = !debugImmortalMode; //press Y to toggle immortality
     }
+    if (keysPressed.contains(LogicalKeyboardKey.keyK)) {
+      print('joystick'); //press H to reset lives
+    }
 
     return super.onKeyEvent(event, keysPressed);
   }
@@ -76,8 +80,10 @@ class Player extends SpriteAnimationGroupComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
-    if (other is Collectable) {other.collidedWithPlayer();
-    game.overlays.add('SpeechBubble');}
+    if (other is Collectable) {
+      other.collidedWithPlayer();
+      game.overlays.add('SpeechBubble');
+    }
 
     if (other is Saw && !debugImmortalMode) _hit();
     if (other is Enemy && !debugImmortalMode) _hit();
@@ -87,6 +93,7 @@ class Player extends SpriteAnimationGroupComponent
     }
     super.onCollision(intersectionPoints, other);
   }
+
   void _hit() async {
     if (gotHit) return;
     lives = lives - 1;
@@ -99,6 +106,7 @@ class Player extends SpriteAnimationGroupComponent
     await Future.delayed(Duration(milliseconds: 250));
     gotHit = false;
   }
+
   void _respawn() async {
     if (gotHit) return; //if the player is already being respawned, stop
     updateMovement = false;
@@ -121,13 +129,8 @@ class Player extends SpriteAnimationGroupComponent
     ); //wait for the animation to finish
     // respawn position is the last checkpoints position
 
-    if(lastCheckpoint != null) {
-      position =
-          lastCheckpoint!.position -
-              Vector2(
-                40,
-                32,
-              );
+    if (lastCheckpoint != null) {
+      position = lastCheckpoint!.position - Vector2(40, 32);
     } //position the player at the spawn point and also add the displacement of the animation
     scale = Vector2.all(0); //hide the player
     await Future.delayed(
@@ -142,7 +145,8 @@ class Player extends SpriteAnimationGroupComponent
     updatePlayerstate(); //update the players feet to the ground
     gotHit = false; //indicate, that the respawn process is over
     position += Vector2.all(
-        32); //reposition the player, because it had a bit of displacement because of the respawn animation
+      32,
+    ); //reposition the player, because it had a bit of displacement because of the respawn animation
     setGravityEnabled(true); //re-enable gravity
     updateMovement = true;
     lives = startHP;
@@ -160,6 +164,7 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   Vector2 getVelocity() => velocity;
+
   //setters
   @override
   void setIsOnGround(bool val) => isOnGround = val;
@@ -180,11 +185,26 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   List<AnimationLoadOptions> get animationOptions => [
-    AnimationLoadOptions("appearing", "Main Characters/Appearing", textureSize: 96, loop: false),
-    AnimationLoadOptions("disappearing", "Main Characters/Disappearing", textureSize: 96, loop: false),
-    AnimationLoadOptions("hit", "$componentSpriteLocation/Hit" , textureSize: 32, loop: false),
+    AnimationLoadOptions(
+      "appearing",
+      "Main Characters/Appearing",
+      textureSize: 96,
+      loop: false,
+    ),
+    AnimationLoadOptions(
+      "disappearing",
+      "Main Characters/Disappearing",
+      textureSize: 96,
+      loop: false,
+    ),
+    AnimationLoadOptions(
+      "hit",
+      "$componentSpriteLocation/Hit",
+      textureSize: 32,
+      loop: false,
+    ),
 
-    ...movementAnimationDefaultOptions
+    ...movementAnimationDefaultOptions,
   ];
 
   @override
