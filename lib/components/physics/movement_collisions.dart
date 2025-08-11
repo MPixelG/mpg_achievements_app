@@ -320,21 +320,21 @@ on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
     //Making a Joystick if the platform is not web or desktop
     if(!active) return super.onMount();
 
-      final knobPaint = BasicPalette.blue.withAlpha(200).paint();
+      final knobPaint = BasicPalette.black.withAlpha(100).paint();
       final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
       joystick = JoystickComponent(
         knob: CircleComponent(radius: 10, paint: knobPaint),
         background: CircleComponent(radius: 40, paint: backgroundPaint),
-        margin: const EdgeInsets.only(left: 40, bottom: 40),
+        margin: const EdgeInsets.only(left: 25, bottom: 25),
       );
 
-      buttonComponent = ButtonComponent(
-        button: CircleComponent(radius: 20, paint: knobPaint),
-        buttonDown: RectangleComponent(
-          size: Vector2.all(2*30),
+      buttonComponent = HudButtonComponent(
+        button: CircleComponent(radius: 20, paint: knobPaint, anchor: Anchor.center),
+        buttonDown: CircleComponent(
+          radius: 30,
           paint: BasicPalette.red.withAlpha(200).paint(),
+          anchor: Anchor.center,
         ),
-
         onPressed: () {
 
           if (debugFlyMode || isClimbing) {
@@ -348,33 +348,21 @@ on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
           }
 
         },
+        margin: const EdgeInsets.only(
+          right: 25,
+          bottom: 25,
+        ),
       );
-    final marginWrapper = HudMarginComponent(
-      // Define the margin to anchor it to the bottom-right corner.
-      margin: const EdgeInsets.only(
-        right: 40,
-        bottom: 40,
-      ),
-    );
 
-    // 3. Add the button as a child of the wrapper.
-    marginWrapper.add(buttonComponent);
-
-    // 4. Add the wrapper (which now contains the button) to the viewport.
-    game.camera.viewport.add(marginWrapper);
-      /*
-      Old Joystick
-      joystick = JoystickComponent(
-      knob: SpriteComponent(sprite: await Sprite.load('HUD/Knob.png'),
-          size: Vector2(40, 40)),
-      background: SpriteComponent(
-        sprite: await Sprite.load('HUD/Joystick.png'),
-        size: Vector2(128, 128),
-      ),
-      margin: const EdgeInsets.only(left: 32, bottom: 32),
-    );*/
+     // Add the joystick to the viewport
       game.cam.viewport.add(joystick);
+      // Add the button component to the viewport
       game.cam.viewport.add(buttonComponent);
+    // Then set position
+    buttonComponent.position = Vector2(
+      game.cam.viewport.size.x - 80,
+      game.cam.viewport.size.y - 80,
+    );
     }
   void updateJoystick() {
     //define the horizontal and vertical movement based on the joystick direction
