@@ -77,8 +77,8 @@ mixin HasCollisions on Component, CollisionCallbacks {
 
     Vector2 posDiff =
         hitbox.absolutePosition -
-            other
-                .absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
+        other
+            .absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
 
     //if the player faces in the other direction, we want to measure the distances from the other side of the hitbox. so we just add the width of it to the value.
     if (scale.x < 0) {
@@ -176,8 +176,8 @@ mixin BasicMovement on PositionComponent {
     velocity.x += horizontalMovement * moveSpeed;
     velocity.x *=
         _friction *
-            (dt +
-                1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+        (dt +
+            1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
     position.x += velocity.x * dt;
 
     if (viewSide == ViewSide.side && gravityEnabled) {
@@ -219,7 +219,7 @@ mixin BasicMovement on PositionComponent {
 }
 
 mixin KeyboardControllableMovement
-on PositionComponent, BasicMovement, KeyboardHandler {
+    on PositionComponent, BasicMovement, KeyboardHandler {
   bool active = true;
   Vector2 mouseCoords = Vector2.zero();
 
@@ -232,10 +232,10 @@ on PositionComponent, BasicMovement, KeyboardHandler {
 
     final isLeftKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.keyA) ||
-            keysPressed.contains(LogicalKeyboardKey.arrowLeft);
+        keysPressed.contains(LogicalKeyboardKey.arrowLeft);
     final isRightKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
-            keysPressed.contains(LogicalKeyboardKey.keyD);
+        keysPressed.contains(LogicalKeyboardKey.keyD);
 
     //ternary statement if left key pressed then add -1 to horizontal movement if not add 0 = not moving
     if (isLeftKeyPressed) horizontalMovement--;
@@ -272,10 +272,10 @@ on PositionComponent, BasicMovement, KeyboardHandler {
     } else if (viewSide == ViewSide.topDown) {
       final isUpKeyPressed =
           keysPressed.contains(LogicalKeyboardKey.keyW) ||
-              keysPressed.contains(LogicalKeyboardKey.arrowUp);
+          keysPressed.contains(LogicalKeyboardKey.arrowUp);
       final isDownKeyPressed =
           keysPressed.contains(LogicalKeyboardKey.keyS) ||
-              keysPressed.contains(LogicalKeyboardKey.arrowDown);
+          keysPressed.contains(LogicalKeyboardKey.arrowDown);
 
       if (isUpKeyPressed) verticalMovement--;
       if (isDownKeyPressed) verticalMovement++;
@@ -290,15 +290,13 @@ on PositionComponent, BasicMovement, KeyboardHandler {
 
     return super.onKeyEvent(event, keysPressed);
   }
-// Enable/disable player control
+
+  // Enable/disable player control
   bool setControllable(bool val) => active = val;
 }
 
-
-
 mixin JoystickControllableMovement
-on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
-
+    on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
   bool active = util.getPlatform();
 
   // Joystick component for movement
@@ -313,57 +311,52 @@ on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
     super.update(dt);
   }
 
-
   @override
-  Future<void> onMount() async{
+  Future<void> onMount() async {
     ///Joystick Component
     //Making a Joystick if the platform is not web or desktop
-    if(!active) return super.onMount();
+    if (!active) return super.onMount();
 
-      final knobPaint = BasicPalette.black.withAlpha(100).paint();
-      final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
-      joystick = JoystickComponent(
-        knob: CircleComponent(radius: 10, paint: knobPaint),
-        background: CircleComponent(radius: 40, paint: backgroundPaint),
-        margin: const EdgeInsets.only(left: 25, bottom: 25),
-      );
-
-      buttonComponent = HudButtonComponent(
-        button: CircleComponent(radius: 20, paint: knobPaint, anchor: Anchor.center),
-        buttonDown: CircleComponent(
-          radius: 30,
-          paint: BasicPalette.red.withAlpha(200).paint(),
-          anchor: Anchor.center,
-        ),
-        onPressed: () {
-
-          if (debugFlyMode || isClimbing) {
-            //when in debug mode move the player upwards
-            if (isClimbing)
-              verticalMovement = -0.06;
-            else
-              verticalMovement = -1;
-          } else {
-            hasJumped = true; //else jump
-          }
-
-        },
-        margin: const EdgeInsets.only(
-          right: 25,
-          bottom: 25,
-        ),
-      );
-
-     // Add the joystick to the viewport
-      game.cam.viewport.add(joystick);
-      // Add the button component to the viewport
-      game.cam.viewport.add(buttonComponent);
-    // Then set position
-    buttonComponent.position = Vector2(
-      game.cam.viewport.size.x - 80,
-      game.cam.viewport.size.y - 80,
+    final knobPaint = BasicPalette.black.withAlpha(100).paint();
+    final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
+    joystick = JoystickComponent(
+      knob: CircleComponent(radius: 10, paint: knobPaint),
+      background: CircleComponent(radius: 40, paint: backgroundPaint),
+      margin: const EdgeInsets.only(left: 25, bottom: 25),
     );
-    }
+
+    buttonComponent = HudButtonComponent(
+      button: CircleComponent(
+        radius: 20,
+        paint: knobPaint,
+        anchor: Anchor.center,
+      ),
+      buttonDown: CircleComponent(
+        radius: 30,
+        paint: BasicPalette.red.withAlpha(100).paint(),
+        anchor: Anchor.center,
+      ),
+      onPressed: () {
+        if (debugFlyMode || isClimbing) {
+          //when in debug mode move the player upwards
+          if (isClimbing)
+            verticalMovement = -0.06;
+          else
+            verticalMovement = -1;
+        } else {
+          hasJumped = true; //else jump
+        }
+      },
+      margin: const EdgeInsets.only(right: 25, bottom: 25),
+    );
+
+    // Add the joystick to the viewport
+    game.cam.viewport.add(joystick);
+    // Add the button component to the viewport
+    game.cam.viewport.add(buttonComponent);
+    // Then set position
+  }
+
   void updateJoystick() {
     //define the horizontal and vertical movement based on the joystick direction
     final direction = joystick.direction;
@@ -371,7 +364,6 @@ on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
     final intensity = joystick.intensity;
 
     switch (joystick.direction) {
-
       case JoystickDirection.upLeft:
       case JoystickDirection.downLeft:
       case JoystickDirection.left:
@@ -401,13 +393,9 @@ on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
           verticalMovement = 1;
 
       default:
-      //No movement
+        //No movement
         horizontalMovement = 0;
     }
   }
-
-  }
-  //
-
-
-
+}
+//
