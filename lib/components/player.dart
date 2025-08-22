@@ -10,7 +10,7 @@ import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'level_components/saw.dart';
-
+//todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations
 //with is used to additonal classes here our game class
 //import/reference to Keyboardhandler
@@ -24,7 +24,8 @@ class Player extends SpriteAnimationGroupComponent
         KeyboardControllableMovement,
         AnimationManager,
         HasMovementAnimations,
-        JoystickControllableMovement {
+        JoystickControllableMovement
+         {
   //bools
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
@@ -85,7 +86,11 @@ class Player extends SpriteAnimationGroupComponent
       game.overlays.add('SpeechBubble');
     }
 
-    if (other is Saw && !debugImmortalMode) _hit();
+    if (other is Saw && !debugImmortalMode) {
+      //todo here the ref.read(playerStateProvider.notifier).hit() should be called, but it is not working yet
+      _hit();}
+
+
     if (other is Enemy && !debugImmortalMode) _hit();
     if (other is Collectable && other.interactiveTask) {
       game.showDialogue = true;
