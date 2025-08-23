@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flame/game.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/json_exporter.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/text_overlay.dart';
+import 'package:mpg_achievements_app/main.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../dialogue_utils/speechbubble.dart';
 import 'json_factory/widgetFactory.dart';
@@ -158,7 +160,9 @@ class GameScreen extends StatelessWidget {
     return MaterialApp(
       home: Stack(
           children: [
-            GameWidget(
+            //because our game is of type game you would normally not need a type specifier, but here the RiverpodAwareGameWidget needs it to know which game it is dealing with
+            RiverpodAwareGameWidget<PixelAdventure>(
+              key: gameWidgetKey,
               game: game,
               overlayBuilderMap: {
                 "guiEditor": (BuildContext context, PixelAdventure game) {

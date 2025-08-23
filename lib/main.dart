@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_widgets.dart';
 import 'package:mpg_achievements_app/components/router/router.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'components/GUI/menuCreator/widget_option_definitions.dart';
 
-//a global key to access the game widget state
-final GlobalKey<RiverpodAwareGameWidgetState> gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState>();
+//a global key to access the game widget state from outside the RiverPodAwareGameWidget or services that live outside the game, but when Riverpod ref logic is available use the standard way of accessing the game via ref.read(gameProvider)
+// because our game is of type game you would normally not need a type specifier, but here the RiverpodAwareGameWidget needs it to know which game it is dealing with
+final GlobalKey<RiverpodAwareGameWidgetState<PixelAdventure>> gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState<PixelAdventure>>();
 
 // must be async because device loads fullScreen and setsLandscape and then at last the joystick
 void main() async {
