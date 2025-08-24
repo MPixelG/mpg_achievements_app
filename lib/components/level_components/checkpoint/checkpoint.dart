@@ -1,11 +1,14 @@
 import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
+import '../../state_management/providers/playerStateProvider.dart';
+
 class Checkpoint extends SpriteAnimationGroupComponent
-    with HasGameReference<PixelAdventure>, CollisionCallbacks, AnimationManager {
+    with HasGameReference<PixelAdventure>, CollisionCallbacks, AnimationManager, RiverpodComponentMixin {
   final int id;
   bool isActivated;
 
@@ -25,15 +28,16 @@ class Checkpoint extends SpriteAnimationGroupComponent
     return super.onLoad();
   }
 
-  @override
+ @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
+    final playerState = ref.watch(playerProvider);
     // if the checkpoint hasn't yet been activated and the player is colliding, we continue
     if (!isActivated && other is Player) {
       // id (represents gameplay progress) has to be higher so that the player always spawns at the latest checkpoint
-      if (other.lastCheckpoint == null || other.lastCheckpoint!.id < id) {
+      if (playerState.lastCheckpoint == null || playerState.lastCheckpoint!.id < id) {
         isActivated = true;
-        other.lastCheckpoint = this;
+        ref.read(playerProvider.notifier).setCheckpoint(this);
         playFlagOutAnimation();
       }
     }

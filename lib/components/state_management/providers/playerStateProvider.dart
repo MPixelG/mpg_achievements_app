@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/components/state_management/models/playerdata.dart';
+import '../../level_components/checkpoint/checkpoint.dart';
 
 
 
@@ -8,11 +9,11 @@ import 'package:mpg_achievements_app/components/state_management/models/playerda
 //Notifier is a class from the Riverpod package that allows you to create a state management solution. New since Riverpod 2.0 before it was StateNotifier
 
 
-//The global provider for the player state.
+//The global provider for the player state. Always declared outside of any class or function
 // This provider can be accessed from anywhere in the app to get or update the player's state.
-final playerProvider = NotifierProvider<PlayerStateProvider, PlayerData>((){return PlayerStateProvider();});
+final playerProvider = NotifierProvider<PlayerNotifier, PlayerData> (PlayerNotifier.new);
 
-class PlayerStateProvider extends Notifier<PlayerData> {
+class PlayerNotifier extends Notifier<PlayerData> {
 
 @override
   PlayerData build() {
@@ -20,12 +21,41 @@ class PlayerStateProvider extends Notifier<PlayerData> {
   // This method is called when the provider is first created.
   // You can also fetch initial data from a database or API here.
   // For this example, we are just returning a PlayerData object with a default character name
-    return PlayerData(playerCharacter: 'name');
+    return PlayerData(playerCharacter: 'default', lives: 3, gotHit: false, lastCheckpoint: null);
   }
 
   void takeHit(){
-    // This method can be used to update the player's state when they take a hit.
-    // For example, you might want to decrease the player's health or change their status.
+   if (state.gotHit) return; // If already got hit, do nothing
+    state = state.copyWith(
+      lives: state.lives - 1,
+      gotHit: true,
+    );
+
+  }
+
+  void heal(){
+    state = state.copyWith(
+      lives: state.lives + 1,
+      gotHit: false,
+    );
+  }
+
+  void setCheckpoint(Checkpoint checkpoint){
+    state = state.copyWith(
+      lastCheckpoint: checkpoint,
+    );
+  }
+
+  void resetHit(){
+    state = state.copyWith(
+      gotHit: false,
+    );
+  }
+
+  void respawn(){
+  state = state.copyWith(
+    lives: state.lives + 3,
+  );
 
   }
 

@@ -313,6 +313,7 @@ mixin JoystickControllableMovement
 
   @override
   Future<void> onMount() async {
+    super.onMount();
     ///Joystick Component
     //Making a Joystick if the platform is not web or desktop
     if (!active) return super.onMount();

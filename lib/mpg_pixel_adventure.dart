@@ -73,6 +73,11 @@ class PixelAdventure extends FlameGame
   }
 
   @override
+  void onMount() {
+    super.onMount();
+  }
+
+  @override
   void update(double dt) {
     super.update(dt);
   }

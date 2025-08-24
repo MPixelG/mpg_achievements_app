@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
+import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/level_components/checkpoint/checkpoint.dart';
@@ -17,6 +18,7 @@ import 'level_components/saw.dart';
 class Player extends SpriteAnimationGroupComponent
     with
         HasGameReference<PixelAdventure>,
+        RiverpodComponentMixin,
         KeyboardHandler,
         CollisionCallbacks,
         HasCollisions,
@@ -25,24 +27,24 @@ class Player extends SpriteAnimationGroupComponent
         AnimationManager,
         HasMovementAnimations,
         JoystickControllableMovement
+
          {
   //bools
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
+  //we need this local state flag because of the animation and movement logic, it refers to the global state bool gotHit
+  bool _isHitAnimationPlaying = false;
+  //starting position
+  Vector2 startingPosition = Vector2.zero();
+  //Player name
+  String playerCharacter;
 
-  // variable to store the latest checkpoint (used for respawning)
+/*moved to Provider  // variable to store the latest checkpoint (used for respawning)
   Checkpoint? lastCheckpoint;
-
   // HP variables, if we decide to include these (if not set both to 1)
   int startHP = 3;
   int lives = 3;
-  bool gotHit = false;
-
-  //starting position
-  Vector2 startingPosition = Vector2.zero();
-
-  //Player name
-  String playerCharacter;
+  bool gotHit = false;*/
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
@@ -51,6 +53,38 @@ class Player extends SpriteAnimationGroupComponent
   FutureOr<void> onLoad() {
     startingPosition = Vector2(position.x, position.y);
     return super.onLoad();
+  }
+
+  @override
+  Future<void> onMount() async {
+    super.onMount();
+  }
+
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    //Provider logic follow
+    //the ref.watch here makes sure that the player component rebuilds and PlayerData changes its values when the player state changes
+    final playerState = ref.watch(playerProvider);
+    if(playerState.gotHit && !_isHitAnimationPlaying){
+      _isHitAnimationPlaying = true;
+      playAnimation('hit').whenComplete(() async {
+        await Future.delayed(Duration(milliseconds: 250));
+        //we are accessing the notifier of the playerProvider to call the resetHit method which sets gotHit to false again
+        ref.read(playerProvider.notifier).resetHit();
+        _isHitAnimationPlaying = false;
+      });
+      
+      }
+
+    if (playerState.lives <= 0 && !playerState.gotHit) {
+      //if the player has no lives left, we respawn them
+      _respawn();
+      position = startingPosition;
+    }
+
   }
 
   @override
@@ -87,35 +121,24 @@ class Player extends SpriteAnimationGroupComponent
     }
 
     if (other is Saw && !debugImmortalMode) {
-      //todo here the ref.read(playerStateProvider.notifier).hit() should be called, but it is not working yet
-      _hit();}
+      ref.read(playerProvider.notifier).takeHit();}
 
+    if (other is Enemy && !debugImmortalMode) {
+      ref.read(playerProvider.notifier).takeHit();}
 
-    if (other is Enemy && !debugImmortalMode) _hit();
     if (other is Collectable && other.interactiveTask) {
+      //todo state management for tasks
       game.showDialogue = true;
       game.overlays.add('DialogueScreen');
     }
     super.onCollision(intersectionPoints, other);
   }
 
-  void _hit() async {
-    if (gotHit) return;
-    lives = lives - 1;
-    if (lives <= 0) {
-      _respawn();
-      return;
-    }
-    gotHit = true;
-    playAnimation('hit');
-    await Future.delayed(Duration(milliseconds: 250));
-    gotHit = false;
-  }
-
   void _respawn() async {
-    if (gotHit) return; //if the player is already being respawned, stop
+
+    ref.read(playerProvider.notifier).respawn();
+
     updateMovement = false;
-    gotHit = true; //indicate, that the player is being respawned
     playAnimation("hit");
     velocity = Vector2.zero(); //reset velocity
     setGravityEnabled(false); //temporarily disable gravity for this player
@@ -133,9 +156,10 @@ class Player extends SpriteAnimationGroupComponent
       Duration(milliseconds: 320),
     ); //wait for the animation to finish
     // respawn position is the last checkpoints position
-
-    if (lastCheckpoint != null) {
-      position = lastCheckpoint!.position - Vector2(40, 32);
+    final respawnPoint = ref.read(playerProvider).lastCheckpoint;
+    if (respawnPoint != null) {
+      position = startingPosition;
+      //position = lastCheckpoint!.position - Vector2(40, 32);
     } //position the player at the spawn point and also add the displacement of the animation
     scale = Vector2.all(0); //hide the player
     await Future.delayed(
@@ -146,16 +170,14 @@ class Player extends SpriteAnimationGroupComponent
     await Future.delayed(
       Duration(milliseconds: 300),
     ); //wait for the animation to finish
-
+    //todo renaming necessary
     updatePlayerstate(); //update the players feet to the ground
-    gotHit = false; //indicate, that the respawn process is over
     position += Vector2.all(
       32,
     ); //reposition the player, because it had a bit of displacement because of the respawn animation
     setGravityEnabled(true); //re-enable gravity
     updateMovement = true;
-    lives = startHP;
-  }
+    }
 
   //Getters
   @override
@@ -219,5 +241,5 @@ class Player extends SpriteAnimationGroupComponent
   AnimatedComponentGroup get group => AnimatedComponentGroup.entity;
 
   @override
-  bool get isInHitFrames => gotHit;
+  bool get isInHitFrames => _isHitAnimationPlaying;
 }

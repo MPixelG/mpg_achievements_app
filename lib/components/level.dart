@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide PointerMoveEvent, AnimationStyle;
 import 'package:flutter/services.dart';
@@ -16,6 +17,7 @@ import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
+import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
@@ -28,7 +30,8 @@ class Level extends World
         HasGameReference<PixelAdventure>,
         KeyboardHandler,
         PointerMoveCallbacks,
-        TapCallbacks {
+        TapCallbacks,
+        RiverpodComponentMixin {
   final String levelName;
   late TiledComponent level;
   final Player player;
@@ -96,6 +99,12 @@ class Level extends World
 
     //runs all the other onLoad-events the method is referring to, now not important
     return super.onLoad();
+  }
+
+  @override
+  void onMount() {
+    super.onMount();
+    final playerState = ref.watch(playerProvider);
   }
 
   //creating a background dynamically
@@ -177,9 +186,8 @@ class Level extends World
             );
             // if checkpoint is already activated in tiled, the original spawnpoint is overridden
             if (isActivated == true) {
-              player.lastCheckpoint = checkpoint;
-              player.position = checkpoint.position;
-            }
+              ref.read(playerProvider.notifier).setCheckpoint(checkpoint);
+              }
             add(checkpoint);
             break;
           case "Enemy":
