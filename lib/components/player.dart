@@ -34,10 +34,13 @@ class Player extends SpriteAnimationGroupComponent
   bool debugImmortalMode = false;
   //we need this local state flag because of the animation and movement logic, it refers to the global state bool gotHit
   bool _isHitAnimationPlaying = false;
+  bool _isRespawningAnimationPlaying = false;
   //starting position
   Vector2 startingPosition = Vector2.zero();
   //Player name
   String playerCharacter;
+
+
 
 /*moved to Provider  // variable to store the latest checkpoint (used for respawning)
   Checkpoint? lastCheckpoint;
@@ -55,11 +58,6 @@ class Player extends SpriteAnimationGroupComponent
     return super.onLoad();
   }
 
-  @override
-  Future<void> onMount() async {
-    super.onMount();
-  }
-
 
   @override
   void update(double dt) {
@@ -68,29 +66,32 @@ class Player extends SpriteAnimationGroupComponent
     //Provider logic follow
     //the ref.watch here makes sure that the player component rebuilds and PlayerData changes its values when the player state changes
     final playerState = ref.watch(playerProvider);
-    if(playerState.gotHit && !_isHitAnimationPlaying){
+
+
+    //Hit-Logic
+    if(playerState.gotHit && !_isHitAnimationPlaying && !playerState.isRespawning){
       _isHitAnimationPlaying = true;
-      playAnimation('hit').whenComplete(() async {
-        await Future.delayed(Duration(milliseconds: 250));
+      playAnimation('hit').whenComplete(() {
         //we are accessing the notifier of the playerProvider to call the resetHit method which sets gotHit to false again
         ref.read(playerProvider.notifier).resetHit();
         _isHitAnimationPlaying = false;
       });
-      
       }
 
-    if (playerState.lives <= 0 && !playerState.gotHit) {
+    //Respawn logic
+    if (playerState.isRespawning && !_isRespawningAnimationPlaying) {
       //if the player has no lives left, we respawn them
+      _isRespawningAnimationPlaying = true;
       _respawn();
-      position = startingPosition;
-    }
+      }
 
   }
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
-      _respawn(); //press r to reset player
+      ref.read(playerProvider.notifier).manualRespawn();
+      _respawn();//press r to reset player
     }
     if (keysPressed.contains(LogicalKeyboardKey.keyX)) {
       print(
@@ -136,10 +137,7 @@ class Player extends SpriteAnimationGroupComponent
 
   void _respawn() async {
 
-    ref.read(playerProvider.notifier).respawn();
-
     updateMovement = false;
-    playAnimation("hit");
     velocity = Vector2.zero(); //reset velocity
     setGravityEnabled(false); //temporarily disable gravity for this player
 
@@ -154,29 +152,41 @@ class Player extends SpriteAnimationGroupComponent
     playAnimation("disappearing"); //display a disappear animation
     await Future.delayed(
       Duration(milliseconds: 320),
-    ); //wait for the animation to finish
+    );
+    //wait for the animation to finish
+
     // respawn position is the last checkpoints position
+
+    //Positioning the player after respawn
     final respawnPoint = ref.read(playerProvider).lastCheckpoint;
-    if (respawnPoint != null) {
-      position = startingPosition;
-      //position = lastCheckpoint!.position - Vector2(40, 32);
-    } //position the player at the spawn point and also add the displacement of the animation
+
+    position = (respawnPoint?.position ?? startingPosition) - Vector2(40,32);
+
+    //position the player at the spawn point and also add the displacement of the animation
     scale = Vector2.all(0); //hide the player
     await Future.delayed(
       Duration(milliseconds: 800),
     ); //wait a bit for the camera to position and increase the annoyance of the player XD
     scale = Vector2.all(1); //show the player
     playAnimation("appearing"); //display an appear animation
+
     await Future.delayed(
       Duration(milliseconds: 300),
-    ); //wait for the animation to finish
+    );
+
+    //wait for the animation to finish
     //todo renaming necessary
+    setGravityEnabled(true);
+    print("reenabled gravity");//re-enable gravity
+    updateMovement = true;
     updatePlayerstate(); //update the players feet to the ground
     position += Vector2.all(
       32,
     ); //reposition the player, because it had a bit of displacement because of the respawn animation
-    setGravityEnabled(true); //re-enable gravity
-    updateMovement = true;
+
+
+    ref.read(playerProvider.notifier).completeRespawn();
+    _isRespawningAnimationPlaying = false;
     }
 
   //Getters
@@ -242,4 +252,8 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   bool get isInHitFrames => _isHitAnimationPlaying;
-}
+  bool get isInRespawnFrames => _isRespawningAnimationPlaying;
+
+
+
+  }

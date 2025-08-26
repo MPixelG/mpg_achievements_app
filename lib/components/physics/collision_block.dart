@@ -29,8 +29,5 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks {
     hitbox = RectangleHitbox(position: Vector2(0, 0), size: size);
     add(hitbox);
   }
-  @override
-  void onMount() {
-    super.onMount();
-  }
+
 }

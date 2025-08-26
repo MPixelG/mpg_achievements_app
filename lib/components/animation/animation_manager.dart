@@ -108,18 +108,21 @@ mixin HasMovementAnimations on AnimationManager, BasicMovement{
 
 
   bool get isInHitFrames; //if the player is currently being hit, we dont want to overwrite the animation
+  bool get isInRespawnFrames; //if the player is currently respawning, we dont want to overwrite the animation
 
   @override
   void update(double dt){
 
-    if(!isInHitFrames) updatePlayerstate();
+    if(!isInHitFrames || !isInRespawnFrames) updatePlayerstate();
     animationTicker?.update(dt);
 
     super.update(dt);
 
   }
-
+ //todo renameing necessary
   void updatePlayerstate() {
+
+    if(isInRespawnFrames || isInHitFrames) return; //if we are in respawn or hit frames we dont want to change the animation
 
     String animation = getAnimation("idle");
 

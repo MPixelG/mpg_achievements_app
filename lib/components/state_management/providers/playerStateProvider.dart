@@ -24,13 +24,25 @@ class PlayerNotifier extends Notifier<PlayerData> {
     return PlayerData(playerCharacter: 'default', lives: 3, gotHit: false, lastCheckpoint: null);
   }
 
-  void takeHit(){
-   if (state.gotHit) return; // If already got hit, do nothing
-    state = state.copyWith(
-      lives: state.lives - 1,
-      gotHit: true,
-    );
+  void takeHit() {
+    if (state.gotHit || state.isRespawning) return;
 
+    final newLives = state.lives - 1;
+
+    if (newLives <= 0) {
+      // If already got hit, do nothing
+      state = state.copyWith(
+        lives: 0,
+        gotHit: true,
+        isRespawning: true,
+      );
+    }
+    else {
+      state = state.copyWith(
+        lives: newLives,
+        gotHit: true,
+      );
+    }
   }
 
   void heal(){
@@ -52,11 +64,17 @@ class PlayerNotifier extends Notifier<PlayerData> {
     );
   }
 
-  void respawn(){
-  state = state.copyWith(
-    lives: state.lives + 3,
-  );
+  void completeRespawn(){
+    state = state.copyWith(
+      isRespawning: false,
+      lives: 3,
+      gotHit: false,
+    );
+  }
 
+  void manualRespawn(){
+    state = state.copyWith(
+      isRespawning: false, gotHit: false);
   }
 
 }

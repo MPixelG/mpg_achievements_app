@@ -31,13 +31,15 @@ class Checkpoint extends SpriteAnimationGroupComponent
  @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
-    final playerState = ref.watch(playerProvider);
+    final playerState = ref.read(playerProvider);
     // if the checkpoint hasn't yet been activated and the player is colliding, we continue
     if (!isActivated && other is Player) {
       // id (represents gameplay progress) has to be higher so that the player always spawns at the latest checkpoint
       if (playerState.lastCheckpoint == null || playerState.lastCheckpoint!.id < id) {
         isActivated = true;
+        print("activated");
         ref.read(playerProvider.notifier).setCheckpoint(this);
+        print(ref.read(playerProvider).lastCheckpoint?.id);
         playFlagOutAnimation();
       }
     }

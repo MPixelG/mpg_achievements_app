@@ -13,6 +13,7 @@ class PlayerData {
   final String playerCharacter;
   final int lives;
   final bool gotHit;
+  final bool isRespawning;
   final Checkpoint? lastCheckpoint;
 
   PlayerData({
@@ -22,6 +23,7 @@ class PlayerData {
     required this.playerCharacter,
     this.lives = 3,
     this.gotHit = false,
+    this.isRespawning = false,
     this.lastCheckpoint,})
       : id = id ?? uuid.v4(); // Generate a unique ID if not provided;
 
@@ -35,6 +37,7 @@ class PlayerData {
     String? playerCharacter,
     int? lives,
     bool? gotHit,
+    bool? isRespawning,
     Checkpoint? lastCheckpoint,
   }) {
     return PlayerData(
@@ -43,6 +46,7 @@ class PlayerData {
       playerCharacter: playerCharacter ?? this.playerCharacter,
       lives: lives ?? this.lives,
       gotHit: gotHit ?? this.gotHit,
+      isRespawning: isRespawning ?? this.isRespawning,
       lastCheckpoint: lastCheckpoint ?? this.lastCheckpoint,
     );
   }

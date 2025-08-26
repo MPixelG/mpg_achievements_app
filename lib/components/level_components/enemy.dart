@@ -32,6 +32,7 @@ class Enemy extends SpriteAnimationGroupComponent
         BasicMovement,
         AnimationManager, HasMovementAnimations {
   bool gotHit = false;
+  bool isRespawning = false;
 
   //debug switches for special modes
   bool debugNoClipMode = false;
@@ -210,4 +211,7 @@ class Enemy extends SpriteAnimationGroupComponent
 
   @override
   bool get isInHitFrames => gotHit;
+
+  @override
+  bool get isInRespawnFrames => isRespawning;
 }
