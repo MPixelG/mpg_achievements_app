@@ -113,10 +113,10 @@ mixin HasMovementAnimations on AnimationManager, BasicMovement{
   @override
   void update(double dt){
 
-    if(!isInHitFrames || !isInRespawnFrames) updatePlayerstate();
+    updatePlayerstate();
     animationTicker?.update(dt);
-
     super.update(dt);
+
 
   }
  //todo renameing necessary

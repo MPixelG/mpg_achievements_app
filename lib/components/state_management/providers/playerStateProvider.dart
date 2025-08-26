@@ -68,13 +68,13 @@ class PlayerNotifier extends Notifier<PlayerData> {
     state = state.copyWith(
       isRespawning: false,
       lives: 3,
-      gotHit: false,
+
     );
   }
 
   void manualRespawn(){
     state = state.copyWith(
-      isRespawning: false, gotHit: false);
+      isRespawning: true, gotHit: false);
   }
 
 }

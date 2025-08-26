@@ -40,15 +40,6 @@ class Player extends SpriteAnimationGroupComponent
   //Player name
   String playerCharacter;
 
-
-
-/*moved to Provider  // variable to store the latest checkpoint (used for respawning)
-  Checkpoint? lastCheckpoint;
-  // HP variables, if we decide to include these (if not set both to 1)
-  int startHP = 3;
-  int lives = 3;
-  bool gotHit = false;*/
-
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
 
@@ -69,20 +60,30 @@ class Player extends SpriteAnimationGroupComponent
 
 
     //Hit-Logic
-    if(playerState.gotHit && !_isHitAnimationPlaying && !playerState.isRespawning){
-      _isHitAnimationPlaying = true;
-      playAnimation('hit').whenComplete(() {
-        //we are accessing the notifier of the playerProvider to call the resetHit method which sets gotHit to false again
+    //if the player is respawning we play the respawn animation and call the respawn logic when it is complete
+    if(playerState.isRespawning && !_isRespawningAnimationPlaying){
+      _isRespawningAnimationPlaying = true;
+
+      playAnimation('hit').whenComplete((){
+
+        //this is called when the hit animation is complete
         ref.read(playerProvider.notifier).resetHit();
-        _isHitAnimationPlaying = false;
+        //now we call the respawn logic
+        _respawn();
       });
       }
 
     //Respawn logic
-    if (playerState.isRespawning && !_isRespawningAnimationPlaying) {
+    //if the player got hit and the hit animation is not already playing we play the hit animation and reset the gotHit state when it is complete
+    else if (playerState.gotHit && !_isHitAnimationPlaying) {
       //if the player has no lives left, we respawn them
-      _isRespawningAnimationPlaying = true;
-      _respawn();
+      _isHitAnimationPlaying = true;
+      playAnimation('hit').whenComplete(() {
+
+        ref.read(playerProvider.notifier).resetHit();
+        _isHitAnimationPlaying = false;
+      });
+
       }
 
   }
@@ -91,8 +92,7 @@ class Player extends SpriteAnimationGroupComponent
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
       ref.read(playerProvider.notifier).manualRespawn();
-      _respawn();//press r to reset player
-    }
+        }
     if (keysPressed.contains(LogicalKeyboardKey.keyX)) {
       print(
         hitbox.isColliding,
@@ -149,7 +149,7 @@ class Player extends SpriteAnimationGroupComponent
     ); //center the player so that the animation displays correctly (its 96*96 and the player is 32*32)
     scale.x =
         1; //flip the player to the right side and a third of the size because the animation is triple of the size
-    playAnimation("disappearing"); //display a disappear animation
+    await playAnimation("disappearing"); //display a disappear animation
     await Future.delayed(
       Duration(milliseconds: 320),
     );
@@ -168,7 +168,7 @@ class Player extends SpriteAnimationGroupComponent
       Duration(milliseconds: 800),
     ); //wait a bit for the camera to position and increase the annoyance of the player XD
     scale = Vector2.all(1); //show the player
-    playAnimation("appearing"); //display an appear animation
+    await playAnimation("appearing"); //display an appear animation
 
     await Future.delayed(
       Duration(milliseconds: 300),
@@ -250,6 +250,7 @@ class Player extends SpriteAnimationGroupComponent
   @override
   AnimatedComponentGroup get group => AnimatedComponentGroup.entity;
 
+  //we answer the getters from HasMovementAnimations here to tell the mixin if we are currently in hit or respawn frames
   @override
   bool get isInHitFrames => _isHitAnimationPlaying;
   bool get isInRespawnFrames => _isRespawningAnimationPlaying;
