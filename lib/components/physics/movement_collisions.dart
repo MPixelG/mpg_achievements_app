@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
@@ -318,8 +319,13 @@ mixin JoystickControllableMovement
     //Making a Joystick if the platform is not web or desktop
     if (!active) return super.onMount();
 
+    // paints for HUD elements
     final knobPaint = BasicPalette.black.withAlpha(100).paint();
-    final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
+    final backgroundPaint = Paint();
+    final buttonPaint = Paint();
+    backgroundPaint.color = Color.fromARGB(100, 151, 179, 174);
+    buttonPaint.color = Color.fromARGB(100, 250, 243, 235);
+
     joystick = JoystickComponent(
       knob: CircleComponent(radius: 10, paint: knobPaint),
       background: CircleComponent(radius: 40, paint: backgroundPaint),
@@ -328,25 +334,45 @@ mixin JoystickControllableMovement
 
     buttonComponent = HudButtonComponent(
       button: CircleComponent(
-        radius: 20,
+        radius: 40,
         paint: knobPaint,
         anchor: Anchor.center,
-      ),
+      )..position = Vector2.all(40),
       buttonDown: CircleComponent(
-        radius: 30,
-        paint: BasicPalette.red.withAlpha(100).paint(),
+        radius: 40,
+        paint: buttonPaint,
         anchor: Anchor.center,
-      ),
+      )..position = Vector2.all(40),
       onPressed: () {
+        // Jump Logic
         if (debugFlyMode || isClimbing) {
-          //when in debug mode move the player upwards
-          if (isClimbing)
+          if (isClimbing) {
             verticalMovement = -0.06;
-          else
+          } else {
             verticalMovement = -1;
+          }
         } else {
-          hasJumped = true; //else jump
+          hasJumped = true;
         }
+
+        // Animation: Button "pop"
+        final effect = ScaleEffect.to(
+          Vector2.all(1.2), // a bit bigger than before
+          EffectController(
+            duration: 0.15,
+            reverseDuration: 0.2,
+            curve: Curves.easeOutBack, // easing
+            reverseCurve: Curves.easeIn, // when returning
+          ),
+        );
+
+        // resetting old effects to prevent stacking
+        buttonComponent.button!.add(
+          effect..onComplete = () {
+            // reset to original size
+            buttonComponent.button!.scale = Vector2.all(1);
+          },
+        );
       },
       margin: const EdgeInsets.only(right: 25, bottom: 25),
     );
