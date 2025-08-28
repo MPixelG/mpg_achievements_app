@@ -7,6 +7,8 @@ import 'package:flame/geometry.dart';
 import 'package:mpg_achievements_app/components/ai/goals/goal.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
+import 'package:mpg_achievements_app/components/physics/collisions.dart';
+import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 
 import '../../../mpg_pixel_adventure.dart';
@@ -27,7 +29,7 @@ class MoveGoal extends Goal {
   bool get isShifting => (parent!.parent! as BasicMovement).isShifting;
   Level get level => (parent!.parent! as HasGameReference<PixelAdventure>).game.level;
 
-  Vector2 get tilesize => level.tilesize;
+  Vector2 get tilesize => level.tileSize;
 
 
   set horizontalMovement(double pos) => (parent!.parent! as BasicMovement).horizontalMovement = pos;
@@ -44,13 +46,13 @@ class MoveGoal extends Goal {
   @override
   FutureOr<void> onLoad() {
     endPos = Vector2(-1, -1);
-    path = level.generator.getPathTo((position..divide(tilesize)), endPos);
+    path = level.generator.getPathTo(toGridPos(position), endPos);
     return super.onLoad();
   }
 
   void recalculatePath(Vector2 endPos) { //lets the entity walk to a given position
     this.endPos = endPos; //set the new end pos
-    path = level.generator.getPathTo((position..divide(tilesize))..floor(), endPos); //generate the path
+    path = level.generator.getPathTo(toGridPos(position)..floor(), endPos); //generate the path
     stepIndex = 0; //reset the step index
     timeSinceLastPosChange = 0; //and the time since the position changed. this will be used for when the entity got off the path and is stuck now if it was stuck for over 3 secs, the path will be regenerated from that pos
   }
@@ -74,7 +76,7 @@ class MoveGoal extends Goal {
 
     currentStep = path![stepIndex]; //set the current step
 
-    Vector2 currentStepPosCenter = (currentStep!.node.poiNode.position..multiply(tilesize)) + (tilesize / 2); //the center of the currently aimed position.
+    Vector2 currentStepPosCenter = toWorldPos(currentStep!.node.poiNode.position) + (tilesize / 2); //the center of the currently aimed position.
 
     if (currentStepPosCenter.distanceTo(absoluteCenter) > 128) { //if we got off the path, we look at what the nearest node is. this way we automatically skip / get back to the right node.
       currentStep = getNearestStep(absoluteCenter, path!); //get the nearest node to that point. it also checks if theres line of sight between these points so that the entity doesnt target an impossible node.
@@ -124,7 +126,7 @@ class MoveGoal extends Goal {
         }
     }
 
-    if (((lastPosition..divide(tilesize)).clone()..floor()) == ((position..divide(tilesize)).clone()..floor())) //check if the current position and the last position are about the same.
+    if ((toGridPos(lastPosition).clone()..floor()) == (toGridPos(position).clone()..floor())) //check if the current position and the last position are about the same.
       timeSinceLastPosChange += dt; //if they are, we increase the timer
     else {
       timeSinceLastPosChange = 0; //if the position changed, we reset the timer
@@ -143,13 +145,13 @@ class MoveGoal extends Goal {
   PathStep getNearestStep(Vector2 position, List<PathStep> path) {
     return path.reduce((value, element) { //reduce means, that this will get executed until only one element is left. the element returned stays, the other one is removed.
       PathStep nearestTarget =
-          ((value.node.poiNode.position..multiply(tilesize)).distanceTo(position) < //the distance from the current pos and the pos of the first val
-              (element.node.poiNode.position..multiply(tilesize)).distanceTo(position)) //and the distance to the second val
+          (toWorldPos(value.node.poiNode.position).distanceTo(position) < //the distance from the current pos and the pos of the first val
+              toWorldPos(element.node.poiNode.position).distanceTo(position)) //and the distance to the second val
           ? value : element; //the one with the shorter distance is the result.
 
       if (hasClearPath( //now we have to check if theres a clear path between the nearer point and the entity pos.
         nearestTarget.node.poiNode.position + Vector2.all(0.5), // +0.5 so that its centered
-        position..multiply(tilesize))) { //convert the world pos to the grid pos
+        toWorldPos(position))) { //convert the world pos to the grid pos
         return nearestTarget; //if it has a clear path we return the element with the shorter distance
 
       } else { //if theres no clear path between those, we return the other one.
@@ -169,20 +171,20 @@ class MoveGoal extends Goal {
       return true;
     }
 
-    PixelAdventure game = (level.game as PixelAdventure); //get the game
+    PixelAdventure game = level.game; //get the game
 
     Vector2 direction = (otherPos - firstPos)
         .normalized(); //calculate the direction of the 2 points
 
     Ray2 ray = Ray2(
-      origin: firstPos..multiply(tilesize), //convert the grid pos to the world pos
+      origin: toWorldPos(firstPos), //convert the grid pos to the world pos
       direction: direction,
     ); //calculate the ray
 
     RaycastResult<ShapeHitbox>? result = game.collisionDetection.raycast(
       //and use it to raycast
       ray,
-      maxDistance: firstPos.distanceTo(otherPos..multiply(tilesize)),
+      maxDistance: firstPos.distanceTo(toWorldPos(otherPos)),
       //multiply by the tilesize because the current positions are grid positions
       hitboxFilter: (candidate) =>
           candidate.parent is CollisionBlock && //we only want to check for collision blocks
@@ -240,6 +242,14 @@ class MoveGoal extends Goal {
       position;
 
   void jump() {(parent!.parent! as BasicMovement).jump();}
+
+
+  Vector2 toWorldPos(Vector2 val){
+    return Vector2(val.x * tilesize.x, val.y * tilesize.y);
+  }
+  Vector2 toGridPos(Vector2 val){
+    return Vector2(val.x / tilesize.x, val.y / tilesize.y);
+  }
 
 }
 

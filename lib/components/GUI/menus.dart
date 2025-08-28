@@ -204,31 +204,3 @@ class GameScreen extends StatelessWidget {
     );
   }
 }
-
-class JsonScreenBuilder {
-  static Future<Widget> buildScreen(String jsonPath, BuildContext context) async {
-    try {
-      final jsonString = await rootBundle.loadString(jsonPath);
-      final screenData = json.decode(jsonString);
-
-      return _buildWidgetsFromData(screenData, context);
-    } catch (e) {
-      return Container(child: Text('Error loading screen: $e', style: TextStyle(color: Colors.red, fontSize: 20)));
-    }
-  }
-
-  static Widget _buildWidgetsFromData(Map<String, dynamic> screenData, BuildContext context) {
-    return Stack(
-      children: screenData['widgets'].map<Widget>((widgetData) {
-        final widget = WidgetFactory.buildWidget(widgetData, context);
-        final position = widgetData['position'];
-
-        return Positioned(
-          left: position['x'].toDouble(),
-          top: position['y'].toDouble(),
-          child: widget,
-        );
-      }).toList(),
-    );
-  }
-}

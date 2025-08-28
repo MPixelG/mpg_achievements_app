@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class PixelButton extends StatefulWidget{
   final String text; //the text of the button
   final VoidCallback? onPressed; //the action when pressed
-  bool mouseHover = false; //if theres a mouse hovering over it
+  final bool mouseHover = false; //if theres a mouse hovering over it
 
 
-  PixelButton({Key? key, required this.text, this.onPressed}) : super(key: key); //basic constructor
+  const PixelButton({super.key, required this.text, this.onPressed}); //basic constructor
 
   @override
   State<StatefulWidget> createState() => _PixelButtonState(); //the style of the button

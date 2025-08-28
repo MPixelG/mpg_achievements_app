@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
@@ -9,10 +10,10 @@ import 'package:flutter/material.dart' hide PointerMoveEvent, AnimationStyle;
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
 import 'package:mpg_achievements_app/components/animation/animation_style.dart';
+import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
-import 'package:mpg_achievements_app/components/physics/collision_block.dart';
-import 'package:mpg_achievements_app/components/level_components/collectables.dart';
+import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import 'package:mpg_achievements_app/components/player.dart';
@@ -25,7 +26,7 @@ import '../background/scrolling_background.dart';
 import '../level_components/saw.dart';
 import '../level_components/checkpoint/checkpoint.dart';
 
-class Level extends World
+abstract class Level extends World
     with
         HasGameReference<PixelAdventure>,
         KeyboardHandler,
@@ -35,47 +36,49 @@ class Level extends World
   final String levelName;
   late TiledComponent level;
   final Player player;
-  Enemy enemy;
+  Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
 
   int totalCollectables = 0;
 
-  late final Vector2 tilesize;
+  late final Vector2 tileSize;
 
-  //Todo add feature to make levels with and without scrolling background //added via Tiled
-  final bool scrollingBackground = false;
+  late final Background background;
 
   //loads when the class instantiated
   //In dart, late keyword is used to declare a variable or field that will be initialized at a later time.e.g. late String name
   //
   //constructor
-  Level(this.enemy, {required this.levelName, required this.player});
+  Level(
+      {required this.levelName, required this.player, Background? background}) {
+    if (background != null) this.background = background;
+  }
 
   late POIGenerator generator;
 
   @override
   FutureOr<void> onLoad() async {
-    tilesize = (await getTilesizeOfLevel(levelName));
+    tileSize = (await getTilesizeOfLevel(levelName));
 
     //await need to be there because it takes some time to load, that's why the method needs to be async
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
-    level = await TiledComponent.load('$levelName.tmx', tilesize);
+    level = await TiledComponent.load('$levelName.tmx', tileSize);
+
+    level.position = Vector2(0, 0);
+
+    print("map origin: ${Vector2(level.width / 2, 0)}");
+
     add(level);
 
     // If level not Parallax, load level with  scrolling background, property is added in Tiled
-    if (level.tileMap.getLayer('Level')?.properties.getValue('Parallax') ?? false) {
-      _loadParallaxLevel();
+    if (level.tileMap
+        .getLayer('Level')
+        ?.properties
+        .getValue('Parallax') ?? false) {
+      _loadParallaxBackground();
     } else {
-      _scrollingBackground();
-    }
-
-    String side = level.tileMap.getLayer('Level')?.properties.getValue('Side') ?? "Side";
-
-    if (side == "Side") {
-      player.viewSide = ViewSide.side;
-    } else if(side == "TopDown"){
-      player.viewSide = ViewSide.topDown;
+      _loadScrollingBackground();
     }
 
 
@@ -83,16 +86,14 @@ class Level extends World
     add(generator);
 
     //spawn objects
-    _spawningObjects();
+    generateSpawningObjectsForLevel(this);
     //add collision objects
-    _addCollisions();
+    generateCollisionsForLevel(this);
 
-    // Add UI overlays to the game (e.g., score, health bar).
     // Set their scale and render priority so they display correctly.
     add(debugOverlays);
     debugOverlays.scale = Vector2.zero(); // Start hidden/scaled down
-    debugOverlays.priority =
-        2; // Ensure overlays draw above the rest of the game
+    debugOverlays.priority = 2; // Ensure overlays draw above the rest of the game
 
     // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
     game.cam.setMoveBounds(Vector2.zero(), level.size);
@@ -108,138 +109,6 @@ class Level extends World
   }
 
   //creating a background dynamically
-  void _scrollingBackground() {
-    final backgroundLayer = level.tileMap.getLayer('Level');
-    String backgroundColor = "Green";
-    if (backgroundLayer != null) {
-      backgroundColor =
-          backgroundLayer.properties.getValue('BackgroundColor') ?? "Green";
-    }
-
-    ScrollingBackground background = ScrollingBackground(
-      tileColor: backgroundColor,
-      camera: (parent as PixelAdventure).cam,
-    );
-    background.priority = -3;
-
-    add(background);
-  }
-
-  void _spawningObjects() {
-    //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list
-    final ObjectGroup? spawnPointsLayer = level.tileMap.getLayer<ObjectGroup>(
-      'Spawnpoints',
-    );
-
-    //if there is no Spawnpoint-layer the game can never the less run and does not crash / Nullcheck-Safety
-    if (spawnPointsLayer != null) {
-      //then we go through the list and check for the class Player, which was also defined as an object in the Óbjectlayer
-      //When we find that class we create our player and add it to the level in the defined spawnpoint - ! just says that it can be null
-      for (final spawnPoint in spawnPointsLayer.objects) {
-        switch (spawnPoint.class_) {
-          case 'Player':
-            //player spawning
-            player.position = Vector2(spawnPoint.x, spawnPoint.y);
-            add(player);
-            break;
-          case 'Collectable':
-            //checking type for spawning
-            bool interactiveTask =
-                spawnPoint.properties.getValue('interactiveTask') ?? false;
-            String collectablePath(bool task) =>
-                task == true ? 'objects' : 'Items/Fruits';
-
-            //collectable spawning
-            final collectable = Collectable(
-              collectable: spawnPoint.name,
-              position: Vector2(spawnPoint.x, spawnPoint.y),
-              size: Vector2(spawnPoint.width, spawnPoint.height),
-              interactiveTask: interactiveTask,
-              collectablePath: collectablePath(interactiveTask),
-              animated: !interactiveTask,
-            );
-            totalCollectables++;
-            add(collectable);
-            break;
-          case "Saw":
-            final isVertical = spawnPoint.properties.getValue('isVertical');
-            final offNeg = spawnPoint.properties.getValue('offNeg');
-            final offPos = spawnPoint.properties.getValue('offPos');
-            final saw = Saw(
-              isVertical: isVertical,
-              offNeg: offNeg,
-              offPos: offPos,
-              position: Vector2(spawnPoint.x, spawnPoint.y),
-              size: Vector2(spawnPoint.width, spawnPoint.height),
-            );
-            //saw rotates in the other direction
-            saw.scale.x = -1;
-            add(saw);
-            break;
-          case "Checkpoint":
-            final id = spawnPoint.properties.getValue('id');
-            final isActivated = spawnPoint.properties.getValue('isActivated');
-            final checkpoint = Checkpoint(
-              id: id,
-              isActivated: isActivated,
-              position: Vector2(spawnPoint.x, spawnPoint.y),
-            );
-            // if checkpoint is already activated in tiled, the original spawnpoint is overridden
-            if (isActivated == true) {
-              ref.read(playerProvider.notifier).setCheckpoint(checkpoint);
-              }
-            add(checkpoint);
-            break;
-          case "Enemy":
-            //enemy spawning
-            enemy = Enemy(enemyCharacter: "Virtual Guy");
-            enemy.position = Vector2(spawnPoint.x, spawnPoint.y);
-            add(enemy);
-
-          default:
-        }
-      }
-    }
-  }
-
-  void _addCollisions() {
-    final collisionsLayer = level.tileMap.getLayer<ObjectGroup>('Collisions');
-
-    if (collisionsLayer != null) {
-      for (final collision in collisionsLayer.objects) {
-        //makes a list of all the collision object that are in the level and creates CollisionBlockObject-List with the respective attribute values
-        switch (collision.class_) {
-          case 'Platform':
-            final platform = CollisionBlock(
-              position: Vector2(collision.x, collision.y),
-              size: Vector2(collision.width, collision.height),
-              hasCollisionDown: false,
-              hasHorizontalCollision: false,
-            );
-            add(platform);
-          case 'Ladder':
-            final ladder = CollisionBlock(
-              position: Vector2(collision.x, collision.y),
-              size: Vector2(collision.width - 10, collision.height),
-              climbable: true,
-              hasCollisionDown: false,
-              hasCollisionUp: true,
-              hasHorizontalCollision: false,
-              isLadder: true,
-            );
-            add(ladder);
-          default:
-            final block = CollisionBlock(
-              position: Vector2(collision.x, collision.y),
-              size: Vector2(collision.width, collision.height),
-            );
-            add(block);
-        }
-      }
-    }
-    //all collisionsBlocks are given to the player and now the player has a reference
-    //player.collisionsBlockList = collisionsBlockList;
-  }
 
   TextComponent debugOverlays = TextComponent(
     text: "hello!",
@@ -263,40 +132,52 @@ class Level extends World
       );
     } //press V to toggle the visibility of the overlays
 
-    if (keysPressed.contains(LogicalKeyboardKey.keyH))
+    if (keysPressed.contains(LogicalKeyboardKey.keyH)) {
       game.overlays.toggle("guiEditor");
+    }
 
     return super.onKeyEvent(event, keysPressed);
   }
 
-  Vector2 mouseCoords = Vector2.zero();
+  Vector2 _mouseCoords = Vector2.zero();
 
   @override
   void onPointerMove(PointerMoveEvent event) {
-    mouseCoords = event.localPosition..round();
-    player.mouseCoords = mouseCoords;
+    _mouseCoords = event.localPosition..round();
+    player.mouseCoords = _mouseCoords;
   }
 
   @override
   void onTapDown(TapDownEvent event) {
-    generator.onClick(event);
     super.onTapDown(event);
+    final Vector2 screenPosition = event.canvasPosition;
+
+    final Vector2 worldPosition = screenPosition + game.cam.pos;
+
+    print(generator.grid.isBlocked(toGridPos(_mouseCoords)..floor()));
+
+    print("world pos: $worldPosition");
+    print("grid pos: ${toGridPos(_mouseCoords)}\n\n\n");
   }
 
   @override //update the overlays
   void update(double dt) {
     if (debugOverlays.scale == Vector2.zero()) return;
 
-    Vector2 roundedPlayerPos = player.position.clone()..round();
+    Vector2 roundedPlayerPos = player.position.clone()
+      ..round();
 
     String playerCoords = roundedPlayerPos.toString();
     debugOverlays.text =
-        "Player: $playerCoords\nMouse: $mouseCoords\nGrid Mouse Coords: ${(mouseCoords / 32)..floor()}";
+    "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${toGridPos(_mouseCoords)
+      ..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tileSize.x)
+        .floor()}, ${(mousePos.y / tileSize.y).floor()}";
     debugOverlays.position =
         game.cam.pos - game.cam.visibleWorldRect.size.toVector2() / 2;
 
     super.update(dt);
   }
+
 
   //sets the visibility of all of the hitboxes of all of the components in the level (except for background tiles)
   void setDebugMode(bool val) {
@@ -308,58 +189,36 @@ class Level extends World
   }
 
   //gets mouse position Vector2
-  Vector2 get mousePos => mouseCoords;
+  Vector2 get mousePos => _mouseCoords;
 
   //if parallax effect, this method is called
-  void _loadParallaxLevel() {
-    int amountOfBackgroundImages =
-        (level.tileMap
-                .getLayer("Level")
-                ?.properties
-                .byName["BackgroundImages"]
-                ?.value
-            as int) ??
-        0;
+  void _loadParallaxBackground() {
+    background = LayeredImageBackground.ofLevel(this, game.cam);
+    add(background);
+  }
 
-    // Lists to store background images and their corresponding parallax factors.
-    // Lists (not Sets) are used to preserve the order — each image must match its parallax factor by index.
-    Set<TiledImage> images = {};
-    List<Vector2> parallaxFactors = [];
-    List<Vector2> startPositions = [];
-    ImageLayer? imageLayer;
-
-    // Loop through all background image layers defined in Tiled.
-    // Background image layers are expected to be named "background1", "background2", etc.
-    for (int i = 1; i <= amountOfBackgroundImages; i++) {
-      // Try to get the image layer from the Tiled map.
-      imageLayer = level.tileMap.getLayer("background$i") as ImageLayer;
-      imageLayer.visible =
-          false; // Disable visibility in the Tiled layer — we’ll render it manually for the parallax effect.
-      images.add(imageLayer.image);
-      // Retrieve the custom parallax factor property from the image layer.
-      // If not found, default to 0.3.
-      parallaxFactors.add(
-        Vector2(
-          imageLayer.parallaxX.toDouble(),
-          imageLayer.parallaxY.toDouble(),
-        ),
-      );
-      startPositions.add(
-        Vector2(imageLayer.offsetX.toDouble(), imageLayer.offsetY.toDouble()),
-      );
+  void _loadScrollingBackground() {
+    final Layer? backgroundLayer = level.tileMap.getLayer('Level');
+    String backgroundColor = "Green";
+    if (backgroundLayer != null) {
+      backgroundColor =
+          backgroundLayer.properties.getValue('BackgroundColor') ?? "Green";
     }
 
-
-    // Add a custom LayeredImageBackground component that will handle rendering
-    // parallax background images with different scrolling speeds.
-    // Pass in the camera and the start position for background rendering.
-    add(
-      LayeredImageBackground(
-        images,
-        game.cam,
-        parallaxFactors: parallaxFactors,
-        startPositions: startPositions,
-      ),
+    ScrollingBackground background = ScrollingBackground(
+      tileColor: backgroundColor,
+      camera: (parent as PixelAdventure).cam,
     );
+    background.priority = -3;
+
+    add(background);
   }
+
+
+  RectangleHitbox createHitbox({Vector2? position, Vector2? size});
+  bool checkCollisionAt(Vector2 point, Vector2 center, Vector2 size);
+
+  Vector2 toWorldPos(Vector2 pos);
+  Vector2 toGridPos(Vector2 pos);
+
 }

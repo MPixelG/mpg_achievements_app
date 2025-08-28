@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Level_2.tmx",
+    "activeFile": "Level_6.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -16,8 +16,8 @@
         },
         "Level_0.tmx": {
             "expandedObjectLayers": [
-                17,
-                20
+                20,
+                17
             ],
             "scale": 1.5,
             "selectedLayer": 1,
@@ -28,8 +28,8 @@
         },
         "Level_1.tmx": {
             "expandedObjectLayers": [
-                2,
-                3
+                3,
+                2
             ],
             "scale": 2,
             "selectedLayer": 1,
@@ -46,14 +46,14 @@
             "scale": 2,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 674.25,
-                "y": 434.5
+                "x": 520,
+                "y": 531.75
             }
         },
         "Level_3.tmx": {
             "expandedObjectLayers": [
-                2,
-                3
+                3,
+                2
             ],
             "scale": 1.5,
             "selectedLayer": 0,
@@ -66,8 +66,8 @@
             "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1024.1666666666665,
-                "y": 448.33333333333326
+                "x": 1024,
+                "y": 448.16666666666663
             }
         },
         "Level_5.tmx": {
@@ -77,8 +77,16 @@
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 964.3333333333333,
-                "y": 674
+                "x": 1024,
+                "y": 1024.3333333333333
+            }
+        },
+        "Level_6.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 2272.6666666666665,
+                "y": 1276
             }
         },
         "Lever_3.tmx": {
@@ -116,7 +124,9 @@
             "dynamicWrapping": false
         },
         "grass_concrete.tsx": {
-            "dynamicWrapping": false
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "industrialObjects.tsx": {
             "dynamicWrapping": true,
@@ -152,7 +162,7 @@
         },
         "isometric.tsx": {
             "dynamicWrapping": false,
-            "scaleInDock": 1,
+            "scaleInDock": 1.5,
             "scaleInEditor": 1
         },
         "parralax_city_0.tsx": {
@@ -172,12 +182,12 @@
     "last.externalTilesetPath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/tiles",
     "last.imagePath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/images/Pixel_ArtTop_Down",
     "map.fixedSize": true,
-    "map.height": 128,
+    "map.height": 16,
     "map.lastUsedFormat": "tmx",
     "map.orientation": "2",
     "map.tileHeight": 32,
     "map.tileWidth": 32,
-    "map.width": 128,
+    "map.width": 16,
     "openFiles": [
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",
@@ -189,23 +199,27 @@
         "city_night.tmx",
         "Level_4.tmx",
         "industrial_tiles_2.tsx",
-        "IndustrialTile_81.png.tsx"
+        "IndustrialTile_81.png.tsx",
+        "Level_5.tmx",
+        "grass_concrete.tsx",
+        "Level_6.tmx",
+        "industrial_tiles_bg_2.tsx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
-    "property.type": "bool",
+    "property.type": "string",
     "recentFiles": [
-        "isometric.tsx",
         "MPG_pixel_adventure.tsx",
-        "IndustrialTile_81.png.tsx",
-        "industrial_tiles_2.tsx",
-        "Level_4.tmx",
-        "city_night.tmx",
-        "parralax_city_0.tsx",
-        "backgrounds.tsx",
-        "Level_3.tmx",
-        "Level_0.tmx",
+        "Level_2.tmx",
         "Level_1.tmx",
-        "Level_2.tmx"
+        "Level_0.tmx",
+        "Level_3.tmx",
+        "backgrounds.tsx",
+        "parralax_city_0.tsx",
+        "city_night.tmx",
+        "Level_4.tmx",
+        "industrial_tiles_2.tsx",
+        "IndustrialTile_81.png.tsx",
+        "Level_5.tmx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",
