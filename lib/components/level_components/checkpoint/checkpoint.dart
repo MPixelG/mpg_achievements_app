@@ -2,13 +2,18 @@ import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
+import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../state_management/providers/playerStateProvider.dart';
 
 class Checkpoint extends SpriteAnimationGroupComponent
-    with HasGameReference<PixelAdventure>, CollisionCallbacks, AnimationManager, RiverpodComponentMixin {
+    with
+        HasGameReference<PixelAdventure>,
+        CollisionCallbacks,
+        AnimationManager,
+        RiverpodComponentMixin {
   final int id;
   bool isActivated;
 
@@ -16,40 +21,49 @@ class Checkpoint extends SpriteAnimationGroupComponent
 
   @override
   Future<void> onLoad() async {
-    add(RectangleHitbox(
+    add(
+      RectangleHitbox(
         anchor: Anchor.topLeft,
         size: Vector2.all(64),
-        collisionType: CollisionType.passive)
+        collisionType: CollisionType.passive,
+      ),
     );
     playAnimation("noFlag");
     anchor = Anchor.center;
 
-
     return super.onLoad();
   }
 
- @override
+  @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
     final playerState = ref.read(playerProvider);
-    // if the checkpoint hasn't yet been activated and the player is colliding, we continue
+
     if (!isActivated && other is Player) {
-      // id (represents gameplay progress) has to be higher so that the player always spawns at the latest checkpoint
-      if (playerState.lastCheckpoint == null || playerState.lastCheckpoint!.id < id) {
-        isActivated = true;
-        print("activated");
+      if (playerState.lastCheckpoint == null ||
+          playerState.lastCheckpoint!.id < id) {
         ref.read(playerProvider.notifier).setCheckpoint(this);
-        print(ref.read(playerProvider).lastCheckpoint?.id);
-        playFlagOutAnimation();
+
+        // Safely find the parent Level component.
+        final level = ancestors().whereType<Level>().firstOrNull;
+
+        // If the level is found, proceed with the logic.
+        if (level != null) {
+          for (final checkpoint in level.children.whereType<Checkpoint>()) {
+            if (checkpoint.id <= id && !checkpoint.isActivated) {
+              checkpoint.isActivated = true;
+              checkpoint.playFlagOutAnimation();
+              print("trying to play animation on older checkpoitns");
+            }
+          }
+        }
       }
     }
   }
 
-  void playFlagOutAnimation() async{
-
+  void playFlagOutAnimation() async {
     await playAnimation("out");
     playAnimation("outIdle");
-
   }
 
   @override
@@ -60,8 +74,23 @@ class Checkpoint extends SpriteAnimationGroupComponent
 
   @override
   List<AnimationLoadOptions> get animationOptions => [
-    AnimationLoadOptions("outIdle", "Items/Checkpoints/Checkpoint/Checkpoint (Flag Idle)", textureSize: 64),
-    AnimationLoadOptions("out", "Items/Checkpoints/Checkpoint/Checkpoint (Flag Out)", textureSize: 64, stepTime: 0.04, loop: false),
-    AnimationLoadOptions("noFlag", "Items/Checkpoints/Checkpoint/Checkpoint (No Flag)", textureSize: 64, loop: false),
+    AnimationLoadOptions(
+      "outIdle",
+      "Items/Checkpoints/Checkpoint/Checkpoint (Flag Idle)",
+      textureSize: 64,
+    ),
+    AnimationLoadOptions(
+      "out",
+      "Items/Checkpoints/Checkpoint/Checkpoint (Flag Out)",
+      textureSize: 64,
+      stepTime: 0.04,
+      loop: false,
+    ),
+    AnimationLoadOptions(
+      "noFlag",
+      "Items/Checkpoints/Checkpoint/Checkpoint (No Flag)",
+      textureSize: 64,
+      loop: false,
+    ),
   ];
 }
