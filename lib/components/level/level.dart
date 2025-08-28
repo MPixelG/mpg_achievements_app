@@ -21,9 +21,9 @@ import 'package:mpg_achievements_app/components/state_management/providers/playe
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import 'background/scrolling_background.dart';
-import 'level_components/saw.dart';
-import 'level_components/checkpoint/checkpoint.dart';
+import '../background/scrolling_background.dart';
+import '../level_components/saw.dart';
+import '../level_components/checkpoint/checkpoint.dart';
 
 class Level extends World
     with

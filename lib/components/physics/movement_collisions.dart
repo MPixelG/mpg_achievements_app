@@ -10,7 +10,7 @@ import 'package:mpg_achievements_app/components/util/utils.dart' as util;
 import 'package:flutter/services.dart';
 import '../../mpg_pixel_adventure.dart';
 import 'collision_block.dart';
-import '../level.dart';
+import '../level/level.dart';
 
 /// Mixin for adding collision detection behavior to a component.
 /// Requires implementing methods to provide hitbox, position, velocity, etc

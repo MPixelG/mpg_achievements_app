@@ -13,7 +13,7 @@ import 'package:mpg_achievements_app/components/physics/movement_collisions.dart
 import 'package:mpg_achievements_app/components/player.dart';
 import 'components/GUI/menuCreator/gui_editor.dart';
 import 'components/level_components/enemy.dart';
-import 'components/level.dart';
+import 'components/level/level.dart';
 import 'components/util/utils.dart' as util;
 
 //DragCallbacks are imported for touch controls
