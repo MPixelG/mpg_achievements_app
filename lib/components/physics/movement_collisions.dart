@@ -18,7 +18,7 @@ import '../level/level.dart';
 
 /// Mixin for adding collision detection behavior to a component.
 /// Requires implementing methods to provide hitbox, position, velocity, etc
-mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdventure> {
+mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdventure>, BasicMovement {
   ShapeHitbox getHitbox();
 
   Vector2 getScale();
@@ -188,7 +188,7 @@ mixin BasicMovement on PositionComponent {
       } else {
         hasJumped = false;
       }
-    }
+
 
     // Horizontal movement and friction
     velocity.x += horizontalMovement * moveSpeed;

@@ -28,9 +28,10 @@ class Enemy extends SpriteAnimationGroupComponent
         HasGameReference<PixelAdventure>,
         KeyboardHandler,
         CollisionCallbacks,
-        HasCollisions,
+        AnimationManager,
         BasicMovement,
-        AnimationManager, HasMovementAnimations {
+        HasCollisions,
+        HasMovementAnimations{
   bool gotHit = false;
   bool isRespawning = false;
 

@@ -2,13 +2,13 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
+import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/level_components/checkpoint/checkpoint.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
-import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'level_components/saw.dart';
 //todo implement PlayerStateProvider to manage the player state globally
@@ -21,12 +21,12 @@ class Player extends SpriteAnimationGroupComponent
         RiverpodComponentMixin,
         KeyboardHandler,
         CollisionCallbacks,
-        HasCollisions,
         BasicMovement,
         KeyboardControllableMovement,
         AnimationManager,
         HasMovementAnimations,
-        JoystickControllableMovement
+        JoystickControllableMovement,
+        HasCollisions
 
          {
   //bools
@@ -253,6 +253,7 @@ class Player extends SpriteAnimationGroupComponent
   //we answer the getters from HasMovementAnimations here to tell the mixin if we are currently in hit or respawn frames
   @override
   bool get isInHitFrames => _isHitAnimationPlaying;
+  @override
   bool get isInRespawnFrames => _isRespawningAnimationPlaying;
 
 

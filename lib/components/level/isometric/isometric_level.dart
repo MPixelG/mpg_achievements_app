@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
-import '../../physics/collisions.dart';
+import '../../physics/movement_collisions.dart';
 import '../level.dart';
 
 class IsometricLevel extends Level{

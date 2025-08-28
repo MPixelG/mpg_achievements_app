@@ -1,7 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
-
 import '../level_components/checkpoint/checkpoint.dart';
 import '../level_components/collectables.dart';
 import '../level_components/enemy.dart';
@@ -69,7 +68,7 @@ void generateSpawningObjectsForLevel(Level level) {
           );
           // if checkpoint is already activated in tiled, the original spawnpoint is overridden
           if (isActivated == true) {
-            level.player.lastCheckpoint = checkpoint;
+            //todo state management implement necessary level.player.lastCheckpoint = checkpoint;
             level.player.position = checkpoint.position;
           }
           level.add(checkpoint);
