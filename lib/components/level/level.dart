@@ -13,6 +13,7 @@ import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
@@ -21,7 +22,6 @@ import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
 import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-
 import '../background/scrolling_background.dart';
 import '../level_components/saw.dart';
 import '../level_components/checkpoint/checkpoint.dart';
@@ -35,6 +35,7 @@ abstract class Level extends World
         RiverpodComponentMixin {
   final String levelName;
   late TiledComponent level;
+  late final bool isometricLevel;
   final Player player;
   Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
 
@@ -43,6 +44,8 @@ abstract class Level extends World
   late final Vector2 tileSize;
 
   late final Background background;
+
+
 
   //loads when the class instantiated
   //In dart, late keyword is used to declare a variable or field that will be initialized at a later time.e.g. late String name
@@ -64,8 +67,12 @@ abstract class Level extends World
     // Load the Tiled map for the current level.
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
     level = await TiledComponent.load('$levelName.tmx', tileSize);
-
     level.position = Vector2(0, 0);
+    isometricLevel = (game.level == IsometricLevel) ? true: false;
+    //inspect tiles if isometric level
+    if(isometricLevel){
+    inspectTile(15, 14);
+    inspectTile(1,1);}
 
     print("map origin: ${Vector2(level.width / 2, 0)}");
 
@@ -213,6 +220,55 @@ abstract class Level extends World
 
     add(background);
   }
+
+  //Important for reading information from tiles -> needs to go into utils
+  void inspectTile(int x, int y) {
+    //get map object
+    final map = level.tileMap.map;
+
+    //get layer
+    final layer = map.layerByName('Ground') as TileLayer?;
+
+    if (layer == null) {
+      print('Layer not found!');
+      return;
+    }
+
+    //get tileId
+    // IMPORTANT: The data is stored in [row][column] format, so it's [y][x]
+    final Gid? gid = layer.tileData?[y][x];
+
+    // Check if a tile exists there
+    if (gid == null || gid.tile == 0) {
+      print('No tile at ($x, $y)');
+    } else {
+      print('Tile at ($x, $y) has GID: ${gid.tile}');
+    }
+
+         // 1. Use the map's helper function to get the tileset for this GID
+      final tileset = level.tileMap.map.tilesetByTileGId(gid!.tile);
+      print(tileset.firstGid);
+
+      // get localID of tile
+    ///GID (Global ID): A map-wide unique identifier for a tile. It's what's stored in the layer data. Its primary job is to be unique across all tilesets. GID 0 is always "empty".
+    /// Local ID: A tileset-specific identifier, always starting from 0 for the first tile in that tileset. It's used to look up a tile's data (like custom properties) within its own tileset.
+      final localId = gid.tile - tileset.firstGid!;
+      print(localId);
+
+      // 3. Get the Tile object from the tileset using the local ID
+      final tile = tileset.tiles[localId];
+
+      // 4. Access the properties
+      final properties = tile.properties;
+
+      if (properties.isNotEmpty) {
+        print('Properties for tile at ($x, $y):');
+        for (var property in properties) {
+          print('  - ${property.name}: ${property.value}');
+        }
+      }
+    }
+
 
 
   RectangleHitbox createHitbox({Vector2? position, Vector2? size});

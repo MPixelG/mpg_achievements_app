@@ -206,7 +206,7 @@
         "industrial_tiles_bg_2.tsx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
-    "property.type": "string",
+    "property.type": "bool",
     "recentFiles": [
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",

@@ -55,7 +55,7 @@ class PixelAdventure extends FlameGame
     await images.loadAllImages();
     //world is loaded after initialising all images
 
-    String levelName = "level_7";
+    String levelName = "level_2";
 
     String orientation = await getOrientationOfLevel(levelName);
 

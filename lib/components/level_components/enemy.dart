@@ -10,6 +10,7 @@ import 'package:mpg_achievements_app/components/animation/animation_manager.dart
 import 'package:mpg_achievements_app/components/level_components/saw.dart';
 import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import '../../mpg_pixel_adventure.dart';
+import '../level/isometric/isometric_level.dart';
 import '../particles/Particles.dart';
 import '../ai/goals/move_goal.dart';
 
@@ -54,7 +55,12 @@ class Enemy extends SpriteAnimationGroupComponent
   @override
   FutureOr<void> onLoad() {
     startingPosition = Vector2(position.x, position.y);
-
+    // The player inspects its environment (the level) and configures itself.
+    if (game.level is IsometricLevel) {
+      setMovementType(ViewSide.isometric);
+    } else {
+      setMovementType(ViewSide.side); // Default
+    }
     manager = GoalManager();
     add(manager);
 

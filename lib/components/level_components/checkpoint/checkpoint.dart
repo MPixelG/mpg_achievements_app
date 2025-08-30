@@ -2,10 +2,9 @@ import 'package:flame/components.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
-import 'package:mpg_achievements_app/components/level.dart';
 import 'package:mpg_achievements_app/components/player.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-
+import '../../level/level.dart';
 import '../../state_management/providers/playerStateProvider.dart';
 
 class Checkpoint extends SpriteAnimationGroupComponent
@@ -53,7 +52,7 @@ class Checkpoint extends SpriteAnimationGroupComponent
             if (checkpoint.id <= id && !checkpoint.isActivated) {
               checkpoint.isActivated = true;
               checkpoint.playFlagOutAnimation();
-              print("trying to play animation on older checkpoitns");
+              print("trying to play animation on older checkpoints");
             }
           }
         }

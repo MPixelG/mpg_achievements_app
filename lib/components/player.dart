@@ -10,6 +10,7 @@ import 'package:mpg_achievements_app/components/level_components/checkpoint/chec
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'level/isometric/isometric_level.dart';
 import 'level_components/saw.dart';
 //todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations
@@ -45,6 +46,13 @@ class Player extends SpriteAnimationGroupComponent
 
   @override
   FutureOr<void> onLoad() {
+
+    // The player inspects its environment (the level) and configures itself.
+    if (game.level is IsometricLevel) {
+      setMovementType(ViewSide.isometric);
+    } else {
+      setMovementType(ViewSide.side); // Default
+    }
     startingPosition = Vector2(position.x, position.y);
     return super.onLoad();
   }
@@ -122,10 +130,16 @@ class Player extends SpriteAnimationGroupComponent
     }
 
     if (other is Saw && !debugImmortalMode) {
-      ref.read(playerProvider.notifier).takeHit();}
+      //todo separation into PlayerState logic
+      Future(() { // Wrap the provider modification in a future
+      ref.read(playerProvider.notifier).takeHit();});
+    }
 
     if (other is Enemy && !debugImmortalMode) {
-      ref.read(playerProvider.notifier).takeHit();}
+      Future(() { // Wrap the provider modification in a future
+        ref.read(playerProvider.notifier).takeHit();
+      });
+    }
 
     if (other is Collectable && other.interactiveTask) {
       //todo state management for tasks

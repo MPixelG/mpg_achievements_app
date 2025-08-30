@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -15,6 +14,9 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../../mpg_pixel_adventure.dart';
 import 'collision_block.dart';
 import '../level/level.dart';
+
+
+enum ViewSide { topDown, side, isometric }
 
 /// Mixin for adding collision detection behavior to a component.
 /// Requires implementing methods to provide hitbox, position, velocity, etc
@@ -35,10 +37,12 @@ mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdve
 
   late ShapeHitbox hitbox;
 
+  late ViewSide viewSide;
+
   @override
   FutureOr<void> onLoad() {
 
-    if(game.level is IsometricLevel) {
+    if(viewSide == ViewSide.isometric) {
       hitbox = IsometricHitbox(
           Vector2.all(1),
           game.level
@@ -141,7 +145,7 @@ mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdve
   }
 }
 
-enum ViewSide { topDown, side }
+
 
 mixin BasicMovement on PositionComponent {
   //constants for configuring basic movement
@@ -156,6 +160,11 @@ mixin BasicMovement on PositionComponent {
   double verticalMovement = 0; // Directional input (up/down)
   Vector2 velocity = Vector2.zero();
 
+  //velocity along z-Axis
+  double zVelocity = 0.0;
+
+  //character's height off the ground plane
+  double zPosition = 0.0;
   bool debugFlyMode = false;
   bool hasJumped = false;
   bool isOnGround = false;
@@ -163,11 +172,11 @@ mixin BasicMovement on PositionComponent {
 
   bool isShifting = false;
 
-  ViewSide viewSide = ViewSide.side;
+  late ViewSide viewSide;
 
   bool updateMovement = true;
 
-  @override
+ @override
   void update(double dt) {
     if (updateMovement) {
       _updateMovement(dt);
@@ -182,28 +191,45 @@ mixin BasicMovement on PositionComponent {
 
   // Updates movement logic based on input and physics
   void _updateMovement(double dt) {
-    if (hasJumped)
+    if (hasJumped) {
       if (isOnGround) {
-        jump();
+        viewSide == ViewSide.isometric ? isometricJump() : jump();
       } else {
         hasJumped = false;
       }
-
-
+    }
     // Horizontal movement and friction
-    velocity.x += horizontalMovement * moveSpeed;
-    velocity.x *=
-        _friction *
-        (dt +
-            1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
-    position.x += velocity.x * dt;
 
-    if (viewSide == ViewSide.side && gravityEnabled) {
-      _performGravity(dt);
-    } else {
-      _performVerticalMovement(dt);
+    if (viewSide != ViewSide.side) {
+      velocity = Vector2.zero();
     }
 
+    switch (viewSide) {
+      case ViewSide.isometric:
+        _performIsometricMovement(dt);
+       // _performIsometricGravity(dt);
+        break;
+
+      case ViewSide.side:
+        velocity.x += horizontalMovement * moveSpeed;
+        velocity.x *=_friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+        position.x += velocity.x * dt;
+        if (gravityEnabled) {
+          _performGravity(dt);
+        } else {
+          print('gravity not enabled');        }
+
+    //maybe not necessary if we don't have topdown at all
+      case ViewSide.topDown:
+        velocity.x += horizontalMovement * moveSpeed;
+        velocity.y += verticalMovement * moveSpeed;
+        velocity *= _friction * (dt + 1);
+        break;
+    }
+
+
+    // Apply final velocity to position
+    position.x += velocity.x * dt;
     position.y += velocity.y * dt;
   }
 
@@ -212,8 +238,9 @@ mixin BasicMovement on PositionComponent {
     if (!debugFlyMode && !isClimbing) {
       if (isClimbing) {
         velocity.y += _gravity * dt * 0.02; // Fall down
-      } else
+      } else {
         velocity.y += _gravity * dt;
+      }
     } else {
       velocity.y += verticalMovement * moveSpeed * (dt * 1000);
       velocity.y *= pow(0.01, dt); // Simulated drag
@@ -222,17 +249,72 @@ mixin BasicMovement on PositionComponent {
     velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
   }
 
-  // For top-down movement (WASD)
-  void _performVerticalMovement(double dt) {
+  // For top-down movement (WASD) now handled in switch case
+  /*void _performVerticalMovement(double dt) {
     velocity.y += verticalMovement * moveSpeed * (dt + 1);
     velocity.y *= _friction * (dt + 1);
-  }
+  }*/
 
   void jump() {
     velocity.y = -_jumpForce;
     //otherwise the player can even jump even if he is in the air
     isOnGround = false;
     hasJumped = false;
+  }
+
+  //isometric movement logic
+  void _performIsometricMovement(double dt) {
+    // This will be our final direction vector on the 2D screen
+    Vector2 isoDirection = Vector2.zero();
+
+    // Combine inputs to determine direction on the isometric grid
+    if (verticalMovement < 0) { // Up (W)
+      isoDirection += Vector2(-1, -0.5);
+    }
+    if (verticalMovement > 0) { // Down (S)
+      isoDirection += Vector2(1, 0.5);
+    }
+    if (horizontalMovement < 0) { // Left (A)
+      isoDirection += Vector2(-1, 0.5);
+    }
+    if (horizontalMovement > 0) { // Right (D)
+      isoDirection += Vector2(1, -0.5);
+    }
+
+    // Normalize the vector to prevent faster diagonal movement
+    if (isoDirection.length > 0) {
+      isoDirection.normalize();
+    }
+
+    // Apply the movement
+    velocity = isoDirection * moveSpeed;
+  }
+
+
+  void _performIsometricGravity(double dt) {
+    // Only apply gravity if not on the ground
+    if (!isOnGround) {
+      zVelocity += _gravity * dt;
+    }
+
+    // Apply Z velocity to Z position
+    zPosition += zVelocity * dt;
+
+    // A simple ground check
+    if (zPosition >= 0) {
+      zPosition = 0;
+      zVelocity = 0;
+      isOnGround = true;
+    }
+  }
+
+  //needs more work just basic
+  void isometricJump() {
+    if (isOnGround) {
+      zVelocity = -_jumpForce;
+      isOnGround = false;
+      hasJumped = false;
+    }
   }
 }
 
@@ -259,7 +341,7 @@ mixin KeyboardControllableMovement
     if (isLeftKeyPressed) horizontalMovement--;
     if (isRightKeyPressed) horizontalMovement++;
 
-    if (viewSide == ViewSide.side) {
+    if (viewSide == ViewSide.isometric || viewSide == ViewSide.side) {
       if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) {
         debugFlyMode = !debugFlyMode; // press left ctrl to toggle fly mode
       }
@@ -267,10 +349,11 @@ mixin KeyboardControllableMovement
       if (keysPressed.contains(LogicalKeyboardKey.space)) {
         if (debugFlyMode || isClimbing) {
           //when in debug mode move the player upwards
-          if (isClimbing)
+          if (isClimbing) {
             verticalMovement = -0.06;
-          else
+          } else {
             verticalMovement = -1;
+          }
         } else {
           hasJumped = true; //else jump
         }
@@ -278,16 +361,16 @@ mixin KeyboardControllableMovement
 
       if (keysPressed.contains(LogicalKeyboardKey.shiftLeft)) {
         //when in fly mode and shift is pressed, the player gets moved down
-        if (isClimbing)
+        if (isClimbing) {
           verticalMovement = 0.06;
-        else if (debugFlyMode)
+        } else if (debugFlyMode)
           verticalMovement = 1;
 
         isShifting = true;
       } else {
         isShifting = false;
       }
-    } else if (viewSide == ViewSide.topDown) {
+    } else if (viewSide == ViewSide.topDown || viewSide == ViewSide.isometric) {
       final isUpKeyPressed =
           keysPressed.contains(LogicalKeyboardKey.keyW) ||
           keysPressed.contains(LogicalKeyboardKey.arrowUp);
@@ -299,8 +382,9 @@ mixin KeyboardControllableMovement
       if (isDownKeyPressed) verticalMovement++;
     }
 
-    if (keysPressed.contains(LogicalKeyboardKey.keyT))
+    if (keysPressed.contains(LogicalKeyboardKey.keyT)) {
       position = mouseCoords; //press T to teleport the player to the mouse
+    }
     if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
       debugMode = !debugMode;
       (parent as Level).setDebugMode(debugMode);
@@ -404,10 +488,10 @@ mixin JoystickControllableMovement
   void updateJoystick() {
     //define the horizontal and vertical movement based on the joystick direction
     final direction = joystick.direction;
-    //define the horizontal and vertical movement based on the joystich intensity 0 to 1
+    //define the horizontal and vertical movement based on the joystick intensity 0 to 1
     final intensity = joystick.intensity;
 
-    switch (joystick.direction) {
+    switch (direction) {
       case JoystickDirection.upLeft:
       case JoystickDirection.downLeft:
       case JoystickDirection.left:
@@ -419,26 +503,36 @@ mixin JoystickControllableMovement
         horizontalMovement = 1 * intensity;
         break;
       case JoystickDirection.up:
-        if (debugFlyMode || isClimbing) {
+        if (debugFlyMode || isClimbing || viewSide == ViewSide.isometric) {
           //when in debug mode move the player upwards
-          if (isClimbing)
+          if (isClimbing) {
             verticalMovement = -0.06;
-          else
+          } else {
             verticalMovement = -1;
+          }
+
         } else {
           hasJumped = true; //else jump
         }
 
         break;
       case JoystickDirection.down:
-        if (isClimbing)
+
+        if (isClimbing) {
           verticalMovement = 0.06;
-        else if (debugFlyMode)
+        } else if (debugFlyMode)
+        {  verticalMovement = 1;}
+        else if (viewSide == ViewSide.isometric){
           verticalMovement = 1;
+        }
+        break;
 
       default:
         //No movement
         horizontalMovement = 0;
+        if(viewSide == ViewSide.isometric){
+        verticalMovement = 0;}
+
     }
   }
 }
