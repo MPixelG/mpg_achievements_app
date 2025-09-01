@@ -147,7 +147,7 @@ mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdve
 
 
 
-mixin BasicMovement on PositionComponent {
+mixin BasicMovement on PositionComponent, HasGameReference<PixelAdventure> {
   //constants for configuring basic movement
   final double _gravity = 650.0;
   final double _jumpForce = 320;
@@ -162,19 +162,19 @@ mixin BasicMovement on PositionComponent {
 
   //velocity along z-Axis
   double zVelocity = 0.0;
-
   //character's height off the ground plane
   double zPosition = 0.0;
+
   bool debugFlyMode = false;
   bool hasJumped = false;
   bool isOnGround = false;
   bool gravityEnabled = true;
-
   bool isShifting = false;
+  bool updateMovement = true;
 
   late ViewSide viewSide;
 
-  bool updateMovement = true;
+
 
  @override
   void update(double dt) {

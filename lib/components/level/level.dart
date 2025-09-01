@@ -68,7 +68,7 @@ abstract class Level extends World
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
     level = await TiledComponent.load('$levelName.tmx', tileSize);
     level.position = Vector2(0, 0);
-    isometricLevel = (game.level == IsometricLevel) ? true: false;
+    isometricLevel = (game.level is IsometricLevel) ? true: false;
     //inspect tiles if isometric level
     if(isometricLevel){
     inspectTile(15, 14);
@@ -157,6 +157,8 @@ abstract class Level extends World
   @override
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
+
+    print(game.level.toGridPos(_mouseCoords)..floor());
     final Vector2 screenPosition = event.canvasPosition;
 
     final Vector2 worldPosition = screenPosition + game.cam.pos;

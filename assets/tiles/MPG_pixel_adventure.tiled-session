@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Level_6.tmx",
+    "activeFile": "Level_7.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -16,14 +16,14 @@
         },
         "Level_0.tmx": {
             "expandedObjectLayers": [
-                20,
-                17
+                17,
+                20
             ],
             "scale": 1.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 320,
-                "y": 183.66666666666663
+                "x": 320.3333333333333,
+                "y": 184.33333333333334
             }
         },
         "Level_1.tmx": {
@@ -34,7 +34,7 @@
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 320.5,
+                "x": 320.75,
                 "y": 184.25
             }
         },
@@ -44,10 +44,10 @@
                 2
             ],
             "scale": 2,
-            "selectedLayer": 7,
+            "selectedLayer": 9,
             "viewCenter": {
-                "x": 520,
-                "y": 531.75
+                "x": 184.25,
+                "y": 648.75
             }
         },
         "Level_3.tmx": {
@@ -58,35 +58,46 @@
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 512,
+                "x": 512.3333333333333,
                 "y": 512.3333333333333
             }
         },
         "Level_4.tmx": {
-            "scale": 3,
+            "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1024,
-                "y": 448.16666666666663
+                "x": 189.5,
+                "y": 242.5
             }
         },
         "Level_5.tmx": {
             "expandedObjectLayers": [
                 3
             ],
-            "scale": 1.5,
+            "scale": 0.25,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1024,
-                "y": 1024.3333333333333
+                "x": 862,
+                "y": 1222
             }
         },
         "Level_6.tmx": {
             "scale": 0.75,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 2272.6666666666665,
-                "y": 1276
+                "x": 1171.3333333333333,
+                "y": 718
+            }
+        },
+        "Level_7.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 184.5,
+                "y": 103.5
             }
         },
         "Lever_3.tmx": {
@@ -116,7 +127,7 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1024,
+                "x": 1025,
                 "y": 447
             }
         },
@@ -162,7 +173,7 @@
         },
         "isometric.tsx": {
             "dynamicWrapping": false,
-            "scaleInDock": 1.5,
+            "scaleInDock": 2,
             "scaleInEditor": 1
         },
         "parralax_city_0.tsx": {
@@ -192,18 +203,13 @@
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",
         "Level_1.tmx",
-        "Level_0.tmx",
-        "Level_3.tmx",
-        "backgrounds.tsx",
-        "parralax_city_0.tsx",
-        "city_night.tmx",
         "Level_4.tmx",
-        "industrial_tiles_2.tsx",
-        "IndustrialTile_81.png.tsx",
         "Level_5.tmx",
         "grass_concrete.tsx",
         "Level_6.tmx",
-        "industrial_tiles_bg_2.tsx"
+        "industrial_tiles_bg_2.tsx",
+        "Level_7.tmx",
+        "isometric.tsx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
     "property.type": "bool",
@@ -211,15 +217,15 @@
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",
         "Level_1.tmx",
-        "Level_0.tmx",
-        "Level_3.tmx",
-        "backgrounds.tsx",
-        "parralax_city_0.tsx",
-        "city_night.tmx",
         "Level_4.tmx",
-        "industrial_tiles_2.tsx",
+        "Level_5.tmx",
+        "grass_concrete.tsx",
+        "Level_6.tmx",
+        "industrial_tiles_bg_2.tsx",
+        "isometric.tsx",
+        "Level_7.tmx",
         "IndustrialTile_81.png.tsx",
-        "Level_5.tmx"
+        "industrial_tiles_2.tsx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",
