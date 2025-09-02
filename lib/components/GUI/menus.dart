@@ -1,16 +1,14 @@
-import 'dart:convert';
 import 'package:flame/game.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/json_exporter.dart';
+import 'package:mpg_achievements_app/components/GUI/json_factory/json_exporter.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/main.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../dialogue_utils/speechbubble.dart';
-import 'json_factory/widgetFactory.dart';
-import 'menuCreator/layout_widget.dart';
+import 'menuCreator/components/dependencyViewer/layout_widget.dart';
 
 abstract class Screen extends StatelessWidget {
   final Map<String, Screen> children = {};

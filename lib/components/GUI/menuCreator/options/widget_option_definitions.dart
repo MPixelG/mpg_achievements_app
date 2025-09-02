@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_options.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/options/widget_options.dart';
 import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_widgets.dart';
 
-import '../widgets/nine_patch_button.dart';
-import 'button_action.dart';
+import '../../widgets/nine_patch_button.dart';
+import '../components/propertyEditor/button_action.dart';
 
 Map<String, dynamic> defaultFont = {
   "fontSize": 0.01

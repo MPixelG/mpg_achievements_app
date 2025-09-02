@@ -1,12 +1,13 @@
 import 'dart:convert';
 
+import 'package:flame/experimental.dart';
 import 'package:flutter/material.dart' hide Matrix4;
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/json_exporter.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_builder.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/editor_node_dependency_viewer.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/layout_widget.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_option_definitions.dart';
+import 'package:flutter_resizable_container/flutter_resizable_container.dart';
+import 'package:mpg_achievements_app/components/GUI/json_factory/json_exporter.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/options/widget_builder.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/editor_node_dependency_viewer.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/layout_widget.dart';
 
 class GuiEditor extends StatefulWidget { //the GUI editor lets us create guis and later export them as a json
   const GuiEditor({super.key});
@@ -33,9 +34,6 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
   void initState() {
     super.initState();
     initEditor();
-
-
-    registerWidgetOptions();
   }
 
   bool doneLoading = false;
@@ -68,21 +66,32 @@ class _GuiEditorState extends State<GuiEditor> { //the state class for the GUI e
     return Scaffold( //we use a scaffold bc it lets us easily add components with some presets.
       backgroundColor: Colors.white, //the background color of the scaffold is white, so we can see the widgets clearly
 
-        body: Row( //we use a row to display the node viewer and the root widget side by side
-          children: [ //the children of the row are the node viewer and the root widget
-            SizedBox(height: screenHeight, width: 0.2 * screenWidth, child: nodeViewer), //the node viewer is on the left side of the screen, taking up 20% of the width
-            SizedBox(height: screenHeight, width: 0.8 * screenWidth, child: root.build(context)),// the root widget is the main widget that contains all the other widgets. it is built using the LayoutWidget class.
-          ]
-        ),
+        body: ResizableContainer(
+            children: [
+              ResizableChild(child: nodeViewer!),
+              ResizableChild(
+                  size: ResizableSize.expand(flex: 3),
+                  child: ResizableContainer(children: [
+                    ResizableChild(
+                      size: ResizableSize.expand(flex: 3),
+                      child: root.build(context)),
+                    ResizableChild(child: ResizableContainer(direction: Axis.horizontal,
+                      children: [
+                        ResizableChild(child: Container())
+                        ]
+                    )),
+                  ], direction: Axis.vertical)),
+
+        ], direction: Axis.horizontal),
 
       floatingActionButton: Row(mainAxisAlignment: MainAxisAlignment.end,children: [
-
         FloatingActionButton(
           heroTag: null,
           onPressed: () {
-          String json = WidgetJsonUtils.exportWidgetToJson(root); //we convert the root widget to a json string
-          print("json: $json");
-        }, child: Icon(Icons.outbond_outlined),),
+            String json = WidgetJsonUtils.exportWidgetToJson(root); //we convert the root widget to a json string
+            print("json: $json");
+            },
+          child: Icon(Icons.outbond_outlined),),
 
         PopupMenuButton(itemBuilder: (context) => [ //this is the floating action button that opens a popup menu with the options to add widgets
           PopupMenuItem( //this is the popup menu item that lets us add a positioned widget

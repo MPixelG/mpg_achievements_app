@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/button_action.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/layout_widget.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_options.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/components/propertyEditor/button_action.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/layout_widget.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/options/widget_options.dart';
 
 class OptionEditorMenu extends StatefulWidget {
   const OptionEditorMenu({super.key, required this.node, required this.updateView});
@@ -23,38 +23,33 @@ class OptionEditorMenu extends StatefulWidget {
 class _OptionEditorMenuState extends State<OptionEditorMenu> {
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      insetPadding: EdgeInsets.all(50),
-      backgroundColor: Colors.white,
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            centerTitle: true,
-            title: Text("Properties Editor for ${widget.node.widgetType}"), //the title of the app bar is the id of the node
-          ),
-
-          body: Container(
-            decoration: BoxDecoration(
-              color: CupertinoColors.extraLightBackgroundGray,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: EdgeInsets.all(24),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Node Properties",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 48),
-                  ..._buildPropertyWidgets()
-                ],
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        title: Text("Properties Editor for ${widget.node.widgetType}"), //the title of the app bar is the id of the node
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          color: CupertinoColors.extraLightBackgroundGray,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: EdgeInsets.all(24),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Node Properties",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-            ),
+              SizedBox(height: 48),
+              ..._buildPropertyWidgets()
+            ],
           ),
         ),
+      ),
     );
   }
 

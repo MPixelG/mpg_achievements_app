@@ -13,7 +13,7 @@ import 'package:mpg_achievements_app/components/level/isometric/isometric_level.
 import 'package:mpg_achievements_app/components/level/orthagonal/orthogonal_level.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
-import 'components/GUI/menuCreator/gui_editor.dart';
+import 'components/GUI/menuCreator/components/gui_editor.dart';
 import 'components/level_components/enemy.dart';
 import 'components/level/level.dart';
 //DragCallbacks are imported for touch controls

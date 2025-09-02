@@ -6,8 +6,8 @@ class LayoutWidget {
     BuildContext context,
     List<Widget> children,
     Map<String, dynamic> properties,
-  )
-  _builder;
+  ) _builder;
+
   late final List<LayoutWidget> children;
   late Map<String, dynamic> properties;
   late void Function(LayoutWidget child) removeFromParent; // Function to remove this widget from its parent, if needed

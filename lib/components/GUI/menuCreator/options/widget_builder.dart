@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/widget_options.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/options/widget_options.dart';
 
 import 'package:vector_math/vector_math_64.dart' as vm64;
 
-import '../widgets/nine_patch_button.dart';
-import 'layout_widget.dart';
+import '../../widgets/nine_patch_button.dart';
+import '../components/dependencyViewer/layout_widget.dart';
 
 
 EdgeInsetsGeometry? convertToAbsolute(EdgeInsetsGeometry? current, double screenWidth, double screenHeight) {

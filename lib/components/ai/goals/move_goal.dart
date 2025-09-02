@@ -7,7 +7,6 @@ import 'package:flame/geometry.dart';
 import 'package:mpg_achievements_app/components/ai/goals/goal.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
-import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import '../../../mpg_pixel_adventure.dart';
 import '../../physics/collision_block.dart';

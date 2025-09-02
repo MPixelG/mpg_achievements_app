@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/button_action.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/components/propertyEditor/button_action.dart';
 
 class WidgetOptions {
 
