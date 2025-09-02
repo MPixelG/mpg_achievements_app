@@ -135,11 +135,7 @@ bool isDescendant(LayoutWidget dragged, LayoutWidget target) { //check if the dr
   return false; //if no child is the target or has the target as a descendant, return false
 }
 
-/// The type of container this widget is.
-/// - `unlimited`: Can have any number of children.
-/// - `sealed`: Cannot have any children added.
-/// - `single`: Can only have one child.
-enum ContainerType { unlimited, sealed, single }
+enum ContainerType {unlimited, sealed, single }
 
 
 extension on List{
