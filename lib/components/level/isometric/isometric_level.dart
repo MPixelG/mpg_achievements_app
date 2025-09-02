@@ -72,7 +72,9 @@ class IsometricLevel extends Level{
   RectangleHitbox createHitbox({Vector2? position, Vector2? size}) {
     return RectangleHitbox(position: position, size: size);
   }
+}
 
+extension on PositionComponent {
 
 
 

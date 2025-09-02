@@ -7,12 +7,10 @@ import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/cupertino.dart' hide AnimationStyle, Image;
-import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
-import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/orthagonal/orthogonal_level.dart';
-import 'package:mpg_achievements_app/components/player.dart';
+import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'components/GUI/menuCreator/gui_editor.dart';
 import 'components/level_components/enemy.dart';
@@ -132,7 +130,7 @@ class PixelAdventure extends FlameGame
     cam.viewport.add(joystick);
     cam.viewport.add(buttonComponent);
   }
+  Vector2 get tilesizeIso => Vector2.all(level.tileSize.x);
+  Vector2 get tilesizeOrtho => level.tileSize;
+}
 
-
-
-  }

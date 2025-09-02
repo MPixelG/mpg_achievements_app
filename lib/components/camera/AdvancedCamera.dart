@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:mpg_achievements_app/components/camera/camera_effect.dart';
-import 'package:mpg_achievements_app/components/player.dart';
+import 'package:mpg_achievements_app/components/entity/player.dart';
 
 import '../animation/animation_style.dart';
 

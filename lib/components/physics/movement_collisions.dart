@@ -217,9 +217,9 @@ mixin BasicMovement on PositionComponent, HasGameReference<PixelAdventure> {
         if (gravityEnabled) {
           _performGravity(dt);
         } else {
-          print('gravity not enabled');        }
-
-    //maybe not necessary if we don't have topdown at all
+          print('gravity not enabled');
+        }
+      //maybe not necessary if we don't have topdown at all
       case ViewSide.topDown:
         velocity.x += horizontalMovement * moveSpeed;
         velocity.y += verticalMovement * moveSpeed;
