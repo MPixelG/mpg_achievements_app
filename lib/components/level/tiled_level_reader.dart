@@ -9,7 +9,8 @@ import '../level_components/saw.dart';
 import '../physics/collision_block.dart';
 
 void generateSpawningObjectsForLevel(Level level) {
-  //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list
+  Collectable.amountOfCollectables = 0;
+  //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in and store these objects into a list
   final ObjectGroup? spawnPointsLayer = level.level.tileMap.getLayer<ObjectGroup>(
     'Spawnpoints',
   );
@@ -41,7 +42,7 @@ void generateSpawningObjectsForLevel(Level level) {
             collectablePath: collectablePath(interactiveTask),
             animated: !interactiveTask,
           );
-          Collectable.totalAmountOfCollectables++;
+          Collectable.amountOfCollectables++;
           level.add(collectable);
           break;
         case "Saw":
@@ -84,6 +85,7 @@ void generateSpawningObjectsForLevel(Level level) {
       }
     }
   }
+  Collectable.totalAmountOfCollectables = Collectable.amountOfCollectables;
 }
 
 

@@ -76,11 +76,6 @@ mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdve
       return; //physics only work on the collision blocks (including the platforms)
     }
 
-    if(game.level is IsometricLevel){
-      handleIsometricCollision(other);
-      return;
-    }
-
     ShapeHitbox hitbox = getHitbox();
     Vector2 scale = getScale();
     Vector2 velocity = getVelocity();
@@ -133,110 +128,6 @@ mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdve
     if (other.climbable && distanceUp > 5) setClimbing(true);
     // sets new position
     setPos(position);
-  }
-
-
-  void handleIsometricCollision(CollisionBlock other) {
-    ShapeHitbox hitbox = getHitbox();
-    Vector2 scale = getScale();
-    Vector2 velocity = getVelocity();
-    Vector2 position = getPosition();
-
-    // Für IsometricHitbox (PolygonHitbox) verwenden wir die Vertices
-    if (hitbox is! PolygonHitbox) {
-      return; // Fallback für non-polygon hitboxes
-    }
-
-    PolygonHitbox playerHitbox = hitbox as PolygonHitbox;
-
-    // Hole die vier Eckpunkte der isometrischen Hitbox in Weltkoordinaten
-    List<Vector2> playerVertices = playerHitbox.vertices.map((v) =>
-    playerHitbox.absolutePosition + v
-    ).toList();
-
-    // Block-Eckpunkte (angenommen, dass other auch eine IsometricHitbox/PolygonHitbox ist)
-    List<Vector2> blockVertices;
-    if (other is PolygonHitbox) {
-      blockVertices = (other as PolygonHitbox).vertices.map((v) =>
-      other.absolutePosition + v
-      ).toList();
-    } else {
-      // Fallback: Erstelle Rechteck-Vertices für normale RectangleHitbox
-      Vector2 blockPos = other.absolutePosition;
-      blockVertices = [
-        blockPos,
-        blockPos + Vector2(other.size.x, 0),
-        blockPos + other.size,
-        blockPos + Vector2(0, other.size.y),
-      ];
-    }
-
-    print("Player vertices: $playerVertices");
-    print("Block vertices: $blockVertices");
-
-    // Berechne den Mittelpunkt beider Hitboxes
-    Vector2 playerCenter = playerVertices.reduce((a, b) => a + b) / playerVertices.length.toDouble();
-    Vector2 blockCenter = blockVertices.reduce((a, b) => a + b) / blockVertices.length.toDouble();
-
-    Vector2 centerDiff = playerCenter - blockCenter;
-    print("Center diff: $centerDiff");
-
-    // Definiere die vier isometrischen Richtungen (Normale der Kanten)
-    List<Vector2> directions = [
-      Vector2(1, -1).normalized(),  // Top-Right (Nord-Ost)
-      Vector2(1, 1).normalized(),   // Bottom-Right (Süd-Ost)
-      Vector2(-1, 1).normalized(),  // Bottom-Left (Süd-West)
-      Vector2(-1, -1).normalized(), // Top-Left (Nord-West)
-    ];
-
-    List<String> directionNames = ["Top-Right", "Bottom-Right", "Bottom-Left", "Top-Left"];
-
-    double minOverlap = double.infinity;
-    Vector2 bestSeparationVector = Vector2.zero();
-    String bestDirection = "";
-
-    // Für jede isometrische Richtung: berechne die Projektion und Überlappung
-    for (int i = 0; i < directions.length; i++) {
-      Vector2 dir = directions[i];
-
-      // Projiziere beide Hitboxes auf diese Achse
-      List<double> playerProjections = playerVertices.map((v) => v.dot(dir)).toList();
-      List<double> blockProjections = blockVertices.map((v) => v.dot(dir)).toList();
-
-      double playerMin = playerProjections.reduce(min);
-      double playerMax = playerProjections.reduce(max);
-      double blockMin = blockProjections.reduce(min);
-      double blockMax = blockProjections.reduce(max);
-
-      // Berechne Überlappung
-      double overlap = min(playerMax, blockMax) - max(playerMin, blockMin);
-
-      print("Direction ${directionNames[i]}: Player [$playerMin, $playerMax], Block [$blockMin, $blockMax], Overlap: $overlap");
-
-      if (overlap > 0 && overlap < minOverlap) {
-        minOverlap = overlap;
-
-        // Bestimme die Richtung der Trennung
-        double centerProjection = centerDiff.dot(dir);
-        bestSeparationVector = dir * overlap * (centerProjection >= 0 ? 1 : -1);
-        bestDirection = directionNames[i];
-      }
-    }
-
-    print("Best separation: $bestSeparationVector (direction: $bestDirection, overlap: $minOverlap)");
-
-    // Wende die Korrektur an
-    if (minOverlap < double.infinity && minOverlap > 0) {
-      position += bestSeparationVector;
-      velocity = Vector2.zero();
-      setPos(position);
-
-      print("Applied correction: $bestSeparationVector");
-    } else {
-      print("No collision detected or no valid separation found");
-    }
-
-    print("---");
   }
 
 }

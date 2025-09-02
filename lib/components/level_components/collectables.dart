@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -11,7 +12,8 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 class Collectable extends SpriteAnimationComponent
     with HasGameReference<PixelAdventure>, CollisionCallbacks {
 
-  static int totalAmountOfCollectables = 0;
+  static int amountOfCollectables = 0;
+  static late int totalAmountOfCollectables;
 
   //name of the collectable and tape of collect -> those will be more than fruit in the future
   late String collectable;
@@ -99,20 +101,33 @@ class Collectable extends SpriteAnimationComponent
         ),
       );
       _collected = true;
-      (parent as Level).totalCollectables--;
-      if ((parent as Level).totalCollectables == 0) {
-        parent?.add(generateConfetti(position));
+      amountOfCollectables--;
+      print(amountOfCollectables);
+      if (amountOfCollectables == 0) {
+        spawnConfettyEverywhere();
       }
       Future.delayed(
         const Duration(milliseconds: 400),
         () => removeFromParent(),
       ); // Remove after animation.
     } else if(interactiveTask && !_collected) {
-      (parent as Level).totalCollectables--;
+      amountOfCollectables--;
       _collected = true;
-      if ((parent as Level).totalCollectables == 0) {
-        parent?.add(generateConfetti(position));
+      if (amountOfCollectables == 0) {
+        spawnConfettyEverywhere();
       }
     }
   }
+
+  void spawnConfettyEverywhere() async {
+
+
+    for (int i = 0; i < totalAmountOfCollectables; i++) {
+      Vector2 randomPosition = game.cam.viewport.size.toRect().randomPoint() + game.cam.pos;
+      print("pos: $randomPosition");
+      Future.delayed(Duration(milliseconds: Random().nextInt(1300)), () => generateConfetti(randomPosition.clone()));
+    }
+
+  }
+
 }

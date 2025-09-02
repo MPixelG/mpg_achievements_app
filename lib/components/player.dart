@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/cupertino.dart' hide Matrix4;
+import 'package:flutter/services.dart' hide Matrix4;
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/level_components/checkpoint/checkpoint.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
