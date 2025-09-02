@@ -268,4 +268,11 @@ abstract class Level extends World
   Vector2 toWorldPos(Vector2 pos);
   Vector2 toGridPos(Vector2 pos);
 
+  Vector2 isoToScreen(Vector2 iso) {
+    return Vector2(
+      (iso.x - iso.y) * tileSize.x / 2,
+      (iso.x + iso.y) * tileSize.y / 2,
+    );
+  }
+
 }

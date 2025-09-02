@@ -19,7 +19,7 @@ enum ViewSide { topDown, side, isometric }
 
 /// Mixin for adding collision detection behavior to a component.
 /// Requires implementing methods to provide hitbox, position, velocity, etc
-mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdventure>, BasicMovement {
+mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<PixelAdventure>, BasicMovement {
   ShapeHitbox getHitbox();
 
   Vector2 getScale();
@@ -30,17 +30,15 @@ mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdve
 
   void setClimbing(bool val);
 
+  void setDebugNoClipMode(bool val) => _debugNoClipMode = val;
+
   bool get isTryingToGetDownLadder;
 
   bool _debugNoClipMode = false;
 
   late ShapeHitbox hitbox;
-
-  late ViewSide viewSide;
-
   @override
   FutureOr<void> onLoad() {
-
     if(viewSide == ViewSide.isometric) {
       hitbox = IsometricHitbox(
           Vector2.all(1),
@@ -58,90 +56,20 @@ mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdve
     return super.onLoad();
   }
 
-  // Sets the new position of the object after a collision.
-  void setPos(Vector2 newPos);
-
-  void setIsOnGround(bool val);
-
-  // Called automatically by Flame when a collision begins.
+  Vector2 lastSafePosition = Vector2.zero();
   @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is CollisionBlock && !_debugNoClipMode) {
-      checkCollision(other);
+  void update(double dt) {
+    if (_debugNoClipMode) return super.update(dt);
+    if(activeCollisions.isNotEmpty && activeCollisions.any((element) => element is CollisionBlock)){
+      gridPos = lastSafePosition;
+      velocity = Vector2.zero();
+    } else {
+      lastSafePosition = gridPos;
     }
-    super.onCollision(intersectionPoints, other);
+    super.update(dt);
   }
 
-  // Called when the collision with another object ends
-  @override
-  void onCollisionEnd(PositionComponent other) {
-    if (other is CollisionBlock && other.climbable) {
-      setClimbing(false);
-    }
-    super.onCollisionEnd(other);
-  }
 
-  void setDebugNoCipMode(bool val) => _debugNoClipMode = val;
-
-  //main collision physics
-  void checkCollision(PositionComponent other) {
-    if (other is! CollisionBlock) {
-      return; //physics only work on the collision blocks (including the platforms)
-    }
-
-    ShapeHitbox hitbox = getHitbox();
-    Vector2 scale = getScale();
-    Vector2 velocity = getVelocity();
-
-    Vector2 position = getPosition();
-
-    Vector2 posDiff =
-        hitbox.absolutePosition -
-        other
-            .absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
-
-    //if the player faces in the other direction, we want to measure the distances from the other side of the hitbox. so we just add the width of it to the value.
-    if (scale.x < 0) {
-      posDiff.x -= hitbox.width;
-    }
-
-    //get all the distances it would take to transport the player to this side of the platform
-    final double distanceUp = posDiff.y + hitbox.height;
-    final double distanceLeft = posDiff.x + hitbox.width;
-    final double distanceRight = other.width - posDiff.x;
-    final double distanceDown = other.height - posDiff.y;
-
-    final double smallestDistance = min(
-      min(distanceUp, distanceDown),
-      min(distanceRight, distanceLeft),
-    ); //get the smallest distance
-
-    // Resolve the collision in the direction of smallest overlap
-    if (smallestDistance == distanceUp &&
-        velocity.y > 0 &&
-        !(!other.hasCollisionDown && distanceUp > 8) &&
-        other.hasCollisionUp &&
-        !(other.isLadder && isTryingToGetDownLadder)) {
-      position.y -= distanceUp;
-      setIsOnGround(true);
-      velocity.y = 0;
-    } //make sure you're falling (for platforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isn't too high, otherwise if half of the player falls through  a platform, he gets teleported up
-    if (smallestDistance == distanceDown && other.hasCollisionDown) {
-      position.y += distanceDown;
-      velocity.y = 0;
-    } //make sure the block isn't a platform, so that you can go through it from the bottom
-    if (smallestDistance == distanceLeft && other.hasHorizontalCollision) {
-      position.x -= distanceLeft;
-      velocity.x = 0;
-    } //make sure the block isn't a platform, so that you can go through it horizontally
-    if (smallestDistance == distanceRight && other.hasHorizontalCollision) {
-      position.x += distanceRight;
-      velocity.x = 0;
-    }
-    if (other.climbable && distanceUp > 5) setClimbing(true);
-    // sets new position
-    setPos(position);
-  }
 }
 
 
@@ -151,9 +79,9 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
   final double _gravity = 650.0;
   final double _jumpForce = 320;
   final double _terminalVelocity = 300;
-  final double _friction = 0.81;
+  final double _friction = 0.75;
 
-  double moveSpeed = 5; // Speed multiplier
+  double moveSpeed = 3; // Speed multiplier
 
   double horizontalMovement = 0; // Directional input (left/right)
   double verticalMovement = 0; // Directional input (up/down)
@@ -198,7 +126,7 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
       }
     }
     // Horizontal movement and friction
-    velocity = Vector2.zero();
+
 
     switch (viewSide) {
       case ViewSide.isometric:

@@ -98,7 +98,7 @@ class Player extends GameCharacter
     }
     if (keysPressed.contains(LogicalKeyboardKey.keyC)) {
       debugNoClipMode = !debugNoClipMode;
-      setDebugNoCipMode(debugNoClipMode);
+      setDebugNoClipMode(debugNoClipMode);
     } //press C to toggle noClip mode. lets you fall / walk / fly through walls. better only use it whilst flying (ctrl key)
     if (keysPressed.contains(LogicalKeyboardKey.keyY)) {
       debugImmortalMode = !debugImmortalMode; //press Y to toggle immortality

@@ -124,6 +124,4 @@ void generateCollisionsForLevel(Level level) {
       }
     }
   }
-  //all collisionsBlocks are given to the player and now the player has a reference
-  //player.collisionsBlockList = collisionsBlockList;
 }
