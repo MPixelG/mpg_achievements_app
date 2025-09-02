@@ -6,12 +6,11 @@ import 'package:flame/effects.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart' as util;
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import '../../mpg_pixel_adventure.dart';
 import 'collision_block.dart';
 import '../level/level.dart';
 
@@ -147,14 +146,14 @@ mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdve
 
 
 
-mixin BasicMovement on PositionComponent, HasGameReference<PixelAdventure> {
+mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
   //constants for configuring basic movement
   final double _gravity = 650.0;
   final double _jumpForce = 320;
   final double _terminalVelocity = 300;
   final double _friction = 0.81;
 
-  double moveSpeed = 35; // Speed multiplier
+  double moveSpeed = 5; // Speed multiplier
 
   double horizontalMovement = 0; // Directional input (left/right)
   double verticalMovement = 0; // Directional input (up/down)
@@ -199,21 +198,16 @@ mixin BasicMovement on PositionComponent, HasGameReference<PixelAdventure> {
       }
     }
     // Horizontal movement and friction
-
-    if (viewSide != ViewSide.side) {
-      velocity = Vector2.zero();
-    }
+    velocity = Vector2.zero();
 
     switch (viewSide) {
       case ViewSide.isometric:
         _performIsometricMovement(dt);
-       // _performIsometricGravity(dt);
         break;
 
       case ViewSide.side:
         velocity.x += horizontalMovement * moveSpeed;
         velocity.x *=_friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
-        position.x += velocity.x * dt;
         if (gravityEnabled) {
           _performGravity(dt);
         } else {
@@ -229,8 +223,10 @@ mixin BasicMovement on PositionComponent, HasGameReference<PixelAdventure> {
 
 
     // Apply final velocity to position
-    position.x += velocity.x * dt;
-    position.y += velocity.y * dt;
+
+
+
+    gridPos += velocity * dt;
   }
 
   // Applies gravity and falling mechanics
@@ -264,30 +260,11 @@ mixin BasicMovement on PositionComponent, HasGameReference<PixelAdventure> {
 
   //isometric movement logic
   void _performIsometricMovement(double dt) {
-    // This will be our final direction vector on the 2D screen
-    Vector2 isoDirection = Vector2.zero();
+    velocity.x += horizontalMovement * moveSpeed;
+    velocity.x *= _friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
 
-    // Combine inputs to determine direction on the isometric grid
-    if (verticalMovement < 0) { // Up (W)
-      isoDirection += Vector2(-1, -0.5);
-    }
-    if (verticalMovement > 0) { // Down (S)
-      isoDirection += Vector2(1, 0.5);
-    }
-    if (horizontalMovement < 0) { // Left (A)
-      isoDirection += Vector2(-1, 0.5);
-    }
-    if (horizontalMovement > 0) { // Right (D)
-      isoDirection += Vector2(1, -0.5);
-    }
-
-    // Normalize the vector to prevent faster diagonal movement
-    if (isoDirection.length > 0) {
-      isoDirection.normalize();
-    }
-
-    // Apply the movement
-    velocity = isoDirection * moveSpeed;
+    velocity.y += verticalMovement * moveSpeed;
+    velocity.y *= _friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
   }
 
 
@@ -320,12 +297,12 @@ mixin BasicMovement on PositionComponent, HasGameReference<PixelAdventure> {
 
 mixin KeyboardControllableMovement
     on PositionComponent, BasicMovement, KeyboardHandler {
-  bool active = true;
+  bool _active = true;
   Vector2 mouseCoords = Vector2.zero();
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (!active) return super.onKeyEvent(event, keysPressed);
+    if (!_active) return super.onKeyEvent(event, keysPressed);
 
     horizontalMovement = 0;
     verticalMovement = 0;
@@ -370,7 +347,8 @@ mixin KeyboardControllableMovement
       } else {
         isShifting = false;
       }
-    } else if (viewSide == ViewSide.topDown || viewSide == ViewSide.isometric) {
+    }
+    if (viewSide == ViewSide.topDown || viewSide == ViewSide.isometric) {
       final isUpKeyPressed =
           keysPressed.contains(LogicalKeyboardKey.keyW) ||
           keysPressed.contains(LogicalKeyboardKey.arrowUp);
@@ -389,17 +367,16 @@ mixin KeyboardControllableMovement
       debugMode = !debugMode;
       (parent as Level).setDebugMode(debugMode);
     } //press Y to toggle debug mode (visibility of hitboxes and more)
-
     return super.onKeyEvent(event, keysPressed);
   }
 
   // Enable/disable player control
-  bool setControllable(bool val) => active = val;
+  bool setControllable(bool val) => _active = val;
 }
 
 mixin JoystickControllableMovement
     on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
-  bool active = util.getPlatform();
+  bool active = util.shouldShowJoystick();
 
   // Joystick component for movement
   late JoystickComponent joystick;
@@ -536,4 +513,3 @@ mixin JoystickControllableMovement
     }
   }
 }
-//

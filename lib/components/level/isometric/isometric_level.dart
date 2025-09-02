@@ -11,16 +11,11 @@ class IsometricLevel extends Level{
 
   @override
   Vector2 toGridPos(Vector2 worldPos) {
-
-
-    // Remove the offset and width/2 translation for cleaner conversion
     Vector2 adjustedPos = worldPos - Vector2(level.position.x, level.position.y);
     return worldToTileIsometric(adjustedPos - Vector2(level.position.x + (level.width / 2), level.position.y)) + Vector2(1, 1);
   }
 
   Vector2 worldToTileIsometric(Vector2 worldPos) {
-
-    // Standard isometric world-to-tile conversion
     final tileX = (worldPos.x / (tileSize.x / 2) + worldPos.y / (tileSize.y / 2)) / 2;
     final tileY = (worldPos.y / (tileSize.y / 2) - worldPos.x / (tileSize.x / 2)) / 2;
 
@@ -30,13 +25,10 @@ class IsometricLevel extends Level{
 
   @override
   Vector2 toWorldPos(Vector2 gridPos) {
-    // Standard isometric tile-to-world conversion
     final localPoint = Vector2(
       (gridPos.x - gridPos.y) * (tileSize.x / 2),
       (gridPos.x + gridPos.y) * (tileSize.y / 2),
-
     );
-    // Convert local point to global world position
     return level.localToParent(localPoint);
   }
 

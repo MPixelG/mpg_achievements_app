@@ -25,7 +25,7 @@ class Player extends GameCharacter
         HasMovementAnimations,
         JoystickControllableMovement,
         HasCollisions {
-  //bools
+
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
   //we need this local state flag because of the animation and movement logic, it refers to the global state bool gotHit
@@ -40,13 +40,7 @@ class Player extends GameCharacter
   Player({required this.playerCharacter, super.position});
   
   
-  Vector2 get gridPos =>
-    Vector2(
-      position.x / game.tilesizeOrtho.x,
-      position.y / game.tilesizeOrtho.y
-    );
 
-  set gridPos(Vector2 newGridPos) => position = Vector2(newGridPos.x / game.tilesizeOrtho.x, newGridPos.y / game.tilesizeOrtho.y);
 
   @override
   FutureOr<void> onLoad() {
@@ -130,7 +124,8 @@ class Player extends GameCharacter
     if (other is Saw && !debugImmortalMode) {
       //todo separation into PlayerState logic
       Future(() { // Wrap the provider modification in a future
-      ref.read(playerProvider.notifier).takeHit();});
+        ref.read(playerProvider.notifier).takeHit();
+      });
     }
 
     if (other is Enemy && !debugImmortalMode) {

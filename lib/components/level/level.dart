@@ -104,13 +104,6 @@ abstract class Level extends World
     //runs all the other onLoad-events the method is referring to, now not important
     return super.onLoad();
   }
-
-  @override
-  void onMount() {
-    super.onMount();
-    final playerState = ref.watch(playerProvider);
-  }
-
   //creating a background dynamically
 
   TextComponent debugOverlays = TextComponent(
