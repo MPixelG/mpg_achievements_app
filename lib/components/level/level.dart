@@ -8,6 +8,7 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide PointerMoveEvent, AnimationStyle;
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
 import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
@@ -45,6 +46,11 @@ abstract class Level extends World
 
   late final Background background;
 
+  //reference to the tile grid for finding tapped tile
+  late final IsometricTileGrid tileGrid;
+  //currently selected tile
+  Vector2? selectedTile;
+
 
 
   //loads when the class instantiated
@@ -67,7 +73,7 @@ abstract class Level extends World
     // Load the Tiled map for the current level.
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
     level = await TiledComponent.load('$levelName.tmx', tileSize);
-    level.position = Vector2(0, 0);
+    level.position = Vector2.zero();
     isometricLevel = (game.level is IsometricLevel) ? true: false;
     //inspect tiles if isometric level
     if(isometricLevel){
@@ -158,15 +164,29 @@ abstract class Level extends World
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
 
-    print(game.level.toGridPos(_mouseCoords)..floor());
-    final Vector2 screenPosition = event.canvasPosition;
+    final Vector2 screenPositionTap = event.localPosition;
+    final Vector2 worldPositionTap = level.toLocal(screenPositionTap);
+    final Vector2 calculatedGridPos = toGridPos(worldPositionTap)..floor();
+    final Vector2 worldPositionTile = toWorldPos(calculatedGridPos);
+    selectedTile = calculatedGridPos;
 
-    final Vector2 worldPosition = screenPosition + game.cam.pos;
 
+
+
+    // ---  Debugging Logs ---
+    //POI generator
     print(generator.grid.isBlocked(toGridPos(_mouseCoords)..floor()));
-
-    print("world pos: $worldPosition");
+    print("world pos: $worldPositionTap");
+    //mouse pos -> grid pos
     print("grid pos: ${toGridPos(_mouseCoords)}\n\n\n");
+    print('Screen Position of Tap: $screenPositionTap');
+    print('Camera Position: ${game.cam.pos}, Zoom: ${game.cam.givenZoom}');
+    print('World Position of Tap (Calculated): $worldPositionTap');
+    print('Calculated Grid Position (Decimal): $calculatedGridPos');
+    print('Selected Tile (Floored): $selectedTile');
+    print('Logical World Position of Selected Tile: $worldPositionTile');
+
+
   }
 
   @override //update the overlays
@@ -186,7 +206,6 @@ abstract class Level extends World
 
     super.update(dt);
   }
-
 
   //sets the visibility of all of the hitboxes of all of the components in the level (except for background tiles)
   void setDebugMode(bool val) {

@@ -1,21 +1,60 @@
 
+import 'dart:ui';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+
+import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
+import 'package:mpg_achievements_app/components/ai/tile_grid.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 
 class IsometricLevel extends Level{
 
+  late Vector2 tileSize = Vector2(32, 16);
 
+  // Example isometric tile size (width, height)
   IsometricLevel({required super.levelName, required super.player});
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+
+    //find the collision layer
+    final collisionLayer = level.tileMap.getLayer<ObjectGroup>('Collisions');
+    tileGrid = IsometricTileGrid(
+        level.tileMap.map.width,
+        level.tileMap.map.height,
+        //setting the tile size to match the isometric tile dimensions
+        tileSize,
+        collisionLayer,
+        this);
+       }
+
+  //highlight the selected tile
+  @override
+  void render(Canvas canvas) {
+    // This renders the Tiled map and all other components first.
+    super.render(canvas);
+
+    // After the map is drawn, we check if a tile has been selected.
+    if (game.level.selectedTile != null) {
+      // If so, we call the highlight method on our grid instance.
+      tileGrid.renderTileHighlight(canvas, selectedTile!);
+
+    }
+  }
+
+
 
   @override
   Vector2 toGridPos(Vector2 worldPos) {
 
+    final mapOriginOffset = Vector2(level.position.x + (level.width / 2), level.position.y);
 
     // Remove the offset and width/2 translation for cleaner conversion
-    Vector2 adjustedPos = worldPos - Vector2(level.position.x, level.position.y);
-    return worldToTileIsometric(adjustedPos - Vector2(level.position.x + (level.width / 2), level.position.y)) + Vector2(1, 1);
+    Vector2 adjustedPos = worldPos - mapOriginOffset;
+    return worldToTileIsometric(adjustedPos);
   }
 
   Vector2 worldToTileIsometric(Vector2 worldPos) {
@@ -36,8 +75,10 @@ class IsometricLevel extends Level{
       (gridPos.x + gridPos.y) * (tileSize.y / 2),
 
     );
-    // Convert local point to global world position
-    return level.localToParent(localPoint);
+    // Convert local point to global world position, Add the maps's visual origin offset back to the local point
+    // to get the correct world position
+    final mapOriginOffset = Vector2(level.position.x + (level.width / 2), level.position.y);
+    return localPoint + mapOriginOffset;
   }
 
   @override
@@ -73,7 +114,5 @@ class IsometricLevel extends Level{
     return RectangleHitbox(position: position, size: size);
   }
 
-
-
-
 }
+
