@@ -1,4 +1,6 @@
 
+import 'dart:ui';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
@@ -106,7 +108,7 @@ class IsometricLevel extends Level{
   }
 }
 
-}
-extension on PositionComponent {
+
+
 
 
