@@ -166,7 +166,7 @@ abstract class Level extends World
     //POI generator
     print(generator.grid.isBlocked(toGridPos(_mouseCoords)..floor()));
     print("world pos: $worldPositionTap");
-    //mouse pos -> grid pos
+    //mouse pos -> grid po
     print("grid pos: ${toGridPos(_mouseCoords)}\n\n\n");
     print('Screen Position of Tap: $screenPositionTap');
     print('Camera Position: ${game.cam.pos}, Zoom: ${game.cam.givenZoom}');
