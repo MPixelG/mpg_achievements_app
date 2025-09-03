@@ -6,8 +6,8 @@ class LayoutWidget {
     BuildContext context,
     List<Widget> children,
     Map<String, dynamic> properties,
-  )
-  _builder;
+  ) _builder;
+
   late final List<LayoutWidget> children;
   late Map<String, dynamic> properties;
   late void Function(LayoutWidget child) removeFromParent; // Function to remove this widget from its parent, if needed
@@ -135,11 +135,7 @@ bool isDescendant(LayoutWidget dragged, LayoutWidget target) { //check if the dr
   return false; //if no child is the target or has the target as a descendant, return false
 }
 
-/// The type of container this widget is.
-/// - `unlimited`: Can have any number of children.
-/// - `sealed`: Cannot have any children added.
-/// - `single`: Can only have one child.
-enum ContainerType { unlimited, sealed, single }
+enum ContainerType {unlimited, sealed, single }
 
 
 extension on List{

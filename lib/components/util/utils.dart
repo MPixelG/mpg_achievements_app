@@ -7,7 +7,7 @@ import 'dart:io';
 import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/player.dart';
+import 'package:mpg_achievements_app/components/entity/player.dart';
 import '../physics/collision_block.dart';
 
 /* Checks whether a player's hitbox is colliding with a given collision block.
@@ -147,14 +147,6 @@ Vector2 orthogonalToIsometric(Vector2 ortho) {
 //Check OS for Joystick support
 
 //check which platform is used and if the touch controls must be shown, TODO right settings must be set here
-bool getPlatform() {
-  bool os = true;
-  if (kIsWeb) {
-    os = true;
-  } else if (Platform.isAndroid) {
-    os = true;
-  } else if (Platform.isIOS) {
-    os = true;
-  }
-  return os;
+bool shouldShowJoystick() {
+  return Platform.isAndroid || Platform.isIOS;
 }

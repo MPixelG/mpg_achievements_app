@@ -1,10 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/button_action.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/components/propertyEditor/button_action.dart';
 
 class WidgetOptions {
-
   final Type widgetType; // The type of the widget these options are for
 
   final List<WidgetOption> options;
@@ -12,10 +11,13 @@ class WidgetOptions {
   WidgetOptions(this.widgetType, {required this.options});
 
   WidgetOptions.from(WidgetOptions other, this.widgetType)
-      : options = List<WidgetOption>.from(other.options);
+    : options = List<WidgetOption>.from(other.options);
 
   WidgetOption? getOptionByName(String name) {
-    return options.where((option) => option.name == name).cast<WidgetOption?>().firstOrNull; // Using firstOrNull to avoid exceptions if nothing is found
+    return options
+        .where((option) => option.name == name)
+        .cast<WidgetOption?>()
+        .firstOrNull; // Using firstOrNull to avoid exceptions if nothing is found
   }
 
   bool hasOption(String name) {
@@ -35,7 +37,6 @@ class WidgetOptions {
     throw ArgumentError('No option found with name: $name');
   }
 
-
   /// Cache to store widget options by type to avoid redundant lookups
   static final Map<Type, WidgetOptions> _widgetOptionsCache = {};
 
@@ -54,17 +55,15 @@ class WidgetOptions {
     return _widgetOptionsCache.containsKey(widgetType);
   }
 
-
   void register() {
     if (_widgetOptionsCache.containsKey(widgetType)) {
-      throw ArgumentError('Widget options for type $widgetType are already registered.');
+      throw ArgumentError(
+        'Widget options for type $widgetType are already registered.',
+      );
     }
     _widgetOptionsCache[widgetType] = this;
   }
-
-
 }
-
 
 class WidgetOption<T> {
   final String name;
@@ -74,17 +73,19 @@ class WidgetOption<T> {
 
   final Type type = T;
 
-  final T? Function(dynamic type) parser; // Optional parser function to convert string input to the desired type
+  final T? Function(dynamic type)
+  parser; // Optional parser function to convert string input to the desired type
 
-  final Map<String, dynamic>? options; // For dropdowns or multiple choice options but only if there are a limited set of options
+  final Map<String, dynamic>?
+  options; // For dropdowns or multiple choice options but only if there are a limited set of options
 
-  WidgetOption(this.parser, {
+  WidgetOption(
+    this.parser, {
     required this.name,
     this.description,
     required this.defaultValue,
     this.options,
   });
-
 }
 
 double? parseDouble(dynamic value) {
@@ -106,14 +107,14 @@ bool? parseBoolean(dynamic value) {
 }
 
 Color? parseColor(dynamic value) {
-  if(value is Color) return value;
+  if (value is Color) return value;
 
-  if (value is Map<String, dynamic>){
-
+  if (value is Map<String, dynamic>) {
     double r = parseDouble(value['r']) ?? 0;
     double g = parseDouble(value['g']) ?? 0;
     double b = parseDouble(value['b']) ?? 0;
-    double a = parseDouble(value['a']) ?? 1.0; // Default alpha to 1.0 if not provided
+    double a =
+        parseDouble(value['a']) ?? 1.0; // Default alpha to 1.0 if not provided
 
     return Color.fromRGBO(
       (r * 255).toInt(),
@@ -139,7 +140,10 @@ EdgeInsetsGeometry? parseEdgeInsets(dynamic value) {
 
 Alignment parseAlignment(dynamic value) {
   if (value is String) {
-    value = value.replaceAll("Alignment.", ""); //remove the enum prefix if present
+    value = value.replaceAll(
+      "Alignment.",
+      "",
+    ); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'topleft':
         return Alignment.topLeft;
@@ -160,15 +164,18 @@ Alignment parseAlignment(dynamic value) {
       case 'bottomright':
         return Alignment.bottomRight;
       default:
-          return Alignment.center; // Default to center if no match
+        return Alignment.center; // Default to center if no match
     }
   }
   return Alignment.center; // Default to center for any other type
 }
 
-PanAxis parsePanAxis(dynamic value){
+PanAxis parsePanAxis(dynamic value) {
   if (value is String) {
-    value = value.replaceAll("PanAxis.", ""); //remove the enum prefix if present
+    value = value.replaceAll(
+      "PanAxis.",
+      "",
+    ); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'vertical':
         return PanAxis.vertical;
@@ -183,10 +190,12 @@ PanAxis parsePanAxis(dynamic value){
   return PanAxis.free;
 }
 
-
 MainAxisAlignment parseMainAxisAlignment(dynamic value) {
   if (value is String) {
-    value = value.replaceAll("MainAxisAlignment.", ""); //remove the enum prefix if present
+    value = value.replaceAll(
+      "MainAxisAlignment.",
+      "",
+    ); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'start':
         return MainAxisAlignment.start;
@@ -209,7 +218,10 @@ MainAxisAlignment parseMainAxisAlignment(dynamic value) {
 
 CrossAxisAlignment parseCrossAxisAlignment(dynamic value) {
   if (value is String) {
-    value = value.replaceAll("CrossAxisAlignment.", ""); //remove the enum prefix if present
+    value = value.replaceAll(
+      "CrossAxisAlignment.",
+      "",
+    ); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'start':
         return CrossAxisAlignment.start;
@@ -228,7 +240,7 @@ CrossAxisAlignment parseCrossAxisAlignment(dynamic value) {
   return CrossAxisAlignment.start; // Default to start for any other type
 }
 
-Axis parseAxis(dynamic value){
+Axis parseAxis(dynamic value) {
   if (value is String) {
     value = value.replaceAll("Axis.", ""); //remove the enum prefix if present
     switch (value.toLowerCase()) {
@@ -243,7 +255,10 @@ Axis parseAxis(dynamic value){
 
 MainAxisSize parseMainAxisSize(dynamic value) {
   if (value is String) {
-    value = value.replaceAll("MainAxisSize.", ""); //remove the enum prefix if present
+    value = value.replaceAll(
+      "MainAxisSize.",
+      "",
+    ); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'min':
         return MainAxisSize.min;
@@ -258,7 +273,10 @@ MainAxisSize parseMainAxisSize(dynamic value) {
 
 TextAlign parseTextAlign(dynamic value) {
   if (value is String) {
-    value = value.replaceAll("TextAlign.", ""); //remove the enum prefix if present
+    value = value.replaceAll(
+      "TextAlign.",
+      "",
+    ); //remove the enum prefix if present
     switch (value.toLowerCase()) {
       case 'left':
         return TextAlign.left;
@@ -312,7 +330,6 @@ ButtonAction? parseButtonAction(dynamic value) {
   }
   return null;
 }
-
 
 BoxFit parseBoxFit(dynamic value) {
   if (value is String) {

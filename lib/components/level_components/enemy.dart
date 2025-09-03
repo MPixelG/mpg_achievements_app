@@ -7,6 +7,7 @@ import 'package:mpg_achievements_app/components/ai/goals/goal_manager.dart';
 import 'package:mpg_achievements_app/components/ai/goals/pathtracing_goal.dart';
 import 'package:mpg_achievements_app/components/ai/goals/player_locating_goal.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
+import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/level_components/saw.dart';
 import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import '../../mpg_pixel_adventure.dart';
@@ -24,12 +25,10 @@ enum EnemyState {
   disappearing,
 }
 
-class Enemy extends SpriteAnimationGroupComponent
+class Enemy extends GameCharacter
     with
-        HasGameReference<PixelAdventure>,
         KeyboardHandler,
         CollisionCallbacks,
-        AnimationManager,
         BasicMovement,
         HasCollisions,
         HasMovementAnimations{

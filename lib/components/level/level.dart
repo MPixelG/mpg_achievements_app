@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -17,15 +16,11 @@ import 'package:mpg_achievements_app/components/background/background_tile.dart'
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
-import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
-import 'package:mpg_achievements_app/components/player.dart';
-import 'package:mpg_achievements_app/components/shaders/shader_manager.dart';
+import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../background/scrolling_background.dart';
-import '../level_components/saw.dart';
-import '../level_components/checkpoint/checkpoint.dart';
 
 abstract class Level extends World
     with
@@ -77,8 +72,9 @@ abstract class Level extends World
     isometricLevel = (game.level is IsometricLevel) ? true: false;
     //inspect tiles if isometric level
     if(isometricLevel){
-    inspectTile(15, 14);
-    inspectTile(1,1);}
+      inspectTile(15, 14);
+      inspectTile(1,1);
+    }
 
     print("map origin: ${Vector2(level.width / 2, 0)}");
 
@@ -114,13 +110,6 @@ abstract class Level extends World
     //runs all the other onLoad-events the method is referring to, now not important
     return super.onLoad();
   }
-
-  @override
-  void onMount() {
-    super.onMount();
-    final playerState = ref.watch(playerProvider);
-  }
-
   //creating a background dynamically
 
   TextComponent debugOverlays = TextComponent(
@@ -297,5 +286,12 @@ abstract class Level extends World
 
   Vector2 toWorldPos(Vector2 pos);
   Vector2 toGridPos(Vector2 pos);
+
+  Vector2 isoToScreen(Vector2 iso) {
+    return Vector2(
+      (iso.x - iso.y) * tileSize.x / 2,
+      (iso.x + iso.y) * tileSize.y / 2,
+    );
+  }
 
 }

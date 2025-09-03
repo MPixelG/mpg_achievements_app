@@ -2,35 +2,30 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
+import 'package:flutter/foundation.dart';
+import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
-import 'package:mpg_achievements_app/components/level_components/checkpoint/checkpoint.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import 'level/isometric/isometric_level.dart';
-import 'level_components/saw.dart';
+import '../level/isometric/isometric_level.dart';
+import '../level_components/saw.dart';
 //todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations
 //with is used to additonal classes here our game class
 //import/reference to Keyboardhandler
-class Player extends SpriteAnimationGroupComponent
-    with
-        HasGameReference<PixelAdventure>,
-        RiverpodComponentMixin,
+class Player extends GameCharacter
+    with RiverpodComponentMixin,
         KeyboardHandler,
         CollisionCallbacks,
         BasicMovement,
         KeyboardControllableMovement,
-        AnimationManager,
         HasMovementAnimations,
         JoystickControllableMovement,
-        HasCollisions
+        HasCollisions {
 
-         {
-  //bools
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
   //we need this local state flag because of the animation and movement logic, it refers to the global state bool gotHit
@@ -43,6 +38,9 @@ class Player extends SpriteAnimationGroupComponent
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
+  
+  
+
 
   @override
   FutureOr<void> onLoad() {
@@ -87,34 +85,29 @@ class Player extends SpriteAnimationGroupComponent
       //if the player has no lives left, we respawn them
       _isHitAnimationPlaying = true;
       playAnimation('hit').whenComplete(() {
-
         ref.read(playerProvider.notifier).resetHit();
         _isHitAnimationPlaying = false;
       });
-
-      }
-
+    }
   }
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
-      ref.read(playerProvider.notifier).manualRespawn();
-        }
-    if (keysPressed.contains(LogicalKeyboardKey.keyX)) {
-      print(
-        hitbox.isColliding,
-      ); //press x to print if the player is currently in a wall
+        ref.read(playerProvider.notifier).manualRespawn();
     }
     if (keysPressed.contains(LogicalKeyboardKey.keyC)) {
       debugNoClipMode = !debugNoClipMode;
-      setDebugNoCipMode(debugNoClipMode);
+      setDebugNoClipMode(debugNoClipMode);
     } //press C to toggle noClip mode. lets you fall / walk / fly through walls. better only use it whilst flying (ctrl key)
     if (keysPressed.contains(LogicalKeyboardKey.keyY)) {
       debugImmortalMode = !debugImmortalMode; //press Y to toggle immortality
     }
-    if (keysPressed.contains(LogicalKeyboardKey.keyK)) {
-      print('joystick'); //press H to reset lives
+    if (keysPressed.contains(LogicalKeyboardKey.keyK)) { //press K to heal
+      ref.read(playerProvider.notifier).heal();
+      if (kDebugMode) {
+        print("healed");
+      }
     }
 
     return super.onKeyEvent(event, keysPressed);
@@ -126,13 +119,13 @@ class Player extends SpriteAnimationGroupComponent
     //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
     if (other is Collectable) {
       other.collidedWithPlayer();
-      game.overlays.add('SpeechBubble');
     }
 
     if (other is Saw && !debugImmortalMode) {
       //todo separation into PlayerState logic
       Future(() { // Wrap the provider modification in a future
-      ref.read(playerProvider.notifier).takeHit();});
+        ref.read(playerProvider.notifier).takeHit();
+      });
     }
 
     if (other is Enemy && !debugImmortalMode) {
@@ -150,7 +143,6 @@ class Player extends SpriteAnimationGroupComponent
   }
 
   void _respawn() async {
-
     updateMovement = false;
     velocity = Vector2.zero(); //reset velocity
     setGravityEnabled(false); //temporarily disable gravity for this player
@@ -161,15 +153,12 @@ class Player extends SpriteAnimationGroupComponent
     position -= Vector2.all(
       32,
     ); //center the player so that the animation displays correctly (its 96*96 and the player is 32*32)
-    scale.x =
-        1; //flip the player to the right side and a third of the size because the animation is triple of the size
+    scale.x = 1; //flip the player to the right side and a third of the size because the animation is triple of the size
     await playAnimation("disappearing"); //display a disappear animation
     await Future.delayed(
       Duration(milliseconds: 320),
     );
     //wait for the animation to finish
-
-    // respawn position is the last checkpoints position
 
     //Positioning the player after respawn
     final respawnPoint = ref.read(playerProvider).lastCheckpoint;
@@ -191,7 +180,9 @@ class Player extends SpriteAnimationGroupComponent
     //wait for the animation to finish
     //todo renaming necessary
     setGravityEnabled(true);
-    print("reenabled gravity");//re-enable gravity
+    if (kDebugMode) {
+      print("re-enabled gravity");
+    }//re-enable gravity
     updateMovement = true;
     updatePlayerstate(); //update the players feet to the ground
     position += Vector2.all(
@@ -201,7 +192,7 @@ class Player extends SpriteAnimationGroupComponent
 
     ref.read(playerProvider.notifier).completeRespawn();
     _isRespawningAnimationPlaying = false;
-    }
+  }
 
   //Getters
   @override
@@ -269,7 +260,4 @@ class Player extends SpriteAnimationGroupComponent
   bool get isInHitFrames => _isHitAnimationPlaying;
   @override
   bool get isInRespawnFrames => _isRespawningAnimationPlaying;
-
-
-
-  }
+}

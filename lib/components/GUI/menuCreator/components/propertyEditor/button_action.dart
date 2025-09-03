@@ -5,8 +5,10 @@ import 'package:go_router/go_router.dart' show GoRouterHelper;
 class ButtonAction {
   late final String actionType; // Default action type for button actions
 
-  ButtonAction() {init();}
-  void init(){
+  ButtonAction() {
+    init();
+  }
+  void init() {
     actionType = "default";
   }
 
@@ -24,22 +26,19 @@ class ButtonAction {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      "actionType": actionType,
-    };
+    return {"actionType": actionType};
   }
-
 }
 
 class DebugButtonAction extends ButtonAction {
-
   late String printText;
 
-
-  DebugButtonAction([Map<String, dynamic>? properties]){
+  DebugButtonAction([Map<String, dynamic>? properties]) {
     properties ??= {};
 
-    properties.removeWhere((key, value) => key != "printText" && key != "actionType");
+    properties.removeWhere(
+      (key, value) => key != "printText" && key != "actionType",
+    );
 
     properties["printText"] ??= "Debug button pressed!";
 
@@ -58,32 +57,29 @@ class DebugButtonAction extends ButtonAction {
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      "printText": printText,
-      "actionType": actionType,
-    };
+    return {"printText": printText, "actionType": actionType};
   }
 }
 
-class ScreenChangeButtonAction extends ButtonAction{
+class ScreenChangeButtonAction extends ButtonAction {
   late String screen;
 
-  ScreenChangeButtonAction([Map<String, dynamic>? properties]){
+  ScreenChangeButtonAction([Map<String, dynamic>? properties]) {
     properties ??= {};
 
-    properties.removeWhere((key, value) => key != "screen" && key != "actionType");
+    properties.removeWhere(
+      (key, value) => key != "screen" && key != "actionType",
+    );
 
     properties["screen"] ??= "";
 
     screen = properties["screen"];
   }
 
-
   @override
   void press(BuildContext context) {
     context.goNamed(screen);
   }
-
 
   @override
   void init() {
@@ -92,12 +88,6 @@ class ScreenChangeButtonAction extends ButtonAction{
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      "screen": screen,
-      "actionType": actionType,
-    };
+    return {"screen": screen, "actionType": actionType};
   }
-
-
-
 }

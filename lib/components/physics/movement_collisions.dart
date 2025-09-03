@@ -6,12 +6,11 @@ import 'package:flame/effects.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart' as util;
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import '../../mpg_pixel_adventure.dart';
 import 'collision_block.dart';
 import '../level/level.dart';
 
@@ -20,7 +19,7 @@ enum ViewSide { topDown, side, isometric }
 
 /// Mixin for adding collision detection behavior to a component.
 /// Requires implementing methods to provide hitbox, position, velocity, etc
-mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdventure>, BasicMovement {
+mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<PixelAdventure>, BasicMovement {
   ShapeHitbox getHitbox();
 
   Vector2 getScale();
@@ -31,17 +30,15 @@ mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdve
 
   void setClimbing(bool val);
 
+  void setDebugNoClipMode(bool val) => _debugNoClipMode = val;
+
   bool get isTryingToGetDownLadder;
 
   bool _debugNoClipMode = false;
 
   late ShapeHitbox hitbox;
-
-  late ViewSide viewSide;
-
   @override
   FutureOr<void> onLoad() {
-
     if(viewSide == ViewSide.isometric) {
       hitbox = IsometricHitbox(
           Vector2.all(1),
@@ -59,102 +56,32 @@ mixin HasCollisions on Component, CollisionCallbacks, HasGameReference<PixelAdve
     return super.onLoad();
   }
 
-  // Sets the new position of the object after a collision.
-  void setPos(Vector2 newPos);
-
-  void setIsOnGround(bool val);
-
-  // Called automatically by Flame when a collision begins.
+  Vector2 lastSafePosition = Vector2.zero();
   @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is CollisionBlock && !_debugNoClipMode) {
-      checkCollision(other);
+  void update(double dt) {
+    if (_debugNoClipMode) return super.update(dt);
+    if(activeCollisions.isNotEmpty && activeCollisions.any((element) => element is CollisionBlock)){
+      gridPos = lastSafePosition;
+      velocity = Vector2.zero();
+    } else {
+      lastSafePosition = gridPos;
     }
-    super.onCollision(intersectionPoints, other);
+    super.update(dt);
   }
 
-  // Called when the collision with another object ends
-  @override
-  void onCollisionEnd(PositionComponent other) {
-    if (other is CollisionBlock && other.climbable) {
-      setClimbing(false);
-    }
-    super.onCollisionEnd(other);
-  }
 
-  void setDebugNoCipMode(bool val) => _debugNoClipMode = val;
-
-  //main collision physics
-  void checkCollision(PositionComponent other) {
-    if (other is! CollisionBlock) {
-      return; //physics only work on the collision blocks (including the platforms)
-    }
-
-    ShapeHitbox hitbox = getHitbox();
-    Vector2 scale = getScale();
-    Vector2 velocity = getVelocity();
-
-    Vector2 position = getPosition();
-
-    Vector2 posDiff =
-        hitbox.absolutePosition -
-        other
-            .absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
-
-    //if the player faces in the other direction, we want to measure the distances from the other side of the hitbox. so we just add the width of it to the value.
-    if (scale.x < 0) {
-      posDiff.x -= hitbox.width;
-    }
-
-    //get all the distances it would take to transport the player to this side of the platform
-    final double distanceUp = posDiff.y + hitbox.height;
-    final double distanceLeft = posDiff.x + hitbox.width;
-    final double distanceRight = other.width - posDiff.x;
-    final double distanceDown = other.height - posDiff.y;
-
-    final double smallestDistance = min(
-      min(distanceUp, distanceDown),
-      min(distanceRight, distanceLeft),
-    ); //get the smallest distance
-
-    // Resolve the collision in the direction of smallest overlap
-    if (smallestDistance == distanceUp &&
-        velocity.y > 0 &&
-        !(!other.hasCollisionDown && distanceUp > 8) &&
-        other.hasCollisionUp &&
-        !(other.isLadder && isTryingToGetDownLadder)) {
-      position.y -= distanceUp;
-      setIsOnGround(true);
-      velocity.y = 0;
-    } //make sure you're falling (for platforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isn't too high, otherwise if half of the player falls through  a platform, he gets teleported up
-    if (smallestDistance == distanceDown && other.hasCollisionDown) {
-      position.y += distanceDown;
-      velocity.y = 0;
-    } //make sure the block isn't a platform, so that you can go through it from the bottom
-    if (smallestDistance == distanceLeft && other.hasHorizontalCollision) {
-      position.x -= distanceLeft;
-      velocity.x = 0;
-    } //make sure the block isn't a platform, so that you can go through it horizontally
-    if (smallestDistance == distanceRight && other.hasHorizontalCollision) {
-      position.x += distanceRight;
-      velocity.x = 0;
-    }
-    if (other.climbable && distanceUp > 5) setClimbing(true);
-    // sets new position
-    setPos(position);
-  }
 }
 
 
 
-mixin BasicMovement on PositionComponent, HasGameReference<PixelAdventure> {
+mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
   //constants for configuring basic movement
   final double _gravity = 650.0;
   final double _jumpForce = 320;
   final double _terminalVelocity = 300;
-  final double _friction = 0.81;
+  final double _friction = 0.75;
 
-  double moveSpeed = 35; // Speed multiplier
+  double moveSpeed = 3; // Speed multiplier
 
   double horizontalMovement = 0; // Directional input (left/right)
   double verticalMovement = 0; // Directional input (up/down)
@@ -200,26 +127,21 @@ mixin BasicMovement on PositionComponent, HasGameReference<PixelAdventure> {
     }
     // Horizontal movement and friction
 
-    if (viewSide != ViewSide.side) {
-      velocity = Vector2.zero();
-    }
 
     switch (viewSide) {
       case ViewSide.isometric:
         _performIsometricMovement(dt);
-       // _performIsometricGravity(dt);
         break;
 
       case ViewSide.side:
         velocity.x += horizontalMovement * moveSpeed;
         velocity.x *=_friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
-        position.x += velocity.x * dt;
         if (gravityEnabled) {
           _performGravity(dt);
         } else {
-          print('gravity not enabled');        }
-
-    //maybe not necessary if we don't have topdown at all
+          print('gravity not enabled');
+        }
+      //maybe not necessary if we don't have topdown at all
       case ViewSide.topDown:
         velocity.x += horizontalMovement * moveSpeed;
         velocity.y += verticalMovement * moveSpeed;
@@ -229,8 +151,10 @@ mixin BasicMovement on PositionComponent, HasGameReference<PixelAdventure> {
 
 
     // Apply final velocity to position
-    position.x += velocity.x * dt;
-    position.y += velocity.y * dt;
+
+
+
+    gridPos += velocity * dt;
   }
 
   // Applies gravity and falling mechanics
@@ -264,30 +188,11 @@ mixin BasicMovement on PositionComponent, HasGameReference<PixelAdventure> {
 
   //isometric movement logic
   void _performIsometricMovement(double dt) {
-    // This will be our final direction vector on the 2D screen
-    Vector2 isoDirection = Vector2.zero();
+    velocity.x += horizontalMovement * moveSpeed;
+    velocity.x *= _friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
 
-    // Combine inputs to determine direction on the isometric grid
-    if (verticalMovement < 0) { // Up (W)
-      isoDirection += Vector2(-1, -0.5);
-    }
-    if (verticalMovement > 0) { // Down (S)
-      isoDirection += Vector2(1, 0.5);
-    }
-    if (horizontalMovement < 0) { // Left (A)
-      isoDirection += Vector2(-1, 0.5);
-    }
-    if (horizontalMovement > 0) { // Right (D)
-      isoDirection += Vector2(1, -0.5);
-    }
-
-    // Normalize the vector to prevent faster diagonal movement
-    if (isoDirection.length > 0) {
-      isoDirection.normalize();
-    }
-
-    // Apply the movement
-    velocity = isoDirection * moveSpeed;
+    velocity.y += verticalMovement * moveSpeed;
+    velocity.y *= _friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
   }
 
 
@@ -320,12 +225,12 @@ mixin BasicMovement on PositionComponent, HasGameReference<PixelAdventure> {
 
 mixin KeyboardControllableMovement
     on PositionComponent, BasicMovement, KeyboardHandler {
-  bool active = true;
+  bool _active = true;
   Vector2 mouseCoords = Vector2.zero();
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (!active) return super.onKeyEvent(event, keysPressed);
+    if (!_active) return super.onKeyEvent(event, keysPressed);
 
     horizontalMovement = 0;
     verticalMovement = 0;
@@ -370,7 +275,8 @@ mixin KeyboardControllableMovement
       } else {
         isShifting = false;
       }
-    } else if (viewSide == ViewSide.topDown || viewSide == ViewSide.isometric) {
+    }
+    if (viewSide == ViewSide.topDown || viewSide == ViewSide.isometric) {
       final isUpKeyPressed =
           keysPressed.contains(LogicalKeyboardKey.keyW) ||
           keysPressed.contains(LogicalKeyboardKey.arrowUp);
@@ -389,17 +295,16 @@ mixin KeyboardControllableMovement
       debugMode = !debugMode;
       (parent as Level).setDebugMode(debugMode);
     } //press Y to toggle debug mode (visibility of hitboxes and more)
-
     return super.onKeyEvent(event, keysPressed);
   }
 
   // Enable/disable player control
-  bool setControllable(bool val) => active = val;
+  bool setControllable(bool val) => _active = val;
 }
 
 mixin JoystickControllableMovement
     on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
-  bool active = util.getPlatform();
+  bool active = util.shouldShowJoystick();
 
   // Joystick component for movement
   late JoystickComponent joystick;
@@ -536,4 +441,3 @@ mixin JoystickControllableMovement
     }
   }
 }
-//

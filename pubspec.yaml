@@ -46,6 +46,7 @@ dependencies:
   vector_math: any
   flame_riverpod: ^5.4.17
   flutter_riverpod: ^2.6.1
+  flutter_resizable_container: ^4.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
