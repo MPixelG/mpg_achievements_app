@@ -120,36 +120,13 @@ class IsometricTiledLevel extends TiledComponent {
   @override
   void render(Canvas canvas) {
 
-    List<RenderInstance> allRenderables = List.from(_tiles);
-    allRenderables.addAll(children.whereType<PositionComponent>().map((e) => RenderInstance(, position, zIndex),));
-    allRenderables.sort((a, b) => a.zIndex.compareTo(b.zIndex));
-
     for (final tile in _tiles) {
       tile.sprite.render(
         canvas,
         position: tile.position - Vector2(16, 16),
         size: Vector2(32, 32),
       );
-    }
-  }
-}
 
-extension on PositionComponent {
-  int get zIndex {
-    if (this is SpriteAnimationComponent) {
-      return (this as SpriteAnimationComponent).priority;
-    } else if (this is SpriteComponent) {
-      return (this as SpriteComponent).priority;
-    } else {
-      return 0;
-    }
-  }
-
-  set zIndex(int value) {
-    if (this is SpriteAnimationComponent) {
-      (this as SpriteAnimationComponent).priority = value;
-    } else if (this is SpriteComponent) {
-      (this as SpriteComponent).priority = value;
     }
   }
 }
