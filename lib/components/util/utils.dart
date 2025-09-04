@@ -3,8 +3,10 @@
 //is our player overlapping an object in our world
 //hitbox is defined in player.dart, here we need to update our borders for our collision
 import 'dart:io';
+import 'dart:ui' as html;
 
 import 'package:flame/components.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
@@ -144,9 +146,12 @@ Vector2 orthogonalToIsometric(Vector2 ortho) {
 }
 
 
+
+
+
 //Check OS for Joystick support
 
 //check which platform is used and if the touch controls must be shown, TODO right settings must be set here
 bool shouldShowJoystick() {
-  return Platform.isAndroid || Platform.isIOS;
+  return defaultTargetPlatform.name.contains(RegExp("android|iOS|fuchsia"));
 }

@@ -63,9 +63,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
-
-
   fonts:
     - family: gameFont
       fonts:
@@ -78,34 +75,34 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-      - assets/images/
-      - assets/tiles/
-      - assets/images/Terrain/
-      - assets/images/Main Characters/Ninja Frog/
-      - assets/images/Main Characters/Pink Man/
-      - assets/images/Main Characters/Virtual Guy/
-      - assets/images/Main Characters/Mask Dude/
-      - assets/images/Main Characters/
-      - assets/images/HUD/
-      - assets/images/Items/Fruits/
-      - assets/images/Items/Checkpoints/
-      - assets/images/Items/Checkpoints/Checkpoint/
-      - assets/images/Items/Checkpoints/Checkpoint/Checkpoint (Flag Idle) (64x64).png
-      - assets/images/Items/Checkpoints/Checkpoint/Checkpoint (Flag Out) (64x64).png
-      - assets/images/Items/Checkpoints/Checkpoint/Checkpoint (No Flag) (64x64).png
-      - assets/images/Pixel_ArtTop_Down/iso_tile_export.png
-      - assets/images/Traps/Saw/
-      - assets/images/Background/
-      - assets/images/Background/City_Clean/
-      - assets/images/Background/City_Dirty/
-      - assets/images/sky/
-      - assets/images/tiles/
-      - assets/images/objects/
-      - assets/images/Menu/
-      - assets/images/Menu/Buttons/
-      - assets/images/Menu/Buttons/test_button.png
-      - assets/screens/
-      - assets/yarn/test.yarn
+    - assets/images/
+    - assets/tiles/
+    - assets/images/Terrain/
+    - assets/images/Main Characters/Ninja Frog/
+    - assets/images/Main Characters/Pink Man/
+    - assets/images/Main Characters/Virtual Guy/
+    - assets/images/Main Characters/Mask Dude/
+    - assets/images/Main Characters/
+    - assets/images/HUD/
+    - assets/images/Items/Fruits/
+    - assets/images/Items/Checkpoints/
+    - assets/images/Items/Checkpoints/Checkpoint/
+    - assets/images/Items/Checkpoints/Checkpoint/Checkpoint (Flag Idle) (64x64).png
+    - assets/images/Items/Checkpoints/Checkpoint/Checkpoint (Flag Out) (64x64).png
+    - assets/images/Items/Checkpoints/Checkpoint/Checkpoint (No Flag) (64x64).png
+    - assets/images/Pixel_ArtTop_Down/iso_tile_export.png
+    - assets/images/Traps/Saw/
+    - assets/images/Background/
+    - assets/images/Background/City_Clean/
+    - assets/images/Background/City_Dirty/
+    - assets/images/sky/
+    - assets/images/tiles/
+    - assets/images/objects/
+    - assets/images/Menu/
+    - assets/images/Menu/Buttons/
+    - assets/images/Menu/Buttons/test_button.png
+    - assets/screens/
+    - assets/yarn/test.yarn
   shaders:
     - assets/shaders/lighting.glsl
   # An image asset can refer to one or more resolution-specific "variants", see

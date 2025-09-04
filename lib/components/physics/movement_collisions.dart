@@ -56,14 +56,106 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
     return super.onLoad();
   }
 
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if(viewSide != ViewSide.side && !_debugNoClipMode) {
+      gridPos = lastSafePosition;
+      velocity = Vector2.zero();
+      return;
+    }
+
+
+
+    if (other is CollisionBlock && !_debugNoClipMode) {
+      checkCollision(other);
+    }
+    super.onCollision(intersectionPoints, other);
+  }
+
+  // Called when the collision with another object ends
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    super.onCollisionEnd(other);
+
+    if(viewSide == ViewSide.side){
+
+      Future.delayed((Duration(milliseconds: 100)), () { //reset isOnGround after a short delay so that its a bit more forgiving when jumping from edges (lol)
+        if (!activeCollisions.any((element) => element is CollisionBlock)) {
+          isOnGround = false;
+        }
+      });
+
+      if (other is CollisionBlock && other.climbable) {
+        setClimbing(false);
+      }
+    }
+
+  }
+
+  //main collision physics
+  void checkCollision(PositionComponent other) {
+    if (other is! CollisionBlock) {
+      return; //physics only work on the collision blocks (including the platforms)
+    }
+
+    ShapeHitbox hitbox = getHitbox();
+    Vector2 scale = getScale();
+    Vector2 velocity = getVelocity();
+
+    Vector2 position = getPosition();
+
+    Vector2 posDiff =
+        hitbox.absolutePosition -
+            other
+                .absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
+
+    //if the player faces in the other direction, we want to measure the distances from the other side of the hitbox. so we just add the width of it to the value.
+    if (scale.x < 0) {
+      posDiff.x -= hitbox.width;
+    }
+
+    //get all the distances it would take to transport the player to this side of the platform
+    final double distanceUp = posDiff.y + hitbox.height;
+    final double distanceLeft = posDiff.x + hitbox.width;
+    final double distanceRight = other.width - posDiff.x;
+    final double distanceDown = other.height - posDiff.y;
+
+    final double smallestDistance = min(
+      min(distanceUp, distanceDown),
+      min(distanceRight, distanceLeft),
+    ); //get the smallest distance
+
+    // Resolve the collision in the direction of smallest overlap
+    if (smallestDistance == distanceUp &&
+        velocity.y > 0 &&
+        !(!other.hasCollisionDown && distanceUp > 8) &&
+        other.hasCollisionUp &&
+        !(other.isLadder && isTryingToGetDownLadder)) {
+      position.y -= distanceUp;
+      isOnGround = true;
+      velocity.y = 0;
+    } //make sure you're falling (for platforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isn't too high, otherwise if half of the player falls through  a platform, he gets teleported up
+    if (smallestDistance == distanceDown && other.hasCollisionDown) {
+      position.y += distanceDown;
+      velocity.y = 0;
+    } //make sure the block isn't a platform, so that you can go through it from the bottom
+    if (smallestDistance == distanceLeft && other.hasHorizontalCollision) {
+      position.x -= distanceLeft;
+      velocity.x = 0;
+    } //make sure the block isn't a platform, so that you can go through it horizontally
+    if (smallestDistance == distanceRight && other.hasHorizontalCollision) {
+      position.x += distanceRight;
+      velocity.x = 0;
+    }
+    if (other.climbable && distanceUp > 5) setClimbing(true);
+  }
+
   Vector2 lastSafePosition = Vector2.zero();
   @override
   void update(double dt) {
-    if (_debugNoClipMode) return super.update(dt);
-    if(activeCollisions.isNotEmpty && activeCollisions.any((element) => element is CollisionBlock)){
-      gridPos = lastSafePosition;
-      velocity = Vector2.zero();
-    } else {
+    if (viewSide != ViewSide.isometric || _debugNoClipMode) return super.update(dt);
+
+    if(!activeCollisions.isNotEmpty && !activeCollisions.any((element) => element is CollisionBlock)){
       lastSafePosition = gridPos;
     }
     super.update(dt);
@@ -76,9 +168,9 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
 
 mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
   //constants for configuring basic movement
-  final double _gravity = 650.0;
-  final double _jumpForce = 320;
-  final double _terminalVelocity = 300;
+  final double _gravity = 20;
+  final double _jumpForce = 12;
+  final double _terminalVelocity = 150;
   final double _friction = 0.75;
 
   double moveSpeed = 3; // Speed multiplier
@@ -315,7 +407,6 @@ mixin JoystickControllableMovement
     if (!active) return super.update(dt);
 
     updateJoystick();
-    super.update(dt);
   }
 
   @override

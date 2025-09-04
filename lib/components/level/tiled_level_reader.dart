@@ -1,11 +1,13 @@
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
+import 'package:mpg_achievements_app/components/util/utils.dart';
 import '../level_components/checkpoint/checkpoint.dart';
 import '../level_components/collectables.dart';
 import '../level_components/enemy.dart';
 import '../level_components/saw.dart';
 import '../physics/collision_block.dart';
+import 'isometric/isometric_level.dart';
 
 void generateSpawningObjectsForLevel(Level level) {
   //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list
@@ -89,13 +91,25 @@ void generateSpawningObjectsForLevel(Level level) {
 void generateCollisionsForLevel(Level level) {
   final collisionsLayer = level.level.tileMap.getLayer<ObjectGroup>('Collisions');
 
+  Vector2 _orthogonalToIsometric(Vector2 orthoPos) {
+    return Vector2(
+        ((orthoPos.x - orthoPos.y) * 1.0),
+        (orthoPos.x + orthoPos.y) * 0.5 + 1
+    );
+  }
+
   if (collisionsLayer != null) {
     for (final collision in collisionsLayer.objects) {
-      //makes a list of all the collision object that are in the level and creates CollisionBlockObject-List with the respective attribute values
+
+      print("position: ${collision.position / 32}");
+
+      Vector2 pos = _orthogonalToIsometric(collision.position) + Vector2(level.level.width / 2, 0);
+
+
       switch (collision.class_) {
         case 'Platform':
           final platform = CollisionBlock(
-            position: Vector2(collision.x, collision.y),
+            position: pos,
             size: Vector2(collision.width, collision.height),
             hasCollisionDown: false,
             hasHorizontalCollision: false,
@@ -104,7 +118,7 @@ void generateCollisionsForLevel(Level level) {
           level.add(platform);
         case 'Ladder':
           final ladder = CollisionBlock(
-            position: Vector2(collision.x, collision.y),
+            position: pos,
             size: Vector2(collision.width - 10, collision.height),
             climbable: true,
             hasCollisionDown: false,
@@ -116,7 +130,7 @@ void generateCollisionsForLevel(Level level) {
           level.add(ladder);
         default:
           final block = CollisionBlock(
-            position: Vector2(collision.x, collision.y),
+            position: pos,
             size: Vector2(collision.width, collision.height),
             level: level
           );
@@ -124,4 +138,6 @@ void generateCollisionsForLevel(Level level) {
       }
     }
   }
+
+
 }

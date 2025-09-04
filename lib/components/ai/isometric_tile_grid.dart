@@ -1,11 +1,13 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/ai/tile_grid.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-class IsometricTileGrid extends TileGrid{
+class IsometricTileGrid extends TileGrid with HasGameReference<PixelAdventure> {
   IsometricTileGrid(super.width, super.height, super.tileSize, super.collisionLayer, super.level);
 
 
@@ -16,7 +18,6 @@ class IsometricTileGrid extends TileGrid{
     for (final obj in collisionLayer!.objects) {
 
       if (isPointInVertices(toVertices(obj), worldPos.toOffset())) {
-        print("not air at ${level.toGridPos(obj.position)}");
         return switch (obj.class_) {
           "" => TileType.solid,
           "Ladder" => TileType.ladder,
@@ -41,6 +42,7 @@ class IsometricTileGrid extends TileGrid{
     Offset isoBottomLeft = _orthogonalToIsometric(bottomLeft).toOffset();
     Offset isoBottomRight = _orthogonalToIsometric(bottomRight).toOffset();
 
+
     return [isoTopLeft, isoTopRight, isoBottomRight, isoBottomLeft];
   }
 
@@ -49,15 +51,6 @@ class IsometricTileGrid extends TileGrid{
         ((orthoPos.x - orthoPos.y) * 1.0),
         (orthoPos.x + orthoPos.y) * 0.5 + 1
     );
-  }
-
-  Offset _applyOffsetIsometric(Vector2 pos, Vector2 offset){
-    Vector2 gridPos = level.toGridPos(pos) + Vector2(offset.x / tileSize.y, offset.y / tileSize.y);
-
-
-    Vector2 offsetWorldPos = level.toWorldPos(gridPos);
-
-    return offsetWorldPos.toOffset();
   }
 
   bool isPointInVertices(List<Offset> vertices, Offset point) {
@@ -83,30 +76,7 @@ class IsometricTileGrid extends TileGrid{
   void renderDebugTiles(Canvas canvas) {
     canvas.save();
 
-    canvas.translate(level.level.width / 2, 0);
-
-    for (int x = 0; x < width; x++) {
-      for (int y = 0; y < height; y++) {
-        TileType val = grid[x][y];
-        if (val != TileType.air) {
-          Vector2 worldPos = level.toWorldPos(Vector2(x.toDouble(), y.toDouble()));
-          Vector2 halfTile = tileSize / 2;
-
-          List<Offset> diamond = [
-            (worldPos + Vector2(0, -halfTile.y)).toOffset(),
-            (worldPos + Vector2(halfTile.x, 0)).toOffset(),
-            (worldPos + Vector2(0, halfTile.y)).toOffset(),
-            (worldPos + Vector2(-halfTile.x, 0)).toOffset(),
-          ];
-
-          canvas.drawVertices(
-              Vertices(VertexMode.triangleFan, diamond),
-              BlendMode.screen,
-              Paint()..color = Colors.green
-          );
-        }
-      }
-    }
+    canvas.translate(level.level.width / 2, 0); // Center the grid horizontally
 
     if (collisionLayer != null) {
       for (final obj in collisionLayer!.objects) {

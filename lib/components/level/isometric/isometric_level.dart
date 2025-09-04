@@ -27,9 +27,19 @@ class IsometricLevel extends Level{
   Vector2 toWorldPos(Vector2 gridPos) {
     final localPoint = Vector2(
       (gridPos.x - gridPos.y) * (tileSize.x / 2),
-      (gridPos.x + gridPos.y) * (tileSize.y / 2),
+      (gridPos.x + gridPos.y) * (tileSize.y),
     );
     return level.localToParent(localPoint);
+  }
+
+  Vector2 isometricToOrthogonal(Vector2 isometricPoint) {
+    final halfTileW = tileSize.x / 2;
+    final halfTileH = tileSize.y / 2;
+
+    final worldX = (isometricPoint.y / halfTileH + isometricPoint.x / halfTileW) / 2;
+    final worldY = (isometricPoint.y / halfTileH - isometricPoint.x / halfTileW) / 2;
+
+    return Vector2(worldX, worldY);
   }
 
   @override

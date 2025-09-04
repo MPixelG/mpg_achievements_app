@@ -89,6 +89,8 @@ class Player extends GameCharacter
         _isHitAnimationPlaying = false;
       });
     }
+
+    //updateCollisions(dt);
   }
 
   @override

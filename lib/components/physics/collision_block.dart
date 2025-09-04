@@ -35,13 +35,14 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
   @override
   FutureOr<void> onLoad() {
     if (level != null && level is IsometricLevel) {
-      print("size before: $size, size after: " + level!.toGridPos(size).toString());
       hitbox = IsometricHitbox(size / 16, level!);
     } else {
       hitbox = RectangleHitbox(position: Vector2(0, 0), size: size);
     }
     add(hitbox);
   }
+
+
 
   Vector2 get gridPos =>
       worldToTileIsometric(position);
