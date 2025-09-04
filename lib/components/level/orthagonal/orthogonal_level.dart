@@ -3,7 +3,7 @@ import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:vector_math/vector_math.dart';
 
 class OrthogonalLevel extends Level{
-  OrthogonalLevel({required super.levelName, required super.player});
+  OrthogonalLevel({required super.levelName, required super.player, required tileSize});
 
   @override
   Vector2 toGridPos(Vector2 pos) {

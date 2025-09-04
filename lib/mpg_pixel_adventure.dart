@@ -52,25 +52,25 @@ class PixelAdventure extends FlameGame
     //world is loaded after initialising all images
 
     String levelName = "level_7";
+    tileSize = await getTilesizeOfLevel(levelName);
+    orientationOfLevel = await getOrientationOfLevel(levelName);
 
-    String orientation = await getOrientationOfLevel(levelName);
-
-    if(orientation == "orthogonal"){
+    if(orientationOfLevel == "orthogonal"){
       player = Player(playerCharacter: 'Pink Man');
-      level = OrthogonalLevel(levelName: levelName, player: player);
-    } else if(orientation == "isometric"){
+      level = OrthogonalLevel(levelName: levelName, player: player, tileSize: tileSize);
+    } else if(orientationOfLevel == "isometric"){
       player = IsometricPlayer(playerCharacter: 'Pink Man');
-      level = IsometricLevel(levelName: levelName, player: player);
+      level = IsometricLevel(levelName: levelName, player: player, tileSize: Vector2(tileSize.x, tileSize.y/2) );
     } else {
       throw UnimplementedError(
-          "an orientation of $orientation isnt implemented! please use either orthagonal or isometric!");
+          "an orientation of $orientationOfLevel isn't implemented! please use either orthogonal or isometric!");
     }
 
 
     cam = AdvancedCamera(world: level);
     cam.player = player;
     cam.viewfinder.anchor = Anchor.center;
-    addAll([cam, level]);
+    await addAll([cam, level]);
 
     //add overlays
     overlays.add('TextOverlay');
@@ -118,15 +118,6 @@ class PixelAdventure extends FlameGame
       },
     );
 
-    /*oystick = JoystickComponent(
-      knob: SpriteComponent(sprite: await Sprite.load('HUD/Knob.png'),
-          size: Vector2(40, 40)),
-      background: SpriteComponent(
-        sprite: await Sprite.load('HUD/Joystick.png'),
-        size: Vector2(128, 128),
-      ),
-      margin: const EdgeInsets.only(left: 32, bottom: 32),
-    );*/
     cam.viewport.add(joystick);
     cam.viewport.add(buttonComponent);
   }
