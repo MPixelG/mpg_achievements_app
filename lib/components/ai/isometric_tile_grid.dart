@@ -166,12 +166,6 @@ class IsometricTileGrid extends TileGrid{
   }
 
   void renderTileHighlight(Canvas canvas, Vector2 gridPos) {
-    // Save the canvas state so our transformations don't affect other rendering.
-    canvas.save();
-    // Translate to center the isometric map on the canvas.
-    // debug rendering to ensure the highlight aligns with the map.
-    canvas.translate(level.level.width / 2, 0);
-
     // Convert the selected tile's grid coordinates into its center position in the isometric world.
     Vector2 worldPos = level.toWorldPos(gridPos);
     Vector2 halfTile = tileSize / 2;
@@ -196,8 +190,6 @@ class IsometricTileGrid extends TileGrid{
       highlightPaint,
     );
 
-    // Restore the canvas to its previous state.
-    canvas.restore();
   }
 
 

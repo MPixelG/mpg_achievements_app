@@ -61,8 +61,9 @@ abstract class Level extends World
 
   @override
   FutureOr<void> onLoad() async {
-    tileSize = (await getTilesizeOfLevel(levelName));
-
+    await super.onLoad();
+    print(game.tileSize);
+    tileSize = game.tileSize;
     //await need to be there because it takes some time to load, that's why the method needs to be async
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
@@ -78,7 +79,7 @@ abstract class Level extends World
 
     print("map origin: ${Vector2(level.width / 2, 0)}");
 
-    add(level);
+    await add(level);
 
     // If level not Parallax, load level with  scrolling background, property is added in Tiled
     if (level.tileMap
@@ -87,7 +88,7 @@ abstract class Level extends World
         .getValue('Parallax') ?? false) {
       _loadParallaxBackground();
     } else {
-      _loadScrollingBackground();
+     // _loadScrollingBackground();
     }
 
 
@@ -155,9 +156,9 @@ abstract class Level extends World
 
     final Vector2 screenPositionTap = event.localPosition;
     final Vector2 worldPositionTap = level.toLocal(screenPositionTap);
-    final Vector2 calculatedGridPos = toGridPos(worldPositionTap)..floor();
+    final Vector2 calculatedGridPos = toGridPos(worldPositionTap);
     final Vector2 worldPositionTile = toWorldPos(calculatedGridPos);
-    selectedTile = calculatedGridPos;
+    selectedTile = calculatedGridPos..floor();
 
 
 
