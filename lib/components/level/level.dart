@@ -62,8 +62,6 @@ abstract class Level extends World
   @override
   FutureOr<void> onLoad() async {
     await super.onLoad();
-    print(game.tileSize);
-    tileSize = game.tileSize;
     //await need to be there because it takes some time to load, that's why the method needs to be async
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.

@@ -52,8 +52,8 @@ class PixelAdventure extends FlameGame
     //world is loaded after initialising all images
 
     String levelName = "level_7";
-    tileSize = await getTilesizeOfLevel(levelName);
-    orientationOfLevel = await getOrientationOfLevel(levelName);
+    Vector2 tileSize = await getTilesizeOfLevel(levelName);
+    String orientationOfLevel = await getOrientationOfLevel(levelName);
 
     if(orientationOfLevel == "orthogonal"){
       player = Player(playerCharacter: 'Pink Man');
