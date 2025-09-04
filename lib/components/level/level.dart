@@ -13,6 +13,7 @@ import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometricTiledLevel.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
@@ -27,6 +28,7 @@ abstract class Level extends World
         PointerMoveCallbacks,
         TapCallbacks,
         RiverpodComponentMixin {
+
   final String levelName;
   late TiledComponent level;
   late final bool isometricLevel;
@@ -51,7 +53,7 @@ abstract class Level extends World
   //
   //constructor
   Level(
-      {required this.levelName, required this.player, Background? background}) {
+      {required this.levelName, required this.player, Background? background, required this.tileSize}) {
     if (background != null) this.background = background;
   }
 
@@ -64,7 +66,7 @@ abstract class Level extends World
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
-    level = await TiledComponent.load('$levelName.tmx', tileSize);
+    level = IsometricTiledLevel((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
     level.position = Vector2.zero();
     isometricLevel = (game.level is IsometricLevel) ? true: false;
     //inspect tiles if isometric level
