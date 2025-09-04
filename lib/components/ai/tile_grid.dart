@@ -47,7 +47,6 @@ class TileGrid extends Component {
     if (isInBounds(pos)) {
       return grid[pos.x.toInt()][pos.y.toInt()];
     } else {
-      print("not in bounds!");
       return TileType.solid;
     }
   }

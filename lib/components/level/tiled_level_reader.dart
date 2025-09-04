@@ -22,7 +22,7 @@ void generateSpawningObjectsForLevel(Level level) {
         case 'Player':
         //player spawning
           level.player.position = Vector2(spawnPoint.x, spawnPoint.y);
-          level.add(level.player);
+          level.player.priority = 1;
           break;
         case 'Collectable':
         //checking type for spawning

@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometricRenderable.dart';
 import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 import 'package:flutter/services.dart';
@@ -24,7 +25,8 @@ class Player extends GameCharacter
         KeyboardControllableMovement,
         HasMovementAnimations,
         JoystickControllableMovement,
-        HasCollisions {
+        HasCollisions,
+        IsometricRenderable {
 
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
@@ -255,4 +257,9 @@ class Player extends GameCharacter
   bool get isInHitFrames => _isHitAnimationPlaying;
   @override
   bool get isInRespawnFrames => _isRespawningAnimationPlaying;
+
+  @override
+  int get renderPriority => 10;
+
+
 }

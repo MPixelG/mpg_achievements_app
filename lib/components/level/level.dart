@@ -13,6 +13,7 @@ import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometricRenderable.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometricTiledLevel.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
@@ -30,7 +31,7 @@ abstract class Level extends World
         RiverpodComponentMixin {
 
   final String levelName;
-  late TiledComponent level;
+  late IsometricTiledLevel level;
   late final bool isometricLevel;
   final Player player;
   Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
@@ -69,6 +70,9 @@ abstract class Level extends World
     level = IsometricTiledLevel((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
     level.position = Vector2.zero();
     isometricLevel = (game.level is IsometricLevel) ? true: false;
+
+    add(player);
+
     //inspect tiles if isometric level
     if(isometricLevel){
       inspectTile(15, 14);
@@ -297,5 +301,13 @@ abstract class Level extends World
       (iso.x + iso.y) * tileSize.y / 2,
     );
   }
+
+
+  @override
+  void renderFromCamera(Canvas canvas) {
+    super.renderFromCamera(canvas);
+    level.renderComponentsInTree(canvas, children.whereType<IsometricRenderable>());
+  }
+
 
 }

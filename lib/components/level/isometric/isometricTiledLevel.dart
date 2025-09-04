@@ -3,13 +3,15 @@ import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometricRenderable.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 
 class RenderInstance {
-  final Sprite sprite;
+  final void Function(Canvas, {Vector2 position, Vector2 size}) render;
   final Vector2 position;
   final int zIndex;
-  RenderInstance(this.sprite, this.position, this.zIndex);
+  final bool isFrog;
+  RenderInstance(this.render, this.position, this.zIndex, this.isFrog);
 }
 
 class IsometricTiledLevel extends TiledComponent {
@@ -73,7 +75,8 @@ class IsometricTiledLevel extends TiledComponent {
             await _addTileForGid(map, findTileset(gid), gid, x, y, layerIndex, tileW, tileH);
           }
         }
-        layerIndex++;
+
+        layerIndex += 20;
       }
     }
   }
@@ -111,22 +114,48 @@ class IsometricTiledLevel extends TiledComponent {
 
     final worldPos = orthogonalToIsometric(Vector2(tileX * 16, tileY * 16)) + Vector2(map.width * tileW, 0);
 
-    _tiles.add(RenderInstance(sprite, worldPos, tileZ));
+    _tiles.add(RenderInstance(sprite.render, worldPos, tileZ, false));
   }
 
   final Paint paint = Paint()
     ..color = const Color(0x55FF0000)
     ..strokeWidth = 2.0;
-  @override
-  void render(Canvas canvas) {
+  void renderComponentsInTree(Canvas canvas, Iterable<IsometricRenderable> components) {
 
-    for (final tile in _tiles) {
-      tile.sprite.render(
-        canvas,
-        position: tile.position - Vector2(16, 16),
-        size: Vector2(32, 32),
-      );
+    final allRenderables = <Map<String, dynamic>>[];
+    allRenderables.addAll(_tiles.asMap().entries.map((e) => {
+      'inst': e.value,
+      'idx': e.key,
+    }));
 
+
+
+    allRenderables.addAll(components.toList().asMap().entries.map((e) => {
+      'inst': RenderInstance((c, {Vector2? position, Vector2? size}) => e.value.renderTree(c), e.value.position, e.value.renderPriority, true),
+      'idx': _tiles.length + e.key,
+    }));
+
+    allRenderables.sort((a, b) {
+      final A = a['inst'] as RenderInstance;
+      final B = b['inst'] as RenderInstance;
+      final cmp = A.zIndex.compareTo(B.zIndex);
+      if(A.isFrog) {
+        print("A: $cmp");
+        return cmp;
+      }
+      if(B.isFrog) {
+        print("B: ${-cmp}");
+        return cmp;
+      }
+      if (cmp != 0) return cmp;
+      return (a['idx'] as int).compareTo(b['idx'] as int);
+    });
+
+
+    for (final entry in allRenderables) {
+      final r = entry['inst'] as RenderInstance;
+      r.render(canvas, position: r.position - Vector2(16,16), size: Vector2(32,32));
     }
+
   }
 }
