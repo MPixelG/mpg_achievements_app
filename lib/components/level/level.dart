@@ -17,8 +17,6 @@ import 'package:mpg_achievements_app/components/level/isometric/isometric_level.
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
-import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
-import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../background/scrolling_background.dart';
 
@@ -129,7 +127,7 @@ abstract class Level extends World
       (parent as PixelAdventure).cam.shakeCamera(
         6,
         5,
-        animationStyle: AnimationStyle.EaseOut,
+        animationStyle: AnimationStyle.easeOut,
       );
     } //press V to toggle the visibility of the overlays
 

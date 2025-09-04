@@ -6,6 +6,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/ai/tile_grid.dart';
@@ -60,13 +61,15 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
     POINode? node = getNodeAt(gridPos); //the node at the clicked field
 
-    if (node != null) { //the node is null if theres no node at the given position
+    if (node != null && kDebugMode) { //the node is null if theres no node at the given position
       print(node.toString());
-    } else print("node is null!");
+    } else if(kDebugMode) {
+      print("node is null!");
+    }
 
-
-
-    print("clear path? " + hasClearPath(lastClickPoint, gridPos).toString());
+    if (kDebugMode) {
+      print("clear path? ${hasClearPath(lastClickPoint, gridPos)}");
+    }
 
     path = getPathTo(lastClickPoint, gridPos); // calculates the shortest path between the clicked mouse position and the last clicked mouse position
     lastClickPoint = gridPos.clone();
@@ -77,17 +80,17 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
   ///gives all of the empty nodes connections to other nodes
   void addAllNodes() {
     int x = 0;
-    grid.grid.forEach((element) { //every row
+    for (var row in grid.grid) { //every row
       int y = 0;
-      element.forEach((element) { //every commumn in that row -> every field
-        if (element != TileType.solid) { //if its not solid, we add a node, because the entity is able to get there.
+      for (var col in row) { //every collum in that row -> every field
+        if (col != TileType.solid) { //if its not solid, we add a node, because the entity is able to get there.
           nodes.add(POINode(Vector2(x.toDouble(), y.toDouble())));
         }
         y++;
-      });
+      }
 
       x++;
-    });
+    }
 
     addWalkableNodeConnections(); //adds all the connections for walking
     addFallNodeConnections(); //adds all the connections for falling
@@ -96,7 +99,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
   }
 
   void addWalkableNodeConnections() {
-    nodes.forEach((node) { //for every generated node
+    for (var node in nodes) { //for every generated node
       if (isOnGround(node.position)) { //if its on the ground you can walk on it
         if (grid.isFree(node.position + Vector2(1, 0))) { //if the other position is not solid, we can walk there.
           POINode? other = getNodeAt(node.position + Vector2(1, 0));
@@ -120,10 +123,10 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
           }
         }
       }
-    });
+    }
   }
   void addFallNodeConnections() {
-    nodes.forEach((node) { //for every generated node
+    for (var node in nodes) { //for every generated node
       if (!isOnGround(node.position)) { //if its in the air, we can fall
         Vector2 posDownLeft = node.position + Vector2(-1, 1); //all the positions we can fall to. this also includes moving while falling.
         Vector2 posDown = node.position + Vector2(0, 1);
@@ -165,10 +168,10 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
           );
         }
       }
-    });
+    }
   }
   void addJumpNodeConnections() {
-    nodes.forEach((node) { //for every generated node
+    for (var node in nodes) { //for every generated node
       if (isOnGround(node.position) && grid.valAt(node.position) != TileType.ladder) { //if the entity is on the ground, it can jump. you cant jump inside a ladder.
         addJumpNodeInDirection(node, 0); //jump op
         addJumpNodeInDirection(node, 1); //jump right
@@ -176,7 +179,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
         addJumpNodeInDirection(node, -1); //jump left
         addJumpNodeInDirection(node, -2); //jump left far
       }
-    });
+    }
   }
   void addJumpNodeInDirection(POINode node, double differenceX) {
     int heightToCeiling = getHeightToNextCeiling( //get the height to the ceiling. used to find out if the jump is even possible if theres a ceiling over your head.
@@ -209,7 +212,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
 
   void addClimbingNodeConnections(){
-    nodes.forEach((node) { //for every generated node
+    for (var node in nodes) { //for every generated node
       if(grid.valAt(node.position) == TileType.ladder) {
         Vector2 posUp = node.position + Vector2(0, -1);
         Vector2 posDown = node.position + Vector2(0, 1);
@@ -254,7 +257,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
         }
 
       }
-    });
+    }
 
   }
 
@@ -496,9 +499,9 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
         paint.strokeWidth = 2.0; //and a stroke width of 2
 
 
-        connections.forEach((element) { //now draw a line for every connection from the node position to the target of the connection. also add a bit of offset for centering again.
+        for (var element in connections) { //now draw a line for every connection from the node position to the target of the connection. also add a bit of offset for centering again.
           canvas.drawLine((toWorldPos(selectedNode.position) + (tilesize / 2)).toOffset(), (toWorldPos(element.target.position) + (tilesize / 2)).toOffset(), paint);
-        });
+        }
       }
     }
   }

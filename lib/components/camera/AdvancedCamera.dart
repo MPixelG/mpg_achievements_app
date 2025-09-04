@@ -21,7 +21,7 @@ class AdvancedCamera extends CameraComponent {
   double timeLeft = 0; //the time left to get to the given position
   double initialGivenTime = 0; //the initial given time for getting to the position
 
-  AnimationStyle animationStyle = AnimationStyle.Linear; // the animation style of the camera. for example 'easeOut' means
+  AnimationStyle animationStyle = AnimationStyle.linear; // the animation style of the camera. for example 'easeOut' means
 
   Vector2 dir = Vector2.zero(); //the direction the camera is currently going into
 
@@ -41,7 +41,7 @@ class AdvancedCamera extends CameraComponent {
 
 
   @override
-  void moveTo(Vector2 point, {AnimationStyle animationStyle = AnimationStyle.Linear, double speed = double.infinity, double time = 0, double? zoom}) {
+  void moveTo(Vector2 point, {AnimationStyle animationStyle = AnimationStyle.linear, double speed = double.infinity, double time = 0, double? zoom}) {
     Vector2 boundsMinRelative = Vector2.zero();
     Vector2 boundsMaxRelative = Vector2.zero();
 
@@ -74,7 +74,7 @@ class AdvancedCamera extends CameraComponent {
   }
 
   @override
-  void follow(ReadOnlyPositionProvider target, {double maxSpeed = double.infinity, bool horizontalOnly = false, bool verticalOnly = false, bool snap = false, AnimationStyle animationStyle = AnimationStyle.Linear}) {
+  void follow(ReadOnlyPositionProvider target, {double maxSpeed = double.infinity, bool horizontalOnly = false, bool verticalOnly = false, bool snap = false, AnimationStyle animationStyle = AnimationStyle.linear}) {
     super.follow(target, maxSpeed: maxSpeed, horizontalOnly: horizontalOnly, verticalOnly: verticalOnly, snap: snap);
   }
 
@@ -94,7 +94,7 @@ class AdvancedCamera extends CameraComponent {
     this.player = player;
   }
 
-  void shakeCamera(double shakingAmount, double shakingTime, {AnimationStyle animationStyle = AnimationStyle.EaseOut}){
+  void shakeCamera(double shakingAmount, double shakingTime, {AnimationStyle animationStyle = AnimationStyle.easeOut}){
     this.shakingAmount = shakingAmount;
     this.shakingTime = shakingTime;
     totalShakingTime = shakingTime;
@@ -112,10 +112,10 @@ class AdvancedCamera extends CameraComponent {
       timeProgress = timeProgress.clamp(0, 1); //make sure its not over or below 0 and 1
 
       double progressVal = switch (animationStyle) { //progress of the animation between 0 and 1. this is NOT the same as the time progress, the increase of this variable isn't constant, sometimes getting slower at the end for example
-        AnimationStyle.Linear => linear(timeProgress), //constant increase
-        AnimationStyle.EaseIn => easeIn(timeProgress), //slow at the beginning and fast at the end
-        AnimationStyle.EaseOut => easeOut(timeProgress), //first fast and then slow
-        AnimationStyle.EaseInOut => easeInOut(timeProgress), //slow -> fast -> slow
+        AnimationStyle.linear => linear(timeProgress), //constant increase
+        AnimationStyle.easeIn => easeIn(timeProgress), //slow at the beginning and fast at the end
+        AnimationStyle.easeOut => easeOut(timeProgress), //first fast and then slow
+        AnimationStyle.easeInOut => easeInOut(timeProgress), //slow -> fast -> slow
       };
 
       pos = Vector2(
@@ -142,17 +142,17 @@ class AdvancedCamera extends CameraComponent {
 
     if (followPlayer) { //if the camera is in follow mode we check if we need to reposition the camera to the player
       if (viewfinder.position.distanceTo(player!.position) > followAccuracy) {
-        moveTo(player!.absoluteCenter, time: 1000, animationStyle: AnimationStyle.EaseOut);
+        moveTo(player!.absoluteCenter, time: 1000, animationStyle: AnimationStyle.easeOut);
       }
     }
 
     if(shakingTime > 0) { //if theres an ongoing shaking animation
 
       double power = switch (shakingAnimation){
-        AnimationStyle.EaseIn => easeIn(shakingTime / totalShakingTime, startVal: shakingAmount, endVal: 0), //basically the same as the moving of the camera
-        AnimationStyle.EaseOut => easeOut(shakingTime / totalShakingTime, startVal: 0, endVal: shakingAmount),
-        AnimationStyle.Linear => linear(shakingTime / totalShakingTime, startVal: shakingAmount, endVal: 0),
-        AnimationStyle.EaseInOut => easeInOut(shakingTime / totalShakingTime, startVal: shakingAmount, endVal: 0),
+        AnimationStyle.easeIn => easeIn(shakingTime / totalShakingTime, startVal: shakingAmount, endVal: 0), //basically the same as the moving of the camera
+        AnimationStyle.easeOut => easeOut(shakingTime / totalShakingTime, startVal: 0, endVal: shakingAmount),
+        AnimationStyle.linear => linear(shakingTime / totalShakingTime, startVal: shakingAmount, endVal: 0),
+        AnimationStyle.easeInOut => easeInOut(shakingTime / totalShakingTime, startVal: shakingAmount, endVal: 0),
       };
 
       shakingPosition = shake(strength: power); //get the actual values

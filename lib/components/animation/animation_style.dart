@@ -1,6 +1,6 @@
 // a collection of different Easing functions. can be used for smooth movements for a camera or other stuff
 enum AnimationStyle{
-  EaseIn, EaseOut, Linear, EaseInOut
+  easeIn, easeOut, linear, easeInOut
 }
 
 //the time has to be between 0 and 1, where 0 is the start of the animation and 1 is the end.

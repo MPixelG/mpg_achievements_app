@@ -209,13 +209,6 @@ class Player extends GameCharacter
   @override
   Vector2 getVelocity() => velocity;
 
-  //setters
-  @override
-  void setIsOnGround(bool val) => isOnGround = val;
-
-  @override
-  void setPos(Vector2 newPos) => position = newPos;
-
   bool climbing = false;
 
   @override

@@ -10,7 +10,6 @@ import 'package:mpg_achievements_app/components/animation/animation_manager.dart
 import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/level_components/saw.dart';
 import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
-import '../../mpg_pixel_adventure.dart';
 import '../level/isometric/isometric_level.dart';
 import '../particles/Particles.dart';
 import '../ai/goals/move_goal.dart';
@@ -178,13 +177,6 @@ class Enemy extends GameCharacter
 
   @override
   Vector2 getVelocity() => velocity;
-
-  @override
-  void setIsOnGround(bool val) => isOnGround = val;
-
-  @override
-  void setPos(Vector2 newPos) => position = newPos;
-
 
 
   bool climbing = false;

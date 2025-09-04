@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flame/experimental.dart';
 import 'package:flutter/material.dart' hide Matrix4;
 import 'package:flutter/services.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';

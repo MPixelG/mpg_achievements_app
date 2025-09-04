@@ -1,7 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/GUI/json_factory/json_exporter.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/text_overlay.dart';
@@ -51,8 +51,10 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       });
 
     } catch (e, stackTrace) {
-      print("Error loading screen: $e");
-      print("Stack trace: $stackTrace");
+      if(kDebugMode) {
+        print("Error loading screen: $e");
+        print("Stack trace: $stackTrace");
+      }
 
       setState(() {
         errorMessage = e.toString();
@@ -135,8 +137,10 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
         child: loadedWidget!.build(context),
       );
     } catch (e, stackTrace) {
-      print("Error building widget: $e");
-      print("Stack trace: $stackTrace");
+      if (kDebugMode) {
+        print("Error building widget: $e");
+        print("Stack trace: $stackTrace");
+      }
       return Center(
         child: Text(
           "Error building GUI: $e",

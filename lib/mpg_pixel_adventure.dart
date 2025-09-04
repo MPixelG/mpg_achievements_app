@@ -84,17 +84,6 @@ class PixelAdventure extends FlameGame
     return super.onLoad();
   }
 
-  @override
-  void onMount() {
-    super.onMount();
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-  }
-
-
   ///Joystick Component
   //Making a Joystick if the platform is not web or desktop
   void addJoystick() async {

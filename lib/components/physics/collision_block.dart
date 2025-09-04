@@ -5,7 +5,6 @@ import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
-import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 //A positionComponent can have an x, y , width and height

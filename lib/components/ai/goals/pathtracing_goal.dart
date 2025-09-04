@@ -79,12 +79,12 @@ class PathtracingGoal extends Goal{
     double shortestPlayerDistance = double.infinity;
     Vector2? shortestPlayerDistancePos;
 
-    results.forEach((element) {
+    for (var element in results) {
       if(element.hitbox != null && element.hitbox!.parent is Player){
         if(element.intersectionPoint!.distanceTo(rayOriginPoint) < shortestPlayerDistance) {shortestPlayerDistance = element.intersectionPoint!.distanceTo(rayOriginPoint); shortestPlayerDistancePos = element.intersectionPoint!;}
-        return;
+        continue;
       }
-    });
+    }
 
 
     attributes!.attributes["playerPositions"] = results;

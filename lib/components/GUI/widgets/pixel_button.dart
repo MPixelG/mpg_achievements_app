@@ -79,7 +79,7 @@ class _PixelButtonState extends State<PixelButton> {
     if (hover) { //if its hovered, we add a shadow
       return [
         BoxShadow( //just a regular a box shadow
-          color: Color(0xFF7BC4FF).withOpacity(0.3), //light transparent blue
+          color: Color(0xFF7BC4FF).withValues(alpha: .3), //light transparent blue
           offset: Offset(0, 0), //with no offset
           blurRadius: 18, //and a big blur radius
           spreadRadius: 2, //and a smaller spread, so that it appears a bit circular

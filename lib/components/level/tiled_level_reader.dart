@@ -1,13 +1,11 @@
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
-import 'package:mpg_achievements_app/components/util/utils.dart';
 import '../level_components/checkpoint/checkpoint.dart';
 import '../level_components/collectables.dart';
 import '../level_components/enemy.dart';
 import '../level_components/saw.dart';
 import '../physics/collision_block.dart';
-import 'isometric/isometric_level.dart';
 
 void generateSpawningObjectsForLevel(Level level) {
   //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list

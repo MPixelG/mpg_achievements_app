@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
-import 'package:mpg_achievements_app/components/ai/tile_grid.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 
