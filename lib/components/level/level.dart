@@ -13,6 +13,7 @@ import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometricTiledLevel.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
@@ -27,6 +28,7 @@ abstract class Level extends World
         PointerMoveCallbacks,
         TapCallbacks,
         RiverpodComponentMixin {
+
   final String levelName;
   late TiledComponent level;
   late final bool isometricLevel;
@@ -51,7 +53,7 @@ abstract class Level extends World
   //
   //constructor
   Level(
-      {required this.levelName, required this.player, Background? background}) {
+      {required this.levelName, required this.player, Background? background, required this.tileSize}) {
     if (background != null) this.background = background;
   }
 
@@ -64,7 +66,7 @@ abstract class Level extends World
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
-    level = await TiledComponent.load('$levelName.tmx', tileSize);
+    level = IsometricTiledLevel((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
     level.position = Vector2.zero();
     isometricLevel = (game.level is IsometricLevel) ? true: false;
     //inspect tiles if isometric level
@@ -84,7 +86,7 @@ abstract class Level extends World
         .getValue('Parallax') ?? false) {
       _loadParallaxBackground();
     } else {
-     // _loadScrollingBackground();
+      _loadScrollingBackground();
     }
 
 
@@ -157,20 +159,25 @@ abstract class Level extends World
     selectedTile = calculatedGridPos..floor();
 
 
+    Vector2 clickGridPos = toGridPos(worldPositionTap);
 
 
     // ---  Debugging Logs ---
     //POI generator
-    print(generator.grid.isBlocked(toGridPos(_mouseCoords)..floor()));
+    print(generator.grid.isBlocked(clickGridPos..floor()));
     print("world pos: $worldPositionTap");
     //mouse pos -> grid po
-    print("grid pos: ${toGridPos(_mouseCoords)}\n\n\n");
+    print("grid pos: ${clickGridPos}\n\n");
     print('Screen Position of Tap: $screenPositionTap');
     print('Camera Position: ${game.cam.pos}, Zoom: ${game.cam.givenZoom}');
     print('World Position of Tap (Calculated): $worldPositionTap');
     print('Calculated Grid Position (Decimal): $calculatedGridPos');
     print('Selected Tile (Floored): $selectedTile');
-    print('Logical World Position of Selected Tile: $worldPositionTile');
+    print('Logical World Position of Selected Tile: $worldPositionTile \n\n');
+
+    clickGridPos.clamp(Vector2.zero(), Vector2(level.width / tileSize.x - 1, level.height / tileSize.y - 1));
+
+    inspectTile(clickGridPos.x.toInt(), clickGridPos.y.toInt());
 
 
   }

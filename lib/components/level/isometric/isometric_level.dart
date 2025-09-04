@@ -9,7 +9,7 @@ class IsometricLevel extends Level {
 
 
   // Example isometric tile size (width, height)
-  IsometricLevel({required super.levelName, required super.player, required tileSize});
+  IsometricLevel({required super.levelName, required super.player, required super.tileSize});
 
   @override
   Future<void> onLoad() async {
@@ -20,8 +20,7 @@ class IsometricLevel extends Level {
     tileGrid = IsometricTileGrid(
       level.tileMap.map.width,
       level.tileMap.map.height,
-      //setting the tile size to match the isometric tile dimensions
-      tileSize,
+      tileSize,//setting the tile size to match the isometric tile dimensions
       collisionLayer,
       this,
     );
