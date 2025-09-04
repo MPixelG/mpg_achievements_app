@@ -42,7 +42,8 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
     if(viewSide == ViewSide.isometric) {
       hitbox = IsometricHitbox(
           Vector2.all(1),
-          game.level
+          game.level,
+          Vector2.zero()
       );
       hitbox.position = Vector2(0, 16);
     } else {

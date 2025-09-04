@@ -34,7 +34,7 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
   @override
   FutureOr<void> onLoad() {
     if (level != null && level is IsometricLevel) {
-      hitbox = IsometricHitbox(size / 16, level!);
+      hitbox = IsometricHitbox(size / 16 - Vector2.all(0.1), level!, Vector2.all(0.1));
     } else {
       hitbox = RectangleHitbox(position: Vector2(0, 0), size: size);
     }

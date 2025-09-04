@@ -5,16 +5,18 @@ import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometricRenderable.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 class RenderInstance {
   final void Function(Canvas, {Vector2 position, Vector2 size}) render;
   final Vector2 position;
+  final Vector2 gridPos;
   final int zIndex;
   final bool isFrog;
-  RenderInstance(this.render, this.position, this.zIndex, this.isFrog);
+  RenderInstance(this.render, this.position, this.zIndex, this.isFrog, this.gridPos);
 }
 
-class IsometricTiledLevel extends TiledComponent {
+class IsometricTiledLevel extends TiledComponent{
   final List<RenderInstance> _tiles = [];
 
   IsometricTiledLevel(super.map);
@@ -76,7 +78,7 @@ class IsometricTiledLevel extends TiledComponent {
           }
         }
 
-        layerIndex += 20;
+        layerIndex += 1;
       }
     }
   }
@@ -114,7 +116,7 @@ class IsometricTiledLevel extends TiledComponent {
 
     final worldPos = orthogonalToIsometric(Vector2(tileX * 16, tileY * 16)) + Vector2(map.width * tileW, 0);
 
-    _tiles.add(RenderInstance(sprite.render, worldPos, tileZ, false));
+    _tiles.add(RenderInstance(sprite.render, worldPos, tileZ, false, Vector2(tileX.toDouble(), tileY.toDouble())));
   }
 
   final Paint paint = Paint()
@@ -122,38 +124,36 @@ class IsometricTiledLevel extends TiledComponent {
     ..strokeWidth = 2.0;
   void renderComponentsInTree(Canvas canvas, Iterable<IsometricRenderable> components) {
 
-    final allRenderables = <Map<String, dynamic>>[];
-    allRenderables.addAll(_tiles.asMap().entries.map((e) => {
-      'inst': e.value,
-      'idx': e.key,
-    }));
+    final allRenderables = <RenderInstance>[];
+    allRenderables.addAll(_tiles.asMap().entries.map((e) => e.value));
 
 
 
-    allRenderables.addAll(components.toList().asMap().entries.map((e) => {
-      'inst': RenderInstance((c, {Vector2? position, Vector2? size}) => e.value.renderTree(c), e.value.position, e.value.renderPriority, true),
-      'idx': _tiles.length + e.key,
-    }));
+    allRenderables.addAll(components.toList().map((e) => RenderInstance((c, {Vector2? position, Vector2? size}) => e.renderTree(c), e.position, e.renderPriority, true,  e.gridFeetPos)));
+
+    Vector2 cameraPosition = (game as PixelAdventure).cam.pos;
 
     allRenderables.sort((a, b) {
-      final A = a['inst'] as RenderInstance;
-      final B = b['inst'] as RenderInstance;
-      final cmp = A.zIndex.compareTo(B.zIndex);
-      if(A.isFrog) {
-        print("A: $cmp");
-        return cmp;
+      int comparedZ = a.zIndex.compareTo(b.zIndex);
+      if(comparedZ != 0){
+        return comparedZ;
       }
-      if(B.isFrog) {
-        print("B: ${-cmp}");
-        return cmp;
+
+      // Berechne die "Fußposition" des Sprites
+      double footYA = a.gridPos.y + 32;
+      double footYB = b.gridPos.y + 32;
+
+      int comparedY = footYA.compareTo(footYB);
+      if (comparedY != 0) {
+        return comparedY;
       }
-      if (cmp != 0) return cmp;
-      return (a['idx'] as int).compareTo(b['idx'] as int);
+
+      return a.gridPos.x.compareTo(b.gridPos.x);
     });
 
 
     for (final entry in allRenderables) {
-      final r = entry['inst'] as RenderInstance;
+      final r = entry;
       r.render(canvas, position: r.position - Vector2(16,16), size: Vector2(32,32));
     }
 

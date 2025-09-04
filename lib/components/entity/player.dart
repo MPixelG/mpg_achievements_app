@@ -259,7 +259,10 @@ class Player extends GameCharacter
   bool get isInRespawnFrames => _isRespawningAnimationPlaying;
 
   @override
-  int get renderPriority => 10;
+  int get renderPriority => 1;
+
+  @override
+  Vector2 get gridFeetPos => game.level.toGridPos(absolutePositionOfAnchor(Anchor.topRight));
 
 
 }
