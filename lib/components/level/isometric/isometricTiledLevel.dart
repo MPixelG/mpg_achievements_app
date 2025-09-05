@@ -7,15 +7,22 @@ import 'package:mpg_achievements_app/components/level/isometric/isometricRendera
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-/// A class representing a renderable instance with its rendering function, position, z-index, and other properties.
+
+// A data class designed to hold all the necessary information for rendering a single object,
 class RenderInstance {
+
+  // A function reference that knows how to draw the object.
   final void Function(Canvas, {Vector2 position, Vector2 size}) render;
   final Vector2 position;
   final Vector2 gridPos;
+  // The layer index from the Tiled map. This serves as the primary sorting key
   final int zIndex;
   RenderInstance(this.render, this.position, this.zIndex, this.gridPos);
 }
 
+
+// Instead of letting Flame render layer by layer, this component deconstructs the map
+// into a list of individual `RenderInstance` objects
 class IsometricTiledLevel extends TiledComponent{
   final List<RenderInstance> _tiles = [];
 
@@ -24,38 +31,51 @@ class IsometricTiledLevel extends TiledComponent{
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    // Pre-build the tile cache for efficient rendering later reading data from the Tiled map (every layer every tile)
     await _buildTileCache();
   }
 
   ///Builds a cache of tile render instances for efficient rendering.
   Future<void> _buildTileCache() async {
     final map = tileMap.map;
+
+    // For a standard diamond isometric map, the visual width of a tile is half its source image width. Aspect ratio is 2:1.
     final tileW = map.tileWidth.toDouble() / 2;
     final tileH = map.tileHeight.toDouble();
 
-    int rawGid(int gid) => gid & 0x1FFFFFFF; // Clear flip bits
+    // Helper function to remove the flip/rotation flags from a tile's GID (Global ID).
+    //strips away the flip/rotation flags from a tile's GID (Global ID).
+    //10000000 00000000 00000000 01001010  (The GID from Tiled for  horizontally flipped tile #74)
+    // & 00011111 11111111 11111111 11111111  (The mask 0x1FFFFFFF)
+    //   -----------------------------------
+    //   00000000 00000000 00000000 01001010  (The Result)
 
+    int rawGid(int gid) => gid & 0x1FFFFFFF;
+
+    // Helper function to find which Tileset a specific GID belongs to.
+    // This is necessary because a map can use multiple tilesets.
     Tileset findTileset(int gid) { //help function to find the correct tileset for a given gid
-      final raw = rawGid(gid); // Clear flip bits
-      Tileset? best; // The best match so far
-      for (final ts in map.tilesets) { // Iterate through all tilesets
-        if (ts.firstGid! <= raw) { // If this tileset could contain the gid
-          if (best == null || ts.firstGid! > best.firstGid!) best = ts; // Update best if it's a better match
+      final raw = rawGid(gid);// Clear flip bits
+      Tileset? best;// The best match so far
+      for (final ts in map.tilesets) {// Iterate through all tilesets
+        if (ts.firstGid! <= raw) {// If this tileset could contain the gid
+          if (best == null || ts.firstGid! > best.firstGid!) best = ts;// Update best if it's a better match
         }
       }
-      if (best == null) { // If no tileset was found, throw an error
+      if (best == null) {
         throw StateError('No tileset found for gid $gid (raw $raw)');
       }
-      return best; // Return the best match
+      return best;
     }
 
-    int layerIndex = 0; // To keep track of the layer index for z-ordering
-    for (final layer in map.layers) { // Iterate through all layers
-      if (layer is TileLayer) { // Only process tile layers
-        if (layer.chunks!.isNotEmpty) { // If the layer uses chunks
-          for (final chunk in layer.chunks!) { // Iterate through all chunks
-            final chunkData = chunk.data; //get the data
-            final chunkWidth = chunk.width; //and the width
+    int layerIndex = 0;
+    for (final layer in map.layers) {
+      if (layer is TileLayer) {
+        if (layer.chunks!.isNotEmpty) {
+          for (final chunk in layer.chunks!) {
+            final chunkData = chunk.data;
+            final chunkWidth = chunk.width;
+            final chunkHeight = chunk.height;
             final offsetX = chunk.x;
             final offsetY = chunk.y;
             for (int i = 0; i < chunkData.length; i++) { //all the chunk tiles
@@ -94,13 +114,15 @@ class IsometricTiledLevel extends TiledComponent{
       double tileW,
       double tileH,
       ) async {
-    final raw = gid & 0x1FFFFFFF; // Clear flip bits
-    final localIndex = raw - tileset.firstGid!; // Local index within the tileset
+    final raw = gid & 0x1FFFFFFF;
+    //calculate the local index of the tile within its tileset
+    final localIndex = raw - tileset.firstGid!;
 
-    Image img; //the tile texture set
+    Image img;
 
-    final path = tileset.image?.source?..replaceAll("../images", ""); //because the path in the tmx file is relative to the tmx file, but we need it relative to the assets folder
-    img = await Flame.images.load(path ?? ""); //load the image from the tileset
+    // Load the tileset image
+    final path = tileset.image?.source?..replaceAll("../images", "");
+    img = await Flame.images.load(path ?? "");
 
 
     final cols = tileset.columns!; //amount of columns in the tileset image
@@ -114,9 +136,11 @@ class IsometricTiledLevel extends TiledComponent{
       srcSize: srcSize, //and its size
     );
 
-    final worldPos = orthogonalToIsometric(Vector2(tileX * tileW, tileY * tileW)) + Vector2(map.width * tileW, 0); //calculate the world position of the tile in the isometric world, also add an offset to center the map around the 0-point
-
-    _tiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble()))); //convert those to render instance and add it to the list of tiles
+    // Convert the tile's orthogonal grid coordinates to isometric world coordinates.
+    final worldPos = orthogonalToIsometric(Vector2(tileX * 16, tileY * 16)) //transform orthogonal to screen position
+        + Vector2(map.width * tileW, 0); //shift the map to the center of the screen to be all positive
+    // Add the RenderInstance to our cache.
+    _tiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble())));
   }
 
   List<RenderInstance>? lastRenderables;
