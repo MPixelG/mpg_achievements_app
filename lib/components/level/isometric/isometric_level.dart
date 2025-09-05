@@ -85,36 +85,26 @@ class IsometricLevel extends Level {
   }
 
   @override
-  bool checkCollisionAt(Vector2 worldPoint, Vector2 center, Vector2 size) {
-    final gridCoords = toGridPos(worldPoint);
-    final int x = gridCoords.x.floor();
-    final int y = gridCoords.y.floor();
+  bool checkCollisionAt(Vector2 gridPos) {
+    final int x = gridPos.x.floor();
+    final int y = gridPos.y.floor();
     // Access the 'Collisions' layer from the Tiled map
-    final layer = level.tileMap.map.layerByName('Collisions') as TileLayer?;
+    final layer = level.tileMap.map.layerByName('Collisions') as ObjectGroup?;
     if (layer == null) {
       return false;
     }
     // Check boundaries of the tile data if outside return true for collision
-    if (x < 0 ||
-        y < 0 ||
-        y >= layer.tileData!.length ||
-        x >= layer.tileData![y].length) {
-      return true;
-    }
-    // Check if the tile at the calculated grid position is non-null (indicating a collision)
-    final gid = layer.tileData?[y][x];
-    if (gid == null || gid.tile == 0) {
-      // No tile means no collision
-      return false;
-    }
-    final tile = level.tileMap.map.tileByGid(gid.tile);
-    // Check for custom property 'collidable' in the tile's properties
-    final isCollidable = tile?.properties.getValue('collidable') ?? false;
-    return isCollidable;
-  }
 
-  @override
-  RectangleHitbox createHitbox({Vector2? position, Vector2? size}) {
-    return RectangleHitbox(position: position, size: size);
+    for (var value in layer.objects) {
+      assert(value.isRectangle, 'Only rectangle objects are supported in the Collisions layer.');
+
+      Vector2 gridObjectPos = toGridPos(value.position);
+
+      if(Rect.fromPoints(gridObjectPos.toOffset(), gridObjectPos.toOffset() + (value.size..divide(Vector2.all(tileSize.x))).toOffset()).contains(gridPos.toOffset())){
+        return true;
+      }
+
+    }
+    return false;
   }
 }

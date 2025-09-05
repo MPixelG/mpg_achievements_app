@@ -287,10 +287,7 @@ abstract class Level extends World
       }
     }
 
-
-
-  RectangleHitbox createHitbox({Vector2? position, Vector2? size});
-  bool checkCollisionAt(Vector2 point, Vector2 center, Vector2 size);
+    bool checkCollisionAt(Vector2 gridPos);
 
   Vector2 toWorldPos(Vector2 pos);
   Vector2 toGridPos(Vector2 pos);
@@ -305,7 +302,14 @@ abstract class Level extends World
 
   @override
   void renderFromCamera(Canvas canvas) {
-    super.renderFromCamera(canvas);
+    assert(CameraComponent.currentCamera != null);
+
+    super.renderTree(canvas);
+
+    for (final child in children.where((element) => element is! IsometricRenderable && element != level)) {
+      child.renderTree(canvas);
+    }
+
     level.renderComponentsInTree(canvas, children.whereType<IsometricRenderable>());
   }
 

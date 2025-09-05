@@ -94,10 +94,10 @@
                 4
             ],
             "scale": 2,
-            "selectedLayer": 3,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 243.25,
-                "y": 104
+                "x": 219.75,
+                "y": 43.5
             }
         },
         "Lever_3.tmx": {
@@ -173,7 +173,7 @@
         },
         "isometric.tsx": {
             "dynamicWrapping": false,
-            "scaleInDock": 2,
+            "scaleInDock": 1.5,
             "scaleInEditor": 1
         },
         "parralax_city_0.tsx": {

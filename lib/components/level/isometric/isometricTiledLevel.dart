@@ -7,13 +7,13 @@ import 'package:mpg_achievements_app/components/level/isometric/isometricRendera
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
+/// A class representing a renderable instance with its rendering function, position, z-index, and other properties.
 class RenderInstance {
   final void Function(Canvas, {Vector2 position, Vector2 size}) render;
   final Vector2 position;
   final Vector2 gridPos;
   final int zIndex;
-  final bool isFrog;
-  RenderInstance(this.render, this.position, this.zIndex, this.isFrog, this.gridPos);
+  RenderInstance(this.render, this.position, this.zIndex, this.gridPos);
 }
 
 class IsometricTiledLevel extends TiledComponent{
@@ -27,62 +27,63 @@ class IsometricTiledLevel extends TiledComponent{
     await _buildTileCache();
   }
 
+  ///Builds a cache of tile render instances for efficient rendering.
   Future<void> _buildTileCache() async {
     final map = tileMap.map;
     final tileW = map.tileWidth.toDouble() / 2;
     final tileH = map.tileHeight.toDouble();
 
-    int rawGid(int gid) => gid & 0x1FFFFFFF;
+    int rawGid(int gid) => gid & 0x1FFFFFFF; // Clear flip bits
 
-    Tileset findTileset(int gid) {
-      final raw = rawGid(gid);
-      Tileset? best;
-      for (final ts in map.tilesets) {
-        if (ts.firstGid! <= raw) {
-          if (best == null || ts.firstGid! > best.firstGid!) best = ts;
+    Tileset findTileset(int gid) { //help function to find the correct tileset for a given gid
+      final raw = rawGid(gid); // Clear flip bits
+      Tileset? best; // The best match so far
+      for (final ts in map.tilesets) { // Iterate through all tilesets
+        if (ts.firstGid! <= raw) { // If this tileset could contain the gid
+          if (best == null || ts.firstGid! > best.firstGid!) best = ts; // Update best if it's a better match
         }
       }
-      if (best == null) {
+      if (best == null) { // If no tileset was found, throw an error
         throw StateError('No tileset found for gid $gid (raw $raw)');
       }
-      return best;
+      return best; // Return the best match
     }
 
-    int layerIndex = 0;
-    for (final layer in map.layers) {
-      if (layer is TileLayer) {
-        if (layer.chunks!.isNotEmpty) {
-          for (final chunk in layer.chunks!) {
-            final chunkData = chunk.data;
-            final chunkWidth = chunk.width;
-            final chunkHeight = chunk.height;
+    int layerIndex = 0; // To keep track of the layer index for z-ordering
+    for (final layer in map.layers) { // Iterate through all layers
+      if (layer is TileLayer) { // Only process tile layers
+        if (layer.chunks!.isNotEmpty) { // If the layer uses chunks
+          for (final chunk in layer.chunks!) { // Iterate through all chunks
+            final chunkData = chunk.data; //get the data
+            final chunkWidth = chunk.width; //and the width
             final offsetX = chunk.x;
             final offsetY = chunk.y;
-            for (int i = 0; i < chunkData.length; i++) {
-              final gid = chunkData[i];
-              if (gid == 0) continue;
-              final x = (i % chunkWidth) + offsetX;
+            for (int i = 0; i < chunkData.length; i++) { //all the chunk tiles
+              final gid = chunkData[i]; //get the gid
+              if (gid == 0) continue; //if its 0, it means its empty
+              final x = (i % chunkWidth) + offsetX; //calculate the x and y position of the tile in the map
               final y = (i ~/ chunkWidth) + offsetY;
-              await _addTileForGid(map, findTileset(gid), gid, x, y, layerIndex, tileW, tileH);
+              await _addTileForGid(map, findTileset(gid), gid, x, y, layerIndex, tileW, tileH); //and add it to the cache
             }
           }
-        } else {
-          final data = layer.data;
-          final width = layer.width;
-          for (int i = 0; i < data!.length; i++) {
-            final gid = data[i];
-            if (gid == 0) continue;
-            final x = i % width;
+        } else { //if the world is not infinite
+          final data = layer.data; //we get the data
+          final width = layer.width;//the width of the layer
+          for (int i = 0; i < data!.length; i++) { //iterate through all tiles
+            final gid = data[i]; //get the gid
+            if (gid == 0) continue; //if its 0, it means its empty
+            final x = i % width; //calculate the x and y position of the tile in the map
             final y = i ~/ width;
-            await _addTileForGid(map, findTileset(gid), gid, x, y, layerIndex, tileW, tileH);
+            await _addTileForGid(map, findTileset(gid), gid, x, y, layerIndex, tileW, tileH); //and add it to the cache
           }
         }
 
-        layerIndex += 1;
+        layerIndex += 1; //increase the layer index for the next layer
       }
     }
   }
 
+  ///Adds a tile to the render cache based on its GID and position.
   Future<void> _addTileForGid(
       TiledMap map,
       Tileset tileset,
@@ -93,69 +94,71 @@ class IsometricTiledLevel extends TiledComponent{
       double tileW,
       double tileH,
       ) async {
-    final raw = gid & 0x1FFFFFFF;
-    final localIndex = raw - tileset.firstGid!;
+    final raw = gid & 0x1FFFFFFF; // Clear flip bits
+    final localIndex = raw - tileset.firstGid!; // Local index within the tileset
 
-    Image img;
+    Image img; //the tile texture set
 
-    final path = tileset.image?.source?..replaceAll("../images", "");
-    img = await Flame.images.load(path ?? "");
-
-
-    final cols = tileset.columns!;
-    final row = localIndex ~/ cols;
-    final col = localIndex % cols;
-    final srcSize = Vector2(32, 32);
+    final path = tileset.image?.source?..replaceAll("../images", ""); //because the path in the tmx file is relative to the tmx file, but we need it relative to the assets folder
+    img = await Flame.images.load(path ?? ""); //load the image from the tileset
 
 
-    final sprite = Sprite(
-      img,
-      srcPosition: Vector2(col * 32, row * 32),
-      srcSize: srcSize,
+    final cols = tileset.columns!; //amount of columns in the tileset image
+    final row = localIndex ~/ cols; //calculate the row and column of the tile in the tileset image
+    final col = localIndex % cols; //same for column
+    final srcSize = Vector2(tileW*2, tileW*2); //the size of the tile in the tileset image
+
+    final sprite = Sprite( //get the sprite for the tile
+      img, //the tileset
+      srcPosition: Vector2(col * 32, row * 32), //the position of the tile in the tileset image
+      srcSize: srcSize, //and its size
     );
 
-    final worldPos = orthogonalToIsometric(Vector2(tileX * 16, tileY * 16)) + Vector2(map.width * tileW, 0);
+    final worldPos = orthogonalToIsometric(Vector2(tileX * tileW, tileY * tileW)) + Vector2(map.width * tileW, 0); //calculate the world position of the tile in the isometric world, also add an offset to center the map around the 0-point
 
-    _tiles.add(RenderInstance(sprite.render, worldPos, tileZ, false, Vector2(tileX.toDouble(), tileY.toDouble())));
+    _tiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble()))); //convert those to render instance and add it to the list of tiles
   }
 
-  final Paint paint = Paint()
-    ..color = const Color(0x55FF0000)
-    ..strokeWidth = 2.0;
+  List<RenderInstance>? lastRenderables;
+  Iterable<IsometricRenderable>? lastComponents;
   void renderComponentsInTree(Canvas canvas, Iterable<IsometricRenderable> components) {
 
-    final allRenderables = <RenderInstance>[];
-    allRenderables.addAll(_tiles.asMap().entries.map((e) => e.value));
-
-
-
-    allRenderables.addAll(components.toList().map((e) => RenderInstance((c, {Vector2? position, Vector2? size}) => e.renderTree(c), e.position, e.renderPriority, true,  e.gridFeetPos)));
-
-    Vector2 cameraPosition = (game as PixelAdventure).cam.pos;
-
-    allRenderables.sort((a, b) {
-      int comparedZ = a.zIndex.compareTo(b.zIndex);
-      if(comparedZ != 0){
-        return comparedZ;
-      }
-
-      // Berechne die "Fußposition" des Sprites
-      double footYA = a.gridPos.y + 32;
-      double footYB = b.gridPos.y + 32;
-
-      int comparedY = footYA.compareTo(footYB);
-      if (comparedY != 0) {
-        return comparedY;
-      }
-
-      return a.gridPos.x.compareTo(b.gridPos.x);
-    });
-
-
-    for (final entry in allRenderables) {
-      final r = entry;
-      r.render(canvas, position: r.position - Vector2(16,16), size: Vector2(32,32));
+    if(lastComponents != components || lastRenderables == null) {
+      lastComponents = components;
+      lastRenderables = calculateSortedRenderInstances(components);
     }
 
+    for (final r in lastRenderables!) { //render everything in the sorted order
+      r.render(canvas, position: r.position - tileMap.destTileSize.xx / 2, size: tileMap.destTileSize.xx);
+    }
+
+  }
+
+  List<RenderInstance> calculateSortedRenderInstances([Iterable<IsometricRenderable> additionals = const []]){
+    final allRenderables = <RenderInstance>[]; //all the renderables that should be rendered, sorted by their z-index and position distance to the 0-point
+    allRenderables.addAll(_tiles.asMap().entries.map((e) => e.value)); //add all tiles
+    allRenderables.addAll(additionals.toList().map((e) => RenderInstance((c, {Vector2? position, Vector2? size}) => e.renderTree(c), e.position, e.renderPriority, e.gridFeetPos))); //add all given components to the list of renderables so that they are also sorted and rendered in the correct order
+
+
+    allRenderables.sort((a, b) { //now we sort the renderables by their z-index and position
+      Vector3 pos1 = Vector3(a.gridPos.x, a.gridPos.y, a.zIndex.toDouble()*tileMap.destTileSize.y);
+      Vector3 pos2 = Vector3(b.gridPos.x, b.gridPos.y, b.zIndex.toDouble()*tileMap.destTileSize.y);
+
+      int comparedPos = pos1.compareTo(pos2); //compare the foot y positions
+      //if they are different, we take the comparison result (the one with the higher foot y is in front of the other)
+      return comparedPos;
+    });
+
+    return allRenderables;
+  }
+}
+extension on Vector2 {
+  int compareTo(Vector2 gridPos) {
+    return (distanceTo(Vector2.zero()).compareTo(gridPos.distanceTo(Vector2.zero())));
+  }
+}
+extension on Vector3 {
+  int compareTo(Vector3 gridPos) {
+    return (distanceTo(Vector3.zero()).compareTo(gridPos.distanceTo(Vector3.zero())));
   }
 }

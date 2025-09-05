@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +44,7 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
       hitbox = IsometricHitbox(
           Vector2.all(1),
           game.level,
-          Vector2.zero()
+          Vector2.zero(),
       );
       hitbox.position = Vector2(0, 16);
     } else {
@@ -57,17 +58,19 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
     return super.onLoad();
   }
 
+  Hitbox? lastTouchedHitbox;
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if(viewSide != ViewSide.side && !_debugNoClipMode) {
-      gridPos = lastSafePosition;
-      velocity = Vector2.zero();
+
+    if(viewSide != ViewSide.side && other is CollisionBlock && !_debugNoClipMode) {
       return;
     }
 
 
 
     if (other is CollisionBlock && !_debugNoClipMode) {
+      lastTouchedHitbox = other.hitbox;
+
       checkCollision(other);
     }
     super.onCollision(intersectionPoints, other);
@@ -88,6 +91,11 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
 
       if (other is CollisionBlock && other.climbable) {
         setClimbing(false);
+      }
+    } else if(viewSide == ViewSide.isometric){
+
+      if(game.level.checkCollisionAt(gridPos)){
+        gridPos = lastSafePosition;
       }
     }
 
@@ -151,16 +159,69 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
     if (other.climbable && distanceUp > 5) setClimbing(true);
   }
 
+  //TODO FIX
+  void checkCollisionIsometric(CollisionBlock other){
+    hitbox.aabb.intersectsWithAabb2(other.hitbox.aabb);
+
+    Vector2 gridPos = game.level.toGridPos(position);
+
+    Vector2 otherGridPos = game.level.toGridPos(other.position);
+    Vector2 otherHitboxSize = other.hitbox.size;
+
+    Vector2 posDiff = gridPos - otherGridPos;
+    print("\nposDiff: $posDiff");
+    print("gridPos: $gridPos");
+    print("other grid pos: $otherGridPos");
+
+    final double distanceUp = posDiff.y + hitbox.height / 32;
+    final double distanceLeft = posDiff.x + hitbox.width / 32;
+    final double distanceRight = (other.width / 32) - posDiff.x;
+    final double distanceDown = (other.height / 32) - posDiff.y;
+
+    double smallestDistance = min(min(distanceUp, distanceLeft), min(distanceRight, distanceDown));
+
+    Vector2 newGridPos = gridPos;
+    if(smallestDistance == distanceUp){
+      print("up");
+      newGridPos.x -= 0.1;
+      velocity.x = 0;
+    }if(smallestDistance == distanceLeft){
+      print("left");
+      newGridPos.y += 0.1;
+      velocity.y = 0;
+    }if(smallestDistance == distanceRight){
+      print("right");
+      newGridPos.x += 0.1;
+      velocity.x = 0;
+    }if(smallestDistance == distanceDown){
+      print("down");
+      newGridPos.y -= 0.1;
+      velocity.y = 0;
+    }
+
+    gridPos = newGridPos;
+  }
+
   Vector2 lastSafePosition = Vector2.zero();
   @override
   void update(double dt) {
     if (viewSide != ViewSide.isometric || _debugNoClipMode) return super.update(dt);
 
-    if(!activeCollisions.isNotEmpty && !activeCollisions.any((element) => element is CollisionBlock)){
+    if(!activeCollisions.isNotEmpty && !activeCollisions.any((element) => element is CollisionBlock) && !isHitboxInside(hitbox, lastTouchedHitbox) && !isHitboxInside(lastTouchedHitbox, hitbox)){
       lastSafePosition = gridPos;
+    } else {
+      gridPos = lastSafePosition;
+      velocity = Vector2.zero();
     }
     super.update(dt);
+
   }
+
+  bool isHitboxInside(Hitbox? hitboxA, Hitbox? hitboxB) {
+    if(hitboxB == null || hitboxA == null) return false;
+    return hitboxB.aabb.toRect().translate(0.8, 0.8).overlaps(hitboxA.aabb.toRect());
+  }
+
 
 
 }

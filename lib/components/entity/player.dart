@@ -262,7 +262,7 @@ class Player extends GameCharacter
   int get renderPriority => 1;
 
   @override
-  Vector2 get gridFeetPos => game.level.toGridPos(absolutePositionOfAnchor(Anchor.topRight));
+  Vector2 get gridFeetPos => game.level.toGridPos(absolutePositionOfAnchor(Anchor.topCenter));
 
 
 }

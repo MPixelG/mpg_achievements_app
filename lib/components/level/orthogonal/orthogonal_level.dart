@@ -16,13 +16,9 @@ class OrthogonalLevel extends Level{
   }
 
   @override
-  bool checkCollisionAt(Vector2 point, Vector2 center, Vector2 size) {
+  bool checkCollisionAt(Vector2 gridPos) {
     throw UnimplementedError();
   }
 
-  @override
-  RectangleHitbox createHitbox({Vector2? position, Vector2? size}) {
-    return RectangleHitbox(position: position, size: size);
-  }
 
 }
