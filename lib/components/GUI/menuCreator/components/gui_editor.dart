@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Matrix4;
 import 'package:flutter/services.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:mpg_achievements_app/components/GUI/json_factory/json_exporter.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/components/propertyEditor/option_editor.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/widget_declaration.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/editor_node_dependency_viewer.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/layout_widget.dart';
@@ -32,12 +34,16 @@ class _GuiEditorState extends State<GuiEditor> {
   final GlobalKey<NodeViewerState> _nodeViewerKey =
       GlobalKey<NodeViewerState>();
 
+  final editorKey = GlobalKey<OptionEditorMenuState>();
+
   void updateViewport() {
     //this is used to update the viewport of the node viewer, so that it shows the current state of the layout
     setState(
       () {},
     ); //we call setState on the node viewer to rebuild it and show the current state of the layout
   }
+
+  OptionEditorMenu? optionEditor;
 
   @override
   void initState() {
@@ -56,8 +62,22 @@ class _GuiEditorState extends State<GuiEditor> {
         root: root,
         key: _nodeViewerKey,
         updateViewport: updateViewport,
+        updateWithNewSelectedWidget: (LayoutWidget newNode) {
+          setState(() {
+            editorKey.currentState!.setState(() {
+              optionEditor!.node = newNode;
+            });
+            print("new val set!");
+          });
+        },
       );
     });
+
+    optionEditor = OptionEditorMenu(
+      key: editorKey,
+      node: nodeViewer!.currentSelectedWidget,
+      updateView: updateViewport,
+    );
     doneLoading = true;
   }
 
@@ -70,7 +90,7 @@ class _GuiEditorState extends State<GuiEditor> {
   @override
   Widget build(BuildContext context) {
     //here we actually build the stuff thats being rendered
-    if (nodeViewer == null) {
+    if (nodeViewer == null || optionEditor == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -81,7 +101,121 @@ class _GuiEditorState extends State<GuiEditor> {
 
       body: ResizableContainer(
         children: [
-          ResizableChild(child: nodeViewer!),
+          ResizableChild(
+            child: Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                nodeViewer!,
+                Column(
+                  children: [
+                    SizedBox(height: 57),
+
+                    FloatingActionButton(
+                      heroTag: null,
+                      onPressed: () {
+                        String json = WidgetJsonUtils.exportWidgetToJson(
+                          root,
+                        ); //we convert the root widget to a json string
+                        print("json: $json");
+                      },
+                      child: Icon(Icons.outbond_outlined),
+                    ),
+                    SizedBox(height: screenHeight * 0.62),
+
+                    Container(
+                      width: 55,
+                      height: 55,
+
+                      decoration: BoxDecoration(
+                        color: CupertinoColors.extraLightBackgroundGray,
+                        borderRadius: BorderRadius.circular(15.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            spreadRadius: 2,
+                            blurRadius: 6,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+
+                      child: PopupMenuButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all(
+                            CupertinoColors.systemGrey4,
+                          ),
+                          elevation: WidgetStateProperty.all(6.0),
+                          shape: WidgetStateProperty.all(CircleBorder()),
+                        ),
+
+                        itemBuilder: (context) => [
+                          for (final declaration
+                              in WidgetDeclaration.declarationCache)
+                            PopupMenuItem(
+                              value: declaration.id,
+                              child: ListTile(
+                                leading: declaration.icon,
+                                title: Text(declaration.displayName),
+                              ),
+                            ),
+                        ],
+                        onSelected: (value) {
+                          //this is called when an item is selected from the popup menu
+                          switch (value) {
+                            //we switch on the value of the selected item
+                            case "positioned":
+                              {
+                                LayoutWidget? parent = getNearestStackRecursive(
+                                  root,
+                                );
+
+                                var widgetDeclaration = WidgetDeclaration
+                                    .declarationCache
+                                    .where((element) => element.id == value)
+                                    .firstOrNull;
+                                if (widgetDeclaration != null) {
+                                  addWidget(widgetDeclaration.builder(parent));
+                                }
+                              } //if the value is positioned, we add a positioned widget to the root widget
+                            case "expanded":
+                              {
+                                LayoutWidget? parent = getNearestFlexRecursive(
+                                  root,
+                                ); //we get the nearest stack widget to add the expanded widget to, because you can only add expanded widgets to a row or column
+
+                                var widgetDeclaration = WidgetDeclaration
+                                    .declarationCache
+                                    .where((element) => element.id == value)
+                                    .firstOrNull;
+                                if (widgetDeclaration != null) {
+                                  addWidget(widgetDeclaration.builder(parent));
+                                }
+                              }
+                            default:
+                              {
+                                var widgetDeclaration = WidgetDeclaration
+                                    .declarationCache
+                                    .where((element) => element.id == value)
+                                    .firstOrNull;
+                                if (widgetDeclaration != null) {
+                                  addWidget(widgetDeclaration.builder(root));
+                                }
+                              }
+                          }
+
+                          _nodeViewerKey.currentState?.setState(
+                            () {},
+                          ); //this updates the node viewer to show the new widget that was added
+                        },
+                        tooltip: "open widget menu",
+                        child: Icon(Icons.add_box_rounded),
+                      ), //tooltip and + icon
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
           ResizableChild(
             size: ResizableSize.expand(flex: 3),
             child: ResizableContainer(
@@ -93,7 +227,7 @@ class _GuiEditorState extends State<GuiEditor> {
                 ResizableChild(
                   child: ResizableContainer(
                     direction: Axis.horizontal,
-                    children: [ResizableChild(child: Container())],
+                    children: [ResizableChild(child: optionEditor!)],
                   ),
                 ),
               ],
@@ -106,71 +240,11 @@ class _GuiEditorState extends State<GuiEditor> {
 
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            heroTag: null,
-            onPressed: () {
-              String json = WidgetJsonUtils.exportWidgetToJson(
-                root,
-              ); //we convert the root widget to a json string
-              print("json: $json");
-            },
-            child: Icon(Icons.outbond_outlined),
-          ),
-
-          PopupMenuButton(
-            itemBuilder: (context) => [
-              for(final declaration in WidgetDeclaration.declarationCache)
-                PopupMenuItem(
-                  value: declaration.id,
-                  child: ListTile(
-                    leading: declaration.icon,
-                    title: Text(declaration.displayName),
-                  ),
-                ),
-            ],
-            onSelected: (value) {
-              //this is called when an item is selected from the popup menu
-              switch (value) {
-                //we switch on the value of the selected item
-                case "positioned":
-                  {
-                    LayoutWidget? parent = getNearestStackRecursive(root);
-
-                    var widgetDeclaration = WidgetDeclaration.declarationCache.where((element) => element.id == value).firstOrNull;
-                    if(widgetDeclaration != null) {
-                      addWidget(widgetDeclaration.builder(parent));
-                    }                  } //if the value is positioned, we add a positioned widget to the root widget
-                case "expanded":
-                  {
-                    LayoutWidget? parent = getNearestFlexRecursive(
-                      root,
-                    ); //we get the nearest stack widget to add the expanded widget to, because you can only add expanded widgets to a row or column
-
-                    var widgetDeclaration = WidgetDeclaration.declarationCache.where((element) => element.id == value).firstOrNull;
-                    if(widgetDeclaration != null) {
-                      addWidget(widgetDeclaration.builder(parent));
-                    }
-                  }
-                default: {
-                  var widgetDeclaration = WidgetDeclaration.declarationCache.where((element) => element.id == value).firstOrNull;
-                  if(widgetDeclaration != null) {
-                    addWidget(widgetDeclaration.builder(root));
-                  }
-                }
-              }
-
-              _nodeViewerKey.currentState?.setState(
-                () {},
-              ); //this updates the node viewer to show the new widget that was added
-            },
-            tooltip: "open widget menu",
-            child: Icon(Icons.add_box_rounded),
-          ), //tooltip and + icon
-        ],
+        children: [],
       ),
     );
   }
+
   /// Adds a widget to the layout.
   /// The widget is built using the provided LayoutWidget.
   void addWidget(LayoutWidget? layoutWidget, {LayoutWidget? root}) async {
@@ -180,7 +254,8 @@ class _GuiEditorState extends State<GuiEditor> {
 
     setState(() {
       //we call setState to rebuild the widget tree and show the new widget
-      root ??= this.root; //if no root is provided, we use the current root widget
+      root ??=
+          this.root; //if no root is provided, we use the current root widget
 
       root!.addChild(
         layoutWidget,

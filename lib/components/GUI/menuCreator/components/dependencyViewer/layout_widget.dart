@@ -6,18 +6,22 @@ class LayoutWidget {
     BuildContext context,
     List<Widget> children,
     Map<String, dynamic> properties,
-  ) _builder;
+  )
+  _builder;
 
   late final List<LayoutWidget> children;
   late Map<String, dynamic> properties;
-  late void Function(LayoutWidget child) removeFromParent; // Function to remove this widget from its parent, if needed
+  late void Function(LayoutWidget child)
+  removeFromParent; // Function to remove this widget from its parent, if needed
   LayoutWidget? parent; // Reference to the parent widget, if any
 
-  late bool Function(LayoutWidget other)? dropCondition; // Function to drop a prerequisite widget, if needed
+  late bool Function(LayoutWidget other)?
+  dropCondition; // Function to drop a prerequisite widget, if needed
 
   Type widgetType; // The type of the widget this LayoutWidget represents
 
-  ContainerType type; //the amount of children this container can have, unlimited, sealed (no children can be added), single (only one child can be added)
+  ContainerType
+  type; //the amount of children this container can have, unlimited, sealed (no children can be added), single (only one child can be added)
 
   LayoutWidget(
     this._builder, {
@@ -26,9 +30,9 @@ class LayoutWidget {
     Map<String, dynamic>? properties,
     required this.type,
     required void Function(LayoutWidget child)? removeFromParent,
-        required this.parent,
-        required this.widgetType,
-        this.dropCondition
+    required this.parent,
+    required this.widgetType,
+    this.dropCondition,
   }) {
     this.children = children ?? [];
     this.properties = properties ?? {};
@@ -108,10 +112,9 @@ class LayoutWidget {
     return false; // Default case, should not happen
   }
 
-  bool canDropOn(LayoutWidget other){
-
-    if(dropCondition != null && !dropCondition!(other)) return false; // Cannot drop a Positioned widget on a Widget that is not a Stack
-
+  bool canDropOn(LayoutWidget other) {
+    if (dropCondition != null && !dropCondition!(other))
+      return false; // Cannot drop a Positioned widget on a Widget that is not a Stack
 
     //if(isDescendant(this, other)) return false; // Cannot drop a widget on itself or its descendants
 
@@ -127,18 +130,19 @@ class LayoutWidget {
   }
 }
 
-
-bool isDescendant(LayoutWidget dragged, LayoutWidget target) { //check if the dragged widget is a descendant of the target widget
-  for (var child in dragged.children) { //for every child of the dragged widget
-    if (child == target || isDescendant(child, target)) return true; //if the child is the target or if the child has the target as a descendant, return true. this checks the entire tree of children recursively
+bool isDescendant(LayoutWidget dragged, LayoutWidget target) {
+  //check if the dragged widget is a descendant of the target widget
+  for (var child in dragged.children) {
+    //for every child of the dragged widget
+    if (child == target || isDescendant(child, target))
+      return true; //if the child is the target or if the child has the target as a descendant, return true. this checks the entire tree of children recursively
   }
   return false; //if no child is the target or has the target as a descendant, return false
 }
 
-enum ContainerType {unlimited, sealed, single }
+enum ContainerType { unlimited, sealed, single }
 
-
-extension on List{
+extension on List {
   void swap(int index1, int index2) {
     if (index1 < 0 || index2 < 0 || index1 >= length || index2 >= length) {
       throw RangeError('Index out of range');

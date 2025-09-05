@@ -20,16 +20,17 @@ class WidgetJsonUtils {
       'id': widget.id,
       'widgetType': widget.widgetType.toString(),
       'properties': convertProperties(widget.properties),
-      'children': widget.children.map((child) => _buildWidgetMap(child)).toList(),
+      'children': widget.children
+          .map((child) => _buildWidgetMap(child))
+          .toList(),
     };
   }
 
   static dynamic convertProperties(dynamic input) {
     if (input is Map) {
-      return input.map((key, value) => MapEntry(
-        key.toString(),
-        convertProperties(value),
-      ));
+      return input.map(
+        (key, value) => MapEntry(key.toString(), convertProperties(value)),
+      );
     } else if (input is List) {
       return input.map(convertProperties).toList();
     } else if (input is Color) {
@@ -98,10 +99,9 @@ class WidgetJsonUtils {
       }
 
       // Recursively restore other properties
-      return input.map((key, value) => MapEntry(
-        key.toString(),
-        restoreProperties(value),
-      ));
+      return input.map(
+        (key, value) => MapEntry(key.toString(), restoreProperties(value)),
+      );
     } else if (input is List) {
       return input.map(restoreProperties).toList();
     } else {
@@ -117,7 +117,10 @@ class WidgetJsonUtils {
         input.values.every((v) => v is num);
   }
 
-  static Future<LayoutWidget> importScreen(String name, {BuildContext? context}) async {
+  static Future<LayoutWidget> importScreen(
+    String name, {
+    BuildContext? context,
+  }) async {
     final jsonMap = await loadJson(name);
     return WidgetJsonUtils.importWidget(jsonMap, context: context);
   }
@@ -128,20 +131,27 @@ class WidgetJsonUtils {
     return Map<String, dynamic>.from(jsonMap);
   }
 
-  static LayoutWidget importWidget(Map<String, dynamic> data, {LayoutWidget? parent, BuildContext? context}) {
+  static LayoutWidget importWidget(
+    Map<String, dynamic> data, {
+    LayoutWidget? parent,
+    BuildContext? context,
+  }) {
     // Ensure properties are properly restored
     final restoredProps = restoreProperties(data['properties']);
 
-    Type widgetType = parseWidgetType(data['widgetType']);
-
-
-
-    LayoutWidget? widget = switch(widgetType){
-      _ => WidgetDeclaration.declarationCache.where((element) => element.id == data["widgetType"]).first.builder(parent, properties: restoredProps)
-    };
+    LayoutWidget? widget = WidgetDeclaration.declarationCache
+        .where((element) => element.id == data["widgetType"])
+        .first
+        .builder(parent, properties: restoredProps);
 
     List<LayoutWidget> children = (data['children'] as List)
-        .map((child) => importWidget(Map<String, dynamic>.from(child), parent: widget, context: context))
+        .map(
+          (child) => importWidget(
+            Map<String, dynamic>.from(child),
+            parent: widget,
+            context: context,
+          ),
+        )
         .toList();
 
     assert(widget != null, "${data["widgetType"]} is not a supported type!");
@@ -149,87 +159,6 @@ class WidgetJsonUtils {
     widget!.addChildren(children);
 
     return widget;
-  }
-
-  static Type parseWidgetType(String widgetType) {
-    switch (widgetType) {
-      case 'Container':
-        return Container;
-      case 'Text':
-        return Text;
-      case 'Row':
-        return Row;
-      case 'Column':
-        return Column;
-      case 'Stack':
-        return Stack;
-      case 'Image':
-        return Image;
-      case 'Button':
-        return ElevatedButton;
-      case 'Icon':
-        return Icon;
-      case 'ListView':
-        return ListView;
-      case 'GridView':
-        return GridView;
-      case 'Expanded':
-        return Expanded;
-      case 'NinePatchButton':
-        return NinePatchButton;
-      case 'Scaffold':
-        return Scaffold;
-      case 'AppBar':
-        return AppBar;
-      case 'Drawer':
-        return Drawer;
-      case 'BottomNavigationBar':
-        return BottomNavigationBar;
-      case 'TabBar':
-        return TabBar;
-      case 'TabBarView':
-        return TabBarView;
-      case 'Form':
-        return Form;
-      case 'TextField':
-        return TextField;
-      case 'Checkbox':
-        return Checkbox;
-      case 'Radio':
-        return Radio;
-      case 'Switch':
-        return Switch;
-      case 'Slider':
-        return Slider;
-      case 'ProgressIndicator':
-        return CircularProgressIndicator;
-      case 'LinearProgressIndicator':
-        return LinearProgressIndicator;
-      case 'AlertDialog':
-        return AlertDialog;
-      case 'SnackBar':
-        return SnackBar;
-      case 'Tooltip':
-        return Tooltip;
-      case 'MaterialApp':
-        return MaterialApp;
-      case 'Positioned':
-        return Positioned;
-      case 'FittedBox':
-        return FittedBox;
-      case 'Transform':
-        return Transform;
-      case 'Opacity':
-        return Opacity;
-      case 'Card':
-        return Card;
-      case 'InteractiveViewer':
-        return InteractiveViewer;
-      case 'SingleChildScrollView':
-        return SingleChildScrollView;
-      default:
-        throw Exception('Unknown widget type: $widgetType');
-    }
   }
 
   static String _formatJson(Map<String, dynamic> jsonMap) {
@@ -249,10 +178,10 @@ Map<String, dynamic> colorToMap(Color color) => {
 Color mapToColor(Map<String, dynamic> map) {
   try {
     return Color.from(
-        alpha: (map['a'] as num).toDouble(),
-        red: (map['r'] as num).toDouble(),
-        green: (map['g'] as num).toDouble(),
-        blue: (map['b'] as num).toDouble()
+      alpha: (map['a'] as num).toDouble(),
+      red: (map['r'] as num).toDouble(),
+      green: (map['g'] as num).toDouble(),
+      blue: (map['b'] as num).toDouble(),
     );
   } catch (e) {
     print("Error converting map to color: $e, map: $map");
