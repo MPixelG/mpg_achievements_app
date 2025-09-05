@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
 import '../level_components/checkpoint/checkpoint.dart';
 import '../level_components/collectables.dart';
@@ -99,9 +100,12 @@ void generateCollisionsForLevel(Level level) {
   if (collisionsLayer != null) {
     for (final collision in collisionsLayer.objects) {
 
-      print("position: ${collision.position / 32}");
+      Vector2 pos;
 
-      Vector2 pos = _orthogonalToIsometric(collision.position) + Vector2(level.level.width / 2, 0);
+      if(level is IsometricLevel){
+        pos = _orthogonalToIsometric(collision.position) + Vector2(level.level.width / 2, 0);
+      } else pos = collision.position;
+
 
 
       switch (collision.class_) {

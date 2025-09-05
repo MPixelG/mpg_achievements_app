@@ -13,6 +13,7 @@ import 'package:mpg_achievements_app/components/physics/movement_collisions.dart
 import '../level/isometric/isometric_level.dart';
 import '../particles/Particles.dart';
 import '../ai/goals/move_goal.dart';
+import '../physics/movement.dart';
 
 enum EnemyState {
   idle,

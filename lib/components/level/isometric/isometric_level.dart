@@ -1,9 +1,11 @@
 import 'dart:ui';
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+
+import 'isometricRenderable.dart';
+import 'isometricTiledLevel.dart';
 
 class IsometricLevel extends Level {
 
@@ -26,6 +28,11 @@ class IsometricLevel extends Level {
     );
   }
 
+  @override
+  Future<TiledComponent> createTiledLevel(String filename, Vector2 destTilesize) async{
+    return IsometricTiledLevel((await TiledComponent.load(filename, destTilesize)).tileMap);
+  }
+
   //highlight the selected tile
   @override
   void render(Canvas canvas) {
@@ -37,6 +44,20 @@ class IsometricLevel extends Level {
       // If so, we call the highlight method on our grid instance.
       tileGrid.renderTileHighlight(canvas, selectedTile!);
     }
+  }
+
+  @override
+  void renderFromCamera(Canvas canvas) {
+    assert(CameraComponent.currentCamera != null);
+    super.renderTree(canvas);
+
+    if(level is! IsometricTiledLevel) return;
+
+    for (final child in children.where((element) => element is! IsometricRenderable && element != level)) {
+      child.renderTree(canvas);
+    }
+
+    (level as IsometricTiledLevel).renderComponentsInTree(canvas, children.whereType<IsometricRenderable>());
   }
 
   @override

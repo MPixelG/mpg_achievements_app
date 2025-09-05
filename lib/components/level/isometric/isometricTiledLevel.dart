@@ -5,7 +5,6 @@ import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometricRenderable.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 
 // A data class designed to hold all the necessary information for rendering a single object,
@@ -75,7 +74,6 @@ class IsometricTiledLevel extends TiledComponent{
           for (final chunk in layer.chunks!) {
             final chunkData = chunk.data;
             final chunkWidth = chunk.width;
-            final chunkHeight = chunk.height;
             final offsetX = chunk.x;
             final offsetY = chunk.y;
             for (int i = 0; i < chunkData.length; i++) { //all the chunk tiles

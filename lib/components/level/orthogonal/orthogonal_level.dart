@@ -1,4 +1,3 @@
-import 'package:flame/src/collisions/hitboxes/rectangle_hitbox.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:vector_math/vector_math.dart';
 

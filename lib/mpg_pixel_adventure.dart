@@ -51,7 +51,7 @@ class PixelAdventure extends FlameGame
     await images.loadAllImages();
     //world is loaded after initialising all images
 
-    String levelName = "level_7";
+    String levelName = "level_3";
     Vector2 tileSize = await getTilesizeOfLevel(levelName);
     String orientationOfLevel = await getOrientationOfLevel(levelName);
 

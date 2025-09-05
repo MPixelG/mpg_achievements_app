@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
+import '../physics/movement.dart';
 
 mixin AnimationManager on SpriteAnimationGroupComponent, HasGameReference<PixelAdventure>{
 

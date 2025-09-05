@@ -13,6 +13,8 @@ import 'package:mpg_achievements_app/components/level_components/collectables.da
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import '../level/isometric/isometric_level.dart';
 import '../level_components/saw.dart';
+import '../physics/controllableMixins.dart';
+import '../physics/movement.dart';
 //todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations
 //with is used to additonal classes here our game class

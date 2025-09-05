@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
@@ -13,8 +12,6 @@ import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometricRenderable.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometricTiledLevel.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
@@ -31,7 +28,7 @@ abstract class Level extends World
         RiverpodComponentMixin {
 
   final String levelName;
-  late IsometricTiledLevel level;
+  late TiledComponent level;
   late final bool isometricLevel;
   final Player player;
   Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
@@ -67,7 +64,8 @@ abstract class Level extends World
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
-    level = IsometricTiledLevel((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
+
+    level = await createTiledLevel("$levelName.tmx", tileSize);
     level.position = Vector2.zero();
     isometricLevel = (game.level is IsometricLevel) ? true: false;
 
@@ -113,6 +111,11 @@ abstract class Level extends World
     //runs all the other onLoad-events the method is referring to, now not important
     return super.onLoad();
   }
+
+  Future<TiledComponent> createTiledLevel(String filename, Vector2 destTileSize) async{
+    return TiledComponent.load(filename, destTileSize);
+  }
+
   //creating a background dynamically
 
   TextComponent debugOverlays = TextComponent(
@@ -287,7 +290,7 @@ abstract class Level extends World
       }
     }
 
-    bool checkCollisionAt(Vector2 gridPos);
+  bool checkCollisionAt(Vector2 gridPos);
 
   Vector2 toWorldPos(Vector2 pos);
   Vector2 toGridPos(Vector2 pos);
@@ -298,20 +301,4 @@ abstract class Level extends World
       (iso.x + iso.y) * tileSize.y / 2,
     );
   }
-
-
-  @override
-  void renderFromCamera(Canvas canvas) {
-    assert(CameraComponent.currentCamera != null);
-
-    super.renderTree(canvas);
-
-    for (final child in children.where((element) => element is! IsometricRenderable && element != level)) {
-      child.renderTree(canvas);
-    }
-
-    level.renderComponentsInTree(canvas, children.whereType<IsometricRenderable>());
-  }
-
-
 }
