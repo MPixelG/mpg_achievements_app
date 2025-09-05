@@ -4,7 +4,7 @@ import 'package:flutter/material.dart' hide Matrix4;
 import 'package:flutter/services.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:mpg_achievements_app/components/GUI/json_factory/json_exporter.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/options/widget_builder.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/components/widget_declaration.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/editor_node_dependency_viewer.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/layout_widget.dart';
 
@@ -70,8 +70,9 @@ class _GuiEditorState extends State<GuiEditor> {
   @override
   Widget build(BuildContext context) {
     //here we actually build the stuff thats being rendered
-    if (nodeViewer == null)
+    if (nodeViewer == null) {
       return const Center(child: CircularProgressIndicator());
+    }
 
     return Scaffold(
       //we use a scaffold bc it lets us easily add components with some presets.
@@ -119,156 +120,14 @@ class _GuiEditorState extends State<GuiEditor> {
 
           PopupMenuButton(
             itemBuilder: (context) => [
-              //this is the floating action button that opens a popup menu with the options to add widgets
-              PopupMenuItem(
-                //this is the popup menu item that lets us add a positioned widget
-                value:
-                    'interactive_viewer', //the value of the popup menu item is used to identify which widget to add
-                child: ListTile(
-                  //the ListTile is used to display the icon and the text of the popup menu item
-                  leading: Icon(
-                    Icons.dashboard_customize_outlined,
-                  ), //the icon of the ListTile is the icon that is displayed next to the text
-                  title: Text('Interactive Viewer'), //the displayed text
+              for(final declaration in WidgetDeclaration.declarationCache)
+                PopupMenuItem(
+                  value: declaration.id,
+                  child: ListTile(
+                    leading: declaration.icon,
+                    title: Text(declaration.displayName),
+                  ),
                 ),
-              ),
-              PopupMenuItem(
-                //this is the popup menu item that lets us add a positioned widget
-                value:
-                    'single_child_scroll_view', //the value of the popup menu item is used to identify which widget to add
-                child: ListTile(
-                  //the ListTile is used to display the icon and the text of the popup menu item
-                  leading: Icon(
-                    Icons.expand_rounded,
-                  ), //the icon of the ListTile is the icon that is displayed next to the text
-                  title: Text('Single Child Scroll View'), //the displayed text
-                ),
-              ),
-
-              PopupMenuItem(
-                //this is the popup menu item that lets us add a positioned widget
-                value:
-                    'fitted_box', //the value of the popup menu item is used to identify which widget to add
-                child: ListTile(
-                  //the ListTile is used to display the icon and the text of the popup menu item
-                  leading: Icon(
-                    Icons.fit_screen,
-                  ), //the icon of the ListTile is the icon that is displayed next to the text
-                  title: Text('Fitted Box'), //the displayed text
-                ),
-              ),
-              PopupMenuItem(
-                //this is the popup menu item that lets us add a grid view widget
-                value:
-                    'grid_view', //the value of the popup menu item is used to identify which widget to add
-                child: ListTile(
-                  //the ListTile is used to display the icon and the text of the popup menu item
-                  leading: Icon(
-                    Icons.grid_view,
-                  ), //the icon of the ListTile is the icon that is displayed next to the text
-                  title: Text('Grid View'), //the displayed text
-                ),
-              ),
-              PopupMenuItem(
-                //this is the popup menu item that lets us add a transform widget
-                value:
-                    'transform', //the value of the popup menu item is used to identify which widget to add
-                child: ListTile(
-                  //the ListTile is used to display the icon and the text of the popup menu item
-                  leading: Icon(
-                    Icons.transform,
-                  ), //the icon of the ListTile is the icon that is displayed next to the text
-                  title: Text('Transform'), //the displayed text
-                ),
-              ),
-              PopupMenuItem(
-                //this is the popup menu item that lets us add an opacity widget
-                value:
-                    'opacity', //the value of the popup menu item is used to identify which widget to add
-                child: ListTile(
-                  //the ListTile is used to display the icon and the text of the popup menu item
-                  leading: Icon(
-                    Icons.opacity,
-                  ), //the icon of the ListTile is the icon that is displayed next to the text
-                  title: Text('Opacity'), //the displayed text
-                ),
-              ),
-
-              PopupMenuItem(
-                value: "image",
-                child: ListTile(
-                  leading: Icon(Icons.image),
-                  title: Text("Image"),
-                ),
-              ),
-
-              PopupMenuItem(
-                value: 'expanded', //another option for positioned
-                child: ListTile(
-                  leading: Icon(Icons.expand_rounded), //a positioned icon
-                  title: Text('Expanded'), //with Positioned as a display
-                ),
-              ),
-              PopupMenuItem(
-                value: 'positioned', //another option for positioned
-                child: ListTile(
-                  leading: Icon(Icons.add_circle_outline), //a positioned icon
-                  title: Text('Positioned'), //with Positioned as a display
-                ),
-              ),
-              PopupMenuItem(
-                //this is the popup menu item that lets us add a container widget
-                value:
-                    'container', //the value of the popup menu item is used to identify which widget to add
-                child: ListTile(
-                  //the ListTile is used to display the icon and the text of the popup menu item
-                  leading: Icon(
-                    Icons.add_card,
-                  ), //the icon of the ListTile is the icon that is displayed next to the text
-                  title: Text('Container'), //the displayed text
-                ),
-              ),
-              PopupMenuItem(
-                //another option for text
-                value: 'text', //text as a value
-                child: ListTile(
-                  leading: Icon(Icons.text_snippet), //a text snippet icon
-                  title: Text('Text'), //with Text as a display
-                ),
-              ),
-              PopupMenuItem(
-                //another option for row
-                value: 'row', //row as a value
-                child: ListTile(
-                  leading: Icon(Icons.view_agenda_rounded), //a rectangle icon
-                  title: Text('Row'), //with Row as a display
-                ),
-              ),
-              PopupMenuItem(
-                //another option for nine patch button
-                value: 'ninepatch_button', //nine patch button as a value
-                child: ListTile(
-                  leading: Icon(Icons.casino_outlined), //a square icon
-                  title: Text(
-                    'Nine Patch Button',
-                  ), //with Nine Patch Button as a display
-                ),
-              ),
-              PopupMenuItem(
-                value: 'column', //another option for column
-                child: ListTile(
-                  leading: Icon(Icons.view_week_rounded), //a column icon
-                  title: Text('Column'), //with Column as a display
-                ),
-              ),
-              PopupMenuItem(
-                //another option for stack)
-                value: 'stack', //stack as a value
-                child: ListTile(
-                  leading: Icon(Icons.layers), //a stack icon
-                  title: Text('Stack'), //with Stack as a display
-                ),
-              ),
             ],
             onSelected: (value) {
               //this is called when an item is selected from the popup menu
@@ -277,43 +136,28 @@ class _GuiEditorState extends State<GuiEditor> {
                 case "positioned":
                   {
                     LayoutWidget? parent = getNearestStackRecursive(root);
-                    addWidget(addPositioned(parent), root: parent);
-                  } //if the value is positioned, we add a positioned widget to the root widget
-                case "container":
-                  addWidget(
-                    addContainer(root),
-                  ); //if the value is container, we add a container widget to the root widget
-                case "text":
-                  showTextAlertDialog(context); //same for text
-                case "row":
-                  addWidget(addRow(root)); //and row
-                case "column":
-                  addWidget(addColumn(root)); //and column
-                case "stack":
-                  addWidget(addStack(root)); //and stack
-                case "ninepatch_button":
-                  addWidget(addNinepatchButton(root)); //and nine patch button
+
+                    var widgetDeclaration = WidgetDeclaration.declarationCache.where((element) => element.id == value).firstOrNull;
+                    if(widgetDeclaration != null) {
+                      addWidget(widgetDeclaration.builder(parent));
+                    }                  } //if the value is positioned, we add a positioned widget to the root widget
                 case "expanded":
                   {
                     LayoutWidget? parent = getNearestFlexRecursive(
                       root,
                     ); //we get the nearest stack widget to add the expanded widget to, because you can only add expanded widgets to a row or column
-                    addWidget(addExpanded(parent), root: parent);
+
+                    var widgetDeclaration = WidgetDeclaration.declarationCache.where((element) => element.id == value).firstOrNull;
+                    if(widgetDeclaration != null) {
+                      addWidget(widgetDeclaration.builder(parent));
+                    }
                   }
-                case "fitted_box":
-                  addWidget(addFittedBox(root));
-                case "grid_view":
-                  addWidget(addGridView(root));
-                case "transform":
-                  addWidget(addTransform(root));
-                case "opacity":
-                  addWidget(addOpacity(root));
-                case "image":
-                  addWidget(addImage(root));
-                case "interactive_viewer":
-                  addWidget(addInteractiveViewer(root));
-                case "single_child_scroll_view":
-                  addWidget(addSingleChildScrollView(root));
+                default: {
+                  var widgetDeclaration = WidgetDeclaration.declarationCache.where((element) => element.id == value).firstOrNull;
+                  if(widgetDeclaration != null) {
+                    addWidget(widgetDeclaration.builder(root));
+                  }
+                }
               }
 
               _nodeViewerKey.currentState?.setState(
@@ -327,65 +171,6 @@ class _GuiEditorState extends State<GuiEditor> {
       ),
     );
   }
-
-  void showTextAlertDialog(BuildContext context) {
-    //this function shows an alert dialog to enter text for a text widget
-    showDialog(
-      //buil-in function to show a dialog
-      context: context, //the context is the current context of the widget
-      builder: (context) {
-        //the builder is a function that returns the widget that will be displayed in the dialog
-        String inputText =
-            ""; //this is the text that will be entered in the text field. we set it to an empty string by default
-        return AlertDialog(
-          //the actual dialog widget
-          title: Text("Enter your text name here"), //the title of the dialog
-          content: TextField(
-            //the content of the dialog is a text field where the user can enter the text
-            autofocus: true, //this makes the text field focused when the dialog is opened
-            onChanged: (value) {
-              //this is called when the text in the text field changes
-              inputText = value; //we update the inputText variable with the new value
-            },
-            decoration: InputDecoration(
-              hintText: "Ener your text name here",
-            ), //the background of the text field has a hint text that tells the user what to enter
-          ),
-          actions: [
-            //the actions of the dialog are the buttons that the user can press
-            TextButton(
-              //the cancel button
-              onPressed: () {
-                Navigator.of(
-                  context,
-                ).pop(); //we close the dialog when the user presses the cancel button
-              },
-              child: Text("Cancel"), //the text of the cancel button
-            ),
-            TextButton(
-              //the accept button
-              onPressed: () {
-                Navigator.of(
-                  context,
-                ).pop(); //we close the dialog when the user presses the accept button
-                if (inputText.isNotEmpty) {
-                  //if the inputText is not empty, we add a text widget to the root widget
-                  addWidget(
-                    addText(inputText, root),
-                  ); //we add the text widget to the root widget
-                  _nodeViewerKey.currentState?.setState(
-                    () {},
-                  ); //this updates the node viewer to show the new text widget that was added. we use the key to access the state of the node viewer and call setState to rebuild it
-                }
-              },
-              child: Text("Accept"), //the text of the accept button
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   /// Adds a widget to the layout.
   /// The widget is built using the provided LayoutWidget.
   void addWidget(LayoutWidget? layoutWidget, {LayoutWidget? root}) async {

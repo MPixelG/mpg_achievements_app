@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/layout_widget.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/components/widget_declaration.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/options/widget_builder.dart';
 import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_button.dart';
 
@@ -133,31 +134,19 @@ class WidgetJsonUtils {
 
     Type widgetType = parseWidgetType(data['widgetType']);
 
-    LayoutWidget widget = switch(widgetType){
-      Container => addContainer(parent, properties: restoredProps),
-      Row => addRow(parent, properties: restoredProps),
-      Column => addColumn(parent, properties: restoredProps),
-      Text => addText(restoredProps["text"] ?? "Default Text", parent, properties: restoredProps),
-      Stack => addStack(parent, properties: restoredProps),
-      Positioned => addPositioned(parent, properties: restoredProps)!,
-      Expanded => addExpanded(parent, properties: restoredProps)!,
-      NinePatchButton => addNinepatchButton(parent, properties: restoredProps),
-      FittedBox => addFittedBox(parent, properties: restoredProps),
-      Transform => addTransform(parent, properties: restoredProps),
-      Opacity => addOpacity(parent, properties: restoredProps),
-      Card => addCard(parent, properties: restoredProps),
-      GridView => addGridView(parent, properties: restoredProps),
-      Image => addImage(parent, properties: restoredProps),
-      InteractiveViewer => addInteractiveViewer(parent, properties: restoredProps),
-      SingleChildScrollView => addSingleChildScrollView(parent, properties: restoredProps),
-      _ => throw UnimplementedError("the widget type $widgetType cant be created yet! please add it first!")
+
+
+    LayoutWidget? widget = switch(widgetType){
+      _ => WidgetDeclaration.declarationCache.where((element) => element.id == data["widgetType"]).first.builder(parent, properties: restoredProps)
     };
 
     List<LayoutWidget> children = (data['children'] as List)
         .map((child) => importWidget(Map<String, dynamic>.from(child), parent: widget, context: context))
         .toList();
 
-    widget.addChildren(children);
+    assert(widget != null, "${data["widgetType"]} is not a supported type!");
+
+    widget!.addChildren(children);
 
     return widget;
   }

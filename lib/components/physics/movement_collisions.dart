@@ -56,8 +56,6 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
   Hitbox? lastTouchedHitbox;
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    print("collision!");
-
     if(viewSide != ViewSide.side && other is CollisionBlock && !_debugNoClipMode) {
       return;
     }
@@ -104,7 +102,6 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
     if (other is! CollisionBlock) {
       return; //physics only work on the collision blocks (including the platforms)
     }
-    print("collision!");
 
     ShapeHitbox hitbox = getHitbox();
     Vector2 scale = getScale();

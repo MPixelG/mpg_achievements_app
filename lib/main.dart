@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_widgets.dart';
 import 'package:mpg_achievements_app/components/router/router.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import 'components/GUI/menuCreator/options/widget_option_definitions.dart';
+import 'components/GUI/menuCreator/components/widget_declaration.dart';
 
 //a global key to access the game widget state from outside the RiverPodAwareGameWidget or services that live outside the game, but when Riverpod ref logic is available use the standard way of accessing the game via ref.read(gameProvider)
 // because our game is of type game you would normally not need a type specifier, but here the RiverpodAwareGameWidget needs it to know which game it is dealing with
@@ -15,6 +15,7 @@ final GlobalKey<RiverpodAwareGameWidgetState<PixelAdventure>> gameWidgetKey = Gl
 void main() async {
   //Wait until the Flutter Widget is initialised
   WidgetsFlutterBinding.ensureInitialized();
+
   //Game then runs in Fullscreen mode and Landscape
   await Flame.device.fullScreen();
   await Flame.device.setLandscape();
@@ -23,8 +24,7 @@ void main() async {
   //later changed to only game when deploying
 
   NinePatchTexture.loadTextures();
-
-  registerWidgetOptions();
+  declareWidgets();
 
   runApp(const ProviderScope(child: MainApp(),));
 }

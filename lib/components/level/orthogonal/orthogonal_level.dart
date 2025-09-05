@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:vector_math/vector_math.dart';
 
@@ -18,6 +20,4 @@ class OrthogonalLevel extends Level{
   bool checkCollisionAt(Vector2 gridPos) {
     throw UnimplementedError();
   }
-
-
 }

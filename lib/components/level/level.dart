@@ -67,7 +67,7 @@ abstract class Level extends World
 
     level = await createTiledLevel("$levelName.tmx", tileSize);
     level.position = Vector2.zero();
-    isometricLevel = (game.level is IsometricLevel) ? true: false;
+    isometricLevel = (game.level is IsometricLevel);
 
     add(player);
 
@@ -184,8 +184,9 @@ abstract class Level extends World
 
     clickGridPos.clamp(Vector2.zero(), Vector2(level.width / tileSize.x - 1, level.height / tileSize.y - 1));
 
-    inspectTile(clickGridPos.x.toInt(), clickGridPos.y.toInt());
-
+    if(this is IsometricLevel) {
+      inspectTile(clickGridPos.x.toInt(), clickGridPos.y.toInt());
+    }
 
   }
 
