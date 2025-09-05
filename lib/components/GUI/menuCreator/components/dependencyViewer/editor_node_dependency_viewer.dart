@@ -6,15 +6,28 @@ import 'package:mpg_achievements_app/components/GUI/menuCreator/components/prope
 
 class NodeViewer extends StatefulWidget {
   // a widget to view and manage a tree of LayoutWidgets
-  final LayoutWidget? root; // the root node of the tree to display
+  final LayoutWidget root; // the root node of the tree to display
   final void Function()?
   updateViewport; // a function to update the viewport, not used in this widget but can be used to refresh the view of the parent
 
-  const NodeViewer({
-    this.root,
+  late final List<LayoutWidget> _currentSelectedWidget;
+
+  final void Function(LayoutWidget newNode) updateWithNewSelectedWidget;
+
+  NodeViewer({
+    required this.root,
     super.key,
     this.updateViewport,
-  }); //default constructor with an optional root node
+    required this.updateWithNewSelectedWidget,
+  }) { //default constructor with an optional root node
+    _currentSelectedWidget = [root];
+  }
+
+  LayoutWidget get currentSelectedWidget => _currentSelectedWidget.firstOrNull ?? root;
+  set currentSelectedWidget(LayoutWidget newVal) {
+    _currentSelectedWidget[0] = newVal;
+    updateViewport!();
+  }
 
   @override
   State<NodeViewer> createState() => NodeViewerState(); // create the state for this widget. we have a separate class for that
@@ -22,18 +35,23 @@ class NodeViewer extends StatefulWidget {
 
 class NodeViewerState extends State<NodeViewer> {
   //the state for the NodeViewer widget
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
   void _handleReorder(LayoutWidget dragged, LayoutWidget target) {
     //handle the reordering of nodes when a widget is dragged and dropped onto another
-    if (widget.root == null || //if there is no root node, do nothing
-        dragged ==
-            target || //if the dragged widget is the same as the target, do nothing
+    if (dragged == target || //if the dragged widget is the same as the target, do nothing
         isDescendant(dragged, target)) {
       //if the dragged widget is a descendant (a child / grand child / ...) of the target, do nothing
       return;
     }
 
     final parent = findParent(
-      widget.root!,
+      widget.root,
       dragged,
     ); //get the parent of the dragged widget
     parent?.removeChild(dragged); //remove the dragged widget from its parent
@@ -43,8 +61,7 @@ class NodeViewerState extends State<NodeViewer> {
 
     if (widget.updateViewport != null) {
       //if there is a function to update the viewport, call it
-      widget
-          .updateViewport!(); //this is used to refresh the view of the parent widget
+      widget.updateViewport!(); //this is used to refresh the view of the parent widget
     }
   }
 
@@ -59,10 +76,21 @@ class NodeViewerState extends State<NodeViewer> {
         c,
         child,
       ); //if thats not the case, repeat the process for the current child
-      if (found != null)
+      if (found != null) {
         return found; //if the child was found in the current child, return it
+      }
     }
     return null; //if the child was not found in any of the children, return null
+  }
+
+  LayoutWidget? selectedNode;
+
+  void updateSelectedNode(LayoutWidget node){
+    setState(() {
+      selectedNode = node;
+      widget._currentSelectedWidget[0] = node;
+      widget.updateWithNewSelectedWidget(node);
+    });
   }
 
   @override
@@ -149,6 +177,7 @@ class NodeViewerState extends State<NodeViewer> {
                     widget.updateViewport!();
                     setState(() {});
                   }, //the function to update the viewport, not used in this widget but can be used to refresh the view of the parent
+                  updateSelectedNode: updateSelectedNode, getSelectedNode: () => selectedNode,
                 ),
               ),
             ),
@@ -159,7 +188,7 @@ class NodeViewerState extends State<NodeViewer> {
   }
 }
 
-class DisplayNode extends StatelessWidget {
+class DisplayNode extends StatefulWidget {
   //a widget to display a single LayoutWidget and its children
   final LayoutWidget node; //the node to display
   final void Function(LayoutWidget dragged, LayoutWidget target)?
@@ -167,18 +196,35 @@ class DisplayNode extends StatelessWidget {
   final void Function()
   updateViewport; //a function to update the viewport, not used in this widget but can be used to refresh the view of the parent
 
+  final void Function(LayoutWidget) updateSelectedNode;
+  final LayoutWidget? Function() getSelectedNode;
+
   const DisplayNode({
     //constructor for the DisplayNode widget
     required this.node, //the node to display
     super.key, //the key for the widget
     this.onReorder, //function to reorder
     required this.updateViewport,
+    required this.updateSelectedNode,
+    required this.getSelectedNode,
   });
+
+
+  @override
+  State<StatefulWidget> createState() => _DisplayNodeState();
+}
+
+class _DisplayNodeState extends State<DisplayNode> {
+
+  static bool hasTapped = false; //a static variable to check if a menu is currently shown
+
 
   @override
   Widget build(BuildContext context) {
+    LayoutWidget node = widget.node;
+
     //build the widget tree for the DisplayNode and its children
-    final children = node.children; //get the children of the node to display
+    final children = widget.node.children; //get the children of the node to display
 
     List<Widget> displayedChildren = []; //a list to hold the widgets that will be displayed as children
     for (int i = 0; i < children.length; i++) {
@@ -189,10 +235,11 @@ class DisplayNode extends StatelessWidget {
         DisplayNode(
           //as a DisplayNode widget
           node: children[i], //with the given child node
-          onReorder: onReorder, //and the function to reorder them
+          onReorder: widget.onReorder, //and the function to reorder them
           key: ValueKey(children[i].id), //and a key to identify it
           updateViewport:
-              updateViewport, //and the function to update the viewport
+          widget.updateViewport, //and the function to update the viewport
+          updateSelectedNode: widget.updateSelectedNode, getSelectedNode: widget.getSelectedNode,
         ),
       );
     }
@@ -201,8 +248,8 @@ class DisplayNode extends StatelessWidget {
         (node.parent?.children.indexOf(node) ?? 0) > 0; //check if the node can be moved up (if its not the first child)
     bool canMoveDown =
         (node.parent?.children.indexOf(node) ?? 0) <
-        (node.parent?.children.length ?? 0) -
-            1; //check if the node can be moved down (if its not the last child)
+            (node.parent?.children.length ?? 0) -
+                1; //check if the node can be moved down (if its not the last child)
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -210,14 +257,14 @@ class DisplayNode extends StatelessWidget {
         if (!hasTapped) {
           //if no menu is currently shown, we show the context menu. we need to do this to prevent multiple menus from parents of this widgets from being shown at the same time
           hasTapped =
-              true; //set the static variable to true to indicate that a menu is shown
+          true; //set the static variable to true to indicate that a menu is shown
           _showContextMenu(
             context,
             details,
           ); //show the context menu at the position of the tap
           Future.delayed(
             Duration(milliseconds: 10),
-            () => hasTapped = false,
+                () => hasTapped = false,
           ); // reset the static variable after a short delay to allow the menu to be shown again
         }
       },
@@ -226,34 +273,38 @@ class DisplayNode extends StatelessWidget {
         if (hasTapped) {
           return; //if there has been tapped before, we dont want to do anything
         }
-        hasTapped =
-            true; //set the static variable to true to indicate that a menu is shown
+        hasTapped = true; //set the static variable to true to indicate that a menu is shown
+
         Future.delayed(Duration(milliseconds: 10), () => hasTapped = false);
 
         double buttonX = 16 * 1;
 
         if (buttonX - details.localPosition.dx > 20) {
-          //if the tap is more than 20 pixels away from the first button, we dont want to do anything
           return;
         }
 
         double secondButtonX =
-            16 * 3; //calculate the position of the second button
+            16 * 3; //the position of the second button
 
         if ((buttonX - details.localPosition.dx).abs() <
             (secondButtonX - details.localPosition.dx).abs()) {
           if (canMoveUp) {
             //if the tap is closer to the first button and the node can be moved up
             node.moveUp(); //we move the node up
-            updateViewport(); //and update the viewport
+            widget.updateViewport(); //and update the viewport
           }
         } //if the tap is closer to the first button, we press the first one
-        else {
+        else if (details.localPosition.dx < 16*3) {
           if (canMoveDown) {
             node.moveDown(); //if the tap is closer to the second button and the node can be moved down, we move the node down
-            updateViewport();
+            widget.updateViewport();
           }
-        } //otherwise we press the second one
+        } else {
+          setState(() {
+            widget.updateSelectedNode(widget.node);
+            print("click");
+          });
+        }
       },
 
       child: DragTarget<LayoutWidget>(
@@ -268,8 +319,8 @@ class DisplayNode extends StatelessWidget {
         },
         onAcceptWithDetails: (dragged) {
           //when a widget is dropped onto the DisplayNode
-          if (onReorder != null) {
-            onReorder!(
+          if (widget.onReorder != null) {
+            widget.onReorder!(
               dragged.data,
               node,
             ); //we call the function to reorder the nodes
@@ -338,12 +389,15 @@ class DisplayNode extends StatelessWidget {
   }
 
   Widget _buildNodeContent(
-    //a helper function to build the content of the DisplayNode
-    BuildContext context, //the context of the widget
-    bool isHovering, //if the DisplayNode is currently being hovered over
-    List<Widget>
-    displayedChildren, //the list of widgets that are the children of the node
-  ) {
+      //a helper function to build the content of the DisplayNode
+      BuildContext context, //the context of the widget
+      bool isHovering, //if the DisplayNode is currently being hovered over
+      List<Widget>
+      displayedChildren, //the list of widgets that are the children of the node
+      ) {
+
+    LayoutWidget node = widget.node;
+
     return Container(
       //the container that holds the content of the DisplayNode
       margin: const EdgeInsets.symmetric(
@@ -356,15 +410,14 @@ class DisplayNode extends StatelessWidget {
         //the decoration of the container
         color: isHovering
             ? Colors.green.shade50
-            : Colors
-                  .transparent, //if the DisplayNode is being hovered over, we use a light green background color, otherwise we use transparent (no background)
+            : widget.getSelectedNode() == widget.node ? Colors.blue.shade300 : Colors.white, //if the DisplayNode is being hovered over, we use a light green background color, otherwise we use transparent (no background)
         border:
-            isHovering //if the DisplayNode is being hovered over, we use a green border, otherwise we use a light grey border
+        isHovering //if the DisplayNode is being hovered over, we use a green border, otherwise we use a light grey border
             ? Border.all(color: Colors.green, width: 2) // a green border
             : Border.all(
-                color: Colors.grey.shade300,
-                width: 1,
-              ), // a light grey border
+          color: Colors.grey.shade300,
+          width: 1,
+        ), // a light grey border
         borderRadius: BorderRadius.circular(8), //with a border radius of 8
       ),
       child: IntrinsicWidth(
@@ -392,7 +445,7 @@ class DisplayNode extends StatelessWidget {
               child: Row(
                 //the content of the container is a row
                 mainAxisSize:
-                    MainAxisSize.min, //it takes as little space as needed
+                MainAxisSize.min, //it takes as little space as needed
                 children: [
                   //the children of the row are the icon and the id of the node
                   Icon(
@@ -406,8 +459,8 @@ class DisplayNode extends StatelessWidget {
                     Icons.keyboard_arrow_down,
                     size: 16,
                     color:
-                        (node.parent?.children.indexOf(node) ?? 0) <
-                            (node.parent?.children.length ?? 0) - 1
+                    (node.parent?.children.indexOf(node) ?? 0) <
+                        (node.parent?.children.length ?? 0) - 1
                         ? Colors.blue.shade700
                         : Colors.grey.shade400,
                   ),
@@ -421,7 +474,7 @@ class DisplayNode extends StatelessWidget {
                       //the style of the text
                       fontSize: 14, //the font size is 14
                       fontWeight:
-                          FontWeight.w600, //the font weight is semi-bold
+                      FontWeight.w600, //the font weight is semi-bold
                       color: Colors
                           .blue
                           .shade800, //the text color is a darker blue
@@ -445,7 +498,7 @@ class DisplayNode extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment
                       .start, //the children are aligned to the start (left side)
                   children:
-                      displayedChildren, //the children are the widgets we created earlier
+                  displayedChildren, //the children are the widgets we created earlier
                 ),
               ),
             ],
@@ -455,12 +508,14 @@ class DisplayNode extends StatelessWidget {
     );
   }
 
-  static bool hasTapped =
-      false; //a static variable to check if a menu is currently shown
+
   void _showContextMenu(BuildContext context, TapDownDetails details) {
+
+    LayoutWidget node = widget.node;
+
     //a function to show a context menu when the user right clicks on the DisplayNode
     hasTapped =
-        true; //set the static variable to true to indicate that a menu is shown
+    true; //set the static variable to true to indicate that a menu is shown
     showMenu(
       //show a menu with options
       context: context, //the context of the widget
@@ -480,7 +535,7 @@ class DisplayNode extends StatelessWidget {
             node.removeFromParent(
               node,
             ); //remove the node from its parent if it has a removeFromParent function
-            updateViewport();
+            widget.updateViewport();
           },
         ),
         PopupMenuItem(
@@ -500,13 +555,14 @@ class DisplayNode extends StatelessWidget {
                 node.children,
               ); //add the children of the node to the parent
               node.removeFromParent(node); //remove the node from its parent
-              updateViewport(); //update the viewport to reflect the changes
+              widget.updateViewport(); //update the viewport to reflect the changes
             }
           },
         ),
       ],
     );
   }
+
 
   void showPropertiesEditor(BuildContext context) {
     //a function to show the properties editor for the node
@@ -515,7 +571,7 @@ class DisplayNode extends StatelessWidget {
       context: context,
       barrierDismissible: true,
       builder: (context) {
-        return OptionEditorMenu(node: node, updateView: () => updateViewport());
+        return OptionEditorMenu(node: widget.node, updateView: () => widget.updateViewport());
       },
     );
   }

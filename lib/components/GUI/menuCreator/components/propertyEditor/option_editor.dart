@@ -7,44 +7,47 @@ import 'package:mpg_achievements_app/components/GUI/menuCreator/components/depen
 import 'package:mpg_achievements_app/components/GUI/menuCreator/options/widget_options.dart';
 
 class OptionEditorMenu extends StatefulWidget {
-  const OptionEditorMenu({
+
+  OptionEditorMenu({
     super.key,
-    required this.node,
-    required this.updateView,
-  });
+    required LayoutWidget node,
+    required this.updateView
+  }){
+    _currentWidget = [node];
+  }
 
   final VoidCallback updateView;
 
-  final LayoutWidget node;
+
+  late final List<LayoutWidget> _currentWidget;
+
+  LayoutWidget get node => _currentWidget.first;
+  set node(LayoutWidget newNode) {
+    print("new val set!");
+    _currentWidget[0] = newNode;
+    updateView();
+  }
+
+
 
   @override
-  State<StatefulWidget> createState() => _OptionEditorMenuState();
+  State<StatefulWidget> createState() => OptionEditorMenuState();
 }
 
-class _OptionEditorMenuState extends State<OptionEditorMenu> {
+class OptionEditorMenuState extends State<OptionEditorMenu> {
   @override
   Widget build(BuildContext context) {
+    print("rebuilt!");
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-        title: Text(
-          "Properties Editor for ${widget.node.widgetType}",
-        ), //the title of the app bar is the id of the node
-      ),
       body: Container(
-        decoration: BoxDecoration(
-          color: CupertinoColors.extraLightBackgroundGray,
-          borderRadius: BorderRadius.circular(12),
-        ),
         padding: EdgeInsets.all(24),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Node Properties",
+                "${widget.node.widgetType} Properties",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 48),
