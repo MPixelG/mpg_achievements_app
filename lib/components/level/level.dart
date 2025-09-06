@@ -170,6 +170,7 @@ abstract class Level extends World
     selectedTile = calculatedGridPos..floor();
     Vector2 clickGridPos = toGridPos(worldPositionTap);
 
+    //highlight the selected tile
     _highlightedTile = TileHighlightRenderable(selectedTile!);
     _highlightedTile?.position = toWorldPos(selectedTile!);
 
