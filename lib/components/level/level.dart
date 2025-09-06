@@ -163,11 +163,11 @@ abstract class Level extends World
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
     _highlightedTile?.removeFromParent();
-    final Vector2 screenPositionTap = event.localPosition;
+    final Vector2 screenPositionTap = event.localPosition; //screen position of the tap
     final Vector2 worldPositionTap = level.toLocal(screenPositionTap);
+    selectedTile = toGridPos(worldPositionTap)..floor();
     final Vector2 calculatedGridPos = toGridPos(worldPositionTap);
     final Vector2 worldPositionTile = toWorldPos(calculatedGridPos);
-    selectedTile = calculatedGridPos..floor();
     Vector2 clickGridPos = toGridPos(worldPositionTap);
 
     //highlight the selected tile

@@ -83,7 +83,7 @@ class IsometricLevel extends Level {
   Vector2 toWorldPos(Vector2 gridPos) {
     final localPoint = Vector2(
       (gridPos.x - gridPos.y) * (tileSize.x / 2),
-      (gridPos.x + gridPos.y) * (tileSize.y),
+      (gridPos.x + gridPos.y) * (tileSize.y /2),
     );
     // Convert local point to global world position, Add the maps's visual origin offset back to the local point
     // to get the correct world position
