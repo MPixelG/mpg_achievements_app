@@ -3,7 +3,6 @@ import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/level/level.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-
 import 'isometricRenderable.dart';
 import 'isometricTiledLevel.dart';
 
@@ -59,7 +58,7 @@ class IsometricLevel extends Level {
 
     (level as IsometricTiledLevel).renderComponentsInTree(canvas, children.whereType<IsometricRenderable>());
   }
-
+  //calculate the grid position from a world position
   @override
   Vector2 toGridPos(Vector2 worldPos) {
     Vector2 adjustedPos =
@@ -70,7 +69,7 @@ class IsometricLevel extends Level {
         ) +
         Vector2(1, 1);
   }
-
+  // Convert world position to isometric tile coordinates used in toGridPos
   Vector2 worldToTileIsometric(Vector2 worldPos) {
     final tileX =
         (worldPos.x / (tileSize.x / 2) + worldPos.y / (tileSize.y / 2)) / 2;
@@ -79,7 +78,7 @@ class IsometricLevel extends Level {
 
     return Vector2(tileX, tileY);
   }
-
+  //calculate the world position from a grid position
   @override
   Vector2 toWorldPos(Vector2 gridPos) {
     final localPoint = Vector2(
@@ -94,7 +93,7 @@ class IsometricLevel extends Level {
     );
     return localPoint + mapOriginOffset;
   }
-
+// Convert orthogonal tile coordinates to isometric world coordinates.todo review if we need it as it does the same as toWorldPos
   Vector2 isometricToOrthogonal(Vector2 isometricPoint) {
     final halfTileW = tileSize.x / 2;
     final halfTileH = tileSize.y / 2;

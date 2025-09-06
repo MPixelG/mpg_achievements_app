@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
@@ -12,6 +13,9 @@ import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
+import 'package:mpg_achievements_app/components/level/isometric/highlighted_tile.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometricRenderable.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometricTiledLevel.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
@@ -43,6 +47,7 @@ abstract class Level extends World
   late final IsometricTileGrid tileGrid;
   //currently selected tile
   Vector2? selectedTile;
+  TileHighlightRenderable? _highlightedTile;
 
 
 
@@ -64,10 +69,9 @@ abstract class Level extends World
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
-
-    level = await createTiledLevel("$levelName.tmx", tileSize);
+    level = IsometricTiledLevel((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
     level.position = Vector2.zero();
-    isometricLevel = (game.level is IsometricLevel);
+    isometricLevel = (game.level is IsometricLevel) ? true: false;
 
     add(player);
 
@@ -138,11 +142,11 @@ abstract class Level extends World
         5,
         animationStyle: AnimationStyle.easeOut,
       );
-    } //press V to toggle the visibility of the overlays
+    } //press N to shake the camera
 
     if (keysPressed.contains(LogicalKeyboardKey.keyH)) {
       game.overlays.toggle("guiEditor");
-    }
+    } //press H to toggle the GUI editor overlay
 
     return super.onKeyEvent(event, keysPressed);
   }
@@ -158,15 +162,22 @@ abstract class Level extends World
   @override
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
-
+    _highlightedTile?.removeFromParent();
     final Vector2 screenPositionTap = event.localPosition;
     final Vector2 worldPositionTap = level.toLocal(screenPositionTap);
     final Vector2 calculatedGridPos = toGridPos(worldPositionTap);
     final Vector2 worldPositionTile = toWorldPos(calculatedGridPos);
     selectedTile = calculatedGridPos..floor();
-
-
     Vector2 clickGridPos = toGridPos(worldPositionTap);
+
+    _highlightedTile = TileHighlightRenderable(selectedTile!);
+    _highlightedTile?.position = toWorldPos(selectedTile!);
+
+
+
+    add(_highlightedTile!);
+
+
 
 
     // ---  Debugging Logs ---
@@ -181,6 +192,7 @@ abstract class Level extends World
     print('Calculated Grid Position (Decimal): $calculatedGridPos');
     print('Selected Tile (Floored): $selectedTile');
     print('Logical World Position of Selected Tile: $worldPositionTile \n\n');
+    print('highlighted tile pos: ${_highlightedTile?.position}');
 
     clickGridPos.clamp(Vector2.zero(), Vector2(level.width / tileSize.x - 1, level.height / tileSize.y - 1));
 

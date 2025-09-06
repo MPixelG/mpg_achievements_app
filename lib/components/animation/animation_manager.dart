@@ -94,7 +94,7 @@ class AnimationLoadOptions{ //options for creating an animation
 
 
 enum AnimatedComponentGroup {
-  entity, object //for later use, indicates if the object changes in some vals or not.
+  entity, object, effect //for later use, indicates if the object changes in some vals or not.
 }
 
 
