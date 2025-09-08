@@ -71,7 +71,7 @@ abstract class GameWorld extends World
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
     level = IsometricTiledComponent((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
     level.position = Vector2.zero();
-    isometricLevel = (game.level is IsometricLevel) ? true: false;
+    isometricLevel = (game.gameWorld is IsometricLevel) ? true: false;
 
     add(player);
 

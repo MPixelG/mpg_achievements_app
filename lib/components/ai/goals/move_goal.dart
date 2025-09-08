@@ -24,7 +24,7 @@ class MoveGoal extends Goal {
   Vector2 get absoluteCenter => (parent!.parent! as PositionComponent).absoluteCenter;
   bool get isOnGround => (parent!.parent! as BasicMovement).isOnGround;
   bool get isShifting => (parent!.parent! as BasicMovement).isShifting;
-  GameWorld get level => (parent!.parent! as HasGameReference<PixelAdventure>).game.level;
+  GameWorld get level => (parent!.parent! as HasGameReference<PixelAdventure>).game.gameWorld;
 
   Vector2 get tilesize => level.tileSize;
 

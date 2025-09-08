@@ -32,7 +32,7 @@ class PixelAdventure extends FlameGame
   late final AdvancedCamera cam;
   late final Player player;
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
-  late final GameWorld level;
+  late final GameWorld gameWorld;
   final GuiEditor guiEditor = GuiEditor();
   late JoystickComponent joystick;
 
@@ -57,20 +57,20 @@ class PixelAdventure extends FlameGame
 
     if(orientationOfLevel == "orthogonal"){
       player = Player(playerCharacter: 'Pink Man');
-      level = OrthogonalLevel(levelName: levelName, player: player, tileSize: tileSize);
+      gameWorld = OrthogonalLevel(levelName: levelName, player: player, tileSize: tileSize);
     } else if(orientationOfLevel == "isometric"){
       player = IsometricPlayer(playerCharacter: 'Pink Man');
-      level = IsometricLevel(levelName: levelName, player: player, tileSize: tileSize );
+      gameWorld = IsometricLevel(levelName: levelName, player: player, tileSize: tileSize );
     } else {
       throw UnimplementedError(
           "an orientation of $orientationOfLevel isn't implemented! please use either orthogonal or isometric!");
     }
 
 
-    cam = AdvancedCamera(world: level);
+    cam = AdvancedCamera(world: gameWorld);
     cam.player = player;
     cam.viewfinder.anchor = Anchor.center;
-    await addAll([cam, level]);
+    await addAll([cam, gameWorld]);
 
     //add overlays
     overlays.add('TextOverlay');
@@ -110,7 +110,7 @@ class PixelAdventure extends FlameGame
     cam.viewport.add(joystick);
     cam.viewport.add(buttonComponent);
   }
-  Vector2 get tilesizeIso => Vector2.all(level.tileSize.x);
-  Vector2 get tilesizeOrtho => level.tileSize;
+  Vector2 get tilesizeIso => Vector2.all(gameWorld.tileSize.x);
+  Vector2 get tilesizeOrtho => gameWorld.tileSize;
 }
 

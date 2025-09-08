@@ -50,7 +50,7 @@ class Player extends GameCharacter
   FutureOr<void> onLoad() {
 
     // The player inspects its environment (the level) and configures itself.
-    if (game.level is IsometricLevel) {
+    if (game.gameWorld is IsometricLevel) {
       setMovementType(ViewSide.isometric);
     } else {
       setMovementType(ViewSide.side); // Default
@@ -264,7 +264,7 @@ class Player extends GameCharacter
   int get renderPriority => 1;
 
   @override
-  Vector2 get gridFeetPos => game.level.toGridPos(absolutePositionOfAnchor(Anchor.topCenter));
+  Vector2 get gridFeetPos => game.gameWorld.toGridPos(absolutePositionOfAnchor(Anchor.topCenter));
 
 
 }

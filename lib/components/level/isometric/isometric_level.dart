@@ -39,7 +39,7 @@ class IsometricLevel extends GameWorld {
     super.render(canvas);
 
     // After the map is drawn, we check if a tile has been selected.
-    if (game.level.selectedTile != null) {
+    if (game.gameWorld.selectedTile != null) {
       // If so, we call the highlight method on our grid instance.
       tileGrid.renderTileHighlight(canvas, selectedTile!);
     }

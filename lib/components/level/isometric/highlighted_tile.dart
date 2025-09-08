@@ -20,7 +20,7 @@ class TileHighlightRenderable extends SpriteAnimationGroupComponent with Riverpo
 
   @override
   void onLoad(){
-    tileSize = game.level.tileGrid.tileSize;
+    tileSize = game.gameWorld.tileGrid.tileSize;
     
   }
   

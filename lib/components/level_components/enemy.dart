@@ -55,7 +55,7 @@ class Enemy extends GameCharacter
   FutureOr<void> onLoad() {
     startingPosition = Vector2(position.x, position.y);
     // The player inspects its environment (the level) and configures itself.
-    if (game.level is IsometricLevel) {
+    if (game.gameWorld is IsometricLevel) {
       setMovementType(ViewSide.isometric);
     } else {
       setMovementType(ViewSide.side); // Default

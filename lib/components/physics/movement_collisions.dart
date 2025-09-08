@@ -38,7 +38,7 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
     if(viewSide == ViewSide.isometric) {
       hitbox = IsometricHitbox(
           Vector2.all(1),
-          game.level,
+          game.gameWorld,
           Vector2.zero(),
       );
       hitbox.position = Vector2(0, 16);
@@ -90,7 +90,7 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
       }
     } else if(viewSide == ViewSide.isometric){
 
-      if(game.level.checkCollisionAt(gridPos)){
+      if(game.gameWorld.checkCollisionAt(gridPos)){
         gridPos = lastSafePosition;
       }
     }
@@ -160,9 +160,9 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
   void checkCollisionIsometric(CollisionBlock other){
     hitbox.aabb.intersectsWithAabb2(other.hitbox.aabb);
 
-    Vector2 gridPos = game.level.toGridPos(position);
+    Vector2 gridPos = game.gameWorld.toGridPos(position);
 
-    Vector2 otherGridPos = game.level.toGridPos(other.position);
+    Vector2 otherGridPos = game.gameWorld.toGridPos(other.position);
     Vector2 otherHitboxSize = other.hitbox.size;
 
     Vector2 posDiff = gridPos - otherGridPos;
