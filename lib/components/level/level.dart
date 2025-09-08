@@ -172,7 +172,7 @@ abstract class Level extends World
 
     //highlight the selected tile
     _highlightedTile = TileHighlightRenderable(selectedTile!);
-    _highlightedTile?.position = toWorldPos(selectedTile!);
+    _highlightedTile?.position = toWorldPos(selectedTile!) - Vector2(0, tileSize.y/2);
 
 
 
