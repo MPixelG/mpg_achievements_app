@@ -1,14 +1,14 @@
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
-import 'package:mpg_achievements_app/components/level/level.dart';
+import 'package:mpg_achievements_app/components/level/game_world.dart';
 import '../level_components/checkpoint/checkpoint.dart';
 import '../level_components/collectables.dart';
 import '../level_components/enemy.dart';
 import '../level_components/saw.dart';
 import '../physics/collision_block.dart';
 
-void generateSpawningObjectsForLevel(Level level) {
+void generateSpawningObjectsForLevel(GameWorld level) {
   //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list
   final ObjectGroup? spawnPointsLayer = level.level.tileMap.getLayer<ObjectGroup>(
     'Spawnpoints',
@@ -87,7 +87,7 @@ void generateSpawningObjectsForLevel(Level level) {
 }
 
 
-void generateCollisionsForLevel(Level level) {
+void generateCollisionsForLevel(GameWorld level) {
   final collisionsLayer = level.level.tileMap.getLayer<ObjectGroup>('Collisions');
 
   Vector2 _orthogonalToIsometric(Vector2 orthoPos) {

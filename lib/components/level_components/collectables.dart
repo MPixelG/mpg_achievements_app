@@ -4,7 +4,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:mpg_achievements_app/components/particles/Particles.dart';
-import 'package:mpg_achievements_app/components/level/level.dart';
+import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
@@ -99,8 +99,8 @@ class Collectable extends SpriteAnimationComponent
         ),
       );
       _collected = true;
-      (parent as Level).totalCollectables--;
-      if ((parent as Level).totalCollectables == 0) {
+      (parent as GameWorld).totalCollectables--;
+      if ((parent as GameWorld).totalCollectables == 0) {
         parent?.add(generateConfetti(position));
       }
       Future.delayed(
@@ -108,9 +108,9 @@ class Collectable extends SpriteAnimationComponent
         () => removeFromParent(),
       ); // Remove after animation.
     } else if(interactiveTask && !_collected) {
-      (parent as Level).totalCollectables--;
+      (parent as GameWorld).totalCollectables--;
       _collected = true;
-      if ((parent as Level).totalCollectables == 0) {
+      if ((parent as GameWorld).totalCollectables == 0) {
         parent?.add(generateConfetti(position));
       }
     }

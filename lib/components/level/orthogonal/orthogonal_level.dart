@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/level/level.dart';
+import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:vector_math/vector_math.dart';
 
-class OrthogonalLevel extends Level{
+class OrthogonalLevel extends GameWorld{
   OrthogonalLevel({required super.levelName, required super.player, required super.tileSize});
 
   @override

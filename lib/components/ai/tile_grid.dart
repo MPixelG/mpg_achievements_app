@@ -3,14 +3,14 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
-import '../level/level.dart';
+import '../level/game_world.dart';
 
 class TileGrid extends Component {
   int width;
   int height;
 
   Vector2 tileSize;
-  Level level;
+  GameWorld level;
 
   List<List<TileType>> grid = [];
   List<List<bool>> highlightedSpots = [];

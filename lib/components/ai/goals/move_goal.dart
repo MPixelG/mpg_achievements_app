@@ -6,7 +6,7 @@ import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:mpg_achievements_app/components/ai/goals/goal.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
-import 'package:mpg_achievements_app/components/level/level.dart';
+import 'package:mpg_achievements_app/components/level/game_world.dart';
 import '../../../mpg_pixel_adventure.dart';
 import '../../physics/collision_block.dart';
 import '../../physics/movement.dart';
@@ -24,7 +24,7 @@ class MoveGoal extends Goal {
   Vector2 get absoluteCenter => (parent!.parent! as PositionComponent).absoluteCenter;
   bool get isOnGround => (parent!.parent! as BasicMovement).isOnGround;
   bool get isShifting => (parent!.parent! as BasicMovement).isShifting;
-  Level get level => (parent!.parent! as HasGameReference<PixelAdventure>).game.level;
+  GameWorld get level => (parent!.parent! as HasGameReference<PixelAdventure>).game.level;
 
   Vector2 get tilesize => level.tileSize;
 

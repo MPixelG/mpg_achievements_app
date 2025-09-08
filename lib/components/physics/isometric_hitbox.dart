@@ -1,9 +1,9 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/level/level.dart';
+import 'package:mpg_achievements_app/components/level/game_world.dart';
 
 class IsometricHitbox extends PolygonHitbox {
-  IsometricHitbox(Vector2 size, Level level, Vector2 offset)
+  IsometricHitbox(Vector2 size, GameWorld level, Vector2 offset)
       : super([
     level.isoToScreen(offset),
     level.isoToScreen(Vector2(size.x, 0) + offset),

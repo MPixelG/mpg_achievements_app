@@ -23,7 +23,7 @@ import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../background/scrolling_background.dart';
 
-abstract class Level extends World
+abstract class GameWorld extends World
     with
         HasGameReference<PixelAdventure>,
         KeyboardHandler,
@@ -55,7 +55,7 @@ abstract class Level extends World
   //In dart, late keyword is used to declare a variable or field that will be initialized at a later time.e.g. late String name
   //
   //constructor
-  Level(
+  GameWorld(
       {required this.levelName, required this.player, Background? background, required this.tileSize}) {
     if (background != null) this.background = background;
   }

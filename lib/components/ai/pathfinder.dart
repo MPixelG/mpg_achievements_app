@@ -4,6 +4,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
 import 'package:flame/events.dart';
+import 'package:flame/game.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/foundation.dart';
@@ -11,14 +12,14 @@ import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/ai/tile_grid.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
-import 'package:mpg_achievements_app/components/level/level.dart';
+import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 enum PathfindingAction { walk, jump, fall, climbUp, climbDown }
 
 class POIGenerator extends Component with HasGameReference<PixelAdventure>{
-  Level level; //the level where the pathfinding happens
+  GameWorld level; //the level where the pathfinding happens
 
   late TileGrid grid; // a grid that contains a state for every tile. for example solid, platform, ladder, air, etc.
 

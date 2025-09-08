@@ -1,12 +1,12 @@
 import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
-import 'package:mpg_achievements_app/components/level/level.dart';
+import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'isometricRenderable.dart';
 import 'isometricTiledLevel.dart';
 
-class IsometricLevel extends Level {
+class IsometricLevel extends GameWorld {
 
 
   // Example isometric tile size (width, height)

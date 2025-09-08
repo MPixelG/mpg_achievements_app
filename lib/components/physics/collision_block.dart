@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
-import 'package:mpg_achievements_app/components/level/level.dart';
+import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
@@ -17,7 +17,7 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
   bool hasHorizontalCollision;
   bool climbable;
 
-  Level? level;
+  GameWorld? level;
   CollisionBlock({
     super.position,
     super.size,

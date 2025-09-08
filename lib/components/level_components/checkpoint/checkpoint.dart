@@ -4,7 +4,7 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import '../../level/level.dart';
+import '../../level/game_world.dart';
 import '../../state_management/providers/playerStateProvider.dart';
 
 class Checkpoint extends SpriteAnimationGroupComponent
@@ -44,7 +44,7 @@ class Checkpoint extends SpriteAnimationGroupComponent
         ref.read(playerProvider.notifier).setCheckpoint(this);
 
         // Safely find the parent Level component.
-        final level = ancestors().whereType<Level>().firstOrNull;
+        final level = ancestors().whereType<GameWorld>().firstOrNull;
 
         // If the level is found, proceed with the logic.
         if (level != null) {

@@ -8,7 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 import '../../mpg_pixel_adventure.dart';
-import '../level/level.dart';
+import '../level/game_world.dart';
 import '../util/utils.dart' as util;
 import 'movement.dart';
 import 'movement_collisions.dart';
@@ -83,7 +83,7 @@ on PositionComponent, BasicMovement, KeyboardHandler {
     }
     if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
       debugMode = !debugMode;
-      (parent as Level).setDebugMode(debugMode);
+      (parent as GameWorld).setDebugMode(debugMode);
     } //press Y to toggle debug mode (visibility of hitboxes and more)
     return super.onKeyEvent(event, keysPressed);
   }

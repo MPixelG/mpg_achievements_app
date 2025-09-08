@@ -6,7 +6,7 @@ import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
-import 'package:mpg_achievements_app/components/level/level.dart';
+import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 class LayeredImageBackground extends Background with HasGameReference<PixelAdventure>{
@@ -65,7 +65,7 @@ class LayeredImageBackground extends Background with HasGameReference<PixelAdven
   }
 
 
-  factory LayeredImageBackground.ofLevel(Level level, AdvancedCamera cam){
+  factory LayeredImageBackground.ofLevel(GameWorld level, AdvancedCamera cam){
 
     int amountOfBackgroundImages =
         (level.level.tileMap

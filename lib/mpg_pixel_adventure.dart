@@ -15,7 +15,7 @@ import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'components/GUI/menuCreator/components/gui_editor.dart';
 import 'components/level/orthogonal/orthogonal_level.dart';
 import 'components/level_components/enemy.dart';
-import 'components/level/level.dart';
+import 'components/level/game_world.dart';
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame
     with
@@ -32,7 +32,7 @@ class PixelAdventure extends FlameGame
   late final AdvancedCamera cam;
   late final Player player;
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
-  late final Level level;
+  late final GameWorld level;
   final GuiEditor guiEditor = GuiEditor();
   late JoystickComponent joystick;
 
