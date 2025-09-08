@@ -22,10 +22,10 @@ class RenderInstance {
 
 // Instead of letting Flame render layer by layer, this component deconstructs the map
 // into a list of individual `RenderInstance` objects
-class IsometricTiledLevel extends TiledComponent{
+class IsometricTiledComponent extends TiledComponent{
   final List<RenderInstance> _tiles = [];
 
-  IsometricTiledLevel(super.map);
+  IsometricTiledComponent(super.map);
 
   @override
   Future<void> onLoad() async {

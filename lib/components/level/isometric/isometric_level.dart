@@ -29,7 +29,7 @@ class IsometricLevel extends GameWorld {
 
   @override
   Future<TiledComponent> createTiledLevel(String filename, Vector2 destTilesize) async{
-    return IsometricTiledLevel((await TiledComponent.load(filename, destTilesize)).tileMap);
+    return IsometricTiledComponent((await TiledComponent.load(filename, destTilesize)).tileMap);
   }
 
   //highlight the selected tile
@@ -50,13 +50,13 @@ class IsometricLevel extends GameWorld {
     assert(CameraComponent.currentCamera != null);
     super.renderTree(canvas);
 
-    if(level is! IsometricTiledLevel) return;
+    if(level is! IsometricTiledComponent) return;
 
     for (final child in children.where((element) => element is! IsometricRenderable && element != level)) {
       child.renderTree(canvas);
     }
 
-    (level as IsometricTiledLevel).renderComponentsInTree(canvas, children.whereType<IsometricRenderable>());
+    (level as IsometricTiledComponent).renderComponentsInTree(canvas, children.whereType<IsometricRenderable>());
   }
   //calculate the grid position from a world position
   @override

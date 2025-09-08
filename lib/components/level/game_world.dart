@@ -69,7 +69,7 @@ abstract class GameWorld extends World
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
-    level = IsometricTiledLevel((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
+    level = IsometricTiledComponent((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
     level.position = Vector2.zero();
     isometricLevel = (game.level is IsometricLevel) ? true: false;
 
