@@ -4,7 +4,7 @@ import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'isometricRenderable.dart';
-import 'isometricTiledLevel.dart';
+import 'isometricTiledComponent.dart';
 
 class IsometricLevel extends GameWorld {
 

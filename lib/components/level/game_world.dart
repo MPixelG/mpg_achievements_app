@@ -15,7 +15,7 @@ import 'package:mpg_achievements_app/components/background/LayeredImageBackgroun
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/components/level/isometric/highlighted_tile.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometricRenderable.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometricTiledLevel.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometricTiledComponent.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
