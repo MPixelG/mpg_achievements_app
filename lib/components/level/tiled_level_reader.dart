@@ -8,9 +8,9 @@ import '../level_components/enemy.dart';
 import '../level_components/saw.dart';
 import '../physics/collision_block.dart';
 
-void generateSpawningObjectsForLevel(GameWorld level) {
+void generateSpawningObjectsForLevel(GameWorld gameWorld) {
   //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list
-  final ObjectGroup? spawnPointsLayer = level.level.tileMap.getLayer<ObjectGroup>(
+  final ObjectGroup? spawnPointsLayer = gameWorld.level.tileMap.getLayer<ObjectGroup>(
     'Spawnpoints',
   );
 
@@ -22,8 +22,8 @@ void generateSpawningObjectsForLevel(GameWorld level) {
       switch (spawnPoint.class_) {
         case 'Player':
         //player spawning
-          level.player.position = Vector2(spawnPoint.x, spawnPoint.y);
-          level.player.priority = 1;
+          gameWorld.player.position = Vector2(spawnPoint.x, spawnPoint.y);
+          gameWorld.player.priority = 1;
           break;
         case 'Collectable':
         //checking type for spawning
@@ -42,7 +42,7 @@ void generateSpawningObjectsForLevel(GameWorld level) {
             animated: !interactiveTask,
           );
           Collectable.totalAmountOfCollectables++;
-          level.add(collectable);
+          gameWorld.add(collectable);
           break;
         case "Saw":
           final isVertical = spawnPoint.properties.getValue('isVertical');
@@ -57,7 +57,7 @@ void generateSpawningObjectsForLevel(GameWorld level) {
           );
           //saw rotates in the other direction
           saw.scale.x = -1;
-          level.add(saw);
+          gameWorld.add(saw);
           break;
         case "Checkpoint":
           final id = spawnPoint.properties.getValue('id');
@@ -70,15 +70,15 @@ void generateSpawningObjectsForLevel(GameWorld level) {
           // if checkpoint is already activated in tiled, the original spawnpoint is overridden
           if (isActivated == true) {
             //todo state management implement necessary level.player.lastCheckpoint = checkpoint;
-            level.player.position = checkpoint.position;
+            gameWorld.player.position = checkpoint.position;
           }
-          level.add(checkpoint);
+          gameWorld.add(checkpoint);
           break;
         case "Enemy":
         //enemy spawning
-          level.enemy = Enemy(enemyCharacter: "Virtual Guy");
-          level.enemy.position = Vector2(spawnPoint.x, spawnPoint.y);
-          level.add(level.enemy);
+          gameWorld.enemy = Enemy(enemyCharacter: "Virtual Guy");
+          gameWorld.enemy.position = Vector2(spawnPoint.x, spawnPoint.y);
+          gameWorld.add(gameWorld.enemy);
 
         default:
       }
@@ -87,9 +87,9 @@ void generateSpawningObjectsForLevel(GameWorld level) {
 }
 
 
-void generateCollisionsForLevel(GameWorld level) {
-  final collisionsLayer = level.level.tileMap.getLayer<ObjectGroup>('Collisions');
-
+void generateCollisionsForLevel(GameWorld gameWorld) {
+  final collisionsLayer = gameWorld.level.tileMap.getLayer<ObjectGroup>('Collisions');
+  //convert orthogonal to isometric coordinates
   Vector2 _orthogonalToIsometric(Vector2 orthoPos) {
     return Vector2(
         ((orthoPos.x - orthoPos.y) * 1.0),
@@ -102,8 +102,8 @@ void generateCollisionsForLevel(GameWorld level) {
 
       Vector2 pos;
 
-      if(level is IsometricWorld){
-        pos = _orthogonalToIsometric(collision.position) + Vector2(level.level.width / 2, 0);
+      if(gameWorld is IsometricWorld){
+        pos = _orthogonalToIsometric(collision.position) + Vector2(gameWorld.level.width / 2, 0);
       } else pos = collision.position;
 
 
@@ -115,9 +115,9 @@ void generateCollisionsForLevel(GameWorld level) {
             size: Vector2(collision.width, collision.height),
             hasCollisionDown: false,
             hasHorizontalCollision: false,
-            level: level
+            gameWorld: gameWorld
           );
-          level.add(platform);
+          gameWorld.add(platform);
         case 'Ladder':
           final ladder = CollisionBlock(
             position: pos,
@@ -127,16 +127,16 @@ void generateCollisionsForLevel(GameWorld level) {
             hasCollisionUp: true,
             hasHorizontalCollision: false,
             isLadder: true,
-            level: level
+            gameWorld: gameWorld
           );
-          level.add(ladder);
+          gameWorld.add(ladder);
         default:
           final block = CollisionBlock(
             position: pos,
             size: Vector2(collision.width, collision.height),
-            level: level
+            gameWorld: gameWorld
           );
-          level.add(block);
+          gameWorld.add(block);
       }
     }
   }

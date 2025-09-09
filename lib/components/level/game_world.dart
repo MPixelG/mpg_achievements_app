@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/material.dart' hide PointerMoveEvent, AnimationStyle;
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
@@ -14,7 +12,6 @@ import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/components/level/isometric/highlighted_tile.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometricRenderable.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometricTiledComponent.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
@@ -36,11 +33,8 @@ abstract class GameWorld extends World
   late final bool isometricLevel;
   final Player player;
   late Enemy enemy;
-
   int totalCollectables = 0;
-
   late final Vector2 tileSize;
-
   late final Background background;
 
   //reference to the tile grid for finding tapped tile
@@ -73,16 +67,10 @@ abstract class GameWorld extends World
     level.position = Vector2.zero();
     isometricLevel = (game.gameWorld is IsometricWorld) ? true: false;
 
+    // Add the player to the game world so it gets rendered and updated.
     add(player);
 
-    //inspect tiles if isometric level
-    if(isometricLevel){
-      inspectTile(15, 14);
-      inspectTile(1,1);
-    }
-
-    print("map origin: ${Vector2(level.width / 2, 0)}");
-
+    // Add the level to the game world so it gets rendered.
     await add(level);
 
     // If level not Parallax, load level with  scrolling background, property is added in Tiled
@@ -96,15 +84,15 @@ abstract class GameWorld extends World
     }
 
 
-    generator = POIGenerator(this);
-    add(generator);
+    generator = POIGenerator(this); // Initialize the POI generator with the current level
+    add(generator); // Add the POI generator to the game world
 
     //spawn objects
     generateSpawningObjectsForLevel(this);
     //add collision objects
     generateCollisionsForLevel(this);
 
-    // Set their scale and render priority so they display correctly.
+    // Debug mode off by default
     add(debugOverlays);
     debugOverlays.scale = Vector2.zero(); // Start hidden/scaled down
     debugOverlays.priority = 2; // Ensure overlays draw above the rest of the game
@@ -112,8 +100,15 @@ abstract class GameWorld extends World
     // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
     game.cam.setMoveBounds(Vector2.zero(), level.size);
 
+    //Debug prints
+    print("map origin: ${Vector2(level.width / 2, 0)}");
+
     //runs all the other onLoad-events the method is referring to, now not important
     return super.onLoad();
+
+
+
+
   }
 
   Future<TiledComponent> createTiledLevel(String filename, Vector2 destTileSize) async{
