@@ -1,15 +1,28 @@
 import 'dart:ui';
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
 import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'highlighted_tile.dart';
 import 'isometricRenderable.dart';
 import 'isometricTiledComponent.dart';
+
+class TileSelectionResult {
+  final Vector2 gridPosition;
+  final int layerIndex;
+  final Gid tileGid; // The Gid object from Tiled, which contains the tile ID
+
+  TileSelectionResult(this.gridPosition, this.layerIndex, this.tileGid);
+}
+
 
 class IsometricWorld extends GameWorld {
 
   late IsometricTileGrid tileGrid;
+  Vector2? selectedTile;
+  TileHighlightRenderable? highlightedTile;
 
   // Example isometric tile size (width, height)
   IsometricWorld({required super.levelName, required super.tileSize});
@@ -43,9 +56,52 @@ class IsometricWorld extends GameWorld {
     super.render(canvas);
 
     // After the map is drawn, we check if a tile has been selected.
-    if (game.gameWorld.selectedTile != null) {
-      // If so, we call the highlight method on our grid instance.
-      tileGrid.renderTileHighlight(canvas, selectedTile!);
+    // If so, we call the highlight method on our grid instance.
+    tileGrid.renderTileHighlight(canvas, selectedTile!);
+    }
+
+  @override
+  void onTapDown(TapDownEvent event) {
+    super.onTapDown(event);
+
+    //final Vector2 screenPositionTap = event.localPosition; //screen position of the tap
+    //final Vector2 worldPositionTap = level.toLocal(screenPositionTap);
+    //selectedTile = toGridPos(worldPositionTap)..floor();
+    final screenPositionTap = event.localPosition;
+    final worldPositionTap = level.toLocal(screenPositionTap);
+    Vector2? selectedTile = toGridPos(worldPositionTap)..floor();
+
+    // Use our new function to find the top-most tile.
+    final selectionResult = getTopmostTileAtGridPos(selectedTile);
+
+    // Remove the old highlight.
+    highlightedTile?.removeFromParent();
+
+    if (selectionResult != null) {
+      // A tile was successfully selected!
+
+      // Create the highlight with both grid position and layer index.
+      highlightedTile = TileHighlightRenderable(
+        selectionResult.gridPosition,
+        selectionResult.layerIndex,
+      );
+
+      // Position the highlight using the layer-aware toWorldPos.
+      highlightedTile!.position = toWorldPos(
+        selectionResult.gridPosition,
+        layerIndex: selectionResult.layerIndex,
+      ) + Vector2(0, -tileSize.y / 2); // Adjust for isometric tile height
+
+
+
+      add(highlightedTile!);
+      print("Selected tile at ${selectionResult
+          .gridPosition} on layer ${selectionResult.layerIndex}");
+    } else {
+      // No tile was found at this position (clicked on empty space).
+      highlightedTile = null;
+      selectedTile = null;
+      print("No tile selected.");
     }
   }
 
@@ -84,10 +140,10 @@ class IsometricWorld extends GameWorld {
   }
   //calculate the world position from a grid position
   @override
-  Vector2 toWorldPos(Vector2 gridPos) {
+  Vector2 toWorldPos(Vector2 gridPos, {int layerIndex = 0}) {
     final localPoint = Vector2(
       (gridPos.x - gridPos.y) * (tileSize.x / 2),
-      (gridPos.x + gridPos.y) * (tileSize.y /2),
+      (gridPos.x + gridPos.y) * (tileSize.y/2),
     );
     // Convert local point to global world position, Add the maps's visual origin offset back to the local point
     // to get the correct world position
@@ -95,7 +151,9 @@ class IsometricWorld extends GameWorld {
       level.position.x + (level.width / 2),
       level.position.y,
     );
-    return localPoint + mapOriginOffset;
+    //apply vertical movement for different layers according to z-index
+    final layerOffset = Vector2(0, layerIndex * tileSize.y/32);//works for now as each tile is 32 pixels high in the tileset
+    return localPoint + mapOriginOffset + layerOffset;
   }
 // Convert orthogonal tile coordinates to isometric world coordinates.todo review if we need it as it does the same as toWorldPos
   Vector2 isometricToOrthogonal(Vector2 isometricPoint) {
@@ -131,4 +189,37 @@ class IsometricWorld extends GameWorld {
     }
     return false;
   }
+
+  // Finds the top-most, non-empty tile at a given grid coordinate.
+  // It iterates through the map layers from top to bottom.
+  TileSelectionResult? getTopmostTileAtGridPos(Vector2 gridPos) {
+    final map = game.gameWorld.level.tileMap.map;
+    final x = gridPos.x.toInt();
+    final y = gridPos.y.toInt();
+
+    // Iterate from the top layer (highest index) down to the bottom.
+    for (var i = map.layers.length - 1; i >= 0; i--) {
+      final layer = map.layers[i];
+
+      // We only care about tile layers for selection.
+      if (layer is TileLayer) {
+        // Make sure the coordinates are within the bounds of this layer.
+        if (x >= 0 && x < layer.width && y >= 0 && y < layer.height) {
+
+          // Tiled stores tile data in [row][column] format, so we use [y][x].
+          final gid = layer.tileData![y][x];
+
+          // A GID of 0 means the tile is empty. If it's not empty, we've found our target! that means the first tile we find in the top-most layer is our tile that we look for
+          if (gid.tile != 0) {
+            // Success! Return all the info about the tile we found.
+            return TileSelectionResult(gridPos, i, gid);
+          }
+        }
+      }
+    }
+
+    // If we looped through all layers and found nothing, return null.
+    return null;
+  }
+
 }

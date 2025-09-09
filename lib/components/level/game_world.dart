@@ -11,7 +11,6 @@ import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
-import 'package:mpg_achievements_app/components/level/isometric/highlighted_tile.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometricTiledComponent.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
@@ -39,11 +38,6 @@ abstract class GameWorld extends World
 
   //reference to the tile grid for finding tapped tile
   late final IsometricTileGrid tileGrid;
-  //currently selected tile
-  Vector2? selectedTile;
-  TileHighlightRenderable? _highlightedTile;
-
-
 
   //loads when the class instantiated
   //In dart, late keyword is used to declare a variable or field that will be initialized at a later time.e.g. late String name
@@ -160,40 +154,40 @@ abstract class GameWorld extends World
   @override
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
-    _highlightedTile?.removeFromParent();
+    //_highlightedTile?.removeFromParent();
     final Vector2 screenPositionTap = event.localPosition; //screen position of the tap
     final Vector2 worldPositionTap = level.toLocal(screenPositionTap);
-    selectedTile = toGridPos(worldPositionTap)..floor();
-    final Vector2 calculatedGridPos = toGridPos(worldPositionTap);
-    final Vector2 worldPositionTile = toWorldPos(calculatedGridPos);
+    //selectedTile = toGridPos(worldPositionTap)..floor();
+    //final Vector2 calculatedGridPos = toGridPos(worldPositionTap);
+    //final Vector2 worldPositionTile = toWorldPos(calculatedGridPos);
     Vector2 clickGridPos = toGridPos(worldPositionTap);
 
     //highlight the selected tile
-    _highlightedTile = TileHighlightRenderable(selectedTile!);
-    _highlightedTile?.position = toWorldPos(selectedTile!) - Vector2(0, tileSize.y/2);
+   // _highlightedTile = TileHighlightRenderable(selectedTile!);
+   // _highlightedTile?.position = toWorldPos(selectedTile!) - Vector2(0, tileSize.y/2);
 
 
 
-    add(_highlightedTile!);
+   // add(_highlightedTile!);
 
 
 
 
     // ---  Debugging Logs ---
     //POI generator
-    print(generator.grid.isBlocked(clickGridPos..floor()));
-    print("world pos: $worldPositionTap");
+   // print(generator.grid.isBlocked(clickGridPos..floor()));
+   // print("world pos: $worldPositionTap");
     //mouse pos -> grid po
-    print("grid pos: ${clickGridPos}\n\n");
-    print('Screen Position of Tap: $screenPositionTap');
+    //print("grid pos: ${clickGridPos}\n\n");
+    //print('Screen Position of Tap: $screenPositionTap');
     print('Camera Position: ${game.cam.pos}, Zoom: ${game.cam.givenZoom}');
-    print('World Position of Tap (Calculated): $worldPositionTap');
-    print('Calculated Grid Position (Decimal): $calculatedGridPos');
-    print('Selected Tile (Floored): $selectedTile');
-    print('Logical World Position of Selected Tile: $worldPositionTile \n\n');
-    print('highlighted tile pos: ${_highlightedTile?.position}');
+    //print('World Position of Tap (Calculated): $worldPositionTap');
+    //print('Calculated Grid Position (Decimal): $calculatedGridPos');
+    //print('Selected Tile (Floored): $selectedTile');
+    //print('Logical World Position of Selected Tile: $worldPositionTile \n\n');
+    //print('highlighted tile pos: ${_highlightedTile?.position}');
 
-    clickGridPos.clamp(Vector2.zero(), Vector2(level.width / tileSize.x - 1, level.height / tileSize.y - 1));
+    //clickGridPos.clamp(Vector2.zero(), Vector2(level.width / tileSize.x - 1, level.height / tileSize.y - 1));
 
     if(this is IsometricWorld) {
       inspectTile(clickGridPos.x.toInt(), clickGridPos.y.toInt());

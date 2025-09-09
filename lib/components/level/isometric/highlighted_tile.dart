@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
@@ -13,8 +12,9 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 class TileHighlightRenderable extends SpriteAnimationGroupComponent with RiverpodComponentMixin, IsometricRenderable, CollisionCallbacks, HasGameReference<PixelAdventure>, AnimationManager {
 
   final Vector2 gridPos;
+  final int layerIndex;
 
-  TileHighlightRenderable(this.gridPos);
+  TileHighlightRenderable(this.gridPos, this.layerIndex);
 
   late final Vector2 tileSize;
 
@@ -61,7 +61,10 @@ class TileHighlightRenderable extends SpriteAnimationGroupComponent with Riverpo
   Vector2 get gridFeetPos => gridPos;
 
   @override
-  int get renderPriority => 1;
+  int get renderPriority {
+    //ensures that the highlight is rendered above the tile but below characters
+    return (layerIndex*10)+1;
+  }
 
   @override
   List<AnimationLoadOptions> get animationOptions => [

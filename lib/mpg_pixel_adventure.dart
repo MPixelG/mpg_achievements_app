@@ -33,7 +33,7 @@ class PixelAdventure extends FlameGame
   late final GameWorld gameWorld;
   final GuiEditor guiEditor = GuiEditor();
   late JoystickComponent joystick;
-  late String currentLevel = "Level_2";
+  late String currentLevel = "Level_7";
 
   //bools for game logic
   //needs to go into the overlay_controller later
