@@ -31,7 +31,7 @@ abstract class GameWorld extends World
   final String levelName;
   late TiledComponent level;
   late final bool isometricLevel;
-  final Player player;
+  late Player player;
   late Enemy enemy;
   int totalCollectables = 0;
   late final Vector2 tileSize;
@@ -50,7 +50,7 @@ abstract class GameWorld extends World
   //
   //constructor
   GameWorld(
-      {required this.levelName, required this.player, Background? background, required this.tileSize}) {
+      {required this.levelName, Background? background, required this.tileSize}) {
     if (background != null) this.background = background;
   }
 
@@ -72,11 +72,9 @@ abstract class GameWorld extends World
     }
 
 
-    // Add the player to the game world so it gets rendered and updated.
-    add(player);
-
+   await add(game.gameWorld.player);
     // Add the level to the game world so it gets rendered.
-    await add(level);
+   await add(level);
 
     // If level not Parallax, load level with  scrolling background, property is added in Tiled
     if (level.tileMap
@@ -90,7 +88,7 @@ abstract class GameWorld extends World
 
 
     generator = POIGenerator(this); // Initialize the POI generator with the current level
-    add(generator); // Add the POI generator to the game world
+   await add(generator); // Add the POI generator to the game world
 
     //spawn objects
     generateSpawningObjectsForLevel(this);
@@ -109,7 +107,7 @@ abstract class GameWorld extends World
     print("map origin: ${Vector2(level.width / 2, 0)}");
 
     //runs all the other onLoad-events the method is referring to, now not important
-    return super.onLoad();
+    await super.onLoad();
 
 
 

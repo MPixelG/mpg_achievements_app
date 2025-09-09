@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
+import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
 import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'isometricRenderable.dart';
@@ -11,12 +12,14 @@ class IsometricWorld extends GameWorld {
   late IsometricTileGrid tileGrid;
 
   // Example isometric tile size (width, height)
-  IsometricWorld({required super.levelName, required super.player, required super.tileSize});
+  IsometricWorld({required super.levelName, required super.tileSize});
 
   @override
   Future<void> onLoad() async {
-    await super.onLoad();
+   // Initialize the player as an IsometricPlayer
+   player = IsometricPlayer(playerCharacter: 'Pink Man');
 
+    await super.onLoad();
     //find the collision layer
     final collisionLayer = level.tileMap.getLayer<ObjectGroup>('Collisions');
     tileGrid = IsometricTileGrid(

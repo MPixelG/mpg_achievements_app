@@ -8,14 +8,13 @@ import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
-import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
-import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'components/GUI/menuCreator/components/gui_editor.dart';
 import 'components/level/orthogonal/orthogonal_world.dart';
 import 'components/level_components/enemy.dart';
 import 'components/level/game_world.dart';
+
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame
     with
@@ -30,11 +29,11 @@ class PixelAdventure extends FlameGame
 
   ///Game components
   late final AdvancedCamera cam;
-  late final Player player;
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
   late final GameWorld gameWorld;
   final GuiEditor guiEditor = GuiEditor();
   late JoystickComponent joystick;
+  late String currentLevel = "Level_2";
 
   //bools for game logic
   //needs to go into the overlay_controller later
@@ -51,16 +50,13 @@ class PixelAdventure extends FlameGame
     await images.loadAllImages();
     //world is loaded after initialising all images
 
-    String levelName = "Level_7";
-    Vector2 tileSize = await getTilesizeOfLevel(levelName);
-    String orientationOfLevel = await getOrientationOfLevel(levelName);
+    Vector2 tileSize = await getTilesizeOfLevel(currentLevel);
+    String orientationOfLevel = await getOrientationOfLevel(currentLevel);
 
     if(orientationOfLevel == "orthogonal"){
-      player = Player(playerCharacter: 'Pink Man');
-      gameWorld = OrthogonalWorld(levelName: levelName, player: player, tileSize: tileSize);
+      gameWorld = OrthogonalWorld(levelName: currentLevel, tileSize: tileSize);
     } else if(orientationOfLevel == "isometric"){
-      player = IsometricPlayer(playerCharacter: 'Pink Man');
-      gameWorld = IsometricWorld(levelName: levelName, player: player, tileSize: tileSize);
+      gameWorld = IsometricWorld(levelName: currentLevel, tileSize: tileSize);
     } else {
       throw UnimplementedError(
           "an orientation of $orientationOfLevel isn't implemented! please use either orthogonal or isometric!");
@@ -68,19 +64,13 @@ class PixelAdventure extends FlameGame
 
 
     cam = AdvancedCamera(world: gameWorld);
-    cam.player = player;
     cam.viewfinder.anchor = Anchor.center;
     await addAll([cam, gameWorld]);
 
     //add overlays
     overlays.add('TextOverlay');
 
-    cam.setFollowPlayer(
-      true,
-      player: player,
-      accuracy: 50,
-    ); //follows the player.
-
+   await add(_FollowCameraComponent()); //helper class to follow the player after the world and player are loaded
     return super.onLoad();
   }
 
@@ -112,5 +102,23 @@ class PixelAdventure extends FlameGame
   }
   Vector2 get tilesizeIso => Vector2.all(gameWorld.tileSize.x);
   Vector2 get tilesizeOrtho => gameWorld.tileSize;
+}
+
+
+//helper class to follow the player after the world and player are loaded
+class _FollowCameraComponent extends Component with HasGameReference<PixelAdventure> {
+  @override
+  void onMount() {
+    super.onMount();
+    // Now that the world is mounted, we know its player exists.
+    game.cam.player = game.gameWorld.player;
+    game.cam.setFollowPlayer(
+      true,
+      player: game.gameWorld.player,
+      accuracy: 50,
+    );
+    // This component's only job is to run once, so we remove it immediately.
+    removeFromParent();
+  }
 }
 

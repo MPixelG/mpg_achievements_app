@@ -64,7 +64,7 @@ class Enemy extends GameCharacter
     add(manager);
 
     PathtracingGoal goal = PlayerLocatingGoal(1);
-    MoveGoal moveGoal = FollowPlayerGoal(0, game.player);
+    MoveGoal moveGoal = FollowPlayerGoal(0, game.gameWorld.player);
 
     manager.addGoal(goal);
     manager.addGoal(moveGoal);
@@ -90,7 +90,7 @@ class Enemy extends GameCharacter
 
     //debug key bindings
     if (keysPressed.contains(LogicalKeyboardKey.keyF)) {
-      position = game.player.position.clone();
+      position = game.gameWorld.player.position.clone();
     }
     if (keysPressed.contains(LogicalKeyboardKey.keyG)) {
       debugFlyMode = !debugFlyMode;

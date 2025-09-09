@@ -141,11 +141,11 @@ class SpeechBubbleState extends State<SpeechBubble>
     }
 
     // Initialize the player position and height
-    _playerHeight = widget.game.player.height;
-    _playerWidth = widget.game.player.width;
+    _playerHeight = widget.game.gameWorld.player.height;
+    _playerWidth = widget.game.gameWorld.player.width;
     // Adjust the position based on the camera's local to global conversion
     _playerPosition = widget.game.cam.localToGlobal(
-      widget.game.player.position,
+      widget.game.gameWorld.player.position,
     );
 
     return AnimatedPositioned(
