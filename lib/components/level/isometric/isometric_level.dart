@@ -6,11 +6,11 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'isometricRenderable.dart';
 import 'isometricTiledComponent.dart';
 
-class IsometricLevel extends GameWorld {
+class IsometricWorld extends GameWorld {
 
 
   // Example isometric tile size (width, height)
-  IsometricLevel({required super.levelName, required super.player, required super.tileSize});
+  IsometricWorld({required super.levelName, required super.player, required super.tileSize});
 
   @override
   Future<void> onLoad() async {

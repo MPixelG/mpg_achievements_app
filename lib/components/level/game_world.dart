@@ -35,7 +35,7 @@ abstract class GameWorld extends World
   late TiledComponent level;
   late final bool isometricLevel;
   final Player player;
-  Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
+  late Enemy enemy;
 
   int totalCollectables = 0;
 
@@ -71,7 +71,7 @@ abstract class GameWorld extends World
     // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
     level = IsometricTiledComponent((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
     level.position = Vector2.zero();
-    isometricLevel = (game.gameWorld is IsometricLevel) ? true: false;
+    isometricLevel = (game.gameWorld is IsometricWorld) ? true: false;
 
     add(player);
 
@@ -197,7 +197,7 @@ abstract class GameWorld extends World
 
     clickGridPos.clamp(Vector2.zero(), Vector2(level.width / tileSize.x - 1, level.height / tileSize.y - 1));
 
-    if(this is IsometricLevel) {
+    if(this is IsometricWorld) {
       inspectTile(clickGridPos.x.toInt(), clickGridPos.y.toInt());
     }
 

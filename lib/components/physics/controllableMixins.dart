@@ -11,7 +11,7 @@ import '../../mpg_pixel_adventure.dart';
 import '../level/game_world.dart';
 import '../util/utils.dart' as util;
 import 'movement.dart';
-import 'movement_collisions.dart';
+import 'collisions.dart';
 
 mixin KeyboardControllableMovement
 on PositionComponent, BasicMovement, KeyboardHandler {

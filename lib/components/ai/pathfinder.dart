@@ -29,7 +29,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
   POIGenerator(this.level) { //the constructor
 
-    if(level is IsometricLevel){
+    if(level is IsometricWorld){
       grid = IsometricTileGrid(
           (level.level.width / tilesize.x).toInt(),
           (level.level.height / tilesize.y).toInt(),

@@ -60,8 +60,6 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
       return;
     }
 
-
-
     if (other is CollisionBlock && !_debugNoClipMode) {
       lastTouchedHitbox = other.hitbox;
 

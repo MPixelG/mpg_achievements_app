@@ -13,7 +13,7 @@ import 'package:mpg_achievements_app/components/level/isometric/isometric_level.
 import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'components/GUI/menuCreator/components/gui_editor.dart';
-import 'components/level/orthogonal/orthogonal_level.dart';
+import 'components/level/orthogonal/orthogonal_world.dart';
 import 'components/level_components/enemy.dart';
 import 'components/level/game_world.dart';
 //DragCallbacks are imported for touch controls
@@ -57,10 +57,10 @@ class PixelAdventure extends FlameGame
 
     if(orientationOfLevel == "orthogonal"){
       player = Player(playerCharacter: 'Pink Man');
-      gameWorld = OrthogonalLevel(levelName: levelName, player: player, tileSize: tileSize);
+      gameWorld = OrthogonalWorld(levelName: levelName, player: player, tileSize: tileSize);
     } else if(orientationOfLevel == "isometric"){
       player = IsometricPlayer(playerCharacter: 'Pink Man');
-      gameWorld = IsometricLevel(levelName: levelName, player: player, tileSize: tileSize );
+      gameWorld = IsometricWorld(levelName: levelName, player: player, tileSize: tileSize );
     } else {
       throw UnimplementedError(
           "an orientation of $orientationOfLevel isn't implemented! please use either orthogonal or isometric!");

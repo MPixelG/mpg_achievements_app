@@ -102,7 +102,7 @@ void generateCollisionsForLevel(GameWorld level) {
 
       Vector2 pos;
 
-      if(level is IsometricLevel){
+      if(level is IsometricWorld){
         pos = _orthogonalToIsometric(collision.position) + Vector2(level.level.width / 2, 0);
       } else pos = collision.position;
 

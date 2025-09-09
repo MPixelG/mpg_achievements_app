@@ -5,7 +5,7 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometricRenderable.dart';
-import 'package:mpg_achievements_app/components/physics/movement_collisions.dart';
+import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
@@ -49,8 +49,8 @@ class Player extends GameCharacter
   @override
   FutureOr<void> onLoad() {
 
-    // The player inspects its environment (the level) and configures itself.
-    if (game.gameWorld is IsometricLevel) {
+    // The player inspects its environment (the world) and configures itself.
+    if (game.gameWorld is IsometricWorld) {
       setMovementType(ViewSide.isometric);
     } else {
       setMovementType(ViewSide.side); // Default

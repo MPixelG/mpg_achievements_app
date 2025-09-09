@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:vector_math/vector_math.dart';
 
-class OrthogonalLevel extends GameWorld{
-  OrthogonalLevel({required super.levelName, required super.player, required super.tileSize});
+class OrthogonalWorld extends GameWorld{
+  OrthogonalWorld({required super.levelName, required super.player, required super.tileSize});
 
   @override
   Vector2 toGridPos(Vector2 pos) {
