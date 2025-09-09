@@ -6,10 +6,10 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
-import 'package:flutter/cupertino.dart' hide AnimationStyle, Image;
+import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
 import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 import 'components/GUI/menuCreator/components/gui_editor.dart';
@@ -51,7 +51,7 @@ class PixelAdventure extends FlameGame
     await images.loadAllImages();
     //world is loaded after initialising all images
 
-    String levelName = "level_7";
+    String levelName = "level_2";
     Vector2 tileSize = await getTilesizeOfLevel(levelName);
     String orientationOfLevel = await getOrientationOfLevel(levelName);
 
@@ -60,7 +60,7 @@ class PixelAdventure extends FlameGame
       gameWorld = OrthogonalWorld(levelName: levelName, player: player, tileSize: tileSize);
     } else if(orientationOfLevel == "isometric"){
       player = IsometricPlayer(playerCharacter: 'Pink Man');
-      gameWorld = IsometricWorld(levelName: levelName, player: player, tileSize: tileSize );
+      gameWorld = IsometricWorld(levelName: levelName, player: player, tileSize: tileSize);
     } else {
       throw UnimplementedError(
           "an orientation of $orientationOfLevel isn't implemented! please use either orthogonal or isometric!");

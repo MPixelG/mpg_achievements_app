@@ -13,7 +13,7 @@ import 'package:mpg_achievements_app/components/background/LayeredImageBackgroun
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/components/level/isometric/highlighted_tile.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometricTiledComponent.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
@@ -62,10 +62,15 @@ abstract class GameWorld extends World
     //await need to be there because it takes some time to load, that's why the method needs to be async
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
-    // The '$levelName.tmx' refers to a .tmx file (created in Tiled), using 32x32 tiles.
-    level = IsometricTiledComponent((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
-    level.position = Vector2.zero();
+    // Determine if the level is isometric based on the game world's type.
     isometricLevel = (game.gameWorld is IsometricWorld) ? true: false;
+    if(isometricLevel) {
+    level = IsometricTiledComponent((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
+    level.position = Vector2.zero();}
+    else {
+      level = TiledComponent((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
+    }
+
 
     // Add the player to the game world so it gets rendered and updated.
     add(player);

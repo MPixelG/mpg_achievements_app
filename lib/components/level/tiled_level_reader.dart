@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_level.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
 import 'package:mpg_achievements_app/components/level/game_world.dart';
 import '../level_components/checkpoint/checkpoint.dart';
 import '../level_components/collectables.dart';

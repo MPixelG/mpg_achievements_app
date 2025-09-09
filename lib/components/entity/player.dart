@@ -11,7 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
-import '../level/isometric/isometric_level.dart';
+import '../level/isometric/isometric_world.dart';
 import '../level_components/saw.dart';
 import '../physics/controllableMixins.dart';
 import '../physics/movement.dart';
