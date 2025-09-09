@@ -8,6 +8,7 @@ import 'isometricTiledComponent.dart';
 
 class IsometricWorld extends GameWorld {
 
+  late IsometricTileGrid tileGrid;
 
   // Example isometric tile size (width, height)
   IsometricWorld({required super.levelName, required super.player, required super.tileSize});
