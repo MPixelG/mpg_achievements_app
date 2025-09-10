@@ -5,6 +5,7 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometricRenderable.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometricTiledComponent.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 import 'package:flutter/services.dart';
@@ -265,6 +266,9 @@ class Player extends GameCharacter
 
   @override
   Vector2 get gridFeetPos => game.gameWorld.toGridPos(absolutePositionOfAnchor(Anchor.topCenter));
+
+  @override
+  RenderCategory get renderCategory => RenderCategory.entity;
 
 
 }

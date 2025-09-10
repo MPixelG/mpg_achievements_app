@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
@@ -6,6 +5,10 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometricRenderable.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 
+// An enumeration to categorize renderable objects.
+enum RenderCategory { tile,
+  tileHighlight,
+  entity,}
 
 // A data class designed to hold all the necessary information for rendering a single object,
 class RenderInstance {
@@ -16,7 +19,8 @@ class RenderInstance {
   final Vector2 gridPos;
   // The layer index from the Tiled map. This serves as the primary sorting key
   final int zIndex;
-  RenderInstance(this.render, this.position, this.zIndex, this.gridPos);
+  final RenderCategory category;
+  RenderInstance(this.render, this.position, this.zIndex, this.gridPos, this.category);
 }
 
 
@@ -138,7 +142,7 @@ class IsometricTiledComponent extends TiledComponent{
     final worldPos = orthogonalToIsometric(Vector2(tileX * 16, tileY * 16)) //transform orthogonal to screen position
         + Vector2(map.width * tileW, 0); //shift the map to the center of the screen to be all positive
     // Add the RenderInstance to our cache.
-    _tiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble())));
+    _tiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble()), RenderCategory.tile));
   }
 
   List<RenderInstance>? lastRenderables;
@@ -158,8 +162,8 @@ class IsometricTiledComponent extends TiledComponent{
 
   List<RenderInstance> calculateSortedRenderInstances([Iterable<IsometricRenderable> additionals = const []]){
     final allRenderables = <RenderInstance>[]; //all the renderables that should be rendered, sorted by their z-index and position distance to the 0-point
-    allRenderables.addAll(_tiles.asMap().entries.map((e) => e.value)); //add all tiles
-    allRenderables.addAll(additionals.toList().map((e) => RenderInstance((c, {Vector2? position, Vector2? size}) => e.renderTree(c), e.position, e.renderPriority, e.gridFeetPos))); //add all given components to the list of renderables so that they are also sorted and rendered in the correct order
+    allRenderables.addAll(_tiles); //add all tiles
+    allRenderables.addAll(additionals.map((e) => RenderInstance((c, {Vector2? position, Vector2? size}) => e.renderTree(c), e.position, e.renderPriority, e.gridFeetPos, e.renderCategory))); //add all given components to the list of renderables so that they are also sorted and rendered in the correct order
 
 
     allRenderables.sort((a, b) { //now we sort the renderables by their z-index and position

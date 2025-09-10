@@ -6,6 +6,7 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometricRenderable.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometricTiledComponent.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 
@@ -84,5 +85,8 @@ class TileHighlightRenderable extends SpriteAnimationGroupComponent with Riverpo
   @override
 
   AnimatedComponentGroup get group => AnimatedComponentGroup.effect;
+
+  @override
+  RenderCategory get renderCategory => RenderCategory.tileHighlight;
 
 }
