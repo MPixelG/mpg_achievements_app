@@ -71,7 +71,7 @@ class IsometricWorld extends GameWorld {
     final worldPositionTap = level.toLocal(screenPositionTap);
     Vector2? selectedTile = toGridPos(worldPositionTap)..floor();
 
-    // Use our new function to find the top-most tile.
+    // Use the function to find the top-most tile.
     final selectionResult = getTopmostTileAtGridPos(selectedTile);
 
     // Remove the old highlight.

@@ -59,13 +59,10 @@ class TileHighlightRenderable extends SpriteAnimationGroupComponent with Riverpo
   }
 
   @override
-  Vector2 get gridFeetPos => gridPos;
+  Vector2 get gridFeetPos => game.gameWorld.toGridPos(absolutePositionOfAnchor(Anchor.topCenter));
 
   @override
-  int get renderPriority {
-    //ensures that the highlight is rendered above the tile but below characters
-    return (layerIndex*10)+1;
-  }
+  int get renderPriority => 0;
 
   @override
   List<AnimationLoadOptions> get animationOptions => [
