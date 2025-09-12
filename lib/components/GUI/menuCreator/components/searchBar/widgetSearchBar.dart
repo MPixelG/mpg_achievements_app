@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/widget_declaration.dart';
 import 'package:mpg_achievements_app/components/router/router.dart';
+import 'package:mpg_achievements_app/components/util/utils.dart';
 
 class WidgetSearchBar extends StatefulWidget {
+  final void Function(WidgetDeclaration widgetDeclaration) onWidgetSelected;
+
   @override
   State<StatefulWidget> createState() => _WidgetSearchBarState();
-  const WidgetSearchBar({super.key});
+  const WidgetSearchBar({super.key, required this.onWidgetSelected});
 }
 
 class _WidgetSearchBarState extends State<WidgetSearchBar> {
@@ -32,10 +34,10 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
       if(!mounted) return;
 
       final isControlPressed = event.physicalKey == PhysicalKeyboardKey.controlLeft;
+      final isEscapePressed = event.physicalKey == PhysicalKeyboardKey.escape;
       final isHPressed = event.physicalKey == PhysicalKeyboardKey.keyH;
 
       if(isHPressed && !isVisible){
-        print("h pressed!");
         _rootFocus.unfocus();
         _searchBarFocusNode.unfocus();
         setState(() {
@@ -46,13 +48,18 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
         AppRouter.router.goNamed("game");
       }
 
-      if(isControlPressed){
+      if(isEscapePressed && isVisible){
+        setState(() {
+          isVisible = false;
+          _searchBarFocusNode.unfocus();
+          _rootFocus.requestFocus();
+        });
+      }
+
+      if(isControlPressed && !isVisible){
         setState(() {
           isVisible = true;
-
-          if(isVisible){
-            _searchBarFocusNode.requestFocus();
-          }
+          _searchBarFocusNode.requestFocus();
         });
       }
     };
@@ -84,13 +91,17 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
           _rootFocus.requestFocus();
         });
       }
-
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
+
+    WidgetDeclaration? currentBestMatch;
+
+    SearchController searchController = SearchController();
+
+
 
     return KeyboardListener(
       focusNode: _rootFocus,
@@ -99,16 +110,51 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
 
       child: Visibility(
         visible: isVisible,
-        child: SearchBar(
-          focusNode: _searchBarFocusNode,
-          onSubmitted: (value) => _searchBarFocusNode.requestFocus(),
-          onTapOutside: (event) {
+        child: SearchAnchor(
+          searchController: searchController,
+          builder: (context, controller) {
+            SearchBar searchBar = SearchBar(
+              controller: controller,
+              focusNode: _searchBarFocusNode,
+              onSubmitted: (value) {
+                _searchBarFocusNode.requestFocus();
+                print(currentBestMatch);
+              },
+              onTapOutside: (event) {
+                setState(() {
+                  isVisible = false;
+                });
+              },
+              onChanged: (value) {
+                if (!controller.isOpen) {
+                  controller.openView();
+                }
+              },
+            );
+            return searchBar;
+          },
+          suggestionsBuilder: (BuildContext context, SearchController controller) {
+
+            var allElements = WidgetDeclaration.declarationCache.toList();
+            allElements.sort(
+              (a, b) =>
+                jaroWinkler(b.displayName, controller.text).compareTo(jaroWinkler(a.displayName, controller.text))
+            );
+
+            currentBestMatch = allElements.firstOrNull;
+
+            return allElements.map<ListTile>((e) => ListTile(title: Text(e.displayName)));
+          },
+          viewOnSubmitted: (value) {
             setState(() {
+              _searchBarFocusNode.unfocus();
               isVisible = false;
+              widget.onWidgetSelected(currentBestMatch!);
+              print(currentBestMatch);
             });
           },
         )
-      ),
+      )
     );
 
   }

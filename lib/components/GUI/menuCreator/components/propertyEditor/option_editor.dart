@@ -37,7 +37,6 @@ class OptionEditorMenu extends StatefulWidget {
 class OptionEditorMenuState extends State<OptionEditorMenu> {
   @override
   Widget build(BuildContext context) {
-    print("rebuilt!");
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
@@ -217,18 +216,13 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
                     TextButton(
                       child: Text('OK'),
                       onPressed: () {
-                        // 1. Aktualisiere den Wert im properties-Map.
                         properties![customOptionName ?? option.name] =
                             pickedColor;
 
-                        // 2. Wenn ein stateSetter übergeben wurde (d.h. wir sind im TextStyle-Dialog),
-                        // rufe ihn auf, um die UI des Dialogs zu aktualisieren.
                         if (stateSetter != null) {
                           stateSetter(() {});
                         }
 
-                        // 3. Rufe immer das globale setState auf, um die Haupt-View zu aktualisieren
-                        // und sicherzustellen, dass die Änderungen persistent sind.
                         setState(() {
                           widget.updateView();
                         });

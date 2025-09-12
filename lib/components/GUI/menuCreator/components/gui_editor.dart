@@ -5,6 +5,7 @@ import 'package:flutter/material.dart' hide Matrix4;
 import 'package:flutter/services.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:mpg_achievements_app/components/GUI/json_factory/json_exporter.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/display_node.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/propertyEditor/option_editor.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/searchBar/widgetSearchBar.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/widget_declaration.dart';
@@ -73,7 +74,6 @@ class _GuiEditorState extends State<GuiEditor> {
             editorKey.currentState!.setState(() {
               optionEditor!.node = newNode;
             });
-            print("new val set!");
           });
         },
       );
@@ -85,7 +85,13 @@ class _GuiEditorState extends State<GuiEditor> {
       updateView: updateViewport,
     );
 
-    widgetSearchBar = WidgetSearchBar();
+    widgetSearchBar = WidgetSearchBar(
+        onWidgetSelected: (WidgetDeclaration widgetDeclaration) {
+          _nodeViewerKey.currentState!.setState(() {
+            DisplayNode.widgetToDropOff = widgetDeclaration.builder(root);
+          });
+      print("new widget to drop off set!");
+    });
 
     doneLoading = true;
   }
@@ -98,7 +104,7 @@ class _GuiEditorState extends State<GuiEditor> {
 
   @override
   Widget build(BuildContext context) {
-    //here we actually build the stuff thats being rendered
+    //here we actually build the stuff that's being rendered
     if (nodeViewer == null || optionEditor == null) {
       return const Center(child: CircularProgressIndicator());
     }

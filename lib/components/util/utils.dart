@@ -142,6 +142,70 @@ Vector2 orthogonalToIsometric(Vector2 ortho) {
   );
 }
 
+///takes 2 strings and returns a value between 0 and 1, representing the similarity of the 2 strings.
+double jaro(String s1, String s2) {
+  if (s1 == s2) return 1.0;
+  if (s1.isEmpty || s2.isEmpty) return 0.0;
+
+  s1 = s1.toLowerCase();
+  s2 = s2.toLowerCase();
+
+  final List<int> a = s1.codeUnits;
+  final List<int> b = s2.codeUnits;
+  final int len1 = a.length;
+  final int len2 = b.length;
+
+  final int matchDistance = ( (len1 > len2 ? len1 : len2) ~/ 2 ) - 1;
+  final List<bool> matched1 = List<bool>.filled(len1, false);
+  final List<bool> matched2 = List<bool>.filled(len2, false);
+
+  int matches = 0;
+  for (int i = 0; i < len1; i++) {
+    final int start = (i - matchDistance).clamp(0, len2 - 1);
+    final int end = (i + matchDistance).clamp(0, len2 - 1);
+    for (int j = start; j <= end; j++) {
+      if (!matched2[j] && a[i] == b[j]) {
+        matched1[i] = true;
+        matched2[j] = true;
+        matches++;
+        break;
+      }
+    }
+  }
+
+  if (matches == 0) return 0.0;
+
+  int transpositions = 0;
+  int k = 0;
+  for (int i = 0; i < len1; i++) {
+    if (!matched1[i]) continue;
+    while (!matched2[k]) k++;
+    if (a[i] != b[k]) transpositions++;
+    k++;
+  }
+
+  final double m = matches.toDouble();
+  final double t = transpositions / 2.0;
+
+  return ( (m / len1) + (m / len2) + ((m - t) / m) ) / 3.0;
+}
+
+///an upgraded version of [jaro], also considering typos
+double jaroWinkler(String s1, String s2, {double prefixScale = 0.1, int maxPrefix = 4}) {
+  final double j = jaro(s1, s2);
+  if (j == 0.0) return 0.0;
+
+  int prefix = 0;
+  final int limit = s1.length < s2.length ? s1.length : s2.length;
+  for (int i = 0; i < limit && i < maxPrefix; i++) {
+    if (s1[i] == s2[i]) prefix++;
+    else break;
+  }
+
+  return j + (prefix * prefixScale * (1.0 - j));
+}
+
+
 
 
 

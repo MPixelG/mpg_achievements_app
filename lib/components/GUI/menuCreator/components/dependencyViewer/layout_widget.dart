@@ -113,8 +113,9 @@ class LayoutWidget {
   }
 
   bool canDropOn(LayoutWidget other) {
-    if (dropCondition != null && !dropCondition!(other))
+    if (dropCondition != null && !dropCondition!(other)) {
       return false; // Cannot drop a Positioned widget on a Widget that is not a Stack
+    }
 
     //if(isDescendant(this, other)) return false; // Cannot drop a widget on itself or its descendants
 
