@@ -13,9 +13,9 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 class TileHighlightRenderable extends SpriteAnimationGroupComponent with RiverpodComponentMixin, IsometricRenderable, CollisionCallbacks, HasGameReference<PixelAdventure>, AnimationManager {
 
   final Vector2 gridPos;
-  final int layerIndex;
+  final int zIndex;
 
-  TileHighlightRenderable(this.gridPos, this.layerIndex);
+  TileHighlightRenderable(this.gridPos, this.zIndex);
 
   late final Vector2 tileSize;
 
@@ -59,10 +59,10 @@ class TileHighlightRenderable extends SpriteAnimationGroupComponent with Riverpo
   }
 
   @override
-  Vector2 get gridFeetPos => game.gameWorld.toGridPos(absolutePositionOfAnchor(Anchor.topCenter));
+  Vector2 get gridFeetPos => gridPos;
 
   @override
-  int get renderPriority => 1;
+  int get renderPriority => zIndex;
 
   @override
   List<AnimationLoadOptions> get animationOptions => [

@@ -12,7 +12,7 @@ import 'isometricTiledComponent.dart';
 class TileSelectionResult {
   final Vector2 gridPosition;
   final int layerIndex;
-  final Gid tileGid; // The Gid object from Tiled, which contains the tile ID
+  final Gid tileGid;// The Gid object from Tiled, which contains the tile ID
 
   TileSelectionResult(this.gridPosition, this.layerIndex, this.tileGid);
 }

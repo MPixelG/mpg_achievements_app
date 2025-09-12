@@ -43,8 +43,8 @@ class Player extends GameCharacter
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
-  
-  
+
+
 
 
   @override

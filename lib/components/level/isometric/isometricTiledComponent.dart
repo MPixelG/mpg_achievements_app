@@ -142,7 +142,7 @@ class IsometricTiledComponent extends TiledComponent{
     final worldPos = orthogonalToIsometric(Vector2(tileX * 16, tileY * 16)) //transform orthogonal to screen position
         + Vector2(map.width * tileW, 0); //shift the map to the center of the screen to be all positive
     // Add the RenderInstance to our cache.
-    _tiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble()), RenderCategory.tile));
+    _tiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble()), RenderCategory.tile) );
   }
 
   List<RenderInstance>? lastRenderables;
@@ -167,15 +167,20 @@ class IsometricTiledComponent extends TiledComponent{
 
 
     allRenderables.sort((a, b) { //now we sort the renderables by their z-index and position
-      Vector3 pos1 = Vector3(a.gridPos.x, a.gridPos.y, a.zIndex.toDouble()*tileMap.destTileSize.y);
-      Vector3 pos2 = Vector3(b.gridPos.x, b.gridPos.y, b.zIndex.toDouble()*tileMap.destTileSize.y);
+      Vector3 pos1 = Vector3(a.gridPos.x, a.gridPos.y,
+          a.zIndex.toDouble() * tileMap.destTileSize.y);
+      Vector3 pos2 = Vector3(b.gridPos.x, b.gridPos.y,
+          b.zIndex.toDouble() * tileMap.destTileSize.y);
 
       int comparedPos = pos1.compareTo(pos2); //compare the foot y positions
 
+      if (comparedPos != 0) {
         return comparedPos;
+      }
 
-
-          });
+      // ...use the category as the definitive tie-breaker.
+      return a.category.index.compareTo(b.category.index);
+    });
     return allRenderables;
   }
 }
