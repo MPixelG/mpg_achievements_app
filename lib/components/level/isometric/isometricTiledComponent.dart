@@ -171,10 +171,11 @@ class IsometricTiledComponent extends TiledComponent{
       Vector3 pos2 = Vector3(b.gridPos.x, b.gridPos.y, b.zIndex.toDouble()*tileMap.destTileSize.y);
 
       int comparedPos = pos1.compareTo(pos2); //compare the foot y positions
-      //if they are different, we take the comparison result (the one with the higher foot y is in front of the other)
-      return comparedPos;
-    });
 
+        return comparedPos;
+
+
+          });
     return allRenderables;
   }
 }
