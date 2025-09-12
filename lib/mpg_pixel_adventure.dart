@@ -27,6 +27,19 @@ class PixelAdventure extends FlameGame
         {
 
 
+    static PixelAdventure? _currentInstance;
+
+    static PixelAdventure get currentInstance {
+      _currentInstance ??= PixelAdventure();
+
+      return _currentInstance!;
+    }
+
+  PixelAdventure(){
+    print("new instance of the game created!");
+  }
+
+
   ///Game components
   late final AdvancedCamera cam;
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');

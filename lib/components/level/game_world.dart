@@ -4,7 +4,9 @@ import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter/cupertino.dart' show Navigator;
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
 import 'package:mpg_achievements_app/components/animation/animation_style.dart';
@@ -16,6 +18,7 @@ import 'package:mpg_achievements_app/components/level/isometric/isometric_world.
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
+import 'package:mpg_achievements_app/components/router/router.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../background/scrolling_background.dart';
 
@@ -97,8 +100,6 @@ abstract class GameWorld extends World
     // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
     game.cam.setMoveBounds(Vector2.zero(), level.size);
 
-    //Debug prints
-    print("map origin: ${Vector2(level.width / 2, 0)}");
 
     //runs all the other onLoad-events the method is referring to, now not important
     await super.onLoad();
@@ -129,15 +130,13 @@ abstract class GameWorld extends World
       }
     } //press V to toggle the visibility of the overlays
     if (keysPressed.contains(LogicalKeyboardKey.keyN)) {
-      (parent as PixelAdventure).cam.shakeCamera(
-        6,
-        5,
+      (parent as PixelAdventure).cam.shakeCamera(6, 5,
         animationStyle: AnimationStyle.easeOut,
       );
     } //press N to shake the camera
 
     if (keysPressed.contains(LogicalKeyboardKey.keyH)) {
-      game.overlays.toggle("guiEditor");
+      AppRouter.router.pushNamed("widgetBuilder");
     } //press H to toggle the GUI editor overlay
 
     return super.onKeyEvent(event, keysPressed);

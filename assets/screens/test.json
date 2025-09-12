@@ -71,12 +71,12 @@
                   },
                   "children": [
                     {
-                      "id": "transform",
+                      "id": "transform1",
                       "widgetType": "Transform",
                       "properties": {
-                        "rotation": 0.08,
-                        "scale": 4.0,
-                        "alignment": "Alignment.center"
+                        "rotation": 10.0,
+                        "scale": 3.0,
+                        "alignment": "Alignment.topCenter"
                       },
                       "children": [
                         {
@@ -131,7 +131,7 @@
                           },
                           "children": [
                             {
-                              "id": "fitted_box",
+                              "id": "fitted_box3",
                               "widgetType": "FittedBox",
                               "properties": {
                                 "alignment": "Alignment.center",
@@ -181,7 +181,7 @@
                           },
                           "children": [
                             {
-                              "id": "fitted_box",
+                              "id": "fitted_box4",
                               "widgetType": "FittedBox",
                               "properties": {
                                 "alignment": "Alignment.center",
@@ -231,7 +231,7 @@
                           },
                           "children": [
                             {
-                              "id": "fitted_box",
+                              "id": "fitted_box5",
                               "widgetType": "FittedBox",
                               "properties": {
                                 "alignment": "Alignment.center",

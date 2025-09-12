@@ -6,9 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:mpg_achievements_app/components/GUI/json_factory/json_exporter.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/propertyEditor/option_editor.dart';
+import 'package:mpg_achievements_app/components/GUI/menuCreator/components/searchBar/widgetSearchBar.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/widget_declaration.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/editor_node_dependency_viewer.dart';
 import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/layout_widget.dart';
+import 'package:mpg_achievements_app/components/router/router.dart';
+import 'package:mpg_achievements_app/main.dart';
 
 class GuiEditor extends StatefulWidget {
   //the GUI editor lets us create guis and later export them as a json
@@ -29,12 +32,15 @@ class _GuiEditorState extends State<GuiEditor> {
 
   late LayoutWidget root; //just temp to be initialized later in initState()
 
-  NodeViewer?
-  nodeViewer; //this is the node viewer that will be used to show the dependencies of a node.
+  NodeViewer? nodeViewer; //this is the node viewer that will be used to show the dependencies of a node.
   final GlobalKey<NodeViewerState> _nodeViewerKey =
       GlobalKey<NodeViewerState>();
 
+
+  OptionEditorMenu? optionEditor;
   final editorKey = GlobalKey<OptionEditorMenuState>();
+
+  late WidgetSearchBar widgetSearchBar;
 
   void updateViewport() {
     //this is used to update the viewport of the node viewer, so that it shows the current state of the layout
@@ -43,7 +49,7 @@ class _GuiEditorState extends State<GuiEditor> {
     ); //we call setState on the node viewer to rebuild it and show the current state of the layout
   }
 
-  OptionEditorMenu? optionEditor;
+
 
   @override
   void initState() {
@@ -78,6 +84,9 @@ class _GuiEditorState extends State<GuiEditor> {
       node: nodeViewer!.currentSelectedWidget,
       updateView: updateViewport,
     );
+
+    widgetSearchBar = WidgetSearchBar();
+
     doneLoading = true;
   }
 
@@ -222,17 +231,38 @@ class _GuiEditorState extends State<GuiEditor> {
               children: [
                 ResizableChild(
                   size: ResizableSize.expand(flex: 3),
-                  child: root.build(context),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      double containerWidth = constraints.maxWidth;
+                      double containerHeight = constraints.maxHeight;
+
+                      return Stack(
+                        children: [
+                          SizedBox(
+                            width: containerWidth,
+                            height: containerHeight,
+                            child: root.build(context),
+                          ),
+                          Positioned.fill(
+                            child: Center(child: widgetSearchBar),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
                 ResizableChild(
                   child: ResizableContainer(
                     direction: Axis.horizontal,
-                    children: [ResizableChild(child: optionEditor!)],
+                    children: [
+                      ResizableChild(child: optionEditor!),
+                    ],
                   ),
                 ),
               ],
               direction: Axis.vertical,
-            ),
+            )
+
           ),
         ],
         direction: Axis.horizontal,

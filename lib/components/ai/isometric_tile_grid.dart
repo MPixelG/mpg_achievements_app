@@ -22,7 +22,6 @@ class IsometricTileGrid extends TileGrid{
       // Convert the rectangular Tiled object into a list of isometric vertices
       // and check if the world position is inside this polygon.
       if (isPointInVertices(toVertices(obj), worldPos.toOffset())) {
-        print("not air at ${level.toGridPos(obj.position)}");
         return switch (obj.class_) {
           "" => TileType.solid,
           "Ladder" => TileType.ladder,

@@ -71,10 +71,6 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
   // Called when the collision with another object ends
   @override
   void onCollisionEnd(PositionComponent other) {
-    print("collision end!");
-
-    super.onCollisionEnd(other);
-
     if(viewSide == ViewSide.side){
 
       Future.delayed((Duration(milliseconds: 100)), () { //reset isOnGround after a short delay so that its a bit more forgiving when jumping from edges (lol)
@@ -93,6 +89,7 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
       }
     }
 
+    super.onCollisionEnd(other);
   }
 
   //main collision physics

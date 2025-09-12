@@ -155,54 +155,49 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
 class GameScreen extends StatelessWidget {
   final PixelAdventure game;
 
+
+
   const GameScreen({super.key, required this.game});
+
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Stack(
-          children: [
-            //because our game is of type game you would normally not need a type specifier, but here the RiverpodAwareGameWidget needs it to know which game it is dealing with
-            RiverpodAwareGameWidget<PixelAdventure>(
-              key: gameWidgetKey,
-              game: game,
-              overlayBuilderMap: {
-                "guiEditor": (BuildContext context, PixelAdventure game) {
-                  return game.guiEditor;
-                },
-                'TextOverlay': (BuildContext context, PixelAdventure game) {
-                  return TextOverlay(
-                      game: game, onTextOverlayDone: () {game.overlays.remove("TextOverlay");},
-                  );
-                },
-                'DialogueScreen': (BuildContext context, PixelAdventure game) {
-                  return DialogueScreen(
-                    game: game,
-                    //when Dialogue is finishes screen is removed form map
-                    onDialogueFinished: () {
-                      game.overlays.remove('DialogueScreen');
-                    },
-                  );
-                },
-                'SpeechBubble': (BuildContext context, PixelAdventure game) {
-                  return SpeechBubble(
-                    game: game,
-                    characterName: game.gameWorld.player.playerCharacter,
-                    targetPosition: game.gameWorld.player.position.toOffset(),
-                    currentPosition: game.gameWorld.player.position.toOffset(),
-                    onComplete: () {
-                      game.overlays.remove('SpeechBubble');
-                    },
-                    onDismiss: () {
-                      game.overlays.remove('SpeechBubble');
-                    },
-                  );
-                },
-              },
-            ),
-          ]
-      ),
-      debugShowCheckedModeBanner: false,
+    return RiverpodAwareGameWidget<PixelAdventure>(
+      key: gameWidgetKey,
+      game: game,
+      overlayBuilderMap: {
+        "guiEditor": (BuildContext context, PixelAdventure game) {
+          return game.guiEditor;
+        },
+        'TextOverlay': (BuildContext context, PixelAdventure game) {
+          return TextOverlay(
+            game: game, onTextOverlayDone: () {game.overlays.remove("TextOverlay");},
+          );
+        },
+        'DialogueScreen': (BuildContext context, PixelAdventure game) {
+          return DialogueScreen(
+            game: game,
+            //when Dialogue is finishes screen is removed form map
+            onDialogueFinished: () {
+              game.overlays.remove('DialogueScreen');
+            },
+          );
+        },
+        'SpeechBubble': (BuildContext context, PixelAdventure game) {
+          return SpeechBubble(
+            game: game,
+            characterName: game.gameWorld.player.playerCharacter,
+            targetPosition: game.gameWorld.player.position.toOffset(),
+            currentPosition: game.gameWorld.player.position.toOffset(),
+            onComplete: () {
+              game.overlays.remove('SpeechBubble');
+            },
+            onDismiss: () {
+              game.overlays.remove('SpeechBubble');
+            },
+          );
+        },
+      },
     );
   }
 }

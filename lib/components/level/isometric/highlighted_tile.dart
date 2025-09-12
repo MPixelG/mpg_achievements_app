@@ -49,6 +49,7 @@ class TileHighlightRenderable extends SpriteAnimationGroupComponent with Riverpo
       ..color = Colors.yellow.withAlpha(125) // Semi-transparent yellow
       ..style = PaintingStyle.fill;
 
+
     // Draw the diamond shape on the canvas.
     canvas.drawVertices(
       Vertices(VertexMode.triangleFan, diamond),
