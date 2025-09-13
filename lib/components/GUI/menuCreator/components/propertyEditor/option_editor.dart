@@ -267,6 +267,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
     Map<String, dynamic> properties,
   ) {
     return FloatingActionButton(
+      heroTag: null,
       onPressed: () {
         _showEdgeInsetsDialog(context, option, properties);
       },

@@ -121,7 +121,6 @@ class NodeViewerState extends State<NodeViewer> {
             .colorScheme
             .inversePrimary, //the background color is the inversed scheme
       ),
-
       //trash to drop widgets
       floatingActionButton: DragTarget<LayoutWidget>(
         //the floating action button is a preset we use for a trash can. DragTarget allows us to drop widgets onto it

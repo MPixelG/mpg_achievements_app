@@ -117,6 +117,8 @@ class _GuiEditorState extends State<GuiEditor> {
       body: ResizableContainer(
         children: [
           ResizableChild(
+            divider: ResizableDivider(thickness: 3),
+
             child: Stack(
               alignment: Alignment.bottomRight,
               children: [
@@ -232,11 +234,12 @@ class _GuiEditorState extends State<GuiEditor> {
             ),
           ),
           ResizableChild(
-            size: ResizableSize.expand(flex: 3),
+            size: ResizableSize.expand(flex: 5),
             child: ResizableContainer(
               children: [
                 ResizableChild(
                   size: ResizableSize.expand(flex: 3),
+                  divider: ResizableDivider(thickness: 3),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       double containerWidth = constraints.maxWidth;
@@ -258,10 +261,15 @@ class _GuiEditorState extends State<GuiEditor> {
                   ),
                 ),
                 ResizableChild(
+
                   child: ResizableContainer(
+
                     direction: Axis.horizontal,
                     children: [
-                      ResizableChild(child: optionEditor!),
+                      ResizableChild(child: optionEditor!,
+                        divider: ResizableDivider(thickness: 3),
+                      ),
+                      ResizableChild(child: Container(), size: ResizableSize.ratio(0.6)),
                     ],
                   ),
                 ),
@@ -271,6 +279,7 @@ class _GuiEditorState extends State<GuiEditor> {
 
           ),
         ],
+
         direction: Axis.horizontal,
       ),
 

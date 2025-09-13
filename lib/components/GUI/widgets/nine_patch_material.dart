@@ -13,6 +13,8 @@ class NinePatchPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
 
+    if(!ninePatchTexture.isLoaded) return;
+
     final paint = Paint();
 
     canvas.scale(scale);
