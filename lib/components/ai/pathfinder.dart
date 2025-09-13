@@ -25,15 +25,13 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
   late List<POINode> nodes; //all of the POI nodes. a POI (Point of Interest) is a point in the world, that can be used to get from one point to another by chaining those together.
 
-  Vector2 get tilesize => level.tileSize;
-
   POIGenerator(this.level) { //the constructor
 
     if(level is IsometricWorld){
       grid = IsometricTileGrid(
           (level.level.width / tilesize.x).toInt(),
           (level.level.height / tilesize.y).toInt(),
-          tilesize,
+          tilesize.xy,
           level.level.tileMap.getLayer("Collisions") as ObjectGroup?,
           level);
 
@@ -41,7 +39,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
       grid = TileGrid( //initialize the grid.
           (level.level.width / tilesize.x).toInt(),
           (level.level.height / tilesize.y).toInt(),
-          tilesize,
+          tilesize.xy,
           level.level.tileMap.getLayer("Collisions") as ObjectGroup?,
           level
       );
@@ -424,8 +422,8 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
     if (path.length < 2) return; //if the path is shorter than 2 points, it cant have any movements in it, because one of them is the start and the other one is the end point.
 
     for (int i = 0; i < path.length - 1; i++) { //for every point in the path
-      Vector2 from = toWorldPos(path[i].node.poiNode.position) + (tilesize / 2); //calculate the position to use. add another 16 to center the point in the field
-      Vector2 to = toWorldPos(path[i + 1].node.poiNode.position) + (tilesize / 2); //same for the destination point.
+      Vector2 from = toWorldPos(path[i].node.poiNode.position) + (tilesize.xy / 2); //calculate the position to use. add another 16 to center the point in the field
+      Vector2 to = toWorldPos(path[i + 1].node.poiNode.position) + (tilesize.xy / 2); //same for the destination point.
 
       Paint pathPaint = Paint()..strokeWidth = 3.0; //set the stroke width to 3
 
@@ -459,7 +457,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
     }
 
     if (path.isNotEmpty) { //also draw a yellow dot at the end of the path
-      Vector2 endPos = (toWorldPos(path.last.node.poiNode.position)) + (tilesize / 2); //calculate the end pos with a little offset to center it
+      Vector2 endPos = (toWorldPos(path.last.node.poiNode.position)) + (tilesize.xy / 2); //calculate the end pos with a little offset to center it
       Paint endPaint = Paint() // a custom paint
         ..color = Colors.yellow //in yellow
         ..style = PaintingStyle.fill; //and mark it as fill so that not only the outline of the circle will get drawn
@@ -501,7 +499,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure>{
 
 
         for (var element in connections) { //now draw a line for every connection from the node position to the target of the connection. also add a bit of offset for centering again.
-          canvas.drawLine((toWorldPos(selectedNode.position) + (tilesize / 2)).toOffset(), (toWorldPos(element.target.position) + (tilesize / 2)).toOffset(), paint);
+          canvas.drawLine((toWorldPos(selectedNode.position) + (tilesize.xy / 2)).toOffset(), (toWorldPos(element.target.position) + (tilesize.xy / 2)).toOffset(), paint);
         }
       }
     }

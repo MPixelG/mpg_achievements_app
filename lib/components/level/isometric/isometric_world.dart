@@ -5,6 +5,7 @@ import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
 import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import '../../../mpg_pixel_adventure.dart';
 import 'highlighted_tile.dart';
 import 'isometricRenderable.dart';
 import 'isometricTiledComponent.dart';
@@ -25,7 +26,7 @@ class IsometricWorld extends GameWorld {
   TileHighlightRenderable? highlightedTile;
 
   // Example isometric tile size (width, height)
-  IsometricWorld({required super.levelName, required super.tileSize});
+  IsometricWorld({required super.levelName, required super.calculatedTileSize});
 
   @override
   Future<void> onLoad() async {
@@ -38,7 +39,7 @@ class IsometricWorld extends GameWorld {
     tileGrid = IsometricTileGrid(
       level.tileMap.map.width,
       level.tileMap.map.height,
-      tileSize,//setting the tile size to match the isometric tile dimensions
+      tilesize.xy,//setting the tile size to match the isometric tile dimensions
       collisionLayer,
       this,
     );
@@ -90,7 +91,7 @@ class IsometricWorld extends GameWorld {
       highlightedTile!.position = toWorldPos(
         selectionResult.gridPosition,
         layerIndex: selectionResult.layerIndex,
-      ) + Vector2(0, -tileSize.y / 2); // Adjust for isometric tile height
+      ) + Vector2(0, -tilesize.y / 2); // Adjust for isometric tile height
 
 
       add(highlightedTile!);
@@ -133,9 +134,9 @@ class IsometricWorld extends GameWorld {
   // Convert world position to isometric tile coordinates used in toGridPos
   Vector2 worldToTileIsometric(Vector2 worldPos) {
     final tileX =
-        (worldPos.x / (tileSize.x / 2) + worldPos.y / (tileSize.y / 2)) / 2;
+        (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.z / 2)) / 2;
     final tileY =
-        (worldPos.y / (tileSize.y / 2) - worldPos.x / (tileSize.x / 2)) / 2;
+        (worldPos.y / (tilesize.z / 2) - worldPos.x / (tilesize.x / 2)) / 2;
 
     return Vector2(tileX, tileY);
   }
@@ -143,8 +144,8 @@ class IsometricWorld extends GameWorld {
   @override
   Vector2 toWorldPos(Vector2 gridPos, {int layerIndex = 0}) {
     final localPoint = Vector2(
-      (gridPos.x - gridPos.y) * (tileSize.x / 2),
-      (gridPos.x + gridPos.y) * (tileSize.y/2),
+      (gridPos.x - gridPos.y) * (tilesize.x / 2),
+      (gridPos.x + gridPos.y) * (tilesize.z / 2),
     );
     // Convert local point to global world position, Add the maps's visual origin offset back to the local point
     // to get the correct world position
@@ -153,13 +154,13 @@ class IsometricWorld extends GameWorld {
       level.position.y,
     );
     //apply vertical movement for different layers according to z-index
-    final layerOffset = Vector2(0, layerIndex * tileSize.y/32);//works for now as each tile is 32 pixels high in the tileset
+    final layerOffset = Vector2(0, layerIndex * tilesize.z/32);//works for now as each tile is 32 pixels high in the tileset
     return localPoint + mapOriginOffset + layerOffset;
   }
 // Convert orthogonal tile coordinates to isometric world coordinates.todo review if we need it as it does the same as toWorldPos
   Vector2 isometricToOrthogonal(Vector2 isometricPoint) {
-    final halfTileW = tileSize.x / 2;
-    final halfTileH = tileSize.y / 2;
+    final halfTileW = tilesize.x / 2;
+    final halfTileH = tilesize.z / 2;
 
     final worldX = (isometricPoint.y / halfTileH + isometricPoint.x / halfTileW) / 2;
     final worldY = (isometricPoint.y / halfTileH - isometricPoint.x / halfTileW) / 2;
@@ -183,7 +184,7 @@ class IsometricWorld extends GameWorld {
 
       Vector2 gridObjectPos = toGridPos(value.position);
 
-      if(Rect.fromPoints(gridObjectPos.toOffset(), gridObjectPos.toOffset() + (value.size..divide(Vector2.all(tileSize.x))).toOffset()).contains(gridPos.toOffset())){
+      if(Rect.fromPoints(gridObjectPos.toOffset(), gridObjectPos.toOffset() + (value.size..divide(Vector2.all(tilesize.x))).toOffset()).contains(gridPos.toOffset())){
         return true;
       }
 

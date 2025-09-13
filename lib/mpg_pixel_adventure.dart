@@ -16,27 +16,21 @@ import 'components/level_components/enemy.dart';
 import 'components/level/game_world.dart';
 
 //DragCallbacks are imported for touch controls
-class PixelAdventure extends FlameGame
-    with
-        HasKeyboardHandlerComponents,
-        DragCallbacks,
-        HasCollisionDetection,
-        ScrollDetector,
-        CollisionCallbacks,
-        RiverpodGameMixin
-        {
+class PixelAdventure extends FlameGame with
+    HasKeyboardHandlerComponents,
+    DragCallbacks,
+    HasCollisionDetection,
+    ScrollDetector,
+    CollisionCallbacks,
+    RiverpodGameMixin {
 
 
-    static PixelAdventure? _currentInstance;
+  static PixelAdventure? _currentInstance;
 
-    static PixelAdventure get currentInstance {
-      _currentInstance ??= PixelAdventure();
+  static PixelAdventure get currentInstance {
+    _currentInstance ??= PixelAdventure();
 
-      return _currentInstance!;
-    }
-
-  PixelAdventure(){
-    print("new instance of the game created!");
+    return _currentInstance!;
   }
 
 
@@ -67,9 +61,9 @@ class PixelAdventure extends FlameGame
     String orientationOfLevel = await getOrientationOfLevel(currentLevel);
 
     if(orientationOfLevel == "orthogonal"){
-      gameWorld = OrthogonalWorld(levelName: currentLevel, tileSize: tileSize);
+      gameWorld = OrthogonalWorld(levelName: currentLevel, calculatedTileSize: tileSize.xyy);
     } else if(orientationOfLevel == "isometric"){
-      gameWorld = IsometricWorld(levelName: currentLevel, tileSize: tileSize);
+      gameWorld = IsometricWorld(levelName: currentLevel, calculatedTileSize: tileSize.xxy); //on the horizontal axis, the tile is rectangular. on the side its half the size (z-axis)
     } else {
       throw UnimplementedError(
           "an orientation of $orientationOfLevel isn't implemented! please use either orthogonal or isometric!");
@@ -113,9 +107,9 @@ class PixelAdventure extends FlameGame
     cam.viewport.add(joystick);
     cam.viewport.add(buttonComponent);
   }
-  Vector2 get tilesizeIso => Vector2.all(gameWorld.tileSize.x);
-  Vector2 get tilesizeOrtho => gameWorld.tileSize;
 }
+
+Vector3 get tilesize => PixelAdventure.currentInstance.gameWorld.calculatedTileSize;
 
 
 //helper class to follow the player after the world and player are loaded

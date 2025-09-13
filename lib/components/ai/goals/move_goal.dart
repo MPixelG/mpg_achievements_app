@@ -26,8 +26,6 @@ class MoveGoal extends Goal {
   bool get isShifting => (parent!.parent! as BasicMovement).isShifting;
   GameWorld get level => (parent!.parent! as HasGameReference<PixelAdventure>).game.gameWorld;
 
-  Vector2 get tilesize => level.tileSize;
-
 
   set horizontalMovement(double pos) => (parent!.parent! as BasicMovement).horizontalMovement = pos;
   set verticalMovement(double pos) => (parent!.parent! as BasicMovement).verticalMovement = pos;
@@ -73,7 +71,7 @@ class MoveGoal extends Goal {
 
     currentStep = path![stepIndex]; //set the current step
 
-    Vector2 currentStepPosCenter = toWorldPos(currentStep!.node.poiNode.position) + (tilesize / 2); //the center of the currently aimed position.
+    Vector2 currentStepPosCenter = toWorldPos(currentStep!.node.poiNode.position) + (tilesize.xy / 2); //the center of the currently aimed position.
 
     if (currentStepPosCenter.distanceTo(absoluteCenter) > 128) { //if we got off the path, we look at what the nearest node is. this way we automatically skip / get back to the right node.
       currentStep = getNearestStep(absoluteCenter, path!); //get the nearest node to that point. it also checks if theres line of sight between these points so that the entity doesnt target an impossible node.

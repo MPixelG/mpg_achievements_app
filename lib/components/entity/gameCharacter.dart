@@ -7,12 +7,12 @@ abstract class GameCharacter extends SpriteAnimationGroupComponent with HasGameR
   GameCharacter({super.position, super.anchor});
   Vector2 get gridPos =>
       Vector2(
-          position.x / game.tilesizeOrtho.x,
-          position.y / game.tilesizeOrtho.y
+          position.x / tilesize.x,
+          position.y / tilesize.y
       );
 
   set gridPos(Vector2 newGridPos) {
-    position = Vector2(newGridPos.x * game.tilesizeOrtho.x,
-        newGridPos.y * game.tilesizeOrtho.y);
+    position = Vector2(newGridPos.x * tilesize.x,
+        newGridPos.y * tilesize.y);
   }
 }

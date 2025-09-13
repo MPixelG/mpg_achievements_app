@@ -4,9 +4,7 @@ import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/cupertino.dart' show Navigator;
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
 import 'package:mpg_achievements_app/components/animation/animation_style.dart';
@@ -36,8 +34,9 @@ abstract class GameWorld extends World
   late Player player;
   late Enemy enemy;
   int totalCollectables = 0;
-  late final Vector2 tileSize;
   late final Background background;
+
+  Vector3 calculatedTileSize;
 
   //reference to the tile grid for finding tapped tile
   late final IsometricTileGrid tileGrid;
@@ -47,7 +46,7 @@ abstract class GameWorld extends World
   //
   //constructor
   GameWorld(
-      {required this.levelName, Background? background, required this.tileSize}) {
+      {required this.levelName, Background? background, required this.calculatedTileSize}) {
     if (background != null) this.background = background;
   }
 
@@ -62,10 +61,10 @@ abstract class GameWorld extends World
     // Determine if the level is isometric based on the game world's type.
     isometricLevel = (game.gameWorld is IsometricWorld) ? true: false;
     if(isometricLevel) {
-    level = IsometricTiledComponent((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
+    level = IsometricTiledComponent((await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap);
     level.position = Vector2.zero();}
     else {
-      level = TiledComponent((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
+      level = TiledComponent((await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap);
     }
     print(game.images.keys);
 
@@ -204,8 +203,8 @@ abstract class GameWorld extends World
     String playerCoords = roundedPlayerPos.toString();
     debugOverlays.text =
     "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${toGridPos(_mouseCoords)
-      ..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tileSize.x)
-        .floor()}, ${(mousePos.y / tileSize.y).floor()}";
+      ..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tilesize.x)
+        .floor()}, ${(mousePos.y / tilesize.y).floor()}";
     debugOverlays.position =
         game.cam.pos - game.cam.visibleWorldRect.size.toVector2() / 2;
 
@@ -302,8 +301,8 @@ abstract class GameWorld extends World
 
   Vector2 isoToScreen(Vector2 iso) {
     return Vector2(
-      (iso.x - iso.y) * tileSize.x / 2,
-      (iso.x + iso.y) * tileSize.y / 2,
+      (iso.x - iso.y) * tilesize.x / 2,
+      (iso.x + iso.y) * tilesize.z / 2,
     );
   }
 }
