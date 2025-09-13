@@ -15,16 +15,20 @@ class TileHighlightRenderable extends SpriteAnimationGroupComponent with Riverpo
   final Vector2 gridPos;
   final int zIndex;
 
+
   TileHighlightRenderable(this.gridPos, this.zIndex);
 
   late final Vector2 tileSize;
 
   @override
-  void onLoad(){
+  void onLoad() {
+    // Position the highlight based on the grid position and tile size.
     tileSize = game.gameWorld.tileGrid.tileSize;
-    
+
+    playAnimation("explosion_1");
   }
-  
+
+
   @override
   void render(Canvas canvas) {
     super.render(canvas);
@@ -69,16 +73,16 @@ class TileHighlightRenderable extends SpriteAnimationGroupComponent with Riverpo
   List<AnimationLoadOptions> get animationOptions => [
     AnimationLoadOptions(
       "explosion_1",
-      "Main Characters/explosion-1-d",
+      "$componentSpriteLocation/explosion1d",
       textureSize: 128,
       loop: false,
-    ),
+      stepTime: 0.1,
+      ),
    ];
 
 
   @override
-
-  String get componentSpriteLocation => 'Explosions/explosion-1-d';
+  String get componentSpriteLocation => "Explosions/explosion1d";
 
   @override
 

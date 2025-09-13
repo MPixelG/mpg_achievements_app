@@ -102,7 +102,9 @@ flutter:
     - assets/images/Menu/Buttons/
     - assets/images/Menu/Buttons/test_button.png
     - assets/screens/
+    - assets/images/Explosions/explosion1d/
     - assets/yarn/test.yarn
+
   shaders:
     - assets/shaders/lighting.glsl
   # An image asset can refer to one or more resolution-specific "variants", see
