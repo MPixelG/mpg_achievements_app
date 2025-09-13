@@ -93,8 +93,9 @@ class IsometricWorld extends GameWorld {
       ) + Vector2(0, -tileSize.y / 2); // Adjust for isometric tile height
 
 
-
       add(highlightedTile!);
+
+
       print("Selected tile at ${selectionResult
           .gridPosition} on layer ${selectionResult.layerIndex}");
     } else {

@@ -61,8 +61,8 @@ class PixelAdventure extends FlameGame
   FutureOr<void> onLoad() async {
     //all images for the game are loaded into cache when the game start -> could take long at a later stage, but here it is fine for moment being
     await images.loadAllImages();
-    //world is loaded after initialising all images
 
+    //world is loaded after initialising all images
     Vector2 tileSize = await getTilesizeOfLevel(currentLevel);
     String orientationOfLevel = await getOrientationOfLevel(currentLevel);
 

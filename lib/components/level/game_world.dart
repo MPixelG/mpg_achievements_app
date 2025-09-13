@@ -67,7 +67,7 @@ abstract class GameWorld extends World
     else {
       level = TiledComponent((await TiledComponent.load('$levelName.tmx', tileSize)).tileMap);
     }
-
+    print(game.images.keys);
 
    await add(game.gameWorld.player);
     // Add the level to the game world so it gets rendered.
