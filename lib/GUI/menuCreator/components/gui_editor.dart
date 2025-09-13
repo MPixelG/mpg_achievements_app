@@ -4,15 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Matrix4;
 import 'package:flutter/services.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
-import 'package:mpg_achievements_app/components/GUI/json_factory/json_exporter.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/display_node.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/propertyEditor/option_editor.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/searchBar/widgetSearchBar.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/widget_declaration.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/editor_node_dependency_viewer.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/layout_widget.dart';
-import 'package:mpg_achievements_app/components/router/router.dart';
-import 'package:mpg_achievements_app/main.dart';
+import 'package:mpg_achievements_app/GUI/menuCreator/components/propertyEditor/option_editor.dart';
+import 'package:mpg_achievements_app/GUI/menuCreator/components/searchBar/widget_search_bar.dart';
+import 'package:mpg_achievements_app/GUI/menuCreator/components/widget_declaration.dart';
+
+import '../../json_factory/json_exporter.dart';
+import 'dependencyViewer/display_node.dart';
+import 'dependencyViewer/editor_node_dependency_viewer.dart';
+import 'dependencyViewer/layout_widget.dart';
 
 class GuiEditor extends StatefulWidget {
   //the GUI editor lets us create guis and later export them as a json

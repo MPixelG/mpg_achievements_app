@@ -1,14 +1,14 @@
 import 'package:flame/components.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/layout_widget.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/propertyEditor/button_action.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/options/widget_options.dart';
-import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_button.dart';
+import 'package:mpg_achievements_app/GUI/menuCreator/components/propertyEditor/button_action.dart';
 import 'package:vector_math/vector_math_64.dart' as vm64;
 
+import '../../widgets/nine_patch_button.dart';
 import '../../widgets/nine_patch_widgets.dart';
 import '../options/widget_builder.dart';
+import '../options/widget_options.dart';
+import 'dependencyViewer/layout_widget.dart';
 
 class WidgetDeclaration {
   static Set<WidgetDeclaration> declarationCache = {};

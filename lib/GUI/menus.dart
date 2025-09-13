@@ -2,12 +2,12 @@ import 'package:flame/game.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/GUI/json_factory/json_exporter.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/main.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import '../dialogue_utils/speechbubble.dart';
+import '../components/dialogue_utils/speechbubble.dart';
+import 'json_factory/json_exporter.dart';
 import 'menuCreator/components/dependencyViewer/layout_widget.dart';
 
 abstract class Screen extends StatelessWidget {
@@ -166,9 +166,6 @@ class GameScreen extends StatelessWidget {
       key: gameWidgetKey,
       game: game,
       overlayBuilderMap: {
-        "guiEditor": (BuildContext context, PixelAdventure game) {
-          return game.guiEditor;
-        },
         'TextOverlay': (BuildContext context, PixelAdventure game) {
           return TextOverlay(
             game: game, onTextOverlayDone: () {game.overlays.remove("TextOverlay");},

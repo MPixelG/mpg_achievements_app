@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_widgets.dart';
 
 import 'nine_patch_material.dart';
+import 'nine_patch_widgets.dart';
 
 class NinePatchButton extends StatefulWidget {
   final String text;

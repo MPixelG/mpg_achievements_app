@@ -10,7 +10,6 @@ import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
-import 'components/GUI/menuCreator/components/gui_editor.dart';
 import 'components/level/orthogonal/orthogonal_world.dart';
 import 'components/level_components/enemy.dart';
 import 'components/level/game_world.dart';
@@ -38,7 +37,6 @@ class PixelAdventure extends FlameGame with
   late final AdvancedCamera cam;
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
   late final GameWorld gameWorld;
-  final GuiEditor guiEditor = GuiEditor();
   late JoystickComponent joystick;
   late String currentLevel = "Level_7";
 

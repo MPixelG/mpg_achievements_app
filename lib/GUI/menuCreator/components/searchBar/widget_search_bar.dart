@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/widget_declaration.dart';
 import 'package:mpg_achievements_app/components/router/router.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
+
+import '../widget_declaration.dart';
 
 class WidgetSearchBar extends StatefulWidget {
   final void Function(WidgetDeclaration widgetDeclaration) onWidgetSelected;

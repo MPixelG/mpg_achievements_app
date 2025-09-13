@@ -1,8 +1,9 @@
 
 import 'package:go_router/go_router.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/gui_editor.dart';
-import 'package:mpg_achievements_app/components/GUI/menus.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
+import '../../GUI/menuCreator/components/gui_editor.dart';
+import '../../GUI/menus.dart';
 
 class AppRouter {
 

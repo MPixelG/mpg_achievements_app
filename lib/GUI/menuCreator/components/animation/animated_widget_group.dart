@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_button.dart';
 import 'package:mpg_achievements_app/components/animation/animation_style.dart';
+
+import '../../../widgets/nine_patch_button.dart';
 
 class AnimatedWidgetGroup extends StatefulWidget {
   final List<WidgetAnimationKeyframe> keyframes;

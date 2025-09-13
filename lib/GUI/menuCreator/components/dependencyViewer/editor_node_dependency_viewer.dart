@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/layout_widget.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/propertyEditor/option_editor.dart';
 
 import 'display_node.dart';
+import 'layout_widget.dart';
 
 class NodeViewer extends StatefulWidget {
   // a widget to view and manage a tree of LayoutWidgets

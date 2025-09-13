@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/propertyEditor/button_action.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/layout_widget.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/options/widget_options.dart';
+
+import '../../options/widget_options.dart';
+import '../dependencyViewer/layout_widget.dart';
+import 'button_action.dart';
 
 class OptionEditorMenu extends StatefulWidget {
 

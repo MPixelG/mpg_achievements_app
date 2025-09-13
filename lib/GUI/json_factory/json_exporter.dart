@@ -4,10 +4,9 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/dependencyViewer/layout_widget.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/components/widget_declaration.dart';
-import 'package:mpg_achievements_app/components/GUI/menuCreator/options/widget_builder.dart';
-import 'package:mpg_achievements_app/components/GUI/widgets/nine_patch_button.dart';
+
+import '../menuCreator/components/dependencyViewer/layout_widget.dart';
+import '../menuCreator/components/widget_declaration.dart';
 
 class WidgetJsonUtils {
   static String exportWidgetToJson(LayoutWidget widget) {
