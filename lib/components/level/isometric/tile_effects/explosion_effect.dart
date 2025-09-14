@@ -1,21 +1,27 @@
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometricTiledComponent.dart';
+import 'package:mpg_achievements_app/components/level/isometric/tile_effects/highlighted_tile.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import '../isometricRenderable.dart';
 
 class ExplosionEffect extends SpriteAnimationGroupComponent
-    with HasGameReference<PixelAdventure>, AnimationManager {
+    with HasGameReference<PixelAdventure>, AnimationManager, IsometricRenderable {
 
-  ExplosionEffect({super.position});
+  late TileHighlightRenderable tileHighlight;
+  final int zIndex;
+
+  ExplosionEffect(this.tileHighlight, this.zIndex);
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    anchor = Anchor.bottomCenter;
     // The explosion's visual center should align with its position.
-    anchor = Anchor.center;
-
     // Play the animation once, and when it's complete, remove this component.
-    await playAnimation('explosion_1');
-    removeFromParent();
+    playAnimation('explosion_1');
+
+
   }
 
 
@@ -35,6 +41,15 @@ class ExplosionEffect extends SpriteAnimationGroupComponent
       stepTime: 0.1,
     ),
   ];
+
+  @override
+  Vector2 get gridFeetPos => tileHighlight.gridPos;
+
+  @override
+  RenderCategory get renderCategory => RenderCategory.tileHighlight;
+
+  @override
+  int get renderPriority => zIndex;
 }
 
 /*
