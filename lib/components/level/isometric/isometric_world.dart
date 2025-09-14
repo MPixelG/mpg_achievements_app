@@ -6,7 +6,7 @@ import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
 import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import '../../../mpg_pixel_adventure.dart';
-import 'highlighted_tile.dart';
+import 'tile_effects/highlighted_tile.dart';
 import 'isometricRenderable.dart';
 import 'isometricTiledComponent.dart';
 
@@ -50,24 +50,22 @@ class IsometricWorld extends GameWorld {
     return IsometricTiledComponent((await TiledComponent.load(filename, destTilesize)).tileMap);
   }
 
-  //highlight the selected tile
-  @override
-  void render(Canvas canvas) {
-    // This renders the Tiled map and all other components first.
-    super.render(canvas);
-
-    // After the map is drawn, we check if a tile has been selected.
-    // If so, we call the highlight method on our grid instance.
-    tileGrid.renderTileHighlight(canvas, selectedTile!);
-    }
 
   @override
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
 
-    //final Vector2 screenPositionTap = event.localPosition; //screen position of the tap
-    //final Vector2 worldPositionTap = level.toLocal(screenPositionTap);
-    //selectedTile = toGridPos(worldPositionTap)..floor();
+    final TileHighlightRenderable? oldHighlight = highlightedTile;
+
+// 2. Clear the main instance variable immediately. This helps prevent
+//    stale references elsewhere in the code.
+    highlightedTile = null;
+
+// 3. Tell the OLD component to remove itself using the safe, temporary reference.
+//    This will work even though the main `highlightedTile` variable is now null.
+    oldHighlight?.removeFromParent();
+
+    // Convert the tap position from screen space to world space.
     final screenPositionTap = event.localPosition;
     final worldPositionTap = level.toLocal(screenPositionTap);
     Vector2? selectedTile = toGridPos(worldPositionTap)..floor();
@@ -76,7 +74,6 @@ class IsometricWorld extends GameWorld {
     final selectionResult = getTopmostTileAtGridPos(selectedTile);
 
     // Remove the old highlight.
-    highlightedTile?.removeFromParent();
 
     if (selectionResult != null) {
       // A tile was successfully selected!
@@ -91,11 +88,10 @@ class IsometricWorld extends GameWorld {
       highlightedTile!.position = toWorldPos(
         selectionResult.gridPosition,
         layerIndex: selectionResult.layerIndex,
-      ) + Vector2(0, -tilesize.y / 2); // Adjust for isometric tile height
-
+      ) - Vector2(0, tilesize.y/4); // Center the highlight on the tile
+      print("Highlight position set to: ${highlightedTile!.position}");
 
       add(highlightedTile!);
-
 
       print("Selected tile at ${selectionResult
           .gridPosition} on layer ${selectionResult.layerIndex}");
