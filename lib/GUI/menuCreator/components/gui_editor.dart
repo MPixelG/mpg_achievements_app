@@ -133,6 +133,7 @@ class _GuiEditorState extends State<GuiEditor> {
                           root,
                         ); //we convert the root widget to a json string
                         print("json: $json");
+                        Clipboard.setData(ClipboardData(text: json));
                       },
                       child: Icon(Icons.outbond_outlined),
                     ),

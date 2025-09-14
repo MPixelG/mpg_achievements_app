@@ -32,8 +32,6 @@ class WidgetDeclaration {
     WidgetOptions options,
     this.builder,
   ) {
-    print("added");
-
     declarationCache.add(this);
   }
   @override

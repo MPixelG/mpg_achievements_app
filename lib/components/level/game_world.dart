@@ -11,7 +11,7 @@ import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometricTiledComponent.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometric_tiled_component.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
@@ -66,7 +66,6 @@ abstract class GameWorld extends World
     else {
       level = TiledComponent((await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap);
     }
-    print(game.images.keys);
 
    await add(game.gameWorld.player);
     // Add the level to the game world so it gets rendered.

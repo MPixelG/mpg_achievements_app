@@ -21,7 +21,7 @@ version: 1.0.0+1
 environment:
   sdk: ^3.8.1
 
-# Dependencies specify other packages that your package needs in order to work.
+# Dependencies specify other packages that your package needs to work.
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
 # dependencies can be manually updated by changing the version numbers below to
@@ -104,9 +104,11 @@ flutter:
     - assets/screens/
     - assets/images/Explosions/explosion1d/
     - assets/yarn/test.yarn
+    - assets/images/Pixel_ArtTop_Down/basic_isometric_block_normal.png
+    - assets/images/Pixel_ArtTop_Down/iso_tile_export_normalMap.png
 
   shaders:
-    - assets/shaders/lighting.glsl
+    - assets/shaders/lighting.frag
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

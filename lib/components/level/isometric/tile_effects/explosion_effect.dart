@@ -1,9 +1,9 @@
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometricTiledComponent.dart';
 import 'package:mpg_achievements_app/components/level/isometric/tile_effects/highlighted_tile.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import '../isometricRenderable.dart';
+import '../isometric_renderable.dart';
+import '../isometric_tiled_component.dart';
 
 class ExplosionEffect extends SpriteAnimationGroupComponent
     with HasGameReference<PixelAdventure>, AnimationManager, IsometricRenderable {

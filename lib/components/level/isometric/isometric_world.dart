@@ -7,8 +7,8 @@ import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import '../../../mpg_pixel_adventure.dart';
 import 'tile_effects/highlighted_tile.dart';
-import 'isometricRenderable.dart';
-import 'isometricTiledComponent.dart';
+import 'isometric_renderable.dart';
+import 'isometric_tiled_component.dart';
 
 class TileSelectionResult {
   final Vector2 gridPosition;
