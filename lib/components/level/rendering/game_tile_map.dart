@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'dart:ui' as ui;
 
@@ -91,8 +92,56 @@ class GameTileMap {
         layerIndex += 1; //increase the layer index for the next layer
       }
     }
+  }
 
-    print(textures[_gids[Vector3.zero()]]?.sprite.srcPosition);
+  final _tilesetImageCache = <Tileset, Image>{};
+  final _normalTilesetImageCache = <Tileset, Image>{};
+
+  FutureOr<Image?> getImageFromTileset(Tileset tileset) async{
+    if(tileset.image?.source == null) return null;
+
+    Image? cacheResult = _tilesetImageCache[tileset];
+
+    if(cacheResult != null) {
+      print("found in cache!");
+      return cacheResult;
+    }
+    Image? calculatedResult = await getImageFromTilesetPath(tileset.image!.source!);
+
+    if(calculatedResult != null) _tilesetImageCache[tileset] = calculatedResult;
+    print("recalculated!");
+
+    return calculatedResult;
+  }
+
+  Future<Image?> getImageFromTilesetPath(String tilesetPath) async {
+
+    if(!Flame.images.containsKey(tilesetPath)){
+      return await Flame.images.load(tilesetPath);
+    } else {
+      return Flame.images.fromCache(tilesetPath);
+    }
+  }
+
+  FutureOr<Image?> getNormalImageFromTileset(Tileset tileset) async{
+    if(tileset.image?.source == null) return null;
+
+
+    Image? cacheResult = _normalTilesetImageCache[tileset];
+
+    if(cacheResult != null) {
+      print("found in cache!");
+      return cacheResult;
+    }
+
+    final String normalMapPath = "${RegExp("../images/([A-Za-z_0-9/]+).png").firstMatch(tileset.image!.source!)!.group(1)!}_normalMap.png";
+
+    Image? calculatedResult = await getImageFromTilesetPath(normalMapPath);
+
+    if(calculatedResult != null) _normalTilesetImageCache[tileset] = calculatedResult;
+    print("recalculated!");
+
+    return calculatedResult;
   }
 
   ///Adds a tile to the render cache based on its GID and position.
@@ -110,17 +159,8 @@ class GameTileMap {
     //calculate the local index of the tile within its tileset
     final localIndex = raw - tileset.firstGid!;
 
-    Image img;
-    Image normalMapImg;
-
-    // Load the tileset image
-    final path = tileset.image?.source?..replaceAll("../images", "");
-    img = Flame.images.fromCache(path ?? "");
-
-    //final String normalMapPath = "${(tileset.image?.source?..replaceAll("../images", ""))?..replaceAll(".png", "")}_normalMap.png";
-
-    final String normalMapPath = "${RegExp("../images/([A-Za-z_0-9/]+).png").firstMatch(tileset.image!.source!)!.group(1)!}_normalMap.png";
-    normalMapImg = Flame.images.fromCache(normalMapPath);
+    Image img = (await getImageFromTileset(tileset))!;
+    Image normalMapImg = (await getNormalImageFromTileset(tileset))!;
 
 
     final cols = tileset.columns!; //amount of columns in the tileset image
@@ -148,7 +188,12 @@ class GameTileMap {
     renderableTiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble()), RenderCategory.tile, await getTileFromTilesetToImage(sprite), await getTileFromTilesetToImage(normalSprite)));
   }
 
+  final _spriteImageCache = <Sprite, Image>{};
+
   Future<Image> getTileFromTilesetToImage(Sprite sprite) async{
+
+    Image? cacheResult = _spriteImageCache[sprite];
+    if(cacheResult != null) return cacheResult;
 
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
@@ -157,6 +202,7 @@ class GameTileMap {
 
     final picture = recorder.endRecording();
     final img = await picture.toImage(tilesize.x.toInt(), tilesize.y.toInt());
+    _spriteImageCache[sprite] = img;
     return img;
 
   }
