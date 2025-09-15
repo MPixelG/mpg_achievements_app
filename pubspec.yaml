@@ -47,6 +47,7 @@ dependencies:
   flame_riverpod: ^5.4.17
   flutter_riverpod: ^2.6.1
   flutter_resizable_container: ^4.2.0
+  image: ^4.5.4
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -109,6 +110,7 @@ flutter:
 
   shaders:
     - assets/shaders/lighting.frag
+    - assets/shaders/srcBlendModeGreater0.frag
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

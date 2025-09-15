@@ -3,6 +3,9 @@
 //is our player overlapping an object in our world
 //hitbox is defined in player.dart, here we need to update our borders for our collision
 
+import 'dart:io';
+import 'dart:ui' as ui;
+
 import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -205,6 +208,16 @@ double jaroWinkler(String s1, String s2, {double prefixScale = 0.1, int maxPrefi
   return j + (prefix * prefixScale * (1.0 - j));
 }
 
+
+
+Future<File> saveImage(ui.Image image, String filename) async {
+  final directory = await Directory.systemTemp.createTemp();
+  final file = File('${directory.path}/$filename');
+
+
+
+  return file.writeAsBytes((await image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asInt8List(), flush: true);
+}
 
 
 

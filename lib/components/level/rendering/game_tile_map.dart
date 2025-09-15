@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'dart:ui';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -23,9 +24,13 @@ class GameTileMap {
 
   GameSprite? getTextureAt(Vector3 pos) => textures[getGidAt(pos)];
 
+  TiledMap tiledMap;
 
-  GameTileMap(TiledMap map){
-    _buildTileCache(map);
+  late int totalZLayers;
+
+  GameTileMap(this.tiledMap){
+    totalZLayers = tiledMap.layers.whereType<TileLayer>().length;
+    _buildTileCache(tiledMap);
   }
 
   Future<void> _buildTileCache(TiledMap map) async {
@@ -44,7 +49,10 @@ class GameTileMap {
 
     // Helper function to find which Tileset a specific GID belongs to.
     // This is necessary because a map can use multiple tilesets.
+    final tilesetCache = <int, Tileset>{};
     Tileset findTileset(int gid) { //help function to find the correct tileset for a given gid
+      if(tilesetCache[gid] != null) return tilesetCache[gid]!;
+
       final raw = rawGid(gid);// Clear flip bits
       Tileset? best;// The best match so far
       for (final ts in map.tilesets) {// Iterate through all tilesets
@@ -55,6 +63,7 @@ class GameTileMap {
       if (best == null) {
         throw StateError('No tileset found for gid $gid (raw $raw)');
       }
+      tilesetCache[gid] = best;
       return best;
     }
 
@@ -73,7 +82,7 @@ class GameTileMap {
               final x = (i % chunkWidth) + offsetX; //calculate the x and y position of the tile in the map
               final y = (i ~/ chunkWidth) + offsetY;
               _gids[Vector3(x.toDouble(), y.toDouble(), layerIndex.toDouble())] = gid;
-              await _addTileForGid(map, findTileset(gid), gid, x, y, layerIndex, tileW, tileH); //and add it to the cache
+              _addTileForGid(map, findTileset(gid), gid, x, y, layerIndex, tileW, tileH); //and add it to the cache
             }
           }
         } else { //if the world is not infinite
@@ -85,14 +94,17 @@ class GameTileMap {
             final x = i % width; //calculate the x and y position of the tile in the map
             final y = i ~/ width;
             _gids[Vector3(x.toDouble(), y.toDouble(), layerIndex.toDouble())] = gid;
-            await _addTileForGid(map, findTileset(gid), gid, x, y, layerIndex, tileW, tileH); //and add it to the cache
+            _addTileForGid(map, findTileset(gid), gid, x, y, layerIndex, tileW, tileH); //and add it to the cache
           }
         }
 
         layerIndex += 1; //increase the layer index for the next layer
       }
     }
+    totalZLayers = layerIndex;
   }
+
+
 
   final _tilesetImageCache = <Tileset, Image>{};
   final _normalTilesetImageCache = <Tileset, Image>{};
@@ -103,13 +115,11 @@ class GameTileMap {
     Image? cacheResult = _tilesetImageCache[tileset];
 
     if(cacheResult != null) {
-      print("found in cache!");
       return cacheResult;
     }
     Image? calculatedResult = await getImageFromTilesetPath(tileset.image!.source!);
 
     if(calculatedResult != null) _tilesetImageCache[tileset] = calculatedResult;
-    print("recalculated!");
 
     return calculatedResult;
   }
@@ -130,7 +140,6 @@ class GameTileMap {
     Image? cacheResult = _normalTilesetImageCache[tileset];
 
     if(cacheResult != null) {
-      print("found in cache!");
       return cacheResult;
     }
 
@@ -139,7 +148,6 @@ class GameTileMap {
     Image? calculatedResult = await getImageFromTilesetPath(normalMapPath);
 
     if(calculatedResult != null) _normalTilesetImageCache[tileset] = calculatedResult;
-    print("recalculated!");
 
     return calculatedResult;
   }
@@ -155,6 +163,8 @@ class GameTileMap {
       double tileW,
       double tileH,
       ) async {
+
+
     final raw = gid & 0x1FFFFFFF;
     //calculate the local index of the tile within its tileset
     final localIndex = raw - tileset.firstGid!;
@@ -184,8 +194,54 @@ class GameTileMap {
         + Vector2(map.width * tileW, 0); //shift the map to the center of the screen to be all positive
     // Add the RenderInstance to our cache.
 
-    textures[gid] = GameSprite(sprite);
-    renderableTiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble()), RenderCategory.tile, await getTileFromTilesetToImage(sprite), await getTileFromTilesetToImage(normalSprite)));
+    Image texture = await getTileFromTilesetToImage(sprite);
+
+    Image normalImage = await getTileFromTilesetToImage(normalSprite);
+
+    normalImage = await divideImageAlpha(normalImage, (totalZLayers - tileZ).toDouble());
+
+    textures[gid] = GameSprite(texture, normalImage);
+    renderableTiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble()), RenderCategory.tile, texture, normalImage));
+  }
+
+  Future<ui.Image> divideImageAlpha(ui.Image src, double val) async {
+    final int width = src.width;
+    final int height = src.height;
+
+    final ByteData? byteData = await src.toByteData(format: ui.ImageByteFormat.rawRgba);
+    if (byteData == null) throw Exception('Failed to get image bytes');
+
+    final Uint8List pixels = byteData.buffer.asUint8List();
+
+    for (int i = 0; i < pixels.length; i += 4) {
+      final int r = pixels[i];
+      final int g = pixels[i + 1];
+      final int b = pixels[i + 2];
+      final int a = pixels[i + 3];
+
+      final int newA = (a ~/ val);
+
+      if (a == 0) {
+        pixels[i + 3] = newA;
+      } else {
+        final double factor = newA / a;
+        pixels[i] = (r * factor).round().clamp(0, 255);
+        pixels[i + 1] = (g * factor).round().clamp(0, 255);
+        pixels[i + 2] = (b * factor).round().clamp(0, 255);
+        pixels[i + 3] = newA;
+      }
+    }
+
+    final ui.ImmutableBuffer buffer = await ui.ImmutableBuffer.fromUint8List(pixels);
+    final ui.ImageDescriptor descriptor = ui.ImageDescriptor.raw(
+      buffer,
+      width: width,
+      height: height,
+      pixelFormat: ui.PixelFormat.rgba8888,
+    );
+    final ui.Codec codec = await descriptor.instantiateCodec();
+    final ui.FrameInfo fi = await codec.getNextFrame();
+    return fi.image;
   }
 
   final _spriteImageCache = <Sprite, Image>{};
