@@ -17,6 +17,6 @@ jobs:
             -H "Content-Type: application/json" \
             -d @- <<'JSON'
           {
-            "content": "/echo message:Test2 channel:#level"
+            "content": "/echo message:Test3"
           }
           JSON
