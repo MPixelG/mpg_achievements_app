@@ -15,4 +15,4 @@ jobs:
           curl -X POST "https://discord.com/api/v10/channels/$CHANNEL_ID/messages" \
             -H "Authorization: Bot $BOT_TOKEN" \
             -H "Content-Type: application/json" \
-            -d '{"content":"!xp add @arcegamer_ 100"}'
+            -d '{"content":"/echo message: test"}'
