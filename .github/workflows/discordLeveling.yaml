@@ -9,10 +9,9 @@ jobs:
     steps:
       - name: Send message via bot
         env:
-          BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
           CHANNEL_ID: '123456789012345678'
         run: |
           curl -X POST "https://discord.com/api/v10/channels/$CHANNEL_ID/messages" \
-            -H "Authorization: Bot $BOT_TOKEN" \
+            -H "Authorization: Bot MTQxNzE1NjE1MTkyNTE0NTYyMA.GSkHde.uXvm_5p8o1awQ1SG0yYVjU3N9fchB2lveTNRZI" \ # i know its dumb to put there, but i dont have access to secrets XD
             -H "Content-Type: application/json" \
             -d '{"content":"!xp add @arcegamer_ 10"}'
