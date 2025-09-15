@@ -15,10 +15,7 @@ class GBuffer {
   Image? normalAndDepthMap;
   Image? albedoMap;
 
-
-  GameTileMap gameTileMap;
-
-  GBuffer(this.gameTileMap){
+  GBuffer(){
     setupPaintShader();
   }
 

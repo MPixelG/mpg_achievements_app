@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
@@ -157,6 +158,7 @@ class Player extends GameCharacter
     await Future.delayed(
       Duration(milliseconds: 250),
     ); //wait a quarter of a second for the animation to finish
+
     position -= Vector2.all(
       32,
     ); //center the player so that the animation displays correctly (its 96*96 and the player is 32*32)

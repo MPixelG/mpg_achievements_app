@@ -1,13 +1,7 @@
-import 'dart:math';
-import 'dart:ui' as ui;
-
 import 'package:flame/extensions.dart';
-import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
-import 'package:mpg_achievements_app/components/level/rendering/g_buffer.dart';
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 // An enumeration to categorize renderable objects.
 enum RenderCategory {
@@ -37,41 +31,14 @@ class RenderInstance {
 class IsometricTiledComponent extends TiledComponent{
   IsometricTiledComponent(super.map);
 
-  late GBuffer gBuffer;
+  late GameTileMap gameTileMap;
+
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    gBuffer = GBuffer(GameTileMap(tileMap.map));
-    await loadShader();
-    updateShaderUniforms(Vector2(100, 100), Vector2.zero(), game.size, 0);
-    // Pre-build the tile cache for efficient rendering later reading data from the Tiled map (every layer every tile)
-  }
-
-  late ui.FragmentProgram program;
-  late ui.FragmentShader shader;
-  late final ui.Paint shaderPaint;
-
-  Future<void> loadShader() async {
-    final program = await ui.FragmentProgram.fromAsset('assets/shaders/lighting.frag');
-    shader = program.fragmentShader();
-    shader.setImageSampler(0, Flame.images.fromCache(
-        "Pixel_ArtTop_Down/basic_isometric_block_normal.png"));
-    shader.setImageSampler(1, Flame.images.fromCache(
-        "Pixel_ArtTop_Down/basic_isometric_block_normal.png"));
-
-    shaderPaint = ui.Paint()..shader = shader;
-  }
-
-  void updateShaderUniforms(Vector2 lightPos, Vector2 tilePos, Vector2 screenSize, double tilePosZ) {
-    shader.setFloatUniforms((value) {
-      value.setFloats([lightPos.x, lightPos.y]);
-      value.setFloats([tilePos.x, tilePos.y]);
-      value.setFloats([screenSize.x, screenSize.y]);
-      value.setFloats([tilePosZ]);
-    },);
+    gameTileMap = GameTileMap(tileMap.map);
   }
 
   void renderComponentsInTree(Canvas canvas, Iterable<IsometricRenderable> components) {
-    gBuffer.render(canvas, components);
   }
 }
