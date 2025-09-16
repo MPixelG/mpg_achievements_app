@@ -36,18 +36,6 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
 
       final isControlPressed = event.physicalKey == PhysicalKeyboardKey.controlLeft;
       final isEscapePressed = event.physicalKey == PhysicalKeyboardKey.escape;
-      final isHPressed = event.physicalKey == PhysicalKeyboardKey.keyH;
-
-      if(isHPressed && !isVisible){
-        _rootFocus.unfocus();
-        _searchBarFocusNode.unfocus();
-        setState(() {
-          _rootFocus.unfocus();
-          _searchBarFocusNode.unfocus();
-        });
-
-        AppRouter.router.goNamed("game");
-      }
 
       if(isEscapePressed && isVisible){
         setState(() {

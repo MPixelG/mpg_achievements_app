@@ -7,6 +7,14 @@ jobs:
   run_command:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
+      - name: get stats
+        run: |
+          author_name=$(git log -1 --pretty=format:'%an')
+          added=$(git show --numstat --pretty="" HEAD | awk '{sum += $1} END {print sum+0}')
+          echo "ADDITIONS=$added" >> $GITHUB_ENV
+          echo "AUTHOR=$author_name" >> $GITHUB_ENV
       - name: Send message via bot
         env:
           BOT_TOKEN: ${{ secrets.DISCHORD_BOT_TOKEN }}
@@ -17,6 +25,6 @@ jobs:
             -H "Content-Type: application/json" \
             -d @- <<'JSON'
           {
-            "content": "!echo message:Test3"
+            "content": "new Commit by '"$AUTHOR"' '"$ADDITIONS"'"
           }
           JSON
