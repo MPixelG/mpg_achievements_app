@@ -20,11 +20,8 @@ jobs:
           BOT_TOKEN: ${{ secrets.DISCHORD_BOT_TOKEN }}
           CHANNEL_ID: '1417079982848479343'
         run: |
+          payload=$(jq -nc --arg c "new Commit by $AUTHOR $ADDITIONS" '{content:$c}')
           curl -s -X POST "https://discord.com/api/v10/channels/$CHANNEL_ID/messages" \
             -H "Authorization: Bot $BOT_TOKEN" \
             -H "Content-Type: application/json" \
-            -d @- <<'JSON'
-          {
-            "content": "new Commit by '"$AUTHOR"' '"$ADDITIONS"'"
-          }
-          JSON
+            -d "$payload"
