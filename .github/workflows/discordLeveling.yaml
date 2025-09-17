@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: get stats
         id: stats
@@ -20,7 +22,7 @@ jobs:
           echo "AUTHOR_NAME=$author_name" >> $GITHUB_ENV
           echo "AUTHOR_EMAIL=$author_email" >> $GITHUB_ENV
 
-          added=$(git show --numstat --pretty="" "$commit_sha" | awk '{sum += $1} END {print sum+0}')
+          added=$(git show --numstat --pretty="" "$commit_sha" | awk '$1 ~ /^[0-9]+$/ {sum += $1} END {print sum+0}')
           echo "ADDITIONS=$added" >> $GITHUB_ENV
       
 
