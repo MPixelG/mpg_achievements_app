@@ -79,7 +79,7 @@ jobs:
           AUTHOR: ${{ env.FOUND_LOGIN }}
           ADDITIONS: ${{ env.ADDITIONS }}
           DELETIONS: ${{ env.DELETIONS }}
-          MESSAGE: ${{ COMMIT_MESSAGE }}
+          MESSAGE: ${{ env.COMMIT_MESSAGE }}
         run: |
           # Build payload
           content="New commit by $AUTHOR $ADDITIONS $DELETIONS"
