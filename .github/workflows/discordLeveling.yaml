@@ -46,7 +46,6 @@ jobs:
 
           commit_json=$(curl -s -H "Accept: application/vnd.github+json" "$api_url")
           login=$(echo "$commit_json" | jq -r '.author.login // empty')
-
           if [ -n "$login" ]; then
             echo "FOUND_LOGIN=$login" >> $GITHUB_ENV
             echo "mapped: $login" >&2
@@ -87,3 +86,5 @@ jobs:
           -H "Authorization: Bot $BOT_TOKEN" \
           -H "Content-Type: application/json" \
           -d "$payload" --ssl-no-revoke || echo "curl failed" >&2
+          
+          
