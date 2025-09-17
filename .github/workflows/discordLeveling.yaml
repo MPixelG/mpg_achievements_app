@@ -12,19 +12,17 @@ jobs:
       - name: get stats
         id: stats
         run: |
-          # Commit info
           commit_sha=$(git rev-parse HEAD)
           echo "COMMIT_SHA=$commit_sha" >> $GITHUB_ENV
 
-          # Author name/email from git metadata (fallback)
           author_name=$(git log -1 --pretty=format:'%an')
           author_email=$(git log -1 --pretty=format:'%ae')
           echo "AUTHOR_NAME=$author_name" >> $GITHUB_ENV
           echo "AUTHOR_EMAIL=$author_email" >> $GITHUB_ENV
 
-          # Additions in the last commit
-          added=$(git show --numstat --pretty="" HEAD | awk '{sum += $1} END {print sum+0}')
+          added=$(git show --numstat --pretty="" "$commit_sha" | awk '{sum += $1} END {print sum+0}')
           echo "ADDITIONS=$added" >> $GITHUB_ENV
+      
 
       - name: map username
         id: map
