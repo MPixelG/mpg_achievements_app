@@ -28,6 +28,7 @@ jobs:
           deleted=$(git show --numstat --pretty="" "$commit_sha" | awk '$2 ~ /^[0-9]+$/ {sum += $2} END {print sum+0}')
           echo "DELETIONS=$deleted" >> $GITHUB_ENV
           commit_msg=$(git log -1 --pretty=format:'%B')
+          
           echo "COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
           echo "$commit_msg" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
@@ -86,5 +87,3 @@ jobs:
           -H "Authorization: Bot $BOT_TOKEN" \
           -H "Content-Type: application/json" \
           -d "$payload" --ssl-no-revoke || echo "curl failed" >&2
-          
-          
