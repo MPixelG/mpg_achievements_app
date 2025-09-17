@@ -16,15 +16,20 @@ jobs:
         run: |
           commit_sha=$(git rev-parse HEAD)
           echo "COMMIT_SHA=$commit_sha" >> $GITHUB_ENV
-
+          
           author_name=$(git log -1 --pretty=format:'%an')
           author_email=$(git log -1 --pretty=format:'%ae')
           echo "AUTHOR_NAME=$author_name" >> $GITHUB_ENV
           echo "AUTHOR_EMAIL=$author_email" >> $GITHUB_ENV
-
+          
           added=$(git show --numstat --pretty="" "$commit_sha" | awk '$1 ~ /^[0-9]+$/ {sum += $1} END {print sum+0}')
           echo "ADDITIONS=$added" >> $GITHUB_ENV
-      
+          
+          commit_msg=$(git log -1 --pretty=format:'%B')
+          echo "COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$commit_msg" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
 
       - name: map username
         id: map
@@ -70,19 +75,14 @@ jobs:
           CHANNEL_ID: '1417079982848479343'
           AUTHOR: ${{ env.FOUND_LOGIN }}
           ADDITIONS: ${{ env.ADDITIONS }}
+          MESSAGE: ${{ COMMIT_MESSAGE }}
         run: |
           # Build payload
-          content="New commit by $AUTHOR $ADDITIONS additions"
-          payload=$(jq -nc --arg c "$content" '{content:$c}')
-
-          curl -s -X POST "https://atlas.bot/api/guilds/1417072674219229307/actions/05652f94-93cf-4515-a2cd-73f1cabe0162/webhook/07b5213c6bac954da52a57918d9b32110b028dd647e51c8536bd5cfcefd6f6c7" \
-            -H "Authorization: Bot $BOT_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d "$payload" \
-            --ssl-no-revoke || echo "curl failed" >&2
-
-
-
-
-
-
+          content="New commit by $AUTHOR — +$ADDITIONS additions"
+          message="$MESSAGE"
+          payload=$(jq -nc --arg content "$content" --arg message "$message" '{content:$content, embeds:[{description:$message}]}')
+          
+          curl -s -X POST "https://atlas.bot/..." \
+          -H "Authorization: Bot $BOT_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d "$payload" --ssl-no-revoke || echo "curl failed" >&2
