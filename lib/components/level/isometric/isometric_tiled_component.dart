@@ -1,7 +1,9 @@
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
+import 'package:mpg_achievements_app/components/level/rendering/g_buffer.dart';
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
+import 'package:mpg_achievements_app/components/level/rendering/isometric_shader_manager.dart';
 
 // An enumeration to categorize renderable objects.
 enum RenderCategory {
@@ -28,17 +30,24 @@ class RenderInstance {
 
 // Instead of letting Flame render layer by layer, this component deconstructs the map
 // into a list of individual `RenderInstance` objects
-class IsometricTiledComponent extends TiledComponent{
+class IsometricTiledComponent extends TiledComponent {
   IsometricTiledComponent(super.map);
 
   late GameTileMap gameTileMap;
+  //late IsometricShaderManager shaderManager;
+  late GBuffer gBuffer;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     gameTileMap = GameTileMap(tileMap.map);
+    await gameTileMap.init();
+    //shaderManager = IsometricShaderManager(gameTileMap);
+    gBuffer = GBuffer(gameTileMap);
   }
 
+
   void renderComponentsInTree(Canvas canvas, Iterable<IsometricRenderable> components) {
+    gBuffer.render(canvas, components);
   }
 }

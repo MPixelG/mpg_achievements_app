@@ -28,9 +28,11 @@ class GameTileMap {
 
   late int totalZLayers;
 
-  GameTileMap(this.tiledMap){
+  GameTileMap(this.tiledMap);
+
+  Future<void> init() async{
     totalZLayers = tiledMap.layers.whereType<TileLayer>().length;
-    _buildTileCache(tiledMap);
+    return await _buildTileCache(tiledMap);
   }
 
   Future<void> _buildTileCache(TiledMap map) async {
@@ -198,50 +200,10 @@ class GameTileMap {
 
     Image normalImage = await getTileFromTilesetToImage(normalSprite);
 
-    normalImage = await divideImageAlpha(normalImage, (totalZLayers - tileZ).toDouble());
+    normalImage = await normalImage.transformPixels((p0) => p0.withBlue(((((tileZ + p0.b) / totalZLayers)) * 255).toInt()));
 
     textures[gid] = GameSprite(texture, normalImage);
     renderableTiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble()), RenderCategory.tile, texture, normalImage));
-  }
-
-  Future<ui.Image> divideImageAlpha(ui.Image src, double val) async {
-    final int width = src.width;
-    final int height = src.height;
-
-    final ByteData? byteData = await src.toByteData(format: ui.ImageByteFormat.rawRgba);
-    if (byteData == null) throw Exception('Failed to get image bytes');
-
-    final Uint8List pixels = byteData.buffer.asUint8List();
-
-    for (int i = 0; i < pixels.length; i += 4) {
-      final int r = pixels[i];
-      final int g = pixels[i + 1];
-      final int b = pixels[i + 2];
-      final int a = pixels[i + 3];
-
-      final int newA = (a ~/ val);
-
-      if (a == 0) {
-        pixels[i + 3] = newA;
-      } else {
-        final double factor = newA / a;
-        pixels[i] = (r * factor).round().clamp(0, 255);
-        pixels[i + 1] = (g * factor).round().clamp(0, 255);
-        pixels[i + 2] = (b * factor).round().clamp(0, 255);
-        pixels[i + 3] = newA;
-      }
-    }
-
-    final ui.ImmutableBuffer buffer = await ui.ImmutableBuffer.fromUint8List(pixels);
-    final ui.ImageDescriptor descriptor = ui.ImageDescriptor.raw(
-      buffer,
-      width: width,
-      height: height,
-      pixelFormat: ui.PixelFormat.rgba8888,
-    );
-    final ui.Codec codec = await descriptor.instantiateCodec();
-    final ui.FrameInfo fi = await codec.getNextFrame();
-    return fi.image;
   }
 
   final _spriteImageCache = <Sprite, Image>{};

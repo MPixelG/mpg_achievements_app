@@ -1,10 +1,7 @@
 import 'dart:ui';
 import 'dart:ui' as ui;
 
-import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' show Colors;
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
 
 import '../../../mpg_pixel_adventure.dart';
@@ -15,7 +12,8 @@ class GBuffer {
   Image? normalAndDepthMap;
   Image? albedoMap;
 
-  GBuffer(){
+  GameTileMap gameTileMap;
+  GBuffer(this.gameTileMap){
     setupPaintShader();
   }
 
@@ -34,8 +32,8 @@ class GBuffer {
 
   void _renderComponentsInTree(Canvas canvas, Iterable<IsometricRenderable> components) {
     buildMaps(components);
-    if(albedoMap != null) {
-      canvas.drawImage(albedoMap!, Offset.zero, paint);
+    if(normalAndDepthMap != null) {
+      canvas.drawImage(normalAndDepthMap!, Offset.zero, paint);
     }
   }
 
@@ -67,6 +65,7 @@ class GBuffer {
     lastComponents = components;
     lastRenderables = calculateSortedRenderInstances(components);
     buildAlbedoMap();
+    buildNormalAndDepthMap();
   }
 
 

@@ -6,21 +6,28 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:image/image.dart' as img;
-import 'package:mpg_achievements_app/components/level/isometric/isometric_tiled_component.dart';
 import 'package:mpg_achievements_app/components/level/rendering/game_sprite.dart';
+import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import 'package:vector_math/vector_math.dart' show Vector2;
 
-mixin IsometricShaderManager on IsometricTiledComponent{
+import '../isometric/isometric_renderable.dart';
+
+class IsometricShaderManager{
 
   late FragmentProgram program;
   FragmentShader? shader;
 
-  late Image tileset;
-  late Image normalAndDepthTileset;
+  Image? tileset;
+  Image? normalAndDepthTileset;
+  Image? tileData;
 
   late Image defaultNormalTexture;
+
+  GameTileMap gameTileMap;
+
+  IsometricShaderManager(this.gameTileMap){
+    init();
+  }
 
   void initShaderProgram() async{
     program = await FragmentProgram.fromAsset("assets/shaders/lighting.frag");
@@ -30,8 +37,13 @@ mixin IsometricShaderManager on IsometricTiledComponent{
   }
   Paint paint = Paint();
 
-  final mappedIndices = <int, int>{};
+  void init(){
+    initShaderProgram();
+    buildTilesets();
+    convertTileDataToImage();
+  }
 
+  final mappedIndices = <int, int>{};
   void buildTilesets() async{
     PictureRecorder albedoRecorder = PictureRecorder();
     PictureRecorder normalDepthRecorder = PictureRecorder();
@@ -69,27 +81,16 @@ mixin IsometricShaderManager on IsometricTiledComponent{
 
 
     tileset = await albedoRecorder.endRecording().toImage((rows * tilesize.x).toInt(), (tilesize.y * cols).toInt());
-    normalAndDepthTileset = await normalDepthRecorder.endRecording().toImage((width * tilesize.x).toInt(), (height * tilesize.y).toInt());
-
-    Image testBild;
-
-    Flame.images.load("testbild.png").then((value) {
-      testBild = value;
-    });
+    normalAndDepthTileset = await normalDepthRecorder.endRecording().toImage((rows * tilesize.x).toInt(), (cols * tilesize.y).toInt());
   }
 
-  Future<Image> convertValuesToImage(List<double> vals, int width, int height) async{
+  Future<Image> convertValuesToImage(List<int> vals, int width, int height) async{
     int pxCount = width * height;
 
     Uint8List bytes = Uint8List(pxCount);
 
-
-    for (int i = 0; i < pxCount; i++) {
-      double val = vals[i];
-
-      int floatVal = (val * 255.0).round();
-      floatVal.clamp(0, 255);
-      bytes[i] = floatVal;
+    for (int i = 0; i < pxCount; i++){
+      bytes[i] = vals[i].clamp(0, 255);
     }
 
     Completer<Image> completer = Completer();
@@ -98,16 +99,59 @@ mixin IsometricShaderManager on IsometricTiledComponent{
     return completer.future;
   }
 
-  void convertTileDataToImage(){
+  void convertTileDataToImage() async{
 
-    for(RenderInstance instance in gameTileMap.renderableTiles){
+    int rows = gameTileMap.tiledMap.width;
+    int cols = gameTileMap.tiledMap.height;
 
-
-
-
-    }
+    int length = rows * cols * 4 * gameTileMap.totalZLayers;
 
 
+    List<int> data = List.generate(length, (index) {
+      int result = 0;
+
+      double tileIndex = (index ~/ 4).toDouble();
+
+      double layerTileIndex = (tileIndex % (rows*cols)).floorToDouble();
+
+      double gridX = layerTileIndex % cols;
+      double gridY = (layerTileIndex ~/ cols).toDouble();
+      double gridZ = (tileIndex ~/ gameTileMap.totalZLayers).toDouble();
+
+
+      int? gid = gameTileMap.getGidAt(Vector3(gridX, gridY, gridZ));
+      if(gid == null) {
+        print("no gid found at $gridX, $gridY, $gridZ");
+      }
+
+      int? transformedGid = mappedIndices[gid];
+      if(transformedGid == null) {
+        print("no transformed gid found at $gridX, $gridY, $gridZ");
+      }
+
+      switch(index % 4){
+        case 0: { // tile index
+          print("gid1: ${transformedGid! & 0xFFFFFFFF00000000}");
+          return transformedGid & 0xFFFFFFFF00000000;
+        }
+        case 1: { // tile index 2
+          print("gid2: ${transformedGid! & 0x00000000FFFFFFFF}");
+          return transformedGid & 0x00000000FFFFFFFF;
+        }
+        case 2: { // normal index
+          print("normal gid1: ${transformedGid! & 0xFFFFFFFF00000000}");
+          return transformedGid & 0xFFFFFFFF00000000;
+        }
+        case 3: { // normal index 2
+          print("normal gid2: ${transformedGid! & 0x00000000FFFFFFFF}");
+          return transformedGid & 0x00000000FFFFFFFF;
+        }
+
+      }
+      return result;
+    });
+
+    tileData = await convertValuesToImage(data, rows, cols * gameTileMap.totalZLayers);
   }
 
 
@@ -115,15 +159,16 @@ mixin IsometricShaderManager on IsometricTiledComponent{
 
 
   Paint shaderPaint = Paint();
-  void frame(Canvas canvas){
-    if(shader == null) return;
+  void frame(Canvas canvas, Iterable<IsometricRenderable> components){
+    if(shader == null || tileData == null || tileset == null || normalAndDepthTileset == null) return;
+    print("passed!");
 
     final double width = gameTileMap.tiledMap.width * tilesize.x;
     final double height = gameTileMap.tiledMap.height * tilesize.z;
 
-    shader!.setImageSampler(0, image); //map data pixel => tile, r & g => tilesetIndex, b & a => normal and depth tileset index
-    shader!.setImageSampler(1, tileset); //tileset (albedo)
-    shader!.setImageSampler(2, normalAndDepthTileset); //tileset (normal and depth)
+    shader!.setImageSampler(0, tileData!); //map data pixel => tile, r & g => tilesetIndex, b & a => normal and depth tileset index
+    shader!.setImageSampler(1, tileset!); //tileset (albedo)
+    shader!.setImageSampler(2, normalAndDepthTileset!); //tileset (normal and depth)
 
 
     shader!.setFloat(0, gameTileMap.tiledMap.width.toDouble()); //layerWidth
