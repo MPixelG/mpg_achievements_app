@@ -180,7 +180,7 @@ class _GuiEditorState extends State<GuiEditor> {
                           //this is called when an item is selected from the popup menu
                           switch (value) {
                             //we switch on the value of the selected item
-                            case "positioned":
+                            case "Positioned":
                               {
                                 LayoutWidget? parent = getNearestStackRecursive(
                                   root,
@@ -194,8 +194,9 @@ class _GuiEditorState extends State<GuiEditor> {
                                   addWidget(widgetDeclaration.builder(parent));
                                 }
                               } //if the value is positioned, we add a positioned widget to the root widget
-                            case "expanded":
+                            case "Expanded":
                               {
+                                print("adding Expanded!");
                                 LayoutWidget? parent = getNearestFlexRecursive(
                                   root,
                                 ); //we get the nearest stack widget to add the expanded widget to, because you can only add expanded widgets to a row or column
@@ -205,11 +206,13 @@ class _GuiEditorState extends State<GuiEditor> {
                                     .where((element) => element.id == value)
                                     .firstOrNull;
                                 if (widgetDeclaration != null) {
+                                  print("adding widget");
                                   addWidget(widgetDeclaration.builder(parent));
                                 }
                               }
                             default:
                               {
+                                print("default: $value");
                                 var widgetDeclaration = WidgetDeclaration
                                     .declarationCache
                                     .where((element) => element.id == value)
@@ -294,13 +297,13 @@ class _GuiEditorState extends State<GuiEditor> {
   /// The widget is built using the provided LayoutWidget.
   void addWidget(LayoutWidget? layoutWidget, {LayoutWidget? root}) async {
     if (layoutWidget == null) {
+      print("widget is null!");
       return; //if the layoutWidget is null, we return and do not add anything
     }
 
     setState(() {
       //we call setState to rebuild the widget tree and show the new widget
-      root ??=
-          this.root; //if no root is provided, we use the current root widget
+      root ??= this.root; //if no root is provided, we use the current root widget
 
       root!.addChild(
         layoutWidget,
