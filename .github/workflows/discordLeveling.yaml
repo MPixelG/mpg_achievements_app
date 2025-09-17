@@ -11,7 +11,7 @@ jobs:
 
       - name: get stats
         run: |
-          author_name=$(git log -1 --pretty=format:'%ae')
+          author_name=$(git log -1 --pretty=format:'%cn <%ce>')
           added=$(git show --numstat --pretty="" HEAD | awk '{sum += $1} END {print sum+0}')
           echo "ADDITIONS=$added" >> $GITHUB_ENV
           echo "AUTHOR=$author_name" >> $GITHUB_ENV
@@ -26,5 +26,4 @@ jobs:
             -H "Content-Type: application/json" \
             -d "$payload" \
             --ssl-no-revoke
-          
           
