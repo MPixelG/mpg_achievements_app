@@ -18,6 +18,7 @@ jobs:
           echo "COMMIT_SHA=$commit_sha" >> $GITHUB_ENV
           author_name=$(git log -1 --pretty=format:'%an')
           author_email=$(git log -1 --pretty=format:'%ae')
+          
           echo "AUTHOR_NAME=$author_name" >> $GITHUB_ENV
           echo "AUTHOR_EMAIL=$author_email" >> $GITHUB_ENV
           
@@ -86,14 +87,3 @@ jobs:
           -H "Authorization: Bot $BOT_TOKEN" \
           -H "Content-Type: application/json" \
           -d "$payload" --ssl-no-revoke || echo "curl failed" >&2
-          
-          
-          
-
-          
-          
-          
-          
-          
-          
-          
