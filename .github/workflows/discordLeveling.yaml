@@ -72,7 +72,7 @@ jobs:
           ADDITIONS: ${{ env.ADDITIONS }}
         run: |
           # Build payload
-          content="New commit by $AUTHOR — +$ADDITIONS additions (repo: ${{ github.repository }})"
+          content="New commit by $AUTHOR $ADDITIONS additions"
           payload=$(jq -nc --arg c "$content" '{content:$c}')
 
           curl -s -X POST "https://atlas.bot/api/guilds/1417072674219229307/actions/05652f94-93cf-4515-a2cd-73f1cabe0162/webhook/07b5213c6bac954da52a57918d9b32110b028dd647e51c8536bd5cfcefd6f6c7" \
