@@ -24,16 +24,24 @@ class GBuffer {
 
   ui.Paint paint = ui.Paint();
   Paint depthMapPaint = Paint()..blendMode = BlendMode.srcOver;
-
+  late FragmentShader? shader;
   void setupPaintShader() async{
-    FragmentProgram program = await FragmentProgram.fromAsset("assets/shaders/srcBlendModeGreater0.frag");
-    FragmentShader shader = program.fragmentShader();
+    FragmentProgram program = await FragmentProgram.fromAsset("assets/shaders/lighting.frag");
+    shader = program.fragmentShader();
   }
 
   void _renderComponentsInTree(Canvas canvas, Iterable<IsometricRenderable> components) {
     buildMaps(components);
-    if(normalAndDepthMap != null) {
-      canvas.drawImage(normalAndDepthMap!, Offset.zero, paint);
+    if(normalAndDepthMap != null && albedoMap != null && shader != null) {
+      double width = gameTileMap.tiledMap.width * tilesize.x;
+      double height = gameTileMap.tiledMap.height * tilesize.y;
+
+      shader!.setImageSampler(0, albedoMap!);
+      shader!.setImageSampler(1, normalAndDepthMap!);
+      shader!.setFloatUniforms((value) => value.setFloats([width, height]));
+
+      paint.shader ??= shader;
+      canvas.drawRect(Rect.fromPoints(Offset.zero, Offset(width.toDouble(), height)), paint);
     }
   }
 

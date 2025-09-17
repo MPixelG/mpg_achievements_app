@@ -1,16 +1,24 @@
 precision mediump float;
+#include <flutter/runtime_effect.glsl>
 
-uniform sampler2D mapData;
-uniform sampler2D mapNormalData;
-uniform sampler2D tileset;
-uniform sampler2D normalMapTileset;
-
-uniform int layerWidth;
-uniform int layerHeight;
-uniform int zLayers;
+uniform sampler2D albedoMap;
+uniform sampler2D depthMap;
+uniform vec2 screenSize;
 
 out vec4 fragColor;
 
 void main() {
-    fragColor = vec4(1.0, 1.0, 0.0, 1.0);
+
+
+    vec2 uv = FlutterFragCoord().xy / screenSize;
+
+    vec4 depthMapPixel = texture(depthMap, uv);
+    vec2 twoChannelNormalVal = depthMapPixel.rg;
+
+    vec3 normalVal = vec3(twoChannelNormalVal, sqrt(max(0, 1 - depthMapPixel.x*depthMapPixel.x - depthMapPixel.y*depthMapPixel.y)));
+
+    float height = depthMapPixel.b;
+
+
+    fragColor = depthMapPixel;
 }
