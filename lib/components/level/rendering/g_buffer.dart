@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:flame/extensions.dart';
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
+import 'package:mpg_achievements_app/main.dart';
 
 import '../../../mpg_pixel_adventure.dart';
 import '../isometric/isometric_renderable.dart';
@@ -36,9 +37,14 @@ class GBuffer {
       double width = gameTileMap.tiledMap.width * tilesize.x;
       double height = gameTileMap.tiledMap.height * tilesize.y;
 
+      Vector2 mousePos = gameWidgetKey.currentState!.currentGame.gameWorld.mousePos;
+
       shader!.setImageSampler(0, albedoMap!);
       shader!.setImageSampler(1, normalAndDepthMap!);
-      shader!.setFloatUniforms((value) => value.setFloats([width, height]));
+      shader!.setFloatUniforms((value) {
+        value.setFloats([width, height]);
+        value.setFloats([mousePos.x / width, mousePos.y / height]);
+      });
 
       paint.shader ??= shader;
       canvas.drawRect(Rect.fromPoints(Offset.zero, Offset(width.toDouble(), height)), paint);
@@ -85,7 +91,7 @@ class GBuffer {
 
     for (final r in lastRenderables!) { //render everything in the sorted order
       if(r.normal != null) {
-        canvas.drawImage((r.normal!), r.screenPos.toOffset(), depthMapPaint);
+        canvas.drawImage((r.normal!), (r.screenPos - tilesize.xz/2).toOffset(), depthMapPaint);
       }
     }
 
