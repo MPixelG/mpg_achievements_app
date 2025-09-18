@@ -26,7 +26,7 @@ abstract class GameWorld extends World
         KeyboardHandler,
         PointerMoveCallbacks,
         TapCallbacks,
-        RiverpodComponentMixin {
+        RiverpodComponentMixin{
 
   final String levelName;
   late TiledComponent level;
@@ -230,7 +230,7 @@ abstract class GameWorld extends World
 
   void _loadScrollingBackground() {
     final Layer? backgroundLayer = level.tileMap.getLayer('Level');
-    String backgroundColor = "Green";
+    String backgroundColor = this is IsometricWorld ? "Black" : "Green";
     if (backgroundLayer != null) {
       backgroundColor =
           backgroundLayer.properties.getValue('BackgroundColor') ?? "Green";

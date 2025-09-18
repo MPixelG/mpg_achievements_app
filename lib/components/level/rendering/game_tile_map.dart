@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'dart:ui';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -23,9 +24,15 @@ class GameTileMap {
 
   GameSprite? getTextureAt(Vector3 pos) => textures[getGidAt(pos)];
 
+  TiledMap tiledMap;
 
-  GameTileMap(TiledMap map){
-    _buildTileCache(map);
+  late int totalZLayers;
+
+  GameTileMap(this.tiledMap);
+
+  Future<void> init() async{
+    totalZLayers = tiledMap.layers.whereType<TileLayer>().length;
+    return await _buildTileCache(tiledMap);
   }
 
   Future<void> _buildTileCache(TiledMap map) async {
@@ -44,7 +51,10 @@ class GameTileMap {
 
     // Helper function to find which Tileset a specific GID belongs to.
     // This is necessary because a map can use multiple tilesets.
+    final tilesetCache = <int, Tileset>{};
     Tileset findTileset(int gid) { //help function to find the correct tileset for a given gid
+      if(tilesetCache[gid] != null) return tilesetCache[gid]!;
+
       final raw = rawGid(gid);// Clear flip bits
       Tileset? best;// The best match so far
       for (final ts in map.tilesets) {// Iterate through all tilesets
@@ -55,6 +65,7 @@ class GameTileMap {
       if (best == null) {
         throw StateError('No tileset found for gid $gid (raw $raw)');
       }
+      tilesetCache[gid] = best;
       return best;
     }
 
@@ -73,7 +84,7 @@ class GameTileMap {
               final x = (i % chunkWidth) + offsetX; //calculate the x and y position of the tile in the map
               final y = (i ~/ chunkWidth) + offsetY;
               _gids[Vector3(x.toDouble(), y.toDouble(), layerIndex.toDouble())] = gid;
-              await _addTileForGid(map, findTileset(gid), gid, x, y, layerIndex, tileW, tileH); //and add it to the cache
+              _addTileForGid(map, findTileset(gid), gid, x, y, layerIndex, tileW, tileH); //and add it to the cache
             }
           }
         } else { //if the world is not infinite
@@ -85,14 +96,17 @@ class GameTileMap {
             final x = i % width; //calculate the x and y position of the tile in the map
             final y = i ~/ width;
             _gids[Vector3(x.toDouble(), y.toDouble(), layerIndex.toDouble())] = gid;
-            await _addTileForGid(map, findTileset(gid), gid, x, y, layerIndex, tileW, tileH); //and add it to the cache
+            _addTileForGid(map, findTileset(gid), gid, x, y, layerIndex, tileW, tileH); //and add it to the cache
           }
         }
 
         layerIndex += 1; //increase the layer index for the next layer
       }
     }
+    totalZLayers = layerIndex;
   }
+
+
 
   final _tilesetImageCache = <Tileset, Image>{};
   final _normalTilesetImageCache = <Tileset, Image>{};
@@ -103,13 +117,11 @@ class GameTileMap {
     Image? cacheResult = _tilesetImageCache[tileset];
 
     if(cacheResult != null) {
-      print("found in cache!");
       return cacheResult;
     }
     Image? calculatedResult = await getImageFromTilesetPath(tileset.image!.source!);
 
     if(calculatedResult != null) _tilesetImageCache[tileset] = calculatedResult;
-    print("recalculated!");
 
     return calculatedResult;
   }
@@ -130,7 +142,6 @@ class GameTileMap {
     Image? cacheResult = _normalTilesetImageCache[tileset];
 
     if(cacheResult != null) {
-      print("found in cache!");
       return cacheResult;
     }
 
@@ -139,7 +150,6 @@ class GameTileMap {
     Image? calculatedResult = await getImageFromTilesetPath(normalMapPath);
 
     if(calculatedResult != null) _normalTilesetImageCache[tileset] = calculatedResult;
-    print("recalculated!");
 
     return calculatedResult;
   }
@@ -155,6 +165,8 @@ class GameTileMap {
       double tileW,
       double tileH,
       ) async {
+
+
     final raw = gid & 0x1FFFFFFF;
     //calculate the local index of the tile within its tileset
     final localIndex = raw - tileset.firstGid!;
@@ -184,8 +196,14 @@ class GameTileMap {
         + Vector2(map.width * tileW, 0); //shift the map to the center of the screen to be all positive
     // Add the RenderInstance to our cache.
 
-    textures[gid] = GameSprite(sprite);
-    renderableTiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble()), RenderCategory.tile, await getTileFromTilesetToImage(sprite), await getTileFromTilesetToImage(normalSprite)));
+    Image texture = await getTileFromTilesetToImage(sprite);
+
+    Image normalImage = await getTileFromTilesetToImage(normalSprite);
+
+    normalImage = await normalImage.transformPixels((p0) => p0.withBlue(((((tileZ + p0.b) / totalZLayers)) * 255).toInt()));
+
+    textures[gid] = GameSprite(texture, normalImage);
+    renderableTiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble()), RenderCategory.tile, texture, normalImage));
   }
 
   final _spriteImageCache = <Sprite, Image>{};

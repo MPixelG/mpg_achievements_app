@@ -1,56 +1,82 @@
+precision mediump float;
 #include <flutter/runtime_effect.glsl>
 
-precision mediump float;
-
-uniform sampler2D textureSampler;
-uniform sampler2D normalSampler;
-
-uniform vec2 lightPos;
-uniform vec2 tilePos;
-uniform vec2 uResolution;
-uniform float tileZ;
+uniform sampler2D albedoMap;
+uniform sampler2D depthMap;
+uniform vec2 screenSize;
+uniform vec3 lightPos;
+uniform float heightScale;
 
 out vec4 fragColor;
 
-// Rotationsmatrix für isometrische Transformation
-mat3 getIsometricNormalTransform() {
-    // Rotation um 45° in Y-Achse für isometrische Ansicht
-    float angle = radians(45.0);
-    float cosA = cos(angle);
-    float sinA = sin(angle);
-
-    return mat3(
-    cosA, 0.0, sinA,
-    0.0, 1.0, 0.0,
-    -sinA, 0.0, cosA
-    );
+vec2 iso2orth(vec3 iso) {
+    float sum = iso.y / heightScale + iso.z;
+    float diff = iso.x;
+    float x = (sum + diff) * 0.5;
+    float y = (sum - diff) * 0.5;
+    return vec2(x, y);
 }
 
+
+vec3 calculateBasicLighting(){
+    vec2 uv = FlutterFragCoord().xy / screenSize;
+
+
+    vec4 depthMapPixel = texture(depthMap, uv);
+    vec2 nxy = depthMapPixel.rg * 2.0 - 1.0;
+    float nz = sqrt(max(0.0, 1.0 - nxy.x*nxy.x - nxy.y*nxy.y));
+    vec3 n = normalize(vec3(nxy, nz));
+
+    float height = depthMapPixel.b;
+
+    vec3 fragPos = vec3(uv, height);
+
+    vec3 L = lightPos - fragPos;
+    float dist = length(L);
+    L = normalize(L);
+
+    float NdotL = max(dot(n, L), 0.0);
+
+    float range = 2.2 + pow(fragPos.z*4, 2);
+    float att = 1.0 / (1.0 + 16.0 * (dist / range) * (dist / range));
+
+    vec3 lightColor = vec3(1, 0, 0);
+    vec3 diffuse = lightColor * NdotL * att;
+
+    return diffuse;
+}
 void main() {
-    vec2 fragPx = FlutterFragCoord().xy - tilePos;
-    vec2 uv = fragPx / uResolution;
+    vec2 uv = FlutterFragCoord().xy / screenSize;
+    vec4 albedoPixel = texture(albedoMap, uv);
+    float pixelHeight = texture(depthMap, uv).b;
 
-    // Normal aus der Normal Map lesen
-    vec3 normal = texture(normalSampler, uv).rgb * 2.0 - 1.0;
+    float heightScale = 0.5;
+    vec3 fragPos = vec3(uv, pixelHeight * heightScale);
 
-    // Normal für isometrische Ansicht transformieren
-    mat3 isoTransform = getIsometricNormalTransform();
-    normal = normalize(isoTransform * normal);
+    vec3 dirToLight = normalize(lightPos - fragPos);
 
-    // 3D-Position des Fragments
-    vec2 worldFragPos = FlutterFragCoord().xy;
-    vec3 fragPos3D = vec3(worldFragPos, tileZ);
+    vec3 currentPos = fragPos;
+    float stepSize = 0.005;
 
-    // Light Position in 3D
-    vec3 lightPos3D = vec3(lightPos, 100.0);
+    float shadow = 1.0;
 
-    // Light Direction
-    vec3 lightDir = normalize(lightPos3D - fragPos3D);
+    for(int i = 0; i < 640; i++){
+        currentPos += dirToLight * stepSize;
 
-    float diff = max(dot(normal, lightDir)*1.6, 0.8);
+        if(any(lessThan(currentPos.xy, vec2(0.0))) || any(greaterThan(currentPos.xy, vec2(1.0)))){
+            break;
+        }
 
-    vec4 textureColor = texture(textureSampler, uv);
-    vec3 globalLightColor = normalize(vec3(0.29, 0.26, 0.23));
+        float heightVal = texture(depthMap, currentPos.xy).b * heightScale;
 
-    fragColor = vec4(textureColor.rgb * diff * globalLightColor, textureColor.a);
+        if(heightVal > currentPos.z + 0.1){
+            shadow = clamp(shadow - 0.9, 0.0, 1.0);
+            break;
+        }
+    }
+
+    vec3 diffuse = calculateBasicLighting();
+    vec3 color = albedoPixel.rgb * (diffuse * shadow + vec3(0.15, 0.1, 0.3)) ;
+
+    fragColor = vec4(color, albedoPixel.a);
 }

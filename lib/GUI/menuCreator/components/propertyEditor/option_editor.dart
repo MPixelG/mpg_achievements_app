@@ -24,7 +24,6 @@ class OptionEditorMenu extends StatefulWidget {
 
   LayoutWidget get node => _currentWidget.first;
   set node(LayoutWidget newNode) {
-    print("new val set!");
     _currentWidget[0] = newNode;
     updateView();
   }
@@ -99,23 +98,24 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
 
   TextEditingController _getTextController(
     String name,
+    String widgetId,
     Map<String, dynamic> properties, {
     String controllerName = "",
   }) {
     final value = properties[name]?.toString() ?? "";
 
-    if (_textControllers.containsKey(controllerName + name)) {
-      if (_textControllers[controllerName + name]!.text != value &&
-          !_textControllers[controllerName + name]!.selection.isValid) {
-        _textControllers[controllerName + name]!.text = value;
+    if (_textControllers.containsKey(controllerName + name + widgetId)) {
+      if (_textControllers[controllerName + name + widgetId]!.text != value &&
+          !_textControllers[controllerName + name + widgetId]!.selection.isValid) {
+        _textControllers[controllerName + name + widgetId]!.text = value;
       }
     } else {
-      _textControllers[controllerName + name] = TextEditingController(
+      _textControllers[controllerName + name + widgetId] = TextEditingController(
         text: value,
       );
     }
 
-    return _textControllers[controllerName + name]!;
+    return _textControllers[controllerName + name + widgetId]!;
   }
 
   Widget _buildValueEditor(WidgetOption option) {
@@ -397,6 +397,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
   }) {
     TextEditingController controller = _getTextController(
       name,
+      widget.node.id,
       controllerName: controllerName ?? "",
       properties,
     ); //if a controllerName is provided, use it as a prefix for the controller name. if not, use the name directly
