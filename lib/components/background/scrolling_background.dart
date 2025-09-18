@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 class ScrollingBackground extends Background with HasGameReference{
 
@@ -13,7 +14,7 @@ class ScrollingBackground extends Background with HasGameReference{
 
   Set<BackgroundTile> tiles = {};
 
-  Vector2 tileSpeed = Vector2.all(40);
+  Vector2 tileSpeed = Vector2(tilesize.x, tilesize.z);
 
   double time = 0;
 

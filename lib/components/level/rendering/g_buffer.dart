@@ -1,7 +1,9 @@
+import 'dart:math';
 import 'dart:ui';
 import 'dart:ui' as ui;
 
 import 'package:flame/extensions.dart';
+import 'package:flutter/material.dart' show Colors;
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
 import 'package:mpg_achievements_app/main.dart';
 
@@ -39,15 +41,25 @@ class GBuffer {
 
       Vector2 mousePos = gameWidgetKey.currentState!.currentGame.gameWorld.mousePos;
 
+      double x = (mousePos.x / (width));
+      double y = (mousePos.y / height);
+      double z = gameWidgetKey.currentState!.currentGame.zoomFactor;
+
+
       shader!.setImageSampler(0, albedoMap!);
       shader!.setImageSampler(1, normalAndDepthMap!);
       shader!.setFloatUniforms((value) {
         value.setFloats([width, height]);
-        value.setFloats([mousePos.x / width, mousePos.y / height]);
+        value.setFloats([x, y, z]);
+        value.setFloats([gameTileMap.totalZLayers * tilesize.z / width]);
       });
 
       paint.shader ??= shader;
       canvas.drawRect(Rect.fromPoints(Offset.zero, Offset(width.toDouble(), height)), paint);
+
+      canvas.drawLine(Offset(x * width, y * height), Offset(x * width, y * height - z * tilesize.z + 5), Paint()..color = Colors.white70);
+      canvas.drawCircle(Offset(x * width, y * height - z * tilesize.z), 3, Paint()..color = Colors.white70);
+
     }
   }
 

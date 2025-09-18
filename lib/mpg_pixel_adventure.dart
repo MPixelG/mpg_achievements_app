@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -105,6 +106,15 @@ class PixelAdventure extends FlameGame with
     cam.viewport.add(joystick);
     cam.viewport.add(buttonComponent);
   }
+
+  double scrollFactor = 1.0;
+  double zoomFactor = 1.0;
+  @override
+  void onScroll(PointerScrollInfo info) {
+    scrollFactor += info.scrollDelta.global.y;
+    zoomFactor = pow(0.9, scrollFactor / 30).toDouble();
+  }
+
 }
 
 Vector3 get tilesize => PixelAdventure.currentInstance.gameWorld.calculatedTileSize;
