@@ -12,7 +12,8 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 enum RenderCategory {
   tile,
   tileHighlight,
-  entity
+  entity,
+  effect,
 }
 
 // A data class designed to hold all the necessary information for rendering a single object,
@@ -37,6 +38,7 @@ class IsometricTiledComponent extends TiledComponent{
   IsometricTiledComponent(super.map);
 
   late GameTileMap gameTileMap;
+  bool _corrupted = true;
 
   @override
   Future<void> onLoad() async {
@@ -76,7 +78,7 @@ class IsometricTiledComponent extends TiledComponent{
   Iterable<IsometricRenderable>? lastComponents;
   void renderComponentsInTree(Canvas canvas, Iterable<IsometricRenderable> components) {
 
-    if(lastComponents != components || lastRenderables == null) {
+    if(lastComponents != components || lastRenderables == null || _corrupted){ //only recalculate if the components have changed
       lastComponents = components;
       lastRenderables = calculateSortedRenderInstances(components);
     }
@@ -129,8 +131,15 @@ class IsometricTiledComponent extends TiledComponent{
       // ...use the category as the definitive tie-breaker.
       return a.category.index.compareTo(b.category.index);
     });
+    _corrupted = false;
+    print("resorted allRenderables");
     return allRenderables;
   }
+
+  void forceRebuildCache(){
+    _corrupted = true;
+  }
+
 }
 extension on Vector3 {
   int compareTo(Vector3 gridPos) {

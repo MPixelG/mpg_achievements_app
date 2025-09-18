@@ -25,7 +25,7 @@ class TileHighlightRenderable extends PositionComponent with RiverpodComponentMi
   void onLoad() {
     // Position the highlight based on the grid position and tile size.
     tileSize = game.gameWorld.tileGrid.tileSize;
-    add(ExplosionEffect(this, zIndex));
+    add(ExplosionEffect(this, zIndex, gridPos));
 
     }
 

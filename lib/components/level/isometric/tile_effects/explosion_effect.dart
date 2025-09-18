@@ -8,25 +8,45 @@ import '../isometric_tiled_component.dart';
 class ExplosionEffect extends SpriteAnimationGroupComponent
     with HasGameReference<PixelAdventure>, AnimationManager, IsometricRenderable {
 
+  final Vector2 gridPos;
   late TileHighlightRenderable tileHighlight;
-  final int zIndex;
+  late int inizIndex;
+  late int currentZIndex;
 
-  ExplosionEffect(this.tileHighlight, this.zIndex);
+  ExplosionEffect(this.tileHighlight, this.inizIndex, this.gridPos);
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     anchor = Anchor.bottomCenter;
+    currentZIndex = inizIndex;
     // The explosion's visual center should align with its position.
     // Play the animation once, and when it's complete, remove this component.
     playAnimation('explosion_1');
-
-
   }
 
+  @override
+  void update(double dt) {
+    super.update(dt);
+   var ticker = animationTicker;
+    if (ticker != null){
+
+      int frameIndex = ticker.currentIndex;
+      currentZIndex = inizIndex + frameIndex;
+      if (!ticker.isLastFrame) {
+        (game.gameWorld.level as IsometricTiledComponent).forceRebuildCache();}
+      print("setDirty");
+      print("ExplosionEffect frameIndex: $frameIndex, currentZIndex: $currentZIndex");
+      }
+
+      ticker?.onComplete = () {
+        removeFromParent();
+        (game.gameWorld.level as IsometricTiledComponent).forceRebuildCache();
+      };
+  }
 
   @override
-  AnimatedComponentGroup get group => AnimatedComponentGroup.effect;
+  AnimatedComponentGroup get group => AnimatedComponentGroup.entity;
 
   @override
   String get componentSpriteLocation => 'Explosions/explosion1d';
@@ -49,24 +69,5 @@ class ExplosionEffect extends SpriteAnimationGroupComponent
   RenderCategory get renderCategory => RenderCategory.tileHighlight;
 
   @override
-  int get renderPriority => zIndex;
+  int get renderPriority => currentZIndex;
 }
-
-/*
-//Manually draw the current animation frame
-    final sprite = animationTicker?.getSprite(); // Get the sprite for the current frame
-    if (sprite != null) {
-
-      final spriteCenterOffset = sprite.srcSize;// Offset to center the sprite
-      final diamondCenter = Vector2(0, halfTile.y); //bottom center of the diamond
-      final spriteDrawPosition = diamondCenter - Vector2(spriteCenterOffset.x / 2, spriteCenterOffset.y);// Center the sprite above the diamond
-
-      // Render the sprite at the calculated position.
-      sprite.render(
-        canvas,
-        position: spriteDrawPosition,
-        size: sprite.srcSize,
-      );
-
-      }
- */

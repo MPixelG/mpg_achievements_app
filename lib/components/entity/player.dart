@@ -126,6 +126,7 @@ class Player extends GameCharacter
     //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
     if (other is Collectable) {
       other.collidedWithPlayer();
+
     }
 
     if (other is Saw && !debugImmortalMode) {
@@ -145,6 +146,7 @@ class Player extends GameCharacter
       //todo state management for tasks
       game.showDialogue = true;
       game.overlays.add('DialogueScreen');
+      game.overlays.add('SpeechBubble');
     }
     super.onCollision(intersectionPoints, other);
   }
