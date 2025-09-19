@@ -37,11 +37,11 @@ vec3 calculateBasicLighting(){
 
     float NdotL = max(dot(n, L), 0.0);
 
-    float range = 2.2 + pow(fragPos.z*4, 2);
+    float range = 2.2 + pow(fragPos.z*3, 2);
     float att = 1.0 / (1.0 + 16.0 * (dist / range) * (dist / range));
 
-    vec3 lightColor = vec3(1, 0, 0);
-    vec3 diffuse = lightColor * NdotL * att;
+    vec3 lightColor = vec3(0, 0.2, 1);
+    vec3 diffuse = lightColor * NdotL * att * 1.3;
 
     return diffuse;
 }

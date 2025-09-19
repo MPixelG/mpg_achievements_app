@@ -3,7 +3,6 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
 import 'package:mpg_achievements_app/components/level/rendering/g_buffer.dart';
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
-import 'package:mpg_achievements_app/components/level/rendering/isometric_shader_manager.dart';
 
 // An enumeration to categorize renderable objects.
 enum RenderCategory {
@@ -31,30 +30,19 @@ class RenderInstance {
 
 // Instead of letting Flame render layer by layer, this component deconstructs the map
 // into a list of individual `RenderInstance` objects
-class IsometricTiledComponent extends TiledComponent {
+class IsometricTiledComponent extends TiledComponent{
   IsometricTiledComponent(super.map);
 
   late GameTileMap gameTileMap;
-  //late IsometricShaderManager shaderManager;
   late GBuffer gBuffer;
-  bool _corrupted = true;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     gameTileMap = GameTileMap(tileMap.map);
-    await gameTileMap.init();
-    //shaderManager = IsometricShaderManager(gameTileMap);
+    gameTileMap.init();
     gBuffer = GBuffer(gameTileMap);
-  }
-
-  void updateShaderUniforms(Vector2 lightPos, Vector2 tilePos, Vector2 screenSize, double tilePosZ) {
-    shader.setFloatUniforms((value) {
-      value.setFloats([lightPos.x, lightPos.y]);
-      value.setFloats([tilePos.x, tilePos.y]);
-      value.setFloats([screenSize.x, screenSize.y]);
-      value.setFloats([tilePosZ]);
-    },);
+    // Pre-build the tile cache for efficient rendering later reading data from the Tiled map (every layer every tile)
   }
 
 
@@ -62,5 +50,8 @@ class IsometricTiledComponent extends TiledComponent {
   Iterable<IsometricRenderable>? lastComponents;
   void renderComponentsInTree(Canvas canvas, Iterable<IsometricRenderable> components) {
     gBuffer.render(canvas, components);
+  }
+  void forceRebuildCache(){
+    gBuffer.setCorrupted();
   }
 }

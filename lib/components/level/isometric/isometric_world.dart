@@ -55,20 +55,15 @@ class IsometricWorld extends GameWorld {
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
 
-    final TileHighlightRenderable? oldHighlight = highlightedTile;
+    removeWhere((component) => component is TileHighlightRenderable);
 
-// 2. Clear the main instance variable immediately. This helps prevent
-//    stale references elsewhere in the code.
-    highlightedTile = null;
-
-// 3. Tell the OLD component to remove itself using the safe, temporary reference.
-//    This will work even though the main `highlightedTile` variable is now null.
-    oldHighlight?.removeFromParent();
 
     // Convert the tap position from screen space to world space.
     final screenPositionTap = event.localPosition;
     final worldPositionTap = level.toLocal(screenPositionTap);
     Vector2? selectedTile = toGridPos(worldPositionTap)..floor();
+
+    print("pos: $selectedTile");
 
     // Use the function to find the top-most tile.
     final selectionResult = getTopmostTileAtGridPos(selectedTile);
@@ -79,19 +74,19 @@ class IsometricWorld extends GameWorld {
       // A tile was successfully selected!
 
       // Create the highlight with both grid position and layer index.
-      highlightedTile = TileHighlightRenderable(
+      final highlightedTile = TileHighlightRenderable(
         selectionResult.gridPosition,
         selectionResult.layerIndex,
       );
 
       // Position the highlight using the layer-aware toWorldPos.
-      highlightedTile!.position = toWorldPos(
+      highlightedTile.position = toWorldPos(
         selectionResult.gridPosition,
         layerIndex: selectionResult.layerIndex,
-      ) - Vector2(0, tilesize.y/4); // Center the highlight on the tile
-      print("Highlight position set to: ${highlightedTile!.position}");
+      ); // Center the highlight on the tile
+      print("Highlight position set to: ${highlightedTile.position}");
 
-      add(highlightedTile!);
+      add(highlightedTile);
 
       print("Selected tile at ${selectionResult
           .gridPosition} on layer ${selectionResult.layerIndex}");
@@ -166,8 +161,6 @@ class IsometricWorld extends GameWorld {
 
   @override
   bool checkCollisionAt(Vector2 gridPos) {
-    final int x = gridPos.x.floor();
-    final int y = gridPos.y.floor();
     // Access the 'Collisions' layer from the Tiled map
     final layer = level.tileMap.map.layerByName('Collisions') as ObjectGroup?;
     if (layer == null) {
@@ -180,7 +173,7 @@ class IsometricWorld extends GameWorld {
 
       Vector2 gridObjectPos = toGridPos(value.position);
 
-      if(Rect.fromPoints(gridObjectPos.toOffset(), gridObjectPos.toOffset() + (value.size..divide(Vector2.all(tilesize.x))).toOffset()).contains(gridPos.toOffset())){
+      if(Rect.fromPoints(gridObjectPos.toOffset(), gridObjectPos.toOffset() + (value.size..divide(tilesize.xz)).toOffset()).contains(gridPos.toOffset())){
         return true;
       }
 

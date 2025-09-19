@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -53,16 +54,16 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
     return super.onLoad();
   }
 
-  Hitbox? lastTouchedHitbox;
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if(viewSide != ViewSide.side && other is CollisionBlock && !_debugNoClipMode) {
+      velocity = velocity * -0.1;
+      gridPos = lastSafePosition;
+      print("stuck!");
       return;
     }
 
     if (other is CollisionBlock && !_debugNoClipMode) {
-      lastTouchedHitbox = other.hitbox;
-
       checkCollision(other);
     }
     super.onCollision(intersectionPoints, other);
@@ -83,9 +84,10 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
         setClimbing(false);
       }
     } else if(viewSide == ViewSide.isometric){
-
       if(game.gameWorld.checkCollisionAt(gridPos)){
+        print("reset!");
         gridPos = lastSafePosition;
+        velocity = Vector2.zero();
       }
     }
 
@@ -199,14 +201,11 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
   void update(double dt) {
     if (viewSide != ViewSide.isometric || _debugNoClipMode) return super.update(dt);
 
-    if(!activeCollisions.isNotEmpty && !activeCollisions.any((element) => element is CollisionBlock) && !isHitboxInside(hitbox, lastTouchedHitbox) && !isHitboxInside(lastTouchedHitbox, hitbox)){
+    if(!game.gameWorld.checkCollisionAt(gridPos.clone()..floor())){
       lastSafePosition = gridPos;
     } else {
-      gridPos = lastSafePosition;
-      velocity = Vector2.zero();
     }
     super.update(dt);
-
   }
 
   bool isHitboxInside(Hitbox? hitboxA, Hitbox? hitboxB) {

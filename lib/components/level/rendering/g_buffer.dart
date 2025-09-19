@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart' show Colors;
+import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
 import 'package:mpg_achievements_app/main.dart';
 
@@ -14,6 +15,10 @@ import '../isometric/isometric_tiled_component.dart';
 class GBuffer {
   Image? normalAndDepthMap;
   Image? albedoMap;
+
+  bool _corrupted = true;
+
+  void setCorrupted() => _corrupted = true;
 
   GameTileMap gameTileMap;
   GBuffer(this.gameTileMap){
@@ -41,9 +46,11 @@ class GBuffer {
 
       Vector2 mousePos = gameWidgetKey.currentState!.currentGame.gameWorld.mousePos;
 
-      double x = (mousePos.x / (width));
-      double y = (mousePos.y / height);
-      double z = gameWidgetKey.currentState!.currentGame.zoomFactor;
+      Player player = gameWidgetKey.currentState!.currentGame.gameWorld.player;
+
+      double x = player.absoluteCenter.x / width;
+      double y = player.absoluteCenter.y / height;
+      double z = 1.5;
 
 
       shader!.setImageSampler(0, albedoMap!);
@@ -57,8 +64,9 @@ class GBuffer {
       paint.shader ??= shader;
       canvas.drawRect(Rect.fromPoints(Offset.zero, Offset(width.toDouble(), height)), paint);
 
-      canvas.drawLine(Offset(x * width, y * height), Offset(x * width, y * height - z * tilesize.z + 5), Paint()..color = Colors.white70);
-      canvas.drawCircle(Offset(x * width, y * height - z * tilesize.z), 3, Paint()..color = Colors.white70);
+      //to draw a little light bulb at the current light
+      // canvas.drawLine(Offset(x * width, y * height), Offset(x * width, y * height - z * tilesize.z + 5), Paint()..color = Colors.white70);
+      // canvas.drawCircle(Offset(x * width, y * height - z * tilesize.z), 3, Paint()..color = Colors.white70);
 
     }
   }
@@ -92,6 +100,7 @@ class GBuffer {
     lastRenderables = calculateSortedRenderInstances(components);
     buildAlbedoMap();
     buildNormalAndDepthMap();
+    _corrupted = false;
   }
 
 

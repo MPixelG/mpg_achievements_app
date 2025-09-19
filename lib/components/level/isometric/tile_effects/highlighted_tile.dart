@@ -16,18 +16,29 @@ class TileHighlightRenderable extends PositionComponent with RiverpodComponentMi
   final Vector2 gridPos;
   final int zIndex;
 
+  bool done = false;
+
 
   TileHighlightRenderable(this.gridPos, this.zIndex);
 
   late final Vector2 tileSize;
 
+  ExplosionEffect? explosionEffect;
   @override
   void onLoad() {
     // Position the highlight based on the grid position and tile size.
     tileSize = game.gameWorld.tileGrid.tileSize;
-    add(ExplosionEffect(this, zIndex, gridPos));
+    print("loaded!");
+    explosionEffect = ExplosionEffect(this, zIndex, gridPos);
+    add(explosionEffect!);
+  }
 
+  @override
+  void update(double dt){
+    if(explosionEffect?.done ?? false) {
+      done = true;
     }
+  }
 
 
   @override
@@ -59,8 +70,6 @@ class TileHighlightRenderable extends PositionComponent with RiverpodComponentMi
       BlendMode.srcOver, // A standard blend mode for overlays.
       highlightPaint,
     );
-
-
   }
 
   @override
@@ -71,5 +80,4 @@ class TileHighlightRenderable extends PositionComponent with RiverpodComponentMi
 
   @override
   RenderCategory get renderCategory => RenderCategory.tileHighlight;
-
 }
