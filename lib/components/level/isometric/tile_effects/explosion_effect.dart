@@ -66,7 +66,7 @@ class ExplosionEffect extends SpriteAnimationGroupComponent
   Vector2 get gridFeetPos => tileHighlight.gridPos;
 
   @override
-  RenderCategory get renderCategory => RenderCategory.tileHighlight;
+  RenderCategory get renderCategory => RenderCategory.effect;
 
   @override
   int get renderPriority => currentZIndex;

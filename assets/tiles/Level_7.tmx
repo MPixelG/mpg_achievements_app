@@ -8,6 +8,7 @@
  <layer id="1" name="Ground" width="16" height="16">
   <properties>
    <property name="isometric" type="bool" value="true"/>
+   <property name="zHeight" type="int" value="0"/>
   </properties>
   <data encoding="csv">
 25,53,83,53,84,53,81,54,81,55,81,54,84,54,84,25,
@@ -29,6 +30,9 @@
 </data>
  </layer>
  <layer id="5" name="Layer1" width="16" height="16">
+  <properties>
+   <property name="zHeight" type="int" value="100"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,34,0,0,0,0,0,29,0,0,0,0,
@@ -49,6 +53,9 @@
 </data>
  </layer>
  <layer id="6" name="Layer2" width="16" height="16">
+  <properties>
+   <property name="zHeight" type="int" value="200"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

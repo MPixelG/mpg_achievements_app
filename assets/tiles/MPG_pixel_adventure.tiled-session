@@ -28,8 +28,8 @@
         },
         "Level_1.tmx": {
             "expandedObjectLayers": [
-                2,
-                3
+                3,
+                2
             ],
             "scale": 2,
             "selectedLayer": 1,
@@ -46,8 +46,8 @@
             "scale": 2,
             "selectedLayer": 10,
             "viewCenter": {
-                "x": 116.75,
-                "y": 595.25
+                "x": 266.75,
+                "y": 599.75
             }
         },
         "Level_3.tmx": {
@@ -96,8 +96,8 @@
             "scale": 2,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 369.75,
-                "y": 86.75
+                "x": 256.25,
+                "y": 127.75
             }
         },
         "Lever_3.tmx": {
@@ -212,7 +212,7 @@
         "isometric.tsx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
-    "property.type": "bool",
+    "property.type": "int",
     "recentFiles": [
         "MPG_pixel_adventure.tsx",
         "isometric.tsx",

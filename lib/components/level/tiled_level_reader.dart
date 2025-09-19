@@ -105,8 +105,9 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
       if(gameWorld is IsometricWorld){
         pos = _orthogonalToIsometric(collision.position) + Vector2(gameWorld.level.width / 2, 0);
       } else pos = collision.position;
-
-
+      // get z and zHeight from properties, if not set default to 0 and 16
+      final int z = collision.properties.getValue('z') ?? 0;
+      final int zHeight = collision.properties.getValue('zHeight') ?? 0;
 
       switch (collision.class_) {
         case 'Platform':
@@ -134,7 +135,9 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
           final block = CollisionBlock(
             position: pos,
             size: Vector2(collision.width, collision.height),
-            gameWorld: gameWorld
+            gameWorld: gameWorld,
+              zPosition: z,
+              zHeight: zHeight
           );
           gameWorld.add(block);
       }

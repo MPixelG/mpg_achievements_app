@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
@@ -7,7 +6,7 @@ import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-//A positionComponent can have an x, y , width and height
+//A positionComponent can have an x, y , width and height, zPosition and zHeight
 class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameReference<PixelAdventure> {
   //position and size is given and passed in to the PositionComponent with super
   bool isPlatform;
@@ -16,6 +15,8 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
   bool hasCollisionDown;
   bool hasHorizontalCollision;
   bool climbable;
+  int? zPosition;
+  int? zHeight;
 
   GameWorld? gameWorld;
   CollisionBlock({
@@ -28,6 +29,8 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
     this.climbable = false,
     this.isLadder = false,
     this.gameWorld,
+    this.zPosition = 0,
+    this.zHeight = 16,
   });
 
   ShapeHitbox hitbox = RectangleHitbox();
