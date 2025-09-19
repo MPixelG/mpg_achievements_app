@@ -50,7 +50,7 @@ class GBuffer {
 
       double x = player.absoluteCenter.x / width;
       double y = player.absoluteCenter.y / height;
-      double z = 1.5;
+      double z = 0.4;
 
 
       shader!.setImageSampler(0, albedoMap!);
@@ -62,7 +62,7 @@ class GBuffer {
       });
 
       paint.shader ??= shader;
-      canvas.drawRect(Rect.fromPoints(Offset.zero, Offset(width.toDouble(), height)), paint);
+      canvas.drawRect(Rect.fromPoints(Offset.zero, Offset(width.toDouble(), height / 2)), paint);
       //canvas.drawImage(normalAndDepthMap!, Offset.zero, paint);
 
       //to draw a little light bulb at the current light

@@ -35,13 +35,12 @@ vec3 calculateBasicLighting(){
     float dist = length(L);
     L = normalize(L);
 
-    float NdotL = max(dot(n, L), 0.0);
-
-    float range = 2.2 + pow(fragPos.z*3, 2);
+    float NdotL = max(dot(n, L), 0);
+    float range = 20.2;
     float att = 1.0 / (1.0 + 16.0 * (dist / range) * (dist / range));
 
     vec3 lightColor = vec3(0, 0.2, 1);
-    vec3 diffuse = lightColor * NdotL * att * 1.3;
+    vec3 diffuse = lightColor * NdotL * att * 3;
 
     return diffuse;
 }
@@ -56,7 +55,7 @@ void main() {
     vec3 dirToLight = normalize(lightPos - fragPos);
 
     vec3 currentPos = fragPos;
-    float stepSize = 0.005;
+    float stepSize = 0.0005;
 
     float shadow = 1.0;
 
