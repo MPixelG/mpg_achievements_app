@@ -8,11 +8,11 @@ class IsometricPlayer extends Player{
 
   @override
   Vector2 get gridPos =>
-      worldToTileIsometric(position);
+      worldToTileIsometric(absoluteCenter);
 
   @override
   set gridPos(Vector2 newGridPos) {
-    position = toWorldPos(newGridPos);
+    position = (position - absoluteCenter) + toWorldPos(newGridPos);
   }
 
   Vector2 worldToTileIsometric(Vector2 worldPos) {
