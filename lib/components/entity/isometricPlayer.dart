@@ -4,7 +4,10 @@ import 'package:vector_math/vector_math.dart';
 import '../../mpg_pixel_adventure.dart';
 
 class IsometricPlayer extends Player{
-  IsometricPlayer({required super.playerCharacter});
+  IsometricPlayer({required super.playerCharacter}){
+    setCustomAnimationName("falling", "running");
+    setCustomAnimationName("jumping", "running");
+  }
 
   @override
   Vector2 get gridPos =>

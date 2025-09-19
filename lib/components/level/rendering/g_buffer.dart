@@ -63,6 +63,7 @@ class GBuffer {
 
       paint.shader ??= shader;
       canvas.drawRect(Rect.fromPoints(Offset.zero, Offset(width.toDouble(), height)), paint);
+      //canvas.drawImage(normalAndDepthMap!, Offset.zero, paint);
 
       //to draw a little light bulb at the current light
       // canvas.drawLine(Offset(x * width, y * height), Offset(x * width, y * height - z * tilesize.z + 5), Paint()..color = Colors.white70);

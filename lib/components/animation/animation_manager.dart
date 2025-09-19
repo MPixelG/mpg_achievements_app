@@ -15,14 +15,24 @@ mixin AnimationManager on SpriteAnimationGroupComponent, HasGameReference<PixelA
   AnimatedComponentGroup get group; //if its an entity or unmovable object
 
   final Map<String, String> animationNames = {};
+
+  bool initialized = false;
   ///lets you re-map your animation names. for example if your running animation isnt named "running", you can change the animation for that here!
   ///example: use setCustomAnimationName("idle", "doingNothing") so that it uses "doingNothing" as an idle animation
-  void setCustomAnimationName(String realName, String mappedName) => animationNames[realName] = mappedName;
+  void setCustomAnimationName(String realName, String mappedName) {
+    if(!initialized) {
+      animationNamesToAddOnInitialized ??= [];
+      animationNamesToAddOnInitialized!.add(MapEntry(realName, mappedName));
+    } else {
+      animationNames[realName] = mappedName;
+    }
+  }
 
+  List<MapEntry<String, String>>? animationNamesToAddOnInitialized; //a function that is called when the animations are initialized
 
   ///takes a animation you want to play (for example "idle") and gives you the used animation name for that. this way you can change animations.
   String getAnimation(String name) {
-    if(animationNames.isEmpty) { //if we havent loaded the animations yet, we load them in the background and return "idle" for that frame
+    if(!initialized) { //if we havent loaded the animations yet, we load them in the background and return "idle" for that frame
       _loadAnimations();
       return "idle";
     }
@@ -37,7 +47,7 @@ mixin AnimationManager on SpriteAnimationGroupComponent, HasGameReference<PixelA
 
   ///plays the animation. its async so you can put an await before the method call so that you wait until its over
   Future<void> playAnimation(String name) async{
-    if(animations == null) await _loadAnimations();
+    if(!initialized) await _loadAnimations();
     current = animationNames[name];
     return animationTicker?.completed;
   }
@@ -45,12 +55,18 @@ mixin AnimationManager on SpriteAnimationGroupComponent, HasGameReference<PixelA
   List<AnimationLoadOptions> get animationOptions; //so that you can provide the different options
 
   Future<void> _loadAnimations() async{
+    if(initialized) return;
+
     Map<String, SpriteAnimation> newAnimations = { //create a new map of animation names and the animations
       for (var option in animationOptions)
         option.name : loadAnimation(option.name, path: option.path, frames: option.frames, loop: option.loop, textureSize: option.textureSize, stepTime: option.stepTime),
     };
 
     animations = newAnimations; //update the animation map
+    initialized = true;
+    if(animationNamesToAddOnInitialized != null) {
+      animationNames.addEntries(animationNamesToAddOnInitialized!);
+    }
   }
 
 
@@ -76,8 +92,6 @@ mixin AnimationManager on SpriteAnimationGroupComponent, HasGameReference<PixelA
 
     return "(${intTextureSize}x$intTextureSize).$fileFormat";  //and add brackets and the file type
   }
-
-
 }
 
 class AnimationLoadOptions{ //options for creating an animation
@@ -107,19 +121,16 @@ mixin HasMovementAnimations on AnimationManager, BasicMovement{
     AnimationLoadOptions("falling", "$componentSpriteLocation/Fall", loop: true, textureSize: 32),
   ];
 
-
   bool get isInHitFrames; //if the player is currently being hit, we dont want to overwrite the animation
   bool get isInRespawnFrames; //if the player is currently respawning, we dont want to overwrite the animation
 
   @override
   void update(double dt){
-
     updatePlayerstate();
     animationTicker?.update(dt);
     super.update(dt);
-
-
   }
+
  //todo renameing necessary
   void updatePlayerstate() {
 
@@ -140,9 +151,9 @@ mixin HasMovementAnimations on AnimationManager, BasicMovement{
     }
 
     // update state to falling if velocity is greater than 0
-    if (velocity.y > 0) animation = getAnimation("falling");
+    if (velocity.y > 0.1) animation = getAnimation("falling");
 
-    if (velocity.y < 0) animation = getAnimation("jumping");
+    if (velocity.y < -0.1) animation = getAnimation("jumping");
 
     //here the animation ist set after checking all of the conditions above
     playAnimation(animation);

@@ -5,6 +5,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/input.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -57,9 +58,8 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if(viewSide != ViewSide.side && other is CollisionBlock && !_debugNoClipMode) {
-      velocity = velocity * -0.1;
+      velocity = Vector2.zero();
       gridPos = lastSafePosition;
-      print("stuck!");
       return;
     }
 
@@ -82,12 +82,6 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
 
       if (other is CollisionBlock && other.climbable) {
         setClimbing(false);
-      }
-    } else if(viewSide == ViewSide.isometric){
-      if(game.gameWorld.checkCollisionAt(gridPos)){
-        print("reset!");
-        gridPos = lastSafePosition;
-        velocity = Vector2.zero();
       }
     }
 
