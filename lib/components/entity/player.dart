@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_tiled_component.dart';
+import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 import 'package:flutter/services.dart';
@@ -41,6 +42,9 @@ class Player extends GameCharacter
   Vector2 startingPosition = Vector2.zero();
   //Player name
   String playerCharacter;
+  //Find the ground of player position
+  late double zGround;
+  late double zPosition;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
@@ -66,6 +70,9 @@ class Player extends GameCharacter
   void update(double dt) {
     super.update(dt);
 
+    if (viewSide == ViewSide.isometric) {
+      _findGroundBeneath();
+    }
     //Provider logic follow
     //the ref.watch here makes sure that the player component rebuilds and PlayerData changes its values when the player state changes
     final playerState = ref.watch(playerProvider);
@@ -205,6 +212,35 @@ class Player extends GameCharacter
     _isRespawningAnimationPlaying = false;
   }
 
+//find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
+  void _findGroundBeneath() {
+    // the highest ground block beneath the player
+    final blocks = game.gameWorld.children.whereType<CollisionBlock>();
+
+    CollisionBlock? highestGroundBlock;
+    //the players foot rectangle which mesn easier collision detection with the block
+    final playerFootRectangle = Rect.fromLTRB(position.x - size.x /2, position.y, position.x + size.x/2, position.y + size.y);
+
+    for (final block in blocks){
+      //make a rectangle from the block position and size
+      final blockGroundRectangle = Rect.fromLTRB(block.position.x, block.position.y, block.size.x, block.size.y);
+
+      if (playerFootRectangle.overlaps(blockGroundRectangle)){
+        //what is it ground and what is the zHeight of the block;
+        final blockCeiling = block.zPosition! + block.zHeight!;
+        //if the zPosition of the player is higher than the block ceiling and the block ceiling is higher than the current highest ground block, we set the highest ground block to this block
+        if (zPosition >= blockCeiling && (blockCeiling > (highestGroundBlock!.zPosition! + highestGroundBlock.zHeight!))) {
+          highestGroundBlock = block;
+        }
+      }
+    }
+    if(highestGroundBlock != null){
+      zGround = (highestGroundBlock.zPosition! + highestGroundBlock.zHeight!) as double;}
+    else {
+      zGround = 0;
+    }
+  }
+
   //Getters
   @override
   ShapeHitbox getHitbox() => hitbox;
@@ -274,5 +310,12 @@ class Player extends GameCharacter
   @override
   RenderCategory get renderCategory => RenderCategory.entity;
 
+  }
 
-}
+
+
+
+
+
+
+

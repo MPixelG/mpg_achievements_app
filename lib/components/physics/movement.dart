@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flame/components.dart';
+import 'package:mpg_achievements_app/components/entity/player.dart';
 import '../../mpg_pixel_adventure.dart';
 import '../entity/gameCharacter.dart';
 import 'collisions.dart';
@@ -121,19 +122,21 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
 
 
   void _performIsometricGravity(double dt) {
-    // Only apply gravity if not on the ground
-    if (!isOnGround) {
-      zVelocity += _gravity * dt;
-    }
-
+    //access the player's ground level
+    final player = this as Player;
+    final currentZGround = player.zGround;
+    // Apply gravity to Z velocity
+    zVelocity += _gravity * dt;
     // Apply Z velocity to Z position
     zPosition += zVelocity * dt;
 
-    // A simple ground check
-    if (zPosition >= 0) {
-      zPosition = 0;
+    // Only apply gravity if not on the ground
+    if (zPosition <= currentZGround) {
+      zPosition = currentZGround;
       zVelocity = 0;
       isOnGround = true;
+    } else {
+      isOnGround = false;
     }
   }
 
