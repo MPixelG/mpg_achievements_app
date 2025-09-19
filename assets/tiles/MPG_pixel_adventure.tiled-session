@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Level_2.tmx",
+    "activeFile": "Level_7.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -94,10 +94,10 @@
                 4
             ],
             "scale": 2,
-            "selectedLayer": 4,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 256.25,
-                "y": 127.75
+                "x": 236.25,
+                "y": 86.75
             }
         },
         "Lever_3.tmx": {
@@ -215,15 +215,15 @@
     "property.type": "int",
     "recentFiles": [
         "MPG_pixel_adventure.tsx",
+        "Level_2.tmx",
+        "Level_1.tmx",
+        "Level_4.tmx",
+        "Level_5.tmx",
+        "grass_concrete.tsx",
+        "Level_6.tmx",
+        "industrial_tiles_bg_2.tsx",
         "isometric.tsx",
         "Level_7.tmx",
-        "industrial_tiles_bg_2.tsx",
-        "Level_6.tmx",
-        "grass_concrete.tsx",
-        "Level_5.tmx",
-        "Level_4.tmx",
-        "Level_1.tmx",
-        "Level_2.tmx",
         "IndustrialTile_81.png.tsx",
         "industrial_tiles_2.tsx"
     ],

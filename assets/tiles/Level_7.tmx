@@ -81,7 +81,12 @@
   <object id="21" x="80" y="112" width="48" height="16"/>
   <object id="23" x="128" y="64" width="80" height="16"/>
   <object id="24" x="80" y="16" width="16" height="48"/>
-  <object id="25" x="0" y="48" width="16" height="48"/>
+  <object id="25" name="Collidable" x="0" y="48" width="16" height="48">
+   <properties>
+    <property name="zHeight" type="int" value="100"/>
+    <property name="zPosition" type="int" value="0"/>
+   </properties>
+  </object>
   <object id="26" x="96" y="208" width="96" height="16"/>
   <object id="27" x="96" y="160" width="16" height="48"/>
   <object id="28" x="0" y="192" width="32" height="16"/>
