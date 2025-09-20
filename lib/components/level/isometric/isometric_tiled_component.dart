@@ -20,11 +20,10 @@ class RenderInstance {
   final Image? texture;
   final Image? normal;
   final Vector2 screenPos;
-  final Vector2 gridPos;
+  final Vector3 gridPos;
   // The layer index from the Tiled map. This serves as the primary sorting key
-  final int zIndex;
   final RenderCategory category;
-  RenderInstance(this.render, this.screenPos, this.zIndex, this.gridPos, this.category, [this.texture, this.normal]);
+  RenderInstance(this.render, this.screenPos, this.gridPos, this.category, [this.texture, this.normal]);
 }
 
 

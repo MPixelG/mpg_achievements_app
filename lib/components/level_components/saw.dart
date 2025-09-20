@@ -1,4 +1,5 @@
 import 'dart:async' show FutureOr;
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';

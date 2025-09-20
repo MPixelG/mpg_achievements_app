@@ -6,6 +6,7 @@ import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.d
 import 'package:mpg_achievements_app/components/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/main.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
 import '../components/dialogue_utils/speechbubble.dart';
 import 'json_factory/json_exporter.dart';
 import 'menuCreator/components/dependencyViewer/layout_widget.dart';

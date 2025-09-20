@@ -1,21 +1,22 @@
 import 'dart:ui';
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
 import 'package:mpg_achievements_app/components/level/game_world.dart';
-import 'package:flame_tiled/flame_tiled.dart';
+
 import '../../../mpg_pixel_adventure.dart';
-import 'tile_effects/highlighted_tile.dart';
 import 'isometric_renderable.dart';
 import 'isometric_tiled_component.dart';
+import 'tile_effects/highlighted_tile.dart';
 
 class TileSelectionResult {
-  final Vector2 gridPosition;
-  final int layerIndex;
+  final Vector3 gridPosition;
   final Gid tileGid;// The Gid object from Tiled, which contains the tile ID
 
-  TileSelectionResult(this.gridPosition, this.layerIndex, this.tileGid);
+  TileSelectionResult(this.gridPosition, this.tileGid);
 }
 
 
@@ -76,20 +77,19 @@ class IsometricWorld extends GameWorld {
       // Create the highlight with both grid position and layer index.
       final highlightedTile = TileHighlightRenderable(
         selectionResult.gridPosition,
-        selectionResult.layerIndex,
       );
 
       // Position the highlight using the layer-aware toWorldPos.
       highlightedTile.position = toWorldPos(
-        selectionResult.gridPosition,
-        layerIndex: selectionResult.layerIndex,
+        selectionResult.gridPosition.xy,
+        layerIndex: selectionResult.gridPosition.z,
       ); // Center the highlight on the tile
       print("Highlight position set to: ${highlightedTile.position}");
 
       add(highlightedTile);
 
       print("Selected tile at ${selectionResult
-          .gridPosition} on layer ${selectionResult.layerIndex}");
+          .gridPosition.xy} on layer ${selectionResult.gridPosition.z}");
     } else {
       // No tile was found at this position (clicked on empty space).
       highlightedTile = null;
@@ -133,7 +133,7 @@ class IsometricWorld extends GameWorld {
   }
   //calculate the world position from a grid position
   @override
-  Vector2 toWorldPos(Vector2 gridPos, {int layerIndex = 0}) {
+  Vector2 toWorldPos(Vector2 gridPos, {double layerIndex = 0}) {
     final localPoint = Vector2(
       (gridPos.x - gridPos.y) * (tilesize.x / 2),
       (gridPos.x + gridPos.y) * (tilesize.z / 2),
@@ -203,7 +203,7 @@ class IsometricWorld extends GameWorld {
           // A GID of 0 means the tile is empty. If it's not empty, we've found our target! that means the first tile we find in the top-most layer is our tile that we look for
           if (gid.tile != 0) {
             // Success! Return all the info about the tile we found.
-            return TileSelectionResult(gridPos, i, gid);
+            return TileSelectionResult(Vector3(gridPos.x, gridPos.y, i.toDouble()), gid);
           }
         }
       }

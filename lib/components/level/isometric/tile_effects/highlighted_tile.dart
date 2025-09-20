@@ -12,14 +12,12 @@ import '../isometric_tiled_component.dart';
 
 
 class TileHighlightRenderable extends PositionComponent with RiverpodComponentMixin, IsometricRenderable, CollisionCallbacks, HasGameReference<PixelAdventure> {
-
-  final Vector2 gridPos;
-  final int zIndex;
+  final Vector3 gridPos;
 
   bool done = false;
 
 
-  TileHighlightRenderable(this.gridPos, this.zIndex);
+  TileHighlightRenderable(this.gridPos);
 
   late final Vector2 tileSize;
 
@@ -29,7 +27,7 @@ class TileHighlightRenderable extends PositionComponent with RiverpodComponentMi
     // Position the highlight based on the grid position and tile size.
     tileSize = game.gameWorld.tileGrid.tileSize;
     print("loaded!");
-    explosionEffect = ExplosionEffect(this, zIndex, gridPos);
+    explosionEffect = ExplosionEffect(this, gridPos);
     add(explosionEffect!);
   }
 
@@ -73,10 +71,7 @@ class TileHighlightRenderable extends PositionComponent with RiverpodComponentMi
   }
 
   @override
-  Vector2 get gridFeetPos => gridPos;
-
-  @override
-  int get renderPriority => zIndex;
+  Vector3 get gridFeetPos => gridPos;
 
   @override
   RenderCategory get renderCategory => RenderCategory.tileHighlight;

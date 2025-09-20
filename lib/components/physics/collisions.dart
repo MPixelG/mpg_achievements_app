@@ -1,14 +1,13 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:math';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame/input.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
 import 'collision_block.dart';
 import 'movement.dart';
 
@@ -154,7 +153,6 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
     Vector2 gridPos = game.gameWorld.toGridPos(position);
 
     Vector2 otherGridPos = game.gameWorld.toGridPos(other.position);
-    Vector2 otherHitboxSize = other.hitbox.size;
 
     Vector2 posDiff = gridPos - otherGridPos;
     print("\nposDiff: $posDiff");

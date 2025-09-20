@@ -1,19 +1,18 @@
 import 'dart:async';
-import 'dart:io';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_tiled_component.dart';
+import 'package:mpg_achievements_app/components/level_components/collectables.dart';
+import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
-import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
-import 'package:mpg_achievements_app/components/level_components/collectables.dart';
-import 'package:mpg_achievements_app/components/level_components/enemy.dart';
+
 import '../level/isometric/isometric_world.dart';
 import '../level_components/saw.dart';
 import '../physics/controllableMixins.dart';
@@ -30,8 +29,7 @@ class Player extends GameCharacter
         KeyboardControllableMovement,
         HasMovementAnimations,
         JoystickControllableMovement,
-        HasCollisions,
-        IsometricRenderable {
+        HasCollisions{
 
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
@@ -42,6 +40,7 @@ class Player extends GameCharacter
   Vector2 startingPosition = Vector2.zero();
   //Player name
   String playerCharacter;
+
   //Find the ground of player position
   late double zGround;
   late double zPosition;
@@ -49,12 +48,8 @@ class Player extends GameCharacter
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
 
-
-
-
   @override
   FutureOr<void> onLoad() {
-
     // The player inspects its environment (the world) and configures itself.
     if (game.gameWorld is IsometricWorld) {
       setMovementType(ViewSide.isometric);
@@ -103,7 +98,6 @@ class Player extends GameCharacter
       });
     }
 
-    //updateCollisions(dt);
   }
 
   @override
@@ -212,7 +206,7 @@ class Player extends GameCharacter
     _isRespawningAnimationPlaying = false;
   }
 
-//find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
+  //find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
   void _findGroundBeneath() {
     // the highest ground block beneath the player
     final blocks = game.gameWorld.children.whereType<CollisionBlock>();
@@ -300,22 +294,4 @@ class Player extends GameCharacter
   bool get isInHitFrames => _isHitAnimationPlaying;
   @override
   bool get isInRespawnFrames => _isRespawningAnimationPlaying;
-
-  @override
-  int get renderPriority => 1;
-
-  @override
-  Vector2 get gridFeetPos => game.gameWorld.toGridPos(absolutePositionOfAnchor(Anchor.topCenter));
-
-  @override
-  RenderCategory get renderCategory => RenderCategory.entity;
-
-  }
-
-
-
-
-
-
-
-
+}

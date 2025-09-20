@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/GUI/menuCreator/components/propertyEditor/button_action.dart';
 import 'package:vector_math/vector_math_64.dart' as vm64;

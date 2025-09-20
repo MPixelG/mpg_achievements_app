@@ -1,9 +1,11 @@
+import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
-import 'package:vector_math/vector_math.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
 
 import '../../mpg_pixel_adventure.dart';
+import '../level/isometric/isometric_tiled_component.dart';
 
-class IsometricPlayer extends Player{
+class IsometricPlayer extends Player with IsometricRenderable{
   IsometricPlayer({required super.playerCharacter}){
     setCustomAnimationName("falling", "running");
     setCustomAnimationName("jumping", "running");
@@ -31,5 +33,14 @@ class IsometricPlayer extends Player{
       (gridPos.x + gridPos.y) * (tilesize.z / 2),
     );
   }
+
+  @override
+  Vector3 get gridFeetPos {
+    Vector2 xYGridPos = game.gameWorld.toGridPos(absolutePositionOfAnchor(Anchor.topCenter));
+    return Vector3(xYGridPos.x, xYGridPos.y, 1);
+  }
+
+  @override
+  RenderCategory get renderCategory => RenderCategory.entity;
 
 }

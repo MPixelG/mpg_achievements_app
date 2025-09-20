@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
@@ -11,13 +12,14 @@ import 'package:mpg_achievements_app/components/animation/animation_style.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
+import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_tiled_component.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
 import 'package:mpg_achievements_app/components/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
-import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/router/router.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
 import '../background/scrolling_background.dart';
 
 abstract class GameWorld extends World

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/input.dart';
@@ -10,8 +8,8 @@ import 'package:flutter/services.dart';
 import '../../mpg_pixel_adventure.dart';
 import '../level/game_world.dart';
 import '../util/utils.dart' as util;
-import 'movement.dart';
 import 'collisions.dart';
+import 'movement.dart';
 
 mixin KeyboardControllableMovement
 on PositionComponent, BasicMovement, KeyboardHandler {

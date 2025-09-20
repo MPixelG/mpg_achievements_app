@@ -1,6 +1,8 @@
 import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
+
 import '../../mpg_pixel_adventure.dart';
 import '../entity/gameCharacter.dart';
 import 'collisions.dart';

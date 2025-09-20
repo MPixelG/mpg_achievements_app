@@ -1,9 +1,7 @@
-import 'dart:math';
-import 'dart:ui';
 import 'dart:ui' as ui;
+import 'dart:ui';
 
 import 'package:flame/extensions.dart';
-import 'package:flutter/material.dart' show Colors;
 import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
 import 'package:mpg_achievements_app/main.dart';
@@ -44,13 +42,13 @@ class GBuffer {
       double width = gameTileMap.tiledMap.width * tilesize.x;
       double height = gameTileMap.tiledMap.height * tilesize.y;
 
-      Vector2 mousePos = gameWidgetKey.currentState!.currentGame.gameWorld.mousePos;
+      //Vector2 mousePos = gameWidgetKey.currentState!.currentGame.gameWorld.mousePos;
 
       Player player = gameWidgetKey.currentState!.currentGame.gameWorld.player;
 
       double x = player.absoluteCenter.x / width;
       double y = player.absoluteCenter.y / height;
-      double z = 0.4;
+      double z = 3 / gameTileMap.totalZLayers;
 
 
       shader!.setImageSampler(0, albedoMap!);
@@ -63,7 +61,7 @@ class GBuffer {
 
       paint.shader ??= shader;
       canvas.drawRect(Rect.fromPoints(Offset.zero, Offset(width.toDouble(), height / 2)), paint);
-      //canvas.drawImage(normalAndDepthMap!, Offset.zero, paint);
+      //canvas.drawImage(albedoMap!, Offset.zero, paint);
 
       //to draw a little light bulb at the current light
       // canvas.drawLine(Offset(x * width, y * height), Offset(x * width, y * height - z * tilesize.z + 5), Paint()..color = Colors.white70);
@@ -75,14 +73,15 @@ class GBuffer {
   List<RenderInstance> calculateSortedRenderInstances([Iterable<IsometricRenderable> additionals = const []]){
     final allRenderables = <RenderInstance>[]; //all the renderables that should be rendered, sorted by their z-index and position distance to the 0-point
     allRenderables.addAll(gameTileMap.renderableTiles); //add all tiles
-    allRenderables.addAll(additionals.map((e) => RenderInstance((c, {Vector2? position, Vector2? size}) => e.renderTree(c), e.position, e.renderPriority, e.gridFeetPos, e.renderCategory))); //add all given components to the list of renderables so that they are also sorted and rendered in the correct order
+    allRenderables.addAll(additionals.map((e) => RenderInstance((c, {Vector2? position, Vector2? size}) => e.renderTree(c), e.position, e.gridFeetPos, e.renderCategory))); //add all given components to the list of renderables so that they are also sorted and rendered in the correct order
 
 
     allRenderables.sort((a, b) { //now we sort the renderables by their z-index and position
-      Vector3 pos1 = Vector3(a.gridPos.x, a.gridPos.y,
-          a.zIndex.toDouble() * tilesize.z);
-      Vector3 pos2 = Vector3(b.gridPos.x, b.gridPos.y,
-          b.zIndex.toDouble() * tilesize.z);
+      Vector3 pos1 = a.gridPos.clone();
+      Vector3 pos2 = b.gridPos.clone();
+
+      pos1.z *= tilesize.z;
+      pos2.z *= tilesize.z;
 
       int comparedPos = pos1.compareTo(pos2); //compare the foot y positions
 
@@ -103,7 +102,6 @@ class GBuffer {
     buildNormalAndDepthMap();
     _corrupted = false;
   }
-
 
 
 

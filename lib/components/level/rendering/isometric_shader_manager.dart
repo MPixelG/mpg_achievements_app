@@ -155,9 +155,6 @@ class IsometricShaderManager{
   }
 
 
-
-
-
   Paint shaderPaint = Paint();
   void frame(Canvas canvas, Iterable<IsometricRenderable> components){
     if(shader == null || tileData == null || tileset == null || normalAndDepthTileset == null) return;
@@ -179,5 +176,4 @@ class IsometricShaderManager{
     shaderPaint.shader ??= shader!;
     canvas.drawRect(Rect.fromPoints(Offset.zero, Offset(width, height)), shaderPaint);
   }
-
 }

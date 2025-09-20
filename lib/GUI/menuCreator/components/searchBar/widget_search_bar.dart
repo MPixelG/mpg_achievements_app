@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/router/router.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
 
 import '../widget_declaration.dart';

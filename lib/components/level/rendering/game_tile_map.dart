@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
@@ -203,7 +202,7 @@ class GameTileMap {
     normalImage = await normalImage.transformPixels((p0) => p0.withBlue(((((tileZ + p0.b) / totalZLayers)) * 255).toInt()));
 
     textures[gid] = GameSprite(texture, normalImage);
-    renderableTiles.add(RenderInstance(sprite.render, worldPos, tileZ, Vector2(tileX.toDouble(), tileY.toDouble()), RenderCategory.tile, texture, normalImage));
+    renderableTiles.add(RenderInstance(sprite.render, worldPos, Vector3(tileX.toDouble(), tileY.toDouble(), tileZ.toDouble()), RenderCategory.tile, texture, normalImage));
   }
 
   final _spriteImageCache = <Sprite, Image>{};

@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart' hide Image;
 import 'package:flame/particles.dart';

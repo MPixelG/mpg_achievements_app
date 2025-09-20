@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
@@ -10,9 +11,10 @@ import 'package:mpg_achievements_app/components/animation/animation_manager.dart
 import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/level_components/saw.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
+
+import '../ai/goals/move_goal.dart';
 import '../level/isometric/isometric_world.dart';
 import '../particles/Particles.dart';
-import '../ai/goals/move_goal.dart';
 import '../physics/movement.dart';
 
 enum EnemyState {
