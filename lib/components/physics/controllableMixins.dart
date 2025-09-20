@@ -12,7 +12,7 @@ import 'collisions.dart';
 import 'movement.dart';
 
 mixin KeyboardControllableMovement
-on PositionComponent, BasicMovement, KeyboardHandler {
+    on PositionComponent, BasicMovement, KeyboardHandler {
   bool _active = true;
   Vector2 mouseCoords = Vector2.zero();
 
@@ -25,10 +25,10 @@ on PositionComponent, BasicMovement, KeyboardHandler {
 
     final isLeftKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.keyA) ||
-            keysPressed.contains(LogicalKeyboardKey.arrowLeft);
+        keysPressed.contains(LogicalKeyboardKey.arrowLeft);
     final isRightKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
-            keysPressed.contains(LogicalKeyboardKey.keyD);
+        keysPressed.contains(LogicalKeyboardKey.keyD);
 
     //ternary statement if left key pressed then add -1 to horizontal movement if not add 0 = not moving
     if (isLeftKeyPressed) horizontalMovement--;
@@ -38,18 +38,22 @@ on PositionComponent, BasicMovement, KeyboardHandler {
       if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) {
         debugFlyMode = !debugFlyMode; // press left ctrl to toggle fly mode
       }
-      //if the key is pressed than the player jumps in _updatePlayerMovement
+
+      // If the space key is pressed, handle the jump/fly logic.
       if (keysPressed.contains(LogicalKeyboardKey.space)) {
+        // First, check for special movement states that override a standard jump.
         if (debugFlyMode || isClimbing) {
-          //when in debug mode move the player upwards
-          if (isClimbing) {
-            verticalMovement = -0.06;
+          verticalMovement = isClimbing ? -0.06 : -1;
+
+          // Apply movement to the correct axis based on the view.
+          if (viewSide == ViewSide.isometric) {
+            zMovement = verticalMovement;
           } else {
-            verticalMovement = -1;
+            // This will be ViewSide.side
+            verticalMovement = verticalMovement;
           }
-        } else {
-          hasJumped = true; //else jump
         }
+        hasJumped = true;
       }
 
       if (keysPressed.contains(LogicalKeyboardKey.shiftLeft)) {
@@ -64,13 +68,14 @@ on PositionComponent, BasicMovement, KeyboardHandler {
         isShifting = false;
       }
     }
+
     if (viewSide == ViewSide.topDown || viewSide == ViewSide.isometric) {
       final isUpKeyPressed =
           keysPressed.contains(LogicalKeyboardKey.keyW) ||
-              keysPressed.contains(LogicalKeyboardKey.arrowUp);
+          keysPressed.contains(LogicalKeyboardKey.arrowUp);
       final isDownKeyPressed =
           keysPressed.contains(LogicalKeyboardKey.keyS) ||
-              keysPressed.contains(LogicalKeyboardKey.arrowDown);
+          keysPressed.contains(LogicalKeyboardKey.arrowDown);
 
       if (isUpKeyPressed) verticalMovement--;
       if (isDownKeyPressed) verticalMovement++;
@@ -82,7 +87,7 @@ on PositionComponent, BasicMovement, KeyboardHandler {
     if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
       debugMode = !debugMode;
       (parent as GameWorld).setDebugMode(debugMode);
-    } //press Y to toggle debug mode (visibility of hitboxes and more)
+    } //press b to toggle debug mode (visibility of hitboxes and more)
     return super.onKeyEvent(event, keysPressed);
   }
 
@@ -91,7 +96,7 @@ on PositionComponent, BasicMovement, KeyboardHandler {
 }
 
 mixin JoystickControllableMovement
-on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
+    on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
   bool active = util.shouldShowJoystick();
 
   // Joystick component for movement
@@ -108,6 +113,7 @@ on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
   @override
   Future<void> onMount() async {
     super.onMount();
+
     ///Joystick Component
     //Making a Joystick if the platform is not web or desktop
     if (!active) return super.onMount();
@@ -161,10 +167,11 @@ on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
 
         // resetting old effects to prevent stacking
         buttonComponent.button!.add(
-          effect..onComplete = () {
-            // reset to original size
-            buttonComponent.button!.scale = Vector2.all(1);
-          },
+          effect
+            ..onComplete = () {
+              // reset to original size
+              buttonComponent.button!.scale = Vector2.all(1);
+            },
         );
       },
       margin: const EdgeInsets.only(right: 25, bottom: 25),
@@ -202,29 +209,27 @@ on PositionComponent, BasicMovement, HasGameReference<PixelAdventure> {
           } else {
             verticalMovement = -1;
           }
-
         } else {
           hasJumped = true; //else jump
         }
 
         break;
       case JoystickDirection.down:
-
         if (isClimbing) {
           verticalMovement = 0.06;
-        } else if (debugFlyMode)
-        {  verticalMovement = 1;}
-        else if (viewSide == ViewSide.isometric){
+        } else if (debugFlyMode) {
+          verticalMovement = 1;
+        } else if (viewSide == ViewSide.isometric) {
           verticalMovement = 1;
         }
         break;
 
       default:
-      //No movement
+        //No movement
         horizontalMovement = 0;
-        if(viewSide == ViewSide.isometric){
-          verticalMovement = 0;}
-
+        if (viewSide == ViewSide.isometric) {
+          verticalMovement = 0;
+        }
     }
   }
 }

@@ -18,9 +18,10 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
 
   double horizontalMovement = 0; // Directional input (left/right)
   double verticalMovement = 0; // Directional input (up/down)
+  double zMovement =
+      0; // Directional input (up/down) for z axis for isometric view
   Vector2 velocity = Vector2.zero();
 
-  //velocity along z-Axis
   double zVelocity = 0.0;
   //character's height off the ground plane
   double zPosition = 0.0;
@@ -33,8 +34,6 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
   bool updateMovement = true;
 
   late ViewSide viewSide;
-
-
 
   @override
   void update(double dt) {
@@ -60,21 +59,28 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
     }
     // Horizontal movement and friction
 
-
     switch (viewSide) {
       case ViewSide.isometric:
         _performIsometricMovement(dt);
+        if (gravityEnabled) {
+          _performIsometricGravity(dt);
+        } else {
+          print("gravity not enabled");
+        }
         break;
 
       case ViewSide.side:
         velocity.x += horizontalMovement * moveSpeed;
-        velocity.x *=_friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+        velocity.x *=
+            _friction *
+            (dt +
+                1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
         if (gravityEnabled) {
           _performGravity(dt);
         } else {
           print('gravity not enabled');
         }
-    //maybe not necessary if we don't have topdown at all
+      //maybe not necessary if we don't have topdown at all
       case ViewSide.topDown:
         velocity.x += horizontalMovement * moveSpeed;
         velocity.y += verticalMovement * moveSpeed;
@@ -82,10 +88,7 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
         break;
     }
 
-
     // Apply final velocity to position
-
-
 
     gridPos += velocity * dt;
   }
@@ -102,7 +105,7 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
       velocity.y += verticalMovement * moveSpeed * (dt * 1000);
       velocity.y *= pow(0.01, dt); // Simulated drag
     }
-    //limit fallspeed to terminalVelocity
+    //limit fall speed to terminalVelocity
     velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
   }
 
@@ -113,20 +116,36 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
     hasJumped = false;
   }
 
+  //needs more work just basic
+  void isometricJump() {
+    if (isOnGround) {
+      zVelocity = -_jumpForce;
+
+      isOnGround = false;
+      hasJumped = false;
+    }
+  }
+
   //isometric movement logic
   void _performIsometricMovement(double dt) {
     velocity.x += horizontalMovement * moveSpeed;
-    velocity.x *= _friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+    velocity.x *=
+        _friction *
+        (dt +
+            1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
 
     velocity.y += verticalMovement * moveSpeed;
-    velocity.y *= _friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+    velocity.y *=
+        _friction *
+        (dt +
+            1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
   }
-
 
   void _performIsometricGravity(double dt) {
     //access the player's ground level
     final player = this as Player;
     final currentZGround = player.zGround;
+
     // Apply gravity to Z velocity
     zVelocity += _gravity * dt;
     // Apply Z velocity to Z position
@@ -139,15 +158,6 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
       isOnGround = true;
     } else {
       isOnGround = false;
-    }
-  }
-
-  //needs more work just basic
-  void isometricJump() {
-    if (isOnGround) {
-      zVelocity = -_jumpForce;
-      isOnGround = false;
-      hasJumped = false;
     }
   }
 }
