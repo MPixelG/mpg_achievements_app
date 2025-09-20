@@ -18,12 +18,14 @@ import '../level/isometric/isometric_world.dart';
 import '../level_components/saw.dart';
 import '../physics/controllableMixins.dart';
 import '../physics/movement.dart';
+
 //todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations
 //with is used to additonal classes here our game class
 //import/reference to Keyboardhandler
 class Player extends GameCharacter
-    with RiverpodComponentMixin,
+    with
+        RiverpodComponentMixin,
         KeyboardHandler,
         CollisionCallbacks,
         BasicMovement,
@@ -32,7 +34,6 @@ class Player extends GameCharacter
         JoystickControllableMovement,
         HasCollisions,
         IsometricRenderable {
-
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
   //we need this local state flag because of the animation and movement logic, it refers to the global state bool gotHit
@@ -49,49 +50,45 @@ class Player extends GameCharacter
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
 
-
-
-
   @override
   FutureOr<void> onLoad() {
-
     // The player inspects its environment (the world) and configures itself.
     if (game.gameWorld is IsometricWorld) {
       setMovementType(ViewSide.isometric);
     } else {
       setMovementType(ViewSide.side); // Default
     }
+    print("movement type set to $viewSide");
     startingPosition = Vector2(position.x, position.y);
+    zGround = 0;
+    zPosition = 0;
     return super.onLoad();
   }
-
 
   @override
   void update(double dt) {
     super.update(dt);
 
     if (viewSide == ViewSide.isometric) {
+      //find the ground block beneath the player and set the zGround to its zPosition +
       _findGroundBeneath();
     }
     //Provider logic follow
     //the ref.watch here makes sure that the player component rebuilds and PlayerData changes its values when the player state changes
     final playerState = ref.watch(playerProvider);
 
-
     //Hit-Logic
     //if the player is respawning we play the respawn animation and call the respawn logic when it is complete
-    if(playerState.isRespawning && !_isRespawningAnimationPlaying){
+    if (playerState.isRespawning && !_isRespawningAnimationPlaying) {
       _isRespawningAnimationPlaying = true;
 
-      playAnimation('hit').whenComplete((){
-
+      playAnimation('hit').whenComplete(() {
         //this is called when the hit animation is complete
         ref.read(playerProvider.notifier).resetHit();
         //now we call the respawn logic
         _respawn();
       });
-      }
-
+    }
     //Respawn logic
     //if the player got hit and the hit animation is not already playing we play the hit animation and reset the gotHit state when it is complete
     else if (playerState.gotHit && !_isHitAnimationPlaying) {
@@ -109,7 +106,7 @@ class Player extends GameCharacter
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
-        ref.read(playerProvider.notifier).manualRespawn();
+      ref.read(playerProvider.notifier).manualRespawn();
     }
     if (keysPressed.contains(LogicalKeyboardKey.keyC)) {
       debugNoClipMode = !debugNoClipMode;
@@ -118,7 +115,8 @@ class Player extends GameCharacter
     if (keysPressed.contains(LogicalKeyboardKey.keyY)) {
       debugImmortalMode = !debugImmortalMode; //press Y to toggle immortality
     }
-    if (keysPressed.contains(LogicalKeyboardKey.keyK)) { //press K to heal
+    if (keysPressed.contains(LogicalKeyboardKey.keyK)) {
+      //press K to heal
       ref.read(playerProvider.notifier).heal();
       if (kDebugMode) {
         print("healed");
@@ -134,18 +132,19 @@ class Player extends GameCharacter
     //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
     if (other is Collectable) {
       other.collidedWithPlayer();
-
     }
 
     if (other is Saw && !debugImmortalMode) {
       //todo separation into PlayerState logic
-      Future(() { // Wrap the provider modification in a future
+      Future(() {
+        // Wrap the provider modification in a future
         ref.read(playerProvider.notifier).takeHit();
       });
     }
 
     if (other is Enemy && !debugImmortalMode) {
-      Future(() { // Wrap the provider modification in a future
+      Future(() {
+        // Wrap the provider modification in a future
         ref.read(playerProvider.notifier).takeHit();
       });
     }
@@ -171,17 +170,16 @@ class Player extends GameCharacter
     position -= Vector2.all(
       32,
     ); //center the player so that the animation displays correctly (its 96*96 and the player is 32*32)
-    scale.x = 1; //flip the player to the right side and a third of the size because the animation is triple of the size
+    scale.x =
+        1; //flip the player to the right side and a third of the size because the animation is triple of the size
     await playAnimation("disappearing"); //display a disappear animation
-    await Future.delayed(
-      Duration(milliseconds: 320),
-    );
+    await Future.delayed(Duration(milliseconds: 320));
     //wait for the animation to finish
 
     //Positioning the player after respawn
     final respawnPoint = ref.read(playerProvider).lastCheckpoint;
 
-    position = (respawnPoint?.position ?? startingPosition) - Vector2(40,32);
+    position = (respawnPoint?.position ?? startingPosition) - Vector2(40, 32);
 
     //position the player at the spawn point and also add the displacement of the animation
     scale = Vector2.all(0); //hide the player
@@ -191,54 +189,72 @@ class Player extends GameCharacter
     scale = Vector2.all(1); //show the player
     await playAnimation("appearing"); //display an appear animation
 
-    await Future.delayed(
-      Duration(milliseconds: 300),
-    );
+    await Future.delayed(Duration(milliseconds: 300));
 
     //wait for the animation to finish
     //todo renaming necessary
     setGravityEnabled(true);
     if (kDebugMode) {
       print("re-enabled gravity");
-    }//re-enable gravity
+    } //re-enable gravity
     updateMovement = true;
     updatePlayerstate(); //update the players feet to the ground
     position += Vector2.all(
       32,
     ); //reposition the player, because it had a bit of displacement because of the respawn animation
 
-
     ref.read(playerProvider.notifier).completeRespawn();
     _isRespawningAnimationPlaying = false;
   }
 
-//find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
+  //find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
   void _findGroundBeneath() {
     // the highest ground block beneath the player
     final blocks = game.gameWorld.children.whereType<CollisionBlock>();
+    print("number of blocks: ${blocks.length}");
 
     CollisionBlock? highestGroundBlock;
     //the players foot rectangle which mesn easier collision detection with the block
-    final playerFootRectangle = Rect.fromLTRB(position.x - size.x /2, position.y, position.x + size.x/2, position.y + size.y);
-
-    for (final block in blocks){
+    final playerFootRectangle = Rect.fromLTRB(
+      position.x - size.x / 2,
+      position.y,
+      position.x + size.x / 2,
+      position.y + size.y,
+    );
+    print("player foot rectangle: $playerFootRectangle");
+    for (final block in blocks) {
       //make a rectangle from the block position and size
-      final blockGroundRectangle = Rect.fromLTRB(block.position.x, block.position.y, block.size.x, block.size.y);
-
-      if (playerFootRectangle.overlaps(blockGroundRectangle)){
+      final blockGroundRectangle = Rect.fromLTRB(
+        block.position.x,
+        block.position.y,
+        block.size.x,
+        block.size.y,
+      );
+      print(
+        "checking block at position: ${block.position} with size: ${block.size}",
+      );
+      if (playerFootRectangle.overlaps(blockGroundRectangle)) {
         //what is it ground and what is the zHeight of the block;
         final blockCeiling = block.zPosition! + block.zHeight!;
+        print("block ceiling: $blockCeiling");
         //if the zPosition of the player is higher than the block ceiling and the block ceiling is higher than the current highest ground block, we set the highest ground block to this block
-        if (zPosition >= blockCeiling && (blockCeiling > (highestGroundBlock!.zPosition! + highestGroundBlock.zHeight!))) {
+        if (zPosition >= blockCeiling &&
+            (blockCeiling >
+                (highestGroundBlock!.zPosition! +
+                    highestGroundBlock.zHeight!))) {
           highestGroundBlock = block;
         }
       }
     }
-    if(highestGroundBlock != null){
-      zGround = (highestGroundBlock.zPosition! + highestGroundBlock.zHeight!) as double;}
-    else {
+    if (highestGroundBlock != null) {
+      zGround =
+          (highestGroundBlock.zPosition! + highestGroundBlock.zHeight!)
+              as double;
+      print("zGround: $zGround");
+    } else {
       zGround = 0;
     }
+    print("final zGround: $zGround");
   }
 
   //Getters
@@ -305,17 +321,9 @@ class Player extends GameCharacter
   int get renderPriority => 1;
 
   @override
-  Vector2 get gridFeetPos => game.gameWorld.toGridPos(absolutePositionOfAnchor(Anchor.topCenter));
+  Vector2 get gridFeetPos =>
+      game.gameWorld.toGridPos(absolutePositionOfAnchor(Anchor.topCenter));
 
   @override
   RenderCategory get renderCategory => RenderCategory.entity;
-
-  }
-
-
-
-
-
-
-
-
+}
