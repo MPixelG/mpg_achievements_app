@@ -52,7 +52,7 @@ mixin KeyboardControllableMovement
           verticalMovement = 0;
         }
         hasJumped = true;
-        print('has jumped:$hasJumped');
+
       }
 
       if (keysPressed.contains(LogicalKeyboardKey.shiftLeft)) {

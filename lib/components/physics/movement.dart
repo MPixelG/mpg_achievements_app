@@ -62,7 +62,7 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
       case ViewSide.isometric:
         _performIsometricMovement(dt);
         if (gravityEnabled) {
-          _performIsometricGravity(dt);
+         // _performIsometricGravity(dt);
         } else {
           print("gravity not enabled");
         }
@@ -135,10 +135,7 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
         _friction *
         (dt +
             1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
-    print('zMovement:$zMovement');
-    print('vertivalMovement:$verticalMovement');
-    print('moveSpeed:$moveSpeed');
-    print('velocity.y:$velocity.y');
+
     velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
   }
 
