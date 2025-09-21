@@ -29,7 +29,7 @@ class PlayerData {
 
 //The copyWith method allows you to create a new instance of PlayerData with some properties modified
 //while keeping the others unchanged. This is useful for immutability and state management.
-//It returns a new PlayerData object with the specified properties updated, or the current value if
+//It returns a new PlayerData object with the specified properties updated or the current value if
 //no new value is provided for a property.
   PlayerData copyWith({
     String? id, // ID is optional here, as it should not change after creation
