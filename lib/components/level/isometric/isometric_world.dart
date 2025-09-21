@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
@@ -109,7 +110,7 @@ class IsometricWorld extends GameWorld {
       child.renderTree(canvas);
     }
 
-    (level as IsometricTiledComponent).renderComponentsInTree(canvas, children.whereType<IsometricRenderable>());
+    (level as IsometricTiledComponent).renderComponentsInTree(canvas, children.whereType<IsometricRenderable>(), CameraComponent.currentCamera!.viewfinder.position, CameraComponent.currentCamera!.viewport.size);
   }
   //calculate the grid position from a world position
   @override

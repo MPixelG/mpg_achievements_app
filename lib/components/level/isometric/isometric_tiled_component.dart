@@ -46,8 +46,8 @@ class IsometricTiledComponent extends TiledComponent{
 
   List<RenderInstance>? lastRenderables;
   Iterable<IsometricRenderable>? lastComponents;
-  void renderComponentsInTree(Canvas canvas, Iterable<IsometricRenderable> components) {
-    chunks.render(canvas, components);
+  void renderComponentsInTree(Canvas canvas, Iterable<IsometricRenderable> components, Vector2 position, Vector2 viewportSize){
+    chunks.render(canvas, components, position, viewportSize);
   }
   void forceRebuildCache(){
   }
