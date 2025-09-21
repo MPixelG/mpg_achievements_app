@@ -17,7 +17,7 @@ class PlayerData {
 
   PlayerData({
     // If an ID is not provided, generate a unique one using the Uuid package. It is made optional here because we do not
-    //necessarily need to provide an ID when creating a new PlayerData instance. And if we load a Player from a save file, we can use the ID from that file.
+    //necessarily need to provide an ID when creating a new PlayerData instance. And if we load a Player from a save file, we can use the ID from that fil.
     String? id,
     required this.playerCharacter,
     this.lives = 3,
