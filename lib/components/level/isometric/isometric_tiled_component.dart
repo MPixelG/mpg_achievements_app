@@ -1,7 +1,7 @@
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
-import 'package:mpg_achievements_app/components/level/rendering/g_buffer.dart';
+import 'package:mpg_achievements_app/components/level/rendering/chunk_grid.dart';
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
 
 // An enumeration to categorize renderable objects.
@@ -17,13 +17,12 @@ class RenderInstance {
 
   // A function reference that knows how to draw the object.
   final void Function(Canvas, {Vector2 position, Vector2 size}) render;
-  final Image? texture;
-  final Image? normal;
+  final void Function(Canvas, {Vector2 position, Vector2 size})? renderNormal;
   final Vector2 screenPos;
   final Vector3 gridPos;
   // The layer index from the Tiled map. This serves as the primary sorting key
   final RenderCategory category;
-  RenderInstance(this.render, this.screenPos, this.gridPos, this.category, [this.texture, this.normal]);
+  RenderInstance(this.render, this.screenPos, this.gridPos, this.category, {this.renderNormal});
 }
 
 
@@ -33,14 +32,14 @@ class IsometricTiledComponent extends TiledComponent{
   IsometricTiledComponent(super.map);
 
   late GameTileMap gameTileMap;
-  late GBuffer gBuffer;
+  late ChunkGrid chunks;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     gameTileMap = GameTileMap(tileMap.map);
     gameTileMap.init();
-    gBuffer = GBuffer(gameTileMap);
+    chunks = ChunkGrid(gameTileMap);
     // Pre-build the tile cache for efficient rendering later reading data from the Tiled map (every layer every tile)
   }
 
@@ -48,9 +47,8 @@ class IsometricTiledComponent extends TiledComponent{
   List<RenderInstance>? lastRenderables;
   Iterable<IsometricRenderable>? lastComponents;
   void renderComponentsInTree(Canvas canvas, Iterable<IsometricRenderable> components) {
-    gBuffer.render(canvas, components);
+    chunks.render(canvas, components);
   }
   void forceRebuildCache(){
-    gBuffer.setCorrupted();
   }
 }

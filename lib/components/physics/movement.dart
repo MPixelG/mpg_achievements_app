@@ -24,7 +24,7 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
 
   double zVelocity = 0.0;
   //character's height off the ground plane
-  double zPosition = 0.0;
+  double? zPosition = 0.0;
 
   bool debugFlyMode = false;
   bool hasJumped = false;
@@ -145,14 +145,15 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
     //access the player's ground level
     final player = this as Player;
     final currentZGround = player.zGround;
+    if(player.zGround == null || player.zPosition == null) return;
 
     // Apply gravity to Z velocity
     zVelocity += _gravity * dt;
     // Apply Z velocity to Z position
-    zPosition += zVelocity * dt;
+    zPosition = zPosition! + zVelocity * dt;
 
     // Only apply gravity if not on the ground
-    if (zPosition <= currentZGround) {
+    if (zPosition! <= currentZGround!) {
       zPosition = currentZGround;
       zVelocity = 0;
       isOnGround = true;

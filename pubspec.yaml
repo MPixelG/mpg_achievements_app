@@ -107,6 +107,7 @@ flutter:
     - assets/yarn/test.yarn
     - assets/images/Pixel_ArtTop_Down/basic_isometric_block_normal.png
     - assets/images/Pixel_ArtTop_Down/iso_tile_export_normalMap.png
+    - assets/images/Pixel_ArtTop_Down/noTextureBlock.png
 
   shaders:
     - assets/shaders/lighting.frag

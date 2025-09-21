@@ -44,6 +44,29 @@ vec3 calculateBasicLighting(){
 
     return diffuse;
 }
+
+float calculateShadow(vec3 fragPos, vec3 dirToLight, float heightScale){
+    vec3 currentPos = fragPos;
+    float stepSize = 0.005;
+
+    float shadow = 1.0;
+
+    for (int i = 0; i < 5; i++){
+        currentPos += dirToLight * stepSize;
+
+        if (any(lessThan(currentPos.xy, vec2(0.0))) || any(greaterThan(currentPos.xy, vec2(1.0)))){
+            break;
+        }
+
+        float heightVal = texture(depthMap, currentPos.xy).b * heightScale;
+
+        if (heightVal > currentPos.z + 0.1){
+            shadow = clamp(shadow - 0.9, 0.0, 1.0);
+            break;
+        }
+    }
+    return shadow;
+}
 void main() {
     vec2 uv = FlutterFragCoord().xy / screenSize;
     vec4 albedoPixel = texture(albedoMap, uv);
@@ -51,31 +74,12 @@ void main() {
 
     float heightScale = 0.5;
     vec3 fragPos = vec3(uv, pixelHeight * heightScale);
-
     vec3 dirToLight = normalize(lightPos - fragPos);
 
-    vec3 currentPos = fragPos;
-    float stepSize = 0.0005;
 
-    float shadow = 1.0;
-
-    for(int i = 0; i < 640; i++){
-        currentPos += dirToLight * stepSize;
-
-        if(any(lessThan(currentPos.xy, vec2(0.0))) || any(greaterThan(currentPos.xy, vec2(1.0)))){
-            break;
-        }
-
-        float heightVal = texture(depthMap, currentPos.xy).b * heightScale;
-
-        if(heightVal > currentPos.z + 0.1){
-            shadow = clamp(shadow - 0.9, 0.0, 1.0);
-            break;
-        }
-    }
-
-    vec3 diffuse = calculateBasicLighting();
-    vec3 color = albedoPixel.rgb * (diffuse * shadow + vec3(0.15, 0.1, 0.3)) ;
+    //vec3 diffuse = calculateBasicLighting();
+//    float shadow = calculateShadow(fragPos, dirToLight, heightScale);
+    vec3 color = albedoPixel.rgb * (vec3(0.15, 0.1, 0.3));
 
     fragColor = vec4(color, albedoPixel.a);
 }

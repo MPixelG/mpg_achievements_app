@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
@@ -41,7 +42,7 @@ class PixelAdventure extends FlameGame with
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
-  late String currentLevel = "Level_2";
+  late String currentLevel = "Level_8";
 
   //bools for game logic
   //needs to go into the overlay_controller later
@@ -120,7 +121,7 @@ class PixelAdventure extends FlameGame with
 }
 
 Vector3 get tilesize => PixelAdventure.currentInstance.gameWorld.calculatedTileSize;
-
+Vector2 get screenSize => PixelAdventure.currentInstance.cam.visibleWorldRect.toVector2();
 
 //helper class to follow the player after the world and player are loaded
 class _FollowCameraComponent extends Component with HasGameReference<PixelAdventure> {

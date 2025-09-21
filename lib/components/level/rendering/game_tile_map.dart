@@ -5,10 +5,12 @@ import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:mpg_achievements_app/components/level/rendering/tileset_utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../util/utils.dart';
 import '../isometric/isometric_tiled_component.dart';
+import 'chunk.dart';
 import 'game_sprite.dart';
 
 class GameTileMap {
@@ -106,53 +108,6 @@ class GameTileMap {
   }
 
 
-
-  final _tilesetImageCache = <Tileset, Image>{};
-  final _normalTilesetImageCache = <Tileset, Image>{};
-
-  FutureOr<Image?> getImageFromTileset(Tileset tileset) async{
-    if(tileset.image?.source == null) return null;
-
-    Image? cacheResult = _tilesetImageCache[tileset];
-
-    if(cacheResult != null) {
-      return cacheResult;
-    }
-    Image? calculatedResult = await getImageFromTilesetPath(tileset.image!.source!);
-
-    if(calculatedResult != null) _tilesetImageCache[tileset] = calculatedResult;
-
-    return calculatedResult;
-  }
-
-  Future<Image?> getImageFromTilesetPath(String tilesetPath) async {
-
-    if(!Flame.images.containsKey(tilesetPath)){
-      return await Flame.images.load(tilesetPath);
-    } else {
-      return Flame.images.fromCache(tilesetPath);
-    }
-  }
-
-  FutureOr<Image?> getNormalImageFromTileset(Tileset tileset) async{
-    if(tileset.image?.source == null) return null;
-
-
-    Image? cacheResult = _normalTilesetImageCache[tileset];
-
-    if(cacheResult != null) {
-      return cacheResult;
-    }
-
-    final String normalMapPath = "${RegExp("../images/([A-Za-z_0-9/]+).png").firstMatch(tileset.image!.source!)!.group(1)!}_normalMap.png";
-
-    Image? calculatedResult = await getImageFromTilesetPath(normalMapPath);
-
-    if(calculatedResult != null) _normalTilesetImageCache[tileset] = calculatedResult;
-
-    return calculatedResult;
-  }
-
   ///Adds a tile to the render cache based on its GID and position.
   Future<void> _addTileForGid(
       TiledMap map,
@@ -195,18 +150,11 @@ class GameTileMap {
         + Vector2(map.width * tileW, 0); //shift the map to the center of the screen to be all positive
     // Add the RenderInstance to our cache.
 
-    Image texture = await getTileFromTilesetToImage(sprite);
-
-    Image normalImage = await getTileFromTilesetToImage(normalSprite);
-
-    normalImage = await normalImage.transformPixels((p0) => p0.withBlue(((((tileZ + p0.b) / totalZLayers)) * 255).toInt()));
-
-    textures[gid] = GameSprite(texture, normalImage);
-    renderableTiles.add(RenderInstance(sprite.render, worldPos, Vector3(tileX.toDouble(), tileY.toDouble(), tileZ.toDouble()), RenderCategory.tile, texture, normalImage));
+    textures[gid] = GameSprite(sprite, normalSprite);
+    renderableTiles.add(RenderInstance(sprite.render, worldPos, Vector3(tileX.toDouble(), tileY.toDouble(), tileZ.toDouble()), RenderCategory.tile, renderNormal: normalSprite.render));
   }
 
   final _spriteImageCache = <Sprite, Image>{};
-
   Future<Image> getTileFromTilesetToImage(Sprite sprite) async{
 
     Image? cacheResult = _spriteImageCache[sprite];
@@ -221,8 +169,5 @@ class GameTileMap {
     final img = await picture.toImage(tilesize.x.toInt(), tilesize.y.toInt());
     _spriteImageCache[sprite] = img;
     return img;
-
   }
-
-
 }

@@ -66,14 +66,14 @@ class IsometricShaderManager{
       int gridPosX = mappedIndex % rows;
       int gridPosY = mappedIndex ~/ rows;
 
-      Offset atlasPos = Offset(gridPosX * tilesize.x, gridPosY * tilesize.y);
+      Vector2 atlasPos = Vector2(gridPosX * tilesize.x, gridPosY * tilesize.y);
 
-      albedoCanvas.drawImage(value.texture, atlasPos, paint);
+      value.albedo.render(albedoCanvas, position: atlasPos);
 
-      if(value.normalTexture != null) {
-        normalDepthCanvas.drawImage(value.normalTexture!, atlasPos, paint);
+      if(value.normalAndDepth != null) {
+        value.albedo.render(normalDepthCanvas, position: atlasPos);
       } else {
-        normalDepthCanvas.drawImage(defaultNormalTexture, atlasPos, paint);
+        normalDepthCanvas.drawImage(defaultNormalTexture, atlasPos.toOffset(), paint);
       }
 
       mappedIndex++;

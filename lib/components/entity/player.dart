@@ -42,8 +42,8 @@ class Player extends GameCharacter
   //Player name
   String playerCharacter;
   //Find the ground of player position
-  late double zGround;
-  late double zPosition;
+  double? zGround;
+  double? zPosition = 1;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
@@ -65,7 +65,7 @@ class Player extends GameCharacter
     super.update(dt);
 
     if (viewSide == ViewSide.isometric) {
-      _findGroundBeneath();
+      //_findGroundBeneath();
     }
     //Provider logic follow
     //the ref.watch here makes sure that the player component rebuilds and PlayerData changes its values when the player state changes
@@ -206,7 +206,6 @@ class Player extends GameCharacter
   void _findGroundBeneath() {
     // the highest ground block beneath the player
     final blocks = game.gameWorld.children.whereType<CollisionBlock>();
-    print("number of blocks: ${blocks.length}");
 
     CollisionBlock? highestGroundBlock;
     //the players foot rectangle which mesn easier collision detection with the block
@@ -216,7 +215,6 @@ class Player extends GameCharacter
       position.x + size.x / 2,
       position.y + size.y,
     );
-    print("player foot rectangle: $playerFootRectangle");
     for (final block in blocks) {
       //make a rectangle from the block position and size
       final blockGroundRectangle = Rect.fromLTRB(
@@ -225,15 +223,11 @@ class Player extends GameCharacter
         block.size.x,
         block.size.y,
       );
-      print(
-        "checking block at position: ${block.position} with size: ${block.size}",
-      );
       if (playerFootRectangle.overlaps(blockGroundRectangle)) {
         //what is it ground and what is the zHeight of the block;
         final blockCeiling = block.zPosition! + block.zHeight!;
-        print("block ceiling: $blockCeiling");
         //if the zPosition of the player is higher than the block ceiling and the block ceiling is higher than the current highest ground block, we set the highest ground block to this block
-        if (zPosition >= blockCeiling &&
+        if ((zPosition ?? 0) >= blockCeiling &&
             (blockCeiling >
                 (highestGroundBlock!.zPosition! +
                     highestGroundBlock.zHeight!))) {
@@ -247,6 +241,7 @@ class Player extends GameCharacter
               as double;
       print("zGround: $zGround");
     } else {
+      print("set to default val!");
       zGround = 0;
     }
     print("final zGround: $zGround");
