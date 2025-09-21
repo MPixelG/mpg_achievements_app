@@ -23,15 +23,15 @@ import '../physics/movement.dart';
 //with is used to additonal classes here our game class
 //import/reference to Keyboardhandler
 class Player extends GameCharacter
-    with RiverpodComponentMixin,
+    with
+        RiverpodComponentMixin,
         KeyboardHandler,
         CollisionCallbacks,
         BasicMovement,
         KeyboardControllableMovement,
         HasMovementAnimations,
         JoystickControllableMovement,
-        HasCollisions{
-
+        HasCollisions {
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
   //we need this local state flag because of the animation and movement logic, it refers to the global state bool gotHit
@@ -73,10 +73,9 @@ class Player extends GameCharacter
     //the ref.watch here makes sure that the player component rebuilds and PlayerData changes its values when the player state changes
     final playerState = ref.watch(playerProvider);
 
-
     //Hit-Logic
     //if the player is respawning we play the respawn animation and call the respawn logic when it is complete
-    if(playerState.isRespawning && !_isRespawningAnimationPlaying){
+    if (playerState.isRespawning && !_isRespawningAnimationPlaying) {
       _isRespawningAnimationPlaying = true;
 
       playAnimation('hit').whenComplete(() {
@@ -85,8 +84,7 @@ class Player extends GameCharacter
         //now we call the respawn logic
         _respawn();
       });
-      }
-
+    }
     //Respawn logic
     //if the player got hit and the hit animation is not already playing we play the hit animation and reset the gotHit state when it is complete
     else if (playerState.gotHit && !_isHitAnimationPlaying) {
@@ -97,7 +95,6 @@ class Player extends GameCharacter
         _isHitAnimationPlaying = false;
       });
     }
-
   }
 
   @override
@@ -237,78 +234,71 @@ class Player extends GameCharacter
 
           highestGroundBlock = currentBlock;
           zGround =
-          (highestGroundBlock.zPosition! + highestGroundBlock.zHeight!)
-          as double;
+              (highestGroundBlock.zPosition! + highestGroundBlock.zHeight!)
+                  as double;
           print("zGround: $zGround");
         }
       }
     }
   }
 
-      //Getters
-      @override
-      ShapeHitbox getHitbox() => hitbox;
+  //Getters
+  @override
+  ShapeHitbox getHitbox() => hitbox;
 
-      @override
-      Vector2 getPosition() => position;
+  @override
+  Vector2 getPosition() => position;
 
-      @override
-      Vector2 getScale() => scale;
+  @override
+  Vector2 getScale() => scale;
 
-      @override
-      Vector2 getVelocity() => velocity;
+  @override
+  Vector2 getVelocity() => velocity;
 
-      bool climbing = false;
+  bool climbing = false;
 
-      @override
-      void setClimbing(bool val) => climbing = val;
+  @override
+  void setClimbing(bool val) => climbing = val;
 
-      @override
-      bool get isClimbing =>
-      climbing;
+  @override
+  bool get isClimbing => climbing;
 
-      @override
-      bool get isTryingToGetDownLadder =>
-      isShifting;
+  @override
+  bool get isTryingToGetDownLadder => isShifting;
 
-      @override
-      List<AnimationLoadOptions> get animationOptions =>
-      [
-        AnimationLoadOptions(
-          "appearing",
-          "Main Characters/Appearing",
-          textureSize: 96,
-          loop: false,
-        ),
-        AnimationLoadOptions(
-          "disappearing",
-          "Main Characters/Disappearing",
-          textureSize: 96,
-          loop: false,
-        ),
-        AnimationLoadOptions(
-          "hit",
-          "$componentSpriteLocation/Hit",
-          textureSize: 32,
-          loop: false,
-        ),
+  @override
+  List<AnimationLoadOptions> get animationOptions => [
+    AnimationLoadOptions(
+      "appearing",
+      "Main Characters/Appearing",
+      textureSize: 96,
+      loop: false,
+    ),
+    AnimationLoadOptions(
+      "disappearing",
+      "Main Characters/Disappearing",
+      textureSize: 96,
+      loop: false,
+    ),
+    AnimationLoadOptions(
+      "hit",
+      "$componentSpriteLocation/Hit",
+      textureSize: 32,
+      loop: false,
+    ),
 
-        ...movementAnimationDefaultOptions,
-      ];
+    ...movementAnimationDefaultOptions,
+  ];
 
-      @override
-      String get componentSpriteLocation =>
-      "Main Characters/Ninja Frog";
+  @override
+  String get componentSpriteLocation => "Main Characters/Ninja Frog";
 
-      @override
-      AnimatedComponentGroup get group =>
-      AnimatedComponentGroup.entity;
+  @override
+  AnimatedComponentGroup get group => AnimatedComponentGroup.entity;
 
-      //we answer the getters from HasMovementAnimations here to tell the mixin if we are currently in hit or respawn frames
-      @override
-      bool get isInHitFrames =>
-      _isHitAnimationPlaying;
-      @override
-      bool get isInRespawnFrames =>
-      _isRespawningAnimationPlaying;
-    }
+  //we answer the getters from HasMovementAnimations here to tell the mixin if we are currently in hit or respawn frames
+  @override
+  bool get isInHitFrames => _isHitAnimationPlaying;
+  @override
+  bool get isInRespawnFrames => _isRespawningAnimationPlaying;
+}
