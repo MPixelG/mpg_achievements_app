@@ -17,7 +17,7 @@ class Chunk {
   final int y;
   final int z;
 
-  int zHeightUsedPixels = 0;
+  double zHeightUsedPixels = 0;
 
   final List<ChunkTile> _tiles = [];
 
@@ -27,9 +27,16 @@ class Chunk {
 
   Chunk(this.x, this.y, this.z);
 
+  static int currentMaxZHeight = 0;
+
   Chunk.fromGameTileMap(GameTileMap gameTileMap, this.x, this.y, this.z){
     final map = gameTileMap.tiledMap;
     void registerTile(int gid, int x, int y, int z) {
+
+      if(z > currentMaxZHeight){
+        currentMaxZHeight = z;
+      }
+
       final sx = x + z;
       final sy = y + z;
 
@@ -41,17 +48,14 @@ class Chunk {
         final localX = sx - chunkX * chunkSize;
         final localY = sy - chunkY * chunkSize;
 
-        _tiles.add(ChunkTile(
-          gid,
-          localX,
-          localY,
-          z,
-          x,
-          y,
-        ));
+        if(localX == 15 && localY == 0 && z == 0){
+          print("corner! gid: $gid ");
+        }
 
-        if (zHeightUsedPixels < (z + 1) * tilesize.z) {
-          zHeightUsedPixels = ((z + 1) * tilesize.z).toInt();
+        _tiles.add(ChunkTile(gid, localX, localY, x, y, z));
+
+        if (gid != 0 && zHeightUsedPixels < (z + 1) * tilesize.z) {
+          zHeightUsedPixels = ((z + 1) * tilesize.z);
         }
       }
     }
@@ -95,7 +99,7 @@ class Chunk {
     totalZLayers = layerIndex;
 
     reSortTiles();
-    Future.delayed(Duration(seconds: 2), () => rebuildMaps([]));
+    Future.delayed(Duration(seconds: 1), () => rebuildMaps([]));
   }
 
   void reSortTiles(){
@@ -138,6 +142,26 @@ class Chunk {
     final picture = recorder.endRecording();
     albedoMap = await picture.toImage(((Chunk.chunkSize) * tilesize.x).toInt(), ((Chunk.chunkSize) * tilesize.y).toInt());
   }
+  Future<void> buildNormalAndDepthMap() async{
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
+
+
+    for (final tile in _tiles) { //render everything in the sorted order
+      Vector2 renderPos = toLocalPos(tile.posWorld.xy, layerIndex: tile.z.toDouble());
+      final double startVal = ((tile.z - 1) / currentMaxZHeight) * 255;
+      final double endVal = (tile.z / currentMaxZHeight);
+      tile._sprite!.normalAndDepth!.render(canvas, position: renderPos, overridePaint: Paint()..colorFilter = ColorFilter.matrix([
+          1, 0, 0, 0, 0,
+          0, 1, 0, 0, 0,
+          0, 0, endVal, 0, startVal,
+          0, 0, 0, 1, 0,
+          ]));
+    }
+
+    final picture = recorder.endRecording();
+    normalAndDepthMap = await picture.toImage(((Chunk.chunkSize+1) * tilesize.x).toInt(), ((Chunk.chunkSize+1) * tilesize.y).toInt());
+  }
 
   Vector2 toWorldPos(Vector2 gridPos, {double layerIndex = 0}) {
     final localPoint = Vector2(
@@ -162,31 +186,16 @@ class Chunk {
       (gridPos.x + gridPos.y) * (tilesize.z / 2),
     );
 
-    final layerOffset = Vector2(0, zHeightUsedPixels - (layerIndex * tilesize.z / 32),);
+    final layerOffset = Vector2(-tilesize.x / 2, zHeightUsedPixels - (0.0 * layerIndex * tilesize.z / 32));
 
     return localPoint + layerOffset;
   }
 
 
-  Future<void> buildNormalAndDepthMap() async{
-    final recorder = PictureRecorder();
-    final canvas = Canvas(recorder);
-
-
-    for (final tile in _tiles) { //render everything in the sorted order
-      Vector2 renderPos = toLocalPos(tile.posLocal.xy, layerIndex: tile.z.toDouble());
-      tile._sprite!.normalAndDepth!.render(canvas, position: renderPos);
-    }
-
-    final picture = recorder.endRecording();
-    normalAndDepthMap = await picture.toImage(((Chunk.chunkSize+1) * tilesize.x).toInt(), ((Chunk.chunkSize+1) * tilesize.y).toInt());
-  }
-
-
   Paint paint = Paint();
   void render(Canvas canvas, Iterable<IsometricRenderable> components, [Offset offset = Offset.zero]) {
-    if(albedoMap != null){
-      canvas.drawImage(albedoMap!, offset, paint);
+    if(normalAndDepthMap != null){
+      canvas.drawImage(normalAndDepthMap!, offset, paint);
       //canvas.drawCircle(offset, 5, Paint()..color = Colors.red);
     } else {
     }
@@ -209,7 +218,7 @@ class ChunkTile {
   Vector3 get posWorld => Vector3(worldX.toDouble(), worldY.toDouble(), z.toDouble());
   Vector3 get posLocal => Vector3(localX.toDouble(), localY.toDouble(), z.toDouble());
 
-  ChunkTile(this.gid, this.localX, this.localY, this.z, this.worldX, this.worldY) {
+  ChunkTile(this.gid, this.localX, this.localY, this.worldX, this.worldY, this.z) {
     Future.microtask(_loadSprite);
   }
 
@@ -229,16 +238,13 @@ Map<int, GameSprite> textures = {};
 Future<GameSprite> getTextureOfGid(int gid) async{
   GameSprite? cacheResult = textures[gid];
   if(cacheResult != null) {
-    print("getting texture from cache!");
-
     return cacheResult;
-  } print("found nothing for gid $gid");
+  }
 
 
   Tileset tileset = findTileset(gid, Chunk.knownTilesets);
   Image tilesetImage = (await getImageFromTileset(tileset))!;
   Image normalMapImg = (await getNormalImageFromTileset(tileset))!;
-  print("got tileset images!");
 
   final raw = gid & 0x1FFFFFFF;
   //calculate the local index of the tile within its tileset
@@ -248,6 +254,8 @@ Future<GameSprite> getTextureOfGid(int gid) async{
   final row = localIndex ~/ cols; //calculate the row and column of the tile in the tileset image
   final col = localIndex % cols; //same for column
   final srcSize = tilesize.xy; //the size of the tile in the tileset image
+
+  if(gid == 26) print("found gid 26! col: $col, row: $row");
 
   final sprite = Sprite( //get the sprite for the tile
     tilesetImage, //the tileset
@@ -260,12 +268,9 @@ Future<GameSprite> getTextureOfGid(int gid) async{
     srcSize: srcSize, //and its size
   );
 
-  print("got image from tileset!");
 
   GameSprite gameSprite = GameSprite(sprite, normalSprite);
   textures[gid] = gameSprite;
-  print("done! gid: $gid");
-
   return gameSprite;
 }
 

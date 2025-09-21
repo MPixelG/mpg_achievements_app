@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:flutter/material.dart' show Colors;
 import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
 import 'package:mpg_achievements_app/components/level/rendering/chunk.dart';
 
