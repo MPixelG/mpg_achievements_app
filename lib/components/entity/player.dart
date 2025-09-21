@@ -42,8 +42,8 @@ class Player extends GameCharacter
   //Player name
   String playerCharacter;
   //Find the ground of player position
-  late double zGround = 0.0;
-  late double zPosition = 0.0;
+  late double zGround;
+  late double zPosition;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
@@ -58,6 +58,8 @@ class Player extends GameCharacter
     }
     _findGroundBeneath();
     startingPosition = Vector2(position.x, position.y);
+    zGround = 0;
+    zPosition = 0;
 
     return super.onLoad();
   }
@@ -68,6 +70,11 @@ class Player extends GameCharacter
 
     if (viewSide == ViewSide.isometric) {
       _findGroundBeneath();
+      if (zPosition < zGround) {
+        isOnGround = false;
+      } else {
+        isOnGround = true;
+      }
     }
     //Provider logic follow
     //the ref.watch here makes sure that the player component rebuilds and PlayerData changes its values when the player state changes
@@ -237,6 +244,8 @@ class Player extends GameCharacter
               (highestGroundBlock.zPosition! + highestGroundBlock.zHeight!)
                   as double;
           print("zGround: $zGround");
+        } else {
+          zGround = 0;
         }
       }
     }

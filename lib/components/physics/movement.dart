@@ -21,7 +21,6 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
   double zMovement =
       0; // Directional input (up/down) for z axis for isometric view
   Vector2 velocity = Vector2.zero();
-
   double zVelocity = 0.0;
   //character's height off the ground plane
   double zPosition = 0.0;
@@ -118,12 +117,9 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
 
   //needs more work just basic
   void isometricJump() {
-    if (isOnGround) {
-      zVelocity = -_jumpForce;
-
-      isOnGround = false;
-      hasJumped = false;
-    }
+    zVelocity = -_jumpForce;
+    isOnGround = false;
+    hasJumped = false;
   }
 
   //isometric movement logic
@@ -139,25 +135,32 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
         _friction *
         (dt +
             1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+    print('zMovement:$zMovement');
+    print('vertivalMovement:$verticalMovement');
+    print('moveSpeed:$moveSpeed');
+    print('velocity.y:$velocity.y');
+    velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
   }
 
   void _performIsometricGravity(double dt) {
     //access the player's ground level
     final player = this as Player;
     final currentZGround = player.zGround;
+    if (!debugFlyMode) {
+      // Apply gravity to Z velocity
+      zVelocity += _gravity * dt;
+      // Apply Z velocity to Z position
+      zPosition += zVelocity * dt;
+      zVelocity = zVelocity.clamp(-_jumpForce, _terminalVelocity);
 
-    // Apply gravity to Z velocity
-    zVelocity += _gravity * dt;
-    // Apply Z velocity to Z position
-    zPosition += zVelocity * dt;
-
-    // Only apply gravity if not on the ground
-    if (zPosition <= currentZGround) {
-      zPosition = currentZGround;
-      zVelocity = 0;
-      isOnGround = true;
-    } else {
-      isOnGround = false;
+      print('zPosition:$zPosition');
+      // Only apply gravity if not on the ground
+      if (zPosition <= currentZGround) {
+        zVelocity = 0;
+        isOnGround = true;
+      } else {
+        isOnGround = false;
+      }
     }
   }
 }
