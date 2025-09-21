@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
+import 'package:flutter/material.dart' show Colors;
 import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
 import 'package:mpg_achievements_app/components/level/rendering/chunk.dart';
 
@@ -20,10 +21,11 @@ class ChunkGrid {
     for (var value in chunks.entries) {
       Chunk chunk = value.value;
       Vector2 chunkPos = Vector2(
-        (chunk.x - chunk.y + 3) * Chunk.chunkSize * tilesize.x / 2,
-        (chunk.x + chunk.y) * Chunk.chunkSize * tilesize.z / 2 ,
+        (chunk.x - chunk.y + 3) * (Chunk.chunkSize) * tilesize.x / 2,
+        (chunk.x + chunk.y) * (Chunk.chunkSize) * tilesize.z / 2 ,
       );
       chunkPos += offset.toVector2();
+      chunkPos.y -= chunk.zHeightUsedPixels;
       Vector2 unPositionedChunkPos = chunkPos - camPos + viewportSize / 2;
 
       if(unPositionedChunkPos.x < 0){
@@ -46,6 +48,7 @@ class ChunkGrid {
       }
 
       chunk.render(canvas, components, chunkPos.toOffset());
+      //canvas.drawLine((chunkPos - Vector2(0, chunk.zHeightUsedPixels.toDouble())).toOffset(), chunkPos.toOffset(), Paint()..color = Colors.green);
     }
   }
 

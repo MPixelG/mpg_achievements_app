@@ -29,25 +29,39 @@ class Chunk {
 
   Chunk.fromGameTileMap(GameTileMap gameTileMap, this.x, this.y, this.z){
     final map = gameTileMap.tiledMap;
-    void registerTile(int gid, int x, int y, int z) async{
-      final chunkX = x ~/ chunkSize;
-      final chunkY = y ~/ chunkSize;
+    void registerTile(int gid, int x, int y, int z) {
+      final sx = x + z;
+      final sy = y + z;
+
+      final chunkX = sx ~/ chunkSize;
+      final chunkY = sy ~/ chunkSize;
+
+
       if (chunkX == this.x && chunkY == this.y) {
-        _tiles.add(ChunkTile(gid, x % Chunk.chunkSize, y % Chunk.chunkSize, z % Chunk.chunkSize));
-        if(zHeightUsedPixels < (z+1) * tilesize.z){
-          zHeightUsedPixels = ((z+1) * tilesize.z).toInt();
+        final localX = sx - chunkX * chunkSize;
+        final localY = sy - chunkY * chunkSize;
+
+        _tiles.add(ChunkTile(
+          gid,
+          localX,
+          localY,
+          z,
+          x,
+          y,
+        ));
+
+        if (zHeightUsedPixels < (z + 1) * tilesize.z) {
+          zHeightUsedPixels = ((z + 1) * tilesize.z).toInt();
         }
       }
     }
+
 
     int layerIndex = 0;
     knownTilesets.addAll(map.tilesets);
     for (final layer in map.layers) {
       if (layer is TileLayer) {
-        if(layerIndex != z) {
-          layerIndex++;
-          continue; //only load tiles for the specified z layer
-        }
+
 
         if (layer.chunks!.isNotEmpty) {
           for (final chunk in layer.chunks!) {
@@ -86,8 +100,11 @@ class Chunk {
 
   void reSortTiles(){
     _tiles.sort((a, b) {
-      Vector2 pos1 = a.pos;
-      Vector2 pos2 = b.pos;
+      Vector3 pos1 = a.posWorld;
+      Vector3 pos2 = b.posWorld;
+
+      pos1.z *= tilesize.z;
+      pos2.z *= tilesize.z;
 
       int comparedPos = pos1.compareTo(pos2); //compare the foot y positions
 
@@ -111,10 +128,12 @@ class Chunk {
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
 
-    for (final tile in _tiles) { //render everything in the sorted order
-      Vector2 renderPos = toWorldPos(tile.pos, layerIndex: tile.chunkZ.toDouble());
+    for (final tile in _tiles) {
+      Vector2 renderPos = toLocalPos(tile.posWorld.xy, layerIndex: tile.z.toDouble());
       tile._sprite!.albedo.render(canvas, position: renderPos);
     }
+
+    //canvas.drawRect(Offset.zero & Size(chunkSize * tilesize.x, chunkSize * tilesize.z + zHeightUsedPixels), Paint()..color = Color(hashCode));
 
     final picture = recorder.endRecording();
     albedoMap = await picture.toImage(((Chunk.chunkSize) * tilesize.x).toInt(), ((Chunk.chunkSize) * tilesize.y).toInt());
@@ -129,9 +148,25 @@ class Chunk {
     // to get the correct world position
 
     //apply vertical movement for different layers according to z-index
-    final layerOffset = Vector2(0, layerIndex * tilesize.z/32);//works for now as each tile is 32 pixels high in the tileset
+    final layerOffset = Vector2(0, zHeightUsedPixels - (layerIndex * tilesize.z / 32)); //works for now as each tile is 32 pixels high in the tileset
     return localPoint + layerOffset;
   }
+
+
+  Vector2 toLocalPos(Vector2 gridPos, {double layerIndex = 0}) {
+
+    gridPos -= Vector2(x.toDouble() * chunkSize, y.toDouble() * chunkSize);
+
+    final localPoint = Vector2(
+      (gridPos.x - gridPos.y + (chunkSize)) * (tilesize.x / 2),
+      (gridPos.x + gridPos.y) * (tilesize.z / 2),
+    );
+
+    final layerOffset = Vector2(0, zHeightUsedPixels - (layerIndex * tilesize.z / 32),);
+
+    return localPoint + layerOffset;
+  }
+
 
   Future<void> buildNormalAndDepthMap() async{
     final recorder = PictureRecorder();
@@ -139,7 +174,7 @@ class Chunk {
 
 
     for (final tile in _tiles) { //render everything in the sorted order
-      Vector2 renderPos = toWorldPos(tile.pos, layerIndex: tile.chunkZ.toDouble());
+      Vector2 renderPos = toLocalPos(tile.posLocal.xy, layerIndex: tile.z.toDouble());
       tile._sprite!.normalAndDepth!.render(canvas, position: renderPos);
     }
 
@@ -152,7 +187,7 @@ class Chunk {
   void render(Canvas canvas, Iterable<IsometricRenderable> components, [Offset offset = Offset.zero]) {
     if(albedoMap != null){
       canvas.drawImage(albedoMap!, offset, paint);
-      canvas.drawCircle(offset, 5, Paint()..color = Colors.red);
+      //canvas.drawCircle(offset, 5, Paint()..color = Colors.red);
     } else {
     }
   }
@@ -165,14 +200,16 @@ class Chunk {
 
 class ChunkTile {
   final int gid;
-  final int x;
-  final int y;
+  final int localX;
+  final int localY;
+  final int worldX;
+  final int worldY;
+  final int z;
 
-  final int chunkZ;
+  Vector3 get posWorld => Vector3(worldX.toDouble(), worldY.toDouble(), z.toDouble());
+  Vector3 get posLocal => Vector3(localX.toDouble(), localY.toDouble(), z.toDouble());
 
-  Vector2 get pos => Vector2(x.toDouble(), y.toDouble());
-
-  ChunkTile(this.gid, this.x, this.y, this.chunkZ) {
+  ChunkTile(this.gid, this.localX, this.localY, this.z, this.worldX, this.worldY) {
     Future.microtask(_loadSprite);
   }
 
@@ -232,8 +269,8 @@ Future<GameSprite> getTextureOfGid(int gid) async{
   return gameSprite;
 }
 
-extension on Vector2 {
-  int compareTo(Vector2 gridPos) {
-    return (distanceTo(Vector2.zero()).compareTo(gridPos.distanceTo(Vector2.zero())));
+extension VectorComparing on Vector3 {
+  int compareTo(Vector3 gridPos) {
+    return (distanceTo(Vector3.zero()).compareTo(gridPos.distanceTo(Vector3.zero())));
   }
 }
