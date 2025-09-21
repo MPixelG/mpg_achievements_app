@@ -42,21 +42,23 @@ class Player extends GameCharacter
   //Player name
   String playerCharacter;
   //Find the ground of player position
-  late double zGround;
-  late double zPosition;
+  late double zGround = 0.0;
+  late double zPosition = 0.0;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
 
   @override
-  FutureOr<void> onLoad() {
+  Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.
     if (game.gameWorld is IsometricWorld) {
       setMovementType(ViewSide.isometric);
     } else {
       setMovementType(ViewSide.side); // Default
     }
+    _findGroundBeneath();
     startingPosition = Vector2(position.x, position.y);
+
     return super.onLoad();
   }
 
@@ -206,109 +208,107 @@ class Player extends GameCharacter
   void _findGroundBeneath() {
     // the highest ground block beneath the player
     final blocks = game.gameWorld.children.whereType<CollisionBlock>();
-    print("number of blocks: ${blocks.length}");
+    //print("number of blocks: ${blocks.length}");
 
-    CollisionBlock? highestGroundBlock;
+    CollisionBlock highestGroundBlock;
     //the players foot rectangle which mesn easier collision detection with the block
-    final playerFootRectangle = Rect.fromLTRB(
-      position.x - size.x / 2,
-      position.y,
-      position.x + size.x / 2,
-      position.y + size.y,
+    final playerFootRectangle = Rect.fromCenter(
+      center: absolutePositionOfAnchor(Anchor.bottomCenter).toOffset(),
+      width: size.x + 5, //maybe adjust necessary
+      height: 4.0, //thin slice is sufficient
     );
-    print("player foot rectangle: $playerFootRectangle");
+    //print("player foot rectangle: $playerFootRectangle");
     for (final block in blocks) {
       //make a rectangle from the block position and size
-      final blockGroundRectangle = Rect.fromLTRB(
-        block.position.x,
-        block.position.y,
-        block.size.x,
-        block.size.y,
-      );
-      print(
-        "checking block at position: ${block.position} with size: ${block.size}",
-      );
+      final blockGroundRectangle = block.toRect();
       if (playerFootRectangle.overlaps(blockGroundRectangle)) {
         //what is it ground and what is the zHeight of the block;
         final blockCeiling = block.zPosition! + block.zHeight!;
+        CollisionBlock currentBlock = block;
+        highestGroundBlock = currentBlock;
+
         print("block ceiling: $blockCeiling");
-        //if the zPosition of the player is higher than the block ceiling and the block ceiling is higher than the current highest ground block, we set the highest ground block to this block
+
         if (zPosition >= blockCeiling &&
             (blockCeiling >
-                (highestGroundBlock!.zPosition! +
+                (highestGroundBlock.zPosition! +
                     highestGroundBlock.zHeight!))) {
-          highestGroundBlock = block;
+          //if the zPosition of the player is higher than the block ceiling and the block ceiling is higher than the current highest ground block, we set the highest ground block to this block
+
+          highestGroundBlock = currentBlock;
+          zGround =
+          (highestGroundBlock.zPosition! + highestGroundBlock.zHeight!)
+          as double;
+          print("zGround: $zGround");
         }
       }
     }
-    if (highestGroundBlock != null) {
-      zGround =
-          (highestGroundBlock.zPosition! + highestGroundBlock.zHeight!)
-              as double;
-      print("zGround: $zGround");
-    } else {
-      zGround = 0;
-    }
-    print("final zGround: $zGround");
   }
 
-  //Getters
-  @override
-  ShapeHitbox getHitbox() => hitbox;
+      //Getters
+      @override
+      ShapeHitbox getHitbox() => hitbox;
 
-  @override
-  Vector2 getPosition() => position;
+      @override
+      Vector2 getPosition() => position;
 
-  @override
-  Vector2 getScale() => scale;
+      @override
+      Vector2 getScale() => scale;
 
-  @override
-  Vector2 getVelocity() => velocity;
+      @override
+      Vector2 getVelocity() => velocity;
 
-  bool climbing = false;
+      bool climbing = false;
 
-  @override
-  void setClimbing(bool val) => climbing = val;
+      @override
+      void setClimbing(bool val) => climbing = val;
 
-  @override
-  bool get isClimbing => climbing;
+      @override
+      bool get isClimbing =>
+      climbing;
 
-  @override
-  bool get isTryingToGetDownLadder => isShifting;
+      @override
+      bool get isTryingToGetDownLadder =>
+      isShifting;
 
-  @override
-  List<AnimationLoadOptions> get animationOptions => [
-    AnimationLoadOptions(
-      "appearing",
-      "Main Characters/Appearing",
-      textureSize: 96,
-      loop: false,
-    ),
-    AnimationLoadOptions(
-      "disappearing",
-      "Main Characters/Disappearing",
-      textureSize: 96,
-      loop: false,
-    ),
-    AnimationLoadOptions(
-      "hit",
-      "$componentSpriteLocation/Hit",
-      textureSize: 32,
-      loop: false,
-    ),
+      @override
+      List<AnimationLoadOptions> get animationOptions =>
+      [
+        AnimationLoadOptions(
+          "appearing",
+          "Main Characters/Appearing",
+          textureSize: 96,
+          loop: false,
+        ),
+        AnimationLoadOptions(
+          "disappearing",
+          "Main Characters/Disappearing",
+          textureSize: 96,
+          loop: false,
+        ),
+        AnimationLoadOptions(
+          "hit",
+          "$componentSpriteLocation/Hit",
+          textureSize: 32,
+          loop: false,
+        ),
 
-    ...movementAnimationDefaultOptions,
-  ];
+        ...movementAnimationDefaultOptions,
+      ];
 
-  @override
-  String get componentSpriteLocation => "Main Characters/Ninja Frog";
+      @override
+      String get componentSpriteLocation =>
+      "Main Characters/Ninja Frog";
 
-  @override
-  AnimatedComponentGroup get group => AnimatedComponentGroup.entity;
+      @override
+      AnimatedComponentGroup get group =>
+      AnimatedComponentGroup.entity;
 
-  //we answer the getters from HasMovementAnimations here to tell the mixin if we are currently in hit or respawn frames
-  @override
-  bool get isInHitFrames => _isHitAnimationPlaying;
-  @override
-  bool get isInRespawnFrames => _isRespawningAnimationPlaying;
-}
+      //we answer the getters from HasMovementAnimations here to tell the mixin if we are currently in hit or respawn frames
+      @override
+      bool get isInHitFrames =>
+      _isHitAnimationPlaying;
+      @override
+      bool get isInRespawnFrames =>
+      _isRespawningAnimationPlaying;
+    }
