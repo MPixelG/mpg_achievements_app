@@ -83,7 +83,7 @@ class IsometricWorld extends GameWorld {
       // Position the highlight using the layer-aware toWorldPos.
       highlightedTile.position = toWorldPos(
         selectionResult.gridPosition.xy,
-        layerIndex: selectionResult.gridPosition.z,
+        selectionResult.gridPosition.z,
       ); // Center the highlight on the tile
       print("Highlight position set to: ${highlightedTile.position}");
 
@@ -134,7 +134,7 @@ class IsometricWorld extends GameWorld {
   }
   //calculate the world position from a grid position
   @override
-  Vector2 toWorldPos(Vector2 gridPos, {double layerIndex = 0}) {
+  Vector2 toWorldPos(Vector2 gridPos, [double z = 0]) {
     final localPoint = Vector2(
       (gridPos.x - gridPos.y) * (tilesize.x / 2),
       (gridPos.x + gridPos.y) * (tilesize.z / 2),
@@ -146,7 +146,7 @@ class IsometricWorld extends GameWorld {
       level.position.y,
     );
     //apply vertical movement for different layers according to z-index
-    final layerOffset = Vector2(0, layerIndex * tilesize.z/32);//works for now as each tile is 32 pixels high in the tileset
+    final layerOffset = Vector2(0, z * tilesize.z/32);//works for now as each tile is 32 pixels high in the tileset
     return localPoint + mapOriginOffset + layerOffset;
   }
 // Convert orthogonal tile coordinates to isometric world coordinates.todo review if we need it as it does the same as toWorldPos

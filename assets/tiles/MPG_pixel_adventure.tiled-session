@@ -40,8 +40,8 @@
         },
         "Level_2.tmx": {
             "expandedObjectLayers": [
-                4,
-                2
+                2,
+                4
             ],
             "scale": 2,
             "selectedLayer": 10,
@@ -109,11 +109,11 @@
             }
         },
         "Level_8.tmx": {
-            "scale": 1,
-            "selectedLayer": 6,
+            "scale": 2,
+            "selectedLayer": 0,
             "viewCenter": {
                 "x": 1024,
-                "y": 512.5
+                "y": 512.25
             }
         },
         "Lever_3.tmx": {

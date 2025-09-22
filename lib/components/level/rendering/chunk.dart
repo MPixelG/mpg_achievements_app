@@ -6,6 +6,7 @@ import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' show Colors;
 import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
+import 'package:mpg_achievements_app/components/level/isometric/isometric_tiled_component.dart';
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
 import 'package:mpg_achievements_app/components/level/rendering/tileset_utils.dart';
 
@@ -47,11 +48,6 @@ class Chunk {
       if (chunkX == this.x && chunkY == this.y) {
         final localX = sx - chunkX * chunkSize;
         final localY = sy - chunkY * chunkSize;
-
-        if(localX == 15 && localY == 0 && z == 0){
-          print("corner! gid: $gid ");
-        }
-
         _tiles.add(ChunkTile(gid, localX, localY, x, y, z));
 
         if (gid != 0 && zHeightUsedPixels < (z + 1) * tilesize.z) {
@@ -98,14 +94,19 @@ class Chunk {
     }
     totalZLayers = layerIndex;
 
-    reSortTiles();
+    reSortTiles([]);
     Future.delayed(Duration(seconds: 1), () => rebuildMaps([]));
   }
 
-  void reSortTiles(){
-    _tiles.sort((a, b) {
-      Vector3 pos1 = a.posWorld;
-      Vector3 pos2 = b.posWorld;
+  List<IsometricRenderable> allRenderables = [];
+  void reSortTiles(Iterable<IsometricRenderable> additionals){
+    allRenderables.clear();
+    allRenderables.addAll(_tiles);
+    allRenderables.addAll(additionals);
+
+    allRenderables.sort((a, b) {
+      Vector3 pos1 = a.gridFeetPos;
+      Vector3 pos2 = b.gridFeetPos;
 
       pos1.z *= tilesize.z;
       pos2.z *= tilesize.z;
@@ -122,19 +123,25 @@ class Chunk {
 
 
   Future<void> rebuildMaps(Iterable<IsometricRenderable> additionals) async{
+    reSortTiles(additionals);
     await Future.wait([
-      buildAlbedoMap(),
-      buildNormalAndDepthMap()
+      buildAlbedoMap(additionals),
+      buildNormalAndDepthMap(additionals)
     ]);
   }
 
-  Future<void> buildAlbedoMap() async{
+  Future<void> buildAlbedoMap(Iterable<IsometricRenderable> additionals) async{
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
 
-    for (final tile in _tiles) {
-      Vector2 renderPos = toLocalPos(tile.posWorld.xy, layerIndex: tile.z.toDouble());
-      tile._sprite!.albedo.render(canvas, position: renderPos);
+    for (final tile in allRenderables) {
+      Vector2 renderPos = toLocalPos(tile.gridFeetPos.xy, layerIndex: tile.gridFeetPos.z.toDouble());
+      tile.renderAlbedo(canvas, position: renderPos);
+
+      // if(tile.posLocal == Vector3(2, 2, 0) && additionals.isNotEmpty){
+      //   canvas.drawCircle(renderPos.toOffset(), 25, Paint()..color = Colors.red);
+      // }
+
     }
 
     //canvas.drawRect(Offset.zero & Size(chunkSize * tilesize.x, chunkSize * tilesize.z + zHeightUsedPixels), Paint()..color = Color(hashCode));
@@ -142,7 +149,7 @@ class Chunk {
     final picture = recorder.endRecording();
     albedoMap = await picture.toImage(((Chunk.chunkSize) * tilesize.x).toInt(), ((Chunk.chunkSize) * tilesize.y).toInt());
   }
-  Future<void> buildNormalAndDepthMap() async{
+  Future<void> buildNormalAndDepthMap(Iterable<IsometricRenderable> additionals) async{
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
 
@@ -193,10 +200,30 @@ class Chunk {
 
 
   Paint paint = Paint();
+  Set<IsometricRenderable> currentAdditionalComponents = {};
   void render(Canvas canvas, Iterable<IsometricRenderable> components, [Offset offset = Offset.zero]) {
-    if(normalAndDepthMap != null){
-      canvas.drawImage(normalAndDepthMap!, offset, paint);
-      //canvas.drawCircle(offset, 5, Paint()..color = Colors.red);
+    Set<IsometricRenderable> newComponents = {};
+
+    double xPos = x * chunkSize.toDouble();
+    double yPos = y * chunkSize.toDouble();
+    double xPosEnd = (x + 1) * chunkSize.toDouble();
+    double yPosEnd = (y + 1) * chunkSize.toDouble();
+    components.where((element) => element.dirty).forEach((element) {
+      if(element.gridHeadPos.x >= xPos && element.gridFeetPos.x < xPosEnd &&
+         element.gridHeadPos.y >= yPos && element.gridFeetPos.y < yPosEnd){
+        newComponents.add(element);
+        element.updatesNextFrame = true;
+      }
+    });
+
+    if(newComponents.isNotEmpty || currentAdditionalComponents.isNotEmpty){
+      //print("updating chunk at $x,$y. current has ${currentAdditionalComponents.length} new has ${newComponents.length}");
+      currentAdditionalComponents = newComponents;
+      rebuildMaps(currentAdditionalComponents);
+    }
+
+    if(albedoMap != null){
+      canvas.drawImage(albedoMap!, offset, paint);
     } else {
     }
   }
@@ -207,7 +234,7 @@ class Chunk {
   static int totalZLayers = 1;
 }
 
-class ChunkTile {
+class ChunkTile with IsometricRenderable{
   final int gid;
   final int localX;
   final int localY;
@@ -232,6 +259,26 @@ class ChunkTile {
 
     loadingSprite = false;
   }
+
+  @override
+  Vector3 get gridFeetPos => posWorld;
+
+  @override
+  Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 1);
+
+  @override
+  RenderCategory get renderCategory => RenderCategory.tile;
+
+  @override
+  void Function(Canvas canvas, {Vector2 position, Vector2 size})? get renderNormal {
+    if(_sprite == null || _sprite!.normalAndDepth == null) return null;
+    return (Canvas canvas, {Vector2? position, Vector2? size}) => _sprite!.normalAndDepth!.render(canvas, position: position);
+  }
+
+  @override
+  void Function(Canvas canvas, {Vector2 position, Vector2 size}) get renderAlbedo {
+    return (Canvas canvas, {Vector2? position, Vector2? size}) => _sprite!.albedo.render(canvas, position: position);
+  }
 }
 
 Map<int, GameSprite> textures = {};
@@ -254,8 +301,6 @@ Future<GameSprite> getTextureOfGid(int gid) async{
   final row = localIndex ~/ cols; //calculate the row and column of the tile in the tileset image
   final col = localIndex % cols; //same for column
   final srcSize = tilesize.xy; //the size of the tile in the tileset image
-
-  if(gid == 26) print("found gid 26! col: $col, row: $row");
 
   final sprite = Sprite( //get the sprite for the tile
     tilesetImage, //the tileset

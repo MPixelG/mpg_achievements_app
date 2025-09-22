@@ -297,7 +297,7 @@ abstract class GameWorld extends World
 
   bool checkCollisionAt(Vector2 gridPos);
 
-  Vector2 toWorldPos(Vector2 pos);
+  Vector2 toWorldPos(Vector2 pos, [double z = 0]);
   Vector2 toGridPos(Vector2 pos);
 
   Vector2 isoToScreen(Vector2 iso) {

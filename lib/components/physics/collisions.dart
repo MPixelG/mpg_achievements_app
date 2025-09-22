@@ -17,7 +17,7 @@ enum ViewSide { topDown, side, isometric }
 /// Mixin for adding collision detection behavior to a component.
 /// Requires implementing methods to provide hitbox, position, velocity, etc
 mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<PixelAdventure>, BasicMovement {
-  ShapeHitbox getHitbox();
+  ShapeHitbox? getHitbox();
 
   Vector2 getScale();
 
@@ -33,7 +33,7 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
 
   bool _debugNoClipMode = false;
 
-  late ShapeHitbox hitbox;
+  ShapeHitbox? hitbox;
   @override
   FutureOr<void> onLoad() {
     if(viewSide == ViewSide.isometric) {
@@ -42,7 +42,7 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
           game.gameWorld,
           Vector2.zero(),
       );
-      hitbox.position = Vector2(0, 16);
+      hitbox!.position = Vector2(0, 16);
     } else {
       hitbox = RectangleHitbox(
         size: Vector2(20, 26),
@@ -50,7 +50,7 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
       );
     }
 
-    add(hitbox);
+    add(hitbox!);
     return super.onLoad();
   }
 
@@ -93,14 +93,14 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
       return; //physics only work on the collision blocks (including the platforms)
     }
 
-    ShapeHitbox hitbox = getHitbox();
+    ShapeHitbox? hitbox = getHitbox();
     Vector2 scale = getScale();
     Vector2 velocity = getVelocity();
 
     Vector2 position = getPosition();
 
     Vector2 posDiff =
-        hitbox.absolutePosition -
+        hitbox!.absolutePosition -
             other
                 .absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
 
@@ -148,7 +148,7 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
 
   //TODO FIX
   void checkCollisionIsometric(CollisionBlock other){
-    hitbox.aabb.intersectsWithAabb2(other.hitbox.aabb);
+    hitbox!.aabb.intersectsWithAabb2(other.hitbox.aabb);
 
     Vector2 gridPos = game.gameWorld.toGridPos(position);
 
@@ -159,8 +159,8 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
     print("gridPos: $gridPos");
     print("other grid pos: $otherGridPos");
 
-    final double distanceUp = posDiff.y + hitbox.height / 32;
-    final double distanceLeft = posDiff.x + hitbox.width / 32;
+    final double distanceUp = posDiff.y + hitbox!.height / 32;
+    final double distanceLeft = posDiff.x + hitbox!.width / 32;
     final double distanceRight = (other.width / 32) - posDiff.x;
     final double distanceDown = (other.height / 32) - posDiff.y;
 

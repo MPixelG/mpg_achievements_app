@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../level_components/checkpoint/checkpoint.dart';
 import '../level_components/collectables.dart';
@@ -94,7 +95,7 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
   Vector2 _orthogonalToIsometric(Vector2 orthoPos) {
     return Vector2(
         ((orthoPos.x - orthoPos.y) * 1.0),
-        (orthoPos.x + orthoPos.y) * 0.5 + 1
+        (orthoPos.x + orthoPos.y) * 0.5
     );
   }
 
@@ -105,7 +106,10 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
 
       if(gameWorld is IsometricWorld){
         pos = _orthogonalToIsometric(collision.position) + Vector2(gameWorld.level.width / 2, 0);
-      } else pos = collision.position;
+        pos += _orthogonalToIsometric(Vector2(tilesize.x / 2, 0));
+      } else {
+        pos = collision.position;
+      }
       // get z and zHeight from properties, if not set default to 0 and 16
       final int z = collision.properties.getValue('z') ?? 0;
       final int zHeight = collision.properties.getValue('zHeight') ?? 0;

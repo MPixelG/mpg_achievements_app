@@ -20,7 +20,7 @@ class ChunkGrid {
     for (var value in chunks.entries) {
       Chunk chunk = value.value;
       Vector2 chunkPos = Vector2(
-        (chunk.x - chunk.y + 3) * (Chunk.chunkSize) * tilesize.x / 2,
+        ((chunk.x - chunk.y + 3) * (Chunk.chunkSize)) * tilesize.x / 2,
         (chunk.x + chunk.y) * (Chunk.chunkSize) * tilesize.z / 2 ,
       );
       chunkPos += offset.toVector2();
@@ -49,6 +49,10 @@ class ChunkGrid {
       chunk.render(canvas, components, chunkPos.toOffset());
       //canvas.drawLine((chunkPos - Vector2(0, chunk.zHeightUsedPixels.toDouble())).toOffset(), chunkPos.toOffset(), Paint()..color = Colors.green);
     }
+    components.where((element) => element.updatesNextFrame).forEach((element) {
+      element.updatesNextFrame = false;
+      //element.setDirty(false);
+    });
   }
 
   void generateChunks() {

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/level/isometric/tile_effects/highlighted_tile.dart';
@@ -7,7 +9,7 @@ import '../isometric_renderable.dart';
 import '../isometric_tiled_component.dart';
 
 class ExplosionEffect extends SpriteAnimationGroupComponent
-    with HasGameReference<PixelAdventure>, AnimationManager, IsometricRenderable {
+    with HasGameReference<PixelAdventure>, AnimationManager {
 
   final Vector3 gridPos;
   TileHighlightRenderable tileHighlight;
@@ -53,4 +55,15 @@ class ExplosionEffect extends SpriteAnimationGroupComponent
 
   @override
   RenderCategory get renderCategory => RenderCategory.effect;
+
+  @override
+  Vector3 get gridHeadPos => gridFeetPos + Vector3(2, 2, 20);
+
+  @override
+  // TODO: implement renderAlbedo
+  void Function(Canvas canvas, {Vector2 position, Vector2 size}) get renderAlbedo => throw UnimplementedError();
+
+  @override
+  // TODO: implement renderNormal
+  void Function(Canvas canvas, {Vector2 position, Vector2 size})? get renderNormal => throw UnimplementedError();
 }

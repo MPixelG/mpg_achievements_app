@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
@@ -36,11 +38,31 @@ class IsometricPlayer extends Player with IsometricRenderable{
 
   @override
   Vector3 get gridFeetPos {
-    Vector2 xYGridPos = game.gameWorld.toGridPos(absolutePositionOfAnchor(Anchor.topCenter));
-    return Vector3(xYGridPos.x, xYGridPos.y, 1);
+    Vector2 xYGridPos;
+    if(hitbox != null) {
+      xYGridPos = game.gameWorld.toGridPos(absoluteCenter);
+    } else {
+      xYGridPos = game.gameWorld.toGridPos(absoluteCenter);
+      print("taking center!");
+    }
+    return Vector3(xYGridPos.x, xYGridPos.y, 0);
   }
 
   @override
   RenderCategory get renderCategory => RenderCategory.entity;
 
+  @override
+  Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 1);
+
+  @override
+  void Function(Canvas canvas, {Vector2 position, Vector2 size}) get renderAlbedo => (Canvas canvas, {Vector2? position, Vector2? size}) {
+    Vector2 playerPos = game.gameWorld.toWorldPos(gridFeetPos.xy);
+    Vector2 posOffset = (position ?? playerPos) - playerPos;
+    canvas.save();
+    canvas.translate(posOffset.x, posOffset.y);
+    renderTree(canvas);
+    canvas.restore();
+  };
+  @override
+  void Function(Canvas canvas, {Vector2? position, Vector2? size}) get renderNormal => (Canvas canvas, {Vector2? position, Vector2? size}) {};
 }

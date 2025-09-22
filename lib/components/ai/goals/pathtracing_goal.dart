@@ -16,7 +16,7 @@ class PathtracingGoal extends Goal{
   PixelAdventure get game => (parent!.parent as HasGameReference<PixelAdventure>).game;
   Vector2 get center => (parent!.parent as PositionComponent).center;
   Vector2 get absolutePosition => (parent!.parent as PositionComponent).absolutePosition;
-  ShapeHitbox get hitbox => (parent!.parent as HasCollisions).hitbox;
+  ShapeHitbox? get hitbox => (parent!.parent as HasCollisions).hitbox;
 
 
   double time = 0;
@@ -59,7 +59,7 @@ class PathtracingGoal extends Goal{
       numberOfRays: timeSinceLastUpdate < 1 ? numberOfRays * 3 : numberOfRays,
       rays: rays,
       out: results,
-      ignoreHitboxes: [hitbox],
+      ignoreHitboxes: [?hitbox],
       hitboxFilter: (candidate) {
 
 

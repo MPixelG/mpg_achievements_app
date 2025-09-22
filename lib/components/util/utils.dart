@@ -27,7 +27,7 @@ bool checkCollision(Player player, CollisionBlock block) {
 
   /* Convert the player's hitbox to its absolute rectangular bounds in the game world.
   `toAbsoluteRect()` takes into account the component's position and anchor.*/
-  final playerRect = playerHitbox.toAbsoluteRect();
+  final playerRect = playerHitbox!.toAbsoluteRect();
 
   /* The block is also a PositionComponent, so we can get its absolute bounding box.
   Convert the block (also a PositionComponent) to its absolute rectangle.

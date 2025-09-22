@@ -20,7 +20,7 @@ class OrthogonalWorld extends GameWorld{
   }
 
   @override
-  Vector2 toWorldPos(Vector2 pos) {
+  Vector2 toWorldPos(Vector2 pos, [double z = 0]) {
     return Vector2(pos.x * tilesize.x, pos.y * tilesize.y)..floor();
   }
 
