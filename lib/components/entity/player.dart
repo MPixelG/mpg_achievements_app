@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
+import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
@@ -42,8 +44,10 @@ class Player extends GameCharacter
   //Player name
   String playerCharacter;
   //Find the ground of player position
-  late double zGround;
-  late double zPosition;
+  late double zGround = 0.0;
+
+  //shadow
+  late CircleComponent shadow;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
@@ -58,8 +62,19 @@ class Player extends GameCharacter
     }
     _findGroundBeneath();
     startingPosition = Vector2(position.x, position.y);
-    zGround = 0;
-    zPosition = 0;
+
+    if (this is IsometricPlayer) {
+      shadow = CircleComponent(
+        radius: 5.0,
+        position: gridPos,
+        paint: Paint()..color = const Color.fromRGBO(255, 255, 255, 60),
+      );
+      add(shadow);
+    }
+
+    if (zPosition == zGround) {
+      isOnGround = true;
+    }
 
     return super.onLoad();
   }
@@ -70,12 +85,7 @@ class Player extends GameCharacter
 
     if (viewSide == ViewSide.isometric) {
       _findGroundBeneath();
-      if (zPosition < zGround) {
-        isOnGround = false;
-      } else {
-        isOnGround = true;
       }
-    }
     //Provider logic follow
     //the ref.watch here makes sure that the player component rebuilds and PlayerData changes its values when the player state changes
     final playerState = ref.watch(playerProvider);
@@ -213,45 +223,34 @@ class Player extends GameCharacter
     // the highest ground block beneath the player
     final blocks = game.gameWorld.children.whereType<CollisionBlock>();
     //print("number of blocks: ${blocks.length}");
-
-    CollisionBlock highestGroundBlock;
+    double highestZ = 0.0; //default floor
     //the players foot rectangle which mesn easier collision detection with the block
     final playerFootRectangle = Rect.fromCenter(
       center: absolutePositionOfAnchor(Anchor.bottomCenter).toOffset(),
-      width: size.x + 5, //maybe adjust necessary
+      width: size.x, //maybe adjust necessary for debugging
       height: 4.0, //thin slice is sufficient
     );
-    //print("player foot rectangle: $playerFootRectangle");
+
     for (final block in blocks) {
       //make a rectangle from the block position and size
       final blockGroundRectangle = block.toRect();
       if (playerFootRectangle.overlaps(blockGroundRectangle)) {
         //what is it ground and what is the zHeight of the block;
         final blockCeiling = block.zPosition! + block.zHeight!;
-        CollisionBlock currentBlock = block;
-        highestGroundBlock = currentBlock;
-
-        print("block ceiling: $blockCeiling");
-
-        if (zPosition >= blockCeiling &&
-            (blockCeiling >
-                (highestGroundBlock.zPosition! +
-                    highestGroundBlock.zHeight!))) {
-          //if the zPosition of the player is higher than the block ceiling and the block ceiling is higher than the current highest ground block, we set the highest ground block to this block
-
-          highestGroundBlock = currentBlock;
-          zGround =
-              (highestGroundBlock.zPosition! + highestGroundBlock.zHeight!)
-                  as double;
-          print("zGround: $zGround");
-        } else {
-          zGround = 0;
+        if (blockCeiling > highestZ) {
+          highestZ = blockCeiling.toDouble();
+          //print('blockceiling:$blockCeiling');
         }
       }
     }
+    zGround = highestZ;
   }
 
   //Getters
+
+  @override
+  double getzPosition() => zPosition;
+
   @override
   ShapeHitbox getHitbox() => hitbox;
 
