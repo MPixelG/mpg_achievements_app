@@ -46,9 +46,6 @@ class Player extends GameCharacter
   //Find the ground of player position
   late double zGround = 0.0;
 
-  //shadow
-  late CircleComponent shadow;
-
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
 
@@ -63,16 +60,7 @@ class Player extends GameCharacter
     _findGroundBeneath();
     startingPosition = Vector2(position.x, position.y);
 
-    if (this is IsometricPlayer) {
-      shadow = CircleComponent(
-        radius: 5.0,
-        position: gridPos,
-        paint: Paint()..color = const Color.fromRGBO(255, 255, 255, 60),
-      );
-      add(shadow);
-    }
-
-    if (zPosition == zGround) {
+   if (zPosition == zGround) {
       isOnGround = true;
     }
 
@@ -250,6 +238,8 @@ class Player extends GameCharacter
 
   @override
   double getzPosition() => zPosition;
+
+  double getzGround() => zGround;
 
   @override
   ShapeHitbox getHitbox() => hitbox;
