@@ -21,6 +21,7 @@ import 'package:mpg_achievements_app/components/router/router.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../background/scrolling_background.dart';
+import '../util/isometric_utils.dart';
 
 abstract class GameWorld extends World
     with
@@ -296,14 +297,4 @@ abstract class GameWorld extends World
     }
 
   bool checkCollisionAt(Vector2 gridPos);
-
-  Vector2 toWorldPos(Vector2 pos, [double z = 0]);
-  Vector2 toGridPos(Vector2 pos);
-
-  Vector2 isoToScreen(Vector2 iso) {
-    return Vector2(
-      (iso.x - iso.y) * tilesize.x / 2,
-      (iso.x + iso.y) * tilesize.z / 2,
-    );
-  }
 }

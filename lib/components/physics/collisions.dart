@@ -8,6 +8,7 @@ import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
+import '../util/isometric_utils.dart';
 import 'collision_block.dart';
 import 'movement.dart';
 
@@ -39,7 +40,6 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
     if(viewSide == ViewSide.isometric) {
       hitbox = IsometricHitbox(
           Vector2.all(1),
-          game.gameWorld,
           Vector2.zero(),
       );
       hitbox!.position = Vector2(0, 16);
@@ -150,9 +150,9 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
   void checkCollisionIsometric(CollisionBlock other){
     hitbox!.aabb.intersectsWithAabb2(other.hitbox.aabb);
 
-    Vector2 gridPos = game.gameWorld.toGridPos(position);
+    Vector2 gridPos = toGridPos(position);
 
-    Vector2 otherGridPos = game.gameWorld.toGridPos(other.position);
+    Vector2 otherGridPos = toGridPos(other.position);
 
     Vector2 posDiff = gridPos - otherGridPos;
     print("\nposDiff: $posDiff");

@@ -80,12 +80,8 @@ class TileHighlightRenderable extends PositionComponent with RiverpodComponentMi
   Vector3 get gridHeadPos => gridFeetPos + Vector3(0.1, 0.1, 1);
 
   @override
-  void Function(Canvas canvas, {Vector2 position, Vector2 size})? get renderNormal => (Canvas canvas, {Vector2? position, Vector2? size}) {
-    Vector2 posOffset = this.position - (position ?? this.position);
-    canvas.save();
-    canvas.translate(posOffset.x, posOffset.y);
+  void Function(Canvas canvas, Paint? overridePaint)? get renderNormal => (Canvas canvas, Paint? overridePaint) {
     renderTree(canvas);
-    canvas.restore();
   };
   @override
   void Function(Canvas canvas, {Vector2? position, Vector2? size}) get renderAlbedo => (Canvas canvas, {Vector2? position, Vector2? size}) {};

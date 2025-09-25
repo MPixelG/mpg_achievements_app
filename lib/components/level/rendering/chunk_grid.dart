@@ -9,6 +9,8 @@ import '../../../mpg_pixel_adventure.dart';
 import 'game_tile_map.dart';
 
 class ChunkGrid {
+  static const double CHUNK_SPACING = 0;
+
   Map<Vector2, Chunk> chunks = {};
 
   GameTileMap gameTileMap;
@@ -20,8 +22,8 @@ class ChunkGrid {
     for (var value in chunks.entries) {
       Chunk chunk = value.value;
       Vector2 chunkPos = Vector2(
-        ((chunk.x - chunk.y + 3) * (Chunk.chunkSize)) * tilesize.x / 2,
-        (chunk.x + chunk.y) * (Chunk.chunkSize) * tilesize.z / 2 ,
+        ((chunk.x - chunk.y + 3) * (Chunk.chunkSize + CHUNK_SPACING)) * tilesize.x / 2,
+        (chunk.x + chunk.y) * (Chunk.chunkSize + CHUNK_SPACING) * tilesize.z / 2 ,
       );
       chunkPos += offset.toVector2();
       chunkPos.y -= chunk.zHeightUsedPixels;
@@ -53,6 +55,10 @@ class ChunkGrid {
       element.updatesNextFrame = false;
       //element.setDirty(false);
     });
+
+    components.forEach((element) {
+    },);
+
   }
 
   void generateChunks() {

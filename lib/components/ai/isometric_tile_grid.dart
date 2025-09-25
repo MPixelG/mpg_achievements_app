@@ -1,9 +1,12 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/ai/tile_grid.dart';
+import 'package:mpg_achievements_app/components/level/rendering/chunk.dart';
+
+import '../util/isometric_utils.dart';
 
 class IsometricTileGrid extends TileGrid{
 
@@ -72,7 +75,7 @@ class IsometricTileGrid extends TileGrid{
     // Step 1: Convert the current world position into grid coordinates.
     // 'level.toGridPos(pos)' translates the isometric world coordinates (e.g., where something
     // is drawn on the screen) into its logical grid cell coordinates (e.g., tile [5, 3]).
-    Vector2 gridPos = level.toGridPos(pos) + Vector2(offset.x / tileSize.y, offset.y / tileSize.y);
+    Vector2 gridPos = toGridPos(pos) + Vector2(offset.x / tileSize.y, offset.y / tileSize.y);
 
     // Step 2: Apply the offset in grid space.
     // The 'offset' is treated as a movement along the orthogonal grid axes.
@@ -81,7 +84,7 @@ class IsometricTileGrid extends TileGrid{
     // This converts the pixel offset into a tile-based offset.
     // For example, an offset of (0, 16) with a tileSize.y of 16 would mean "move down by one full tile".
 
-    Vector2 offsetWorldPos = level.toWorldPos(gridPos);
+    Vector2 offsetWorldPos = toWorldPos(Vector3(gridPos.x, gridPos.y, 0));
 
     return offsetWorldPos.toOffset();
   }
@@ -124,7 +127,7 @@ class IsometricTileGrid extends TileGrid{
   void renderDebugTiles(Canvas canvas) {
     canvas.save();
 
-    canvas.translate(level.level.width / 2, 0); // Center the grid horizontally
+    canvas.translate(Chunk.worldSize.x / 2, 0); // Center the grid horizontally
 
     if (collisionLayer != null) {
       for (final obj in collisionLayer!.objects) {
@@ -142,7 +145,7 @@ class IsometricTileGrid extends TileGrid{
 
   void renderTileHighlight(Canvas canvas, Vector2 gridPos) {
     // Convert the selected tile's grid coordinates into its center position in the isometric world.
-    Vector2 worldPos = level.toWorldPos(gridPos);
+    Vector2 worldPos = toWorldPos(Vector3(gridPos.x, gridPos.y, 0));
     Vector2 halfTile = tileSize / 2;
 
     // Define the four vertices of the isometric diamond for the tile.

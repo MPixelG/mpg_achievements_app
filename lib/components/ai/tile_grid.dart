@@ -3,6 +3,7 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 
 import '../level/game_world.dart';
+import '../util/isometric_utils.dart';
 
 class TileGrid extends Component {
   int width;
@@ -35,7 +36,7 @@ class TileGrid extends Component {
       for (int y = 0; y < height; y++) {
 
         grid[x][y] = getTileTypeAt(
-          level.toWorldPos(Vector2(x.toDouble(), y.toDouble())),
+          toWorldPos(Vector3(x.toDouble(), y.toDouble(), 0)),
         );
       }
     }

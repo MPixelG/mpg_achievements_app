@@ -9,6 +9,7 @@ import 'package:mpg_achievements_app/components/level/isometric/isometric_render
 import 'package:mpg_achievements_app/components/level/isometric/isometric_tiled_component.dart';
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
 import 'package:mpg_achievements_app/components/level/rendering/tileset_utils.dart';
+import 'package:mpg_achievements_app/components/util/isometric_utils.dart';
 
 import '../../../mpg_pixel_adventure.dart';
 import 'game_sprite.dart';
@@ -18,7 +19,7 @@ class Chunk {
   final int y;
   final int z;
 
-  double zHeightUsedPixels = 0;
+  int zHeightUsedPixels = 0;
 
   final List<ChunkTile> _tiles = [];
 
@@ -28,30 +29,32 @@ class Chunk {
 
   Chunk(this.x, this.y, this.z);
 
-  static int currentMaxZHeight = 0;
 
   Chunk.fromGameTileMap(GameTileMap gameTileMap, this.x, this.y, this.z){
+    worldSize = Vector2(
+      gameTileMap.tiledMap.width.toDouble() * tilesize.x,
+      gameTileMap.tiledMap.height.toDouble() * tilesize.z,
+    );
     final map = gameTileMap.tiledMap;
     void registerTile(int gid, int x, int y, int z) {
 
-      if(z > currentMaxZHeight){
-        currentMaxZHeight = z;
-      }
+      x += z;
+      y += z;
 
-      final sx = x + z;
-      final sy = y + z;
-
-      final chunkX = sx ~/ chunkSize;
-      final chunkY = sy ~/ chunkSize;
-
+      final chunkX = x ~/ chunkSize;
+      final chunkY = y ~/ chunkSize;
 
       if (chunkX == this.x && chunkY == this.y) {
-        final localX = sx - chunkX * chunkSize;
-        final localY = sy - chunkY * chunkSize;
-        _tiles.add(ChunkTile(gid, localX, localY, x, y, z));
+        final localX = x - chunkX * chunkSize;
+        final localY = y - chunkY * chunkSize;
 
-        if (gid != 0 && zHeightUsedPixels < (z + 1) * tilesize.z) {
-          zHeightUsedPixels = ((z + 1) * tilesize.z);
+        _tiles.add(ChunkTile(gid, localX, localY, x, y, z, 0));
+
+
+        int topPos = ((z) * tilesize.z).toInt();
+        if (gid != 0 && topPos > zHeightUsedPixels) {
+          print("new top pos in chunk ${this.x}, ${this.y}: $topPos");
+          zHeightUsedPixels = topPos;
         }
       }
     }
@@ -94,9 +97,13 @@ class Chunk {
     }
     totalZLayers = layerIndex;
 
+    _tiles.forEach((element) => element.zAdjustPos = zHeightUsedPixels);
+
     reSortTiles([]);
     Future.delayed(Duration(seconds: 1), () => rebuildMaps([]));
   }
+
+  static Vector2 worldSize = Vector2.zero();
 
   List<IsometricRenderable> allRenderables = [];
   void reSortTiles(Iterable<IsometricRenderable> additionals){
@@ -133,54 +140,50 @@ class Chunk {
   Future<void> buildAlbedoMap(Iterable<IsometricRenderable> additionals) async{
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
+    canvas.save();
+    Vector2 worldPos = toWorldPos(Vector3((x-1) * chunkSize.toDouble(), y * chunkSize.toDouble(), 0)) + Vector2(0, (tilesize.z * chunkSize / 2) - zHeightUsedPixels);
+
+    Vector2 bottomLeftPos = Vector2(Chunk.chunkSize * tilesize.x, (Chunk.chunkSize + 1) * tilesize.z + zHeightUsedPixels);
+
+    //if(additionals.isNotEmpty) canvas.drawRect(Offset.zero & Size(bottomLeftPos.x, bottomLeftPos.y), Paint()..color = Color(hashCode).withValues(alpha: 0.5));
+
+    canvas.translate(-worldPos.x, -worldPos.y);
 
     for (final tile in allRenderables) {
-      Vector2 renderPos = toLocalPos(tile.gridFeetPos.xy, layerIndex: tile.gridFeetPos.z.toDouble());
-      tile.renderAlbedo(canvas, position: renderPos);
-
-      // if(tile.posLocal == Vector3(2, 2, 0) && additionals.isNotEmpty){
-      //   canvas.drawCircle(renderPos.toOffset(), 25, Paint()..color = Colors.red);
-      // }
-
+      tile.renderAlbedo(canvas);
     }
+    canvas.restore();
 
-    //canvas.drawRect(Offset.zero & Size(chunkSize * tilesize.x, chunkSize * tilesize.z + zHeightUsedPixels), Paint()..color = Color(hashCode));
 
     final picture = recorder.endRecording();
-    albedoMap = await picture.toImage(((Chunk.chunkSize) * tilesize.x).toInt(), ((Chunk.chunkSize) * tilesize.y).toInt());
+    albedoMap = await picture.toImage(bottomLeftPos.x.toInt(), bottomLeftPos.y.toInt());
   }
+
   Future<void> buildNormalAndDepthMap(Iterable<IsometricRenderable> additionals) async{
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
+    canvas.save();
+    print("current maxz: $zHeightUsedPixels");
+    Vector2 worldPos = toWorldPos(Vector3((x -1) * chunkSize.toDouble(), y * chunkSize.toDouble(), 0));
+    if(additionals.isNotEmpty) canvas.drawRect(Offset.zero & Size(((Chunk.chunkSize) * tilesize.x), ((Chunk.chunkSize) * tilesize.z)), Paint()..color = Color(hashCode).withValues(alpha: 0.5));
+    canvas.translate(-worldPos.x, -worldPos.y);
 
-
-    for (final tile in _tiles) { //render everything in the sorted order
-      Vector2 renderPos = toLocalPos(tile.posWorld.xy, layerIndex: tile.z.toDouble());
-      final double startVal = ((tile.z - 1) / currentMaxZHeight) * 255;
-      final double endVal = (tile.z / currentMaxZHeight);
-      tile._sprite!.normalAndDepth!.render(canvas, position: renderPos, overridePaint: Paint()..colorFilter = ColorFilter.matrix([
-          1, 0, 0, 0, 0,
-          0, 1, 0, 0, 0,
-          0, 0, endVal, 0, startVal,
-          0, 0, 0, 1, 0,
-          ]));
+    for (final tile in allRenderables) {
+      if(tile.renderNormal == null) continue;
+      final double startVal = ((tile.gridFeetPos.z - 1) / (zHeightUsedPixels)) * 255;
+      final double endVal = (tile.gridFeetPos.z / zHeightUsedPixels);
+      tile.renderNormal!(canvas, Paint()..colorFilter = ColorFilter.matrix([
+        1, 0, 0, 0, 0,
+        0, 1, 0, 0, 0,
+        0, 0, endVal, 0, startVal,
+        0, 0, 0, 1, 0,
+      ]));
     }
+    canvas.restore();
+
 
     final picture = recorder.endRecording();
-    normalAndDepthMap = await picture.toImage(((Chunk.chunkSize+1) * tilesize.x).toInt(), ((Chunk.chunkSize+1) * tilesize.y).toInt());
-  }
-
-  Vector2 toWorldPos(Vector2 gridPos, {double layerIndex = 0}) {
-    final localPoint = Vector2(
-      (gridPos.x - gridPos.y + (chunkSize)) * (tilesize.x / 2),
-      (gridPos.x + gridPos.y) * (tilesize.z / 2),
-    );
-    // Convert local point to global world position, Add the maps's visual origin offset back to the local point
-    // to get the correct world position
-
-    //apply vertical movement for different layers according to z-index
-    final layerOffset = Vector2(0, zHeightUsedPixels - (layerIndex * tilesize.z / 32)); //works for now as each tile is 32 pixels high in the tileset
-    return localPoint + layerOffset;
+    normalAndDepthMap = await picture.toImage(((Chunk.chunkSize) * tilesize.x).toInt(), ((Chunk.chunkSize) * tilesize.z).toInt());
   }
 
 
@@ -224,7 +227,6 @@ class Chunk {
 
     if(albedoMap != null){
       canvas.drawImage(albedoMap!, offset, paint);
-    } else {
     }
   }
 
@@ -241,11 +243,13 @@ class ChunkTile with IsometricRenderable{
   final int worldX;
   final int worldY;
   final int z;
+  int zAdjustPos;
 
   Vector3 get posWorld => Vector3(worldX.toDouble(), worldY.toDouble(), z.toDouble());
   Vector3 get posLocal => Vector3(localX.toDouble(), localY.toDouble(), z.toDouble());
 
-  ChunkTile(this.gid, this.localX, this.localY, this.worldX, this.worldY, this.z) {
+  ChunkTile(this.gid, this.localX, this.localY, this.worldX, this.worldY, this.z, this.zAdjustPos) {
+    print("$gid at $worldX, $worldY, $z");
     Future.microtask(_loadSprite);
   }
 
@@ -269,15 +273,22 @@ class ChunkTile with IsometricRenderable{
   @override
   RenderCategory get renderCategory => RenderCategory.tile;
 
+
   @override
-  void Function(Canvas canvas, {Vector2 position, Vector2 size})? get renderNormal {
-    if(_sprite == null || _sprite!.normalAndDepth == null) return null;
-    return (Canvas canvas, {Vector2? position, Vector2? size}) => _sprite!.normalAndDepth!.render(canvas, position: position);
+  void Function(Canvas canvas) get renderAlbedo {
+    return (Canvas canvas) {
+      Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, 0);
+      _sprite!.albedo.render(canvas, position: position);
+    };
   }
 
   @override
-  void Function(Canvas canvas, {Vector2 position, Vector2 size}) get renderAlbedo {
-    return (Canvas canvas, {Vector2? position, Vector2? size}) => _sprite!.albedo.render(canvas, position: position);
+  void Function(Canvas canvas, Paint? overridePaint)? get renderNormal {
+    if(_sprite == null || _sprite!.normalAndDepth == null) return null;
+    return (Canvas canvas, Paint? overridePaint) {
+      Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, 0);
+      _sprite!.normalAndDepth!.render(canvas, position: position, overridePaint: overridePaint);
+    };
   }
 }
 

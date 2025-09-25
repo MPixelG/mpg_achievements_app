@@ -19,7 +19,7 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
   int? zPosition;
   int? zHeight;
 
-  GameWorld? gameWorld;
+  bool? isIsometric;
   CollisionBlock({
     super.position,
     super.size,
@@ -29,7 +29,7 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
     this.hasHorizontalCollision = true,
     this.climbable = false,
     this.isLadder = false,
-    this.gameWorld,
+    this.isIsometric,
     this.zPosition = 0,
     this.zHeight = 16,
   });
@@ -37,8 +37,8 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
   ShapeHitbox hitbox = RectangleHitbox();
   @override
   FutureOr<void> onLoad() {
-    if (gameWorld != null && gameWorld is IsometricWorld) {
-      hitbox = IsometricHitbox(size / 16 - Vector2.all(0.1), gameWorld!, Vector2.all(0.1));
+    if (isIsometric != null && isIsometric!) {
+      hitbox = IsometricHitbox(size / 16 - Vector2.all(0.1), Vector2.all(0.1));
     } else {
       hitbox = RectangleHitbox(position: Vector2(0, 0), size: size);
     }

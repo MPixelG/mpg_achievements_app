@@ -3,12 +3,14 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
 import 'package:mpg_achievements_app/components/level/game_world.dart';
+import 'package:mpg_achievements_app/components/level/rendering/chunk.dart';
 
 import '../../../mpg_pixel_adventure.dart';
+import '../../util/isometric_utils.dart';
 import 'isometric_renderable.dart';
 import 'isometric_tiled_component.dart';
 import 'tile_effects/highlighted_tile.dart';
@@ -82,8 +84,7 @@ class IsometricWorld extends GameWorld {
 
       // Position the highlight using the layer-aware toWorldPos.
       highlightedTile.position = toWorldPos(
-        selectionResult.gridPosition.xy,
-        selectionResult.gridPosition.z,
+        selectionResult.gridPosition,
       ); // Center the highlight on the tile
       print("Highlight position set to: ${highlightedTile.position}");
 
@@ -111,53 +112,6 @@ class IsometricWorld extends GameWorld {
     }
 
     (level as IsometricTiledComponent).renderComponentsInTree(canvas, children.whereType<IsometricRenderable>(), CameraComponent.currentCamera!.viewfinder.position, CameraComponent.currentCamera!.viewport.size);
-  }
-  //calculate the grid position from a world position
-  @override
-  Vector2 toGridPos(Vector2 worldPos) {
-    Vector2 adjustedPos =
-        worldPos - Vector2(level.position.x, level.position.y);
-    return worldToTileIsometric(
-          adjustedPos -
-              Vector2(level.position.x + (level.width / 2), level.position.y),
-        ) +
-        Vector2(1, 1);
-  }
-  // Convert world position to isometric tile coordinates used in toGridPos
-  Vector2 worldToTileIsometric(Vector2 worldPos) {
-    final tileX =
-        (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.z / 2)) / 2;
-    final tileY =
-        (worldPos.y / (tilesize.z / 2) - worldPos.x / (tilesize.x / 2)) / 2;
-
-    return Vector2(tileX, tileY);
-  }
-  //calculate the world position from a grid position
-  @override
-  Vector2 toWorldPos(Vector2 gridPos, [double z = 0]) {
-    final localPoint = Vector2(
-      (gridPos.x - gridPos.y) * (tilesize.x / 2),
-      (gridPos.x + gridPos.y) * (tilesize.z / 2),
-    );
-    // Convert local point to global world position, Add the maps's visual origin offset back to the local point
-    // to get the correct world position
-    final mapOriginOffset = Vector2(
-      level.position.x + (level.width / 2),
-      level.position.y,
-    );
-    //apply vertical movement for different layers according to z-index
-    final layerOffset = Vector2(0, z * tilesize.z/32);//works for now as each tile is 32 pixels high in the tileset
-    return localPoint + mapOriginOffset + layerOffset;
-  }
-// Convert orthogonal tile coordinates to isometric world coordinates.todo review if we need it as it does the same as toWorldPos
-  Vector2 isometricToOrthogonal(Vector2 isometricPoint) {
-    final halfTileW = tilesize.x / 2;
-    final halfTileH = tilesize.z / 2;
-
-    final worldX = (isometricPoint.y / halfTileH + isometricPoint.x / halfTileW) / 2;
-    final worldY = (isometricPoint.y / halfTileH - isometricPoint.x / halfTileW) / 2;
-
-    return Vector2(worldX, worldY);
   }
 
   @override

@@ -11,8 +11,8 @@ mixin IsometricRenderable{
   bool _dirty = true;
   bool updatesNextFrame = false;
 
-  void Function(Canvas canvas, {Vector2 position, Vector2 size}) get renderAlbedo;
-  void Function(Canvas canvas, {Vector2 position, Vector2 size})? get renderNormal;
+  void Function(Canvas canvas) get renderAlbedo;
+  void Function(Canvas canvas, Paint? overridePaint)? get renderNormal;
 
   void setDirty([bool value = true]){
     _dirty = value;

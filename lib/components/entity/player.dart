@@ -30,7 +30,7 @@ class Player extends GameCharacter
         KeyboardControllableMovement,
         HasMovementAnimations,
         JoystickControllableMovement,
-        HasCollisions{
+        HasCollisions {
 
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;

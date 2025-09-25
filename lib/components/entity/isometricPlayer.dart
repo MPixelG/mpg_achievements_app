@@ -6,6 +6,7 @@ import 'package:mpg_achievements_app/components/level/isometric/isometric_render
 
 import '../../mpg_pixel_adventure.dart';
 import '../level/isometric/isometric_tiled_component.dart';
+import '../util/isometric_utils.dart';
 
 class IsometricPlayer extends Player with IsometricRenderable{
   IsometricPlayer({required super.playerCharacter}){
@@ -40,10 +41,9 @@ class IsometricPlayer extends Player with IsometricRenderable{
   Vector3 get gridFeetPos {
     Vector2 xYGridPos;
     if(hitbox != null) {
-      xYGridPos = game.gameWorld.toGridPos(absoluteCenter);
+      xYGridPos = toGridPos(hitbox!.absoluteCenter);
     } else {
-      xYGridPos = game.gameWorld.toGridPos(absoluteCenter);
-      print("taking center!");
+      xYGridPos = toGridPos(absoluteCenter);
     }
     return Vector3(xYGridPos.x, xYGridPos.y, 0);
   }
@@ -55,14 +55,9 @@ class IsometricPlayer extends Player with IsometricRenderable{
   Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 1);
 
   @override
-  void Function(Canvas canvas, {Vector2 position, Vector2 size}) get renderAlbedo => (Canvas canvas, {Vector2? position, Vector2? size}) {
-    Vector2 playerPos = game.gameWorld.toWorldPos(gridFeetPos.xy);
-    Vector2 posOffset = (position ?? playerPos) - playerPos;
-    canvas.save();
-    canvas.translate(posOffset.x, posOffset.y);
+  void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {
     renderTree(canvas);
-    canvas.restore();
   };
   @override
-  void Function(Canvas canvas, {Vector2? position, Vector2? size}) get renderNormal => (Canvas canvas, {Vector2? position, Vector2? size}) {};
+  void Function(Canvas canvas, Paint? overridePaint) get renderNormal => (Canvas canvas, Paint? overridePaint) {};
 }

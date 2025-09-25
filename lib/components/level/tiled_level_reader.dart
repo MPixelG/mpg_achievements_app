@@ -1,7 +1,8 @@
 import 'package:flame/components.dart';
-import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
+import 'package:mpg_achievements_app/components/level/rendering/chunk.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../level_components/checkpoint/checkpoint.dart';
@@ -99,14 +100,16 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
     );
   }
 
+  bool isIsometric = gameWorld is IsometricWorld;
+
   if (collisionsLayer != null) {
     for (final collision in collisionsLayer.objects) {
 
       Vector2 pos;
 
       if(gameWorld is IsometricWorld){
-        pos = _orthogonalToIsometric(collision.position) + Vector2(gameWorld.level.width / 2, 0);
-        pos += _orthogonalToIsometric(Vector2(tilesize.x / 2, 0));
+        pos = _orthogonalToIsometric(collision.position) + Vector2(Chunk.worldSize.x / 2, 0);
+        pos += _orthogonalToIsometric(Vector2(tilesize.x / 2, tilesize.y / 2));
       } else {
         pos = collision.position;
       }
@@ -121,7 +124,7 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
             size: Vector2(collision.width, collision.height),
             hasCollisionDown: false,
             hasHorizontalCollision: false,
-            gameWorld: gameWorld
+            isIsometric: isIsometric
           );
           gameWorld.add(platform);
         case 'Ladder':
@@ -133,16 +136,16 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
             hasCollisionUp: true,
             hasHorizontalCollision: false,
             isLadder: true,
-            gameWorld: gameWorld
+            isIsometric: isIsometric
           );
           gameWorld.add(ladder);
         default:
           final block = CollisionBlock(
             position: pos,
             size: Vector2(collision.width, collision.height),
-            gameWorld: gameWorld,
-              zPosition: z,
-              zHeight: zHeight
+            isIsometric: isIsometric,
+            zPosition: z,
+            zHeight: zHeight
           );
           gameWorld.add(block);
       }
