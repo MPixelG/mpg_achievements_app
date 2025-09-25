@@ -29,7 +29,6 @@ void main() async {
 
   runApp(const ProviderScope(child: MainApp(),));
 }
-
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
