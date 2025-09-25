@@ -11,7 +11,7 @@ abstract class GameCharacter extends SpriteAnimationGroupComponent with HasGameR
           position.y / tilesize.y
       );
 
-  set gridPos(Vector2 newGridPos) {
+   set gridPos(Vector2 newGridPos) {
     position = Vector2(newGridPos.x * tilesize.x,
         newGridPos.y * tilesize.y);
   }

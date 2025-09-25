@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
+import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
@@ -23,15 +25,15 @@ import '../physics/movement.dart';
 //with is used to additonal classes here our game class
 //import/reference to Keyboardhandler
 class Player extends GameCharacter
-    with RiverpodComponentMixin,
+    with
+        RiverpodComponentMixin,
         KeyboardHandler,
         CollisionCallbacks,
         BasicMovement,
         KeyboardControllableMovement,
         HasMovementAnimations,
         JoystickControllableMovement,
-        HasCollisions{
-
+        HasCollisions {
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
   //we need this local state flag because of the animation and movement logic, it refers to the global state bool gotHit
@@ -42,21 +44,26 @@ class Player extends GameCharacter
   //Player name
   String playerCharacter;
   //Find the ground of player position
-  late double zGround;
-  late double zPosition;
+  late double zGround = 0.0;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
 
   @override
-  FutureOr<void> onLoad() {
+  Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.
     if (game.gameWorld is IsometricWorld) {
       setMovementType(ViewSide.isometric);
     } else {
       setMovementType(ViewSide.side); // Default
     }
+    _findGroundBeneath();
     startingPosition = Vector2(position.x, position.y);
+
+   if (zPosition == zGround) {
+      isOnGround = true;
+    }
+
     return super.onLoad();
   }
 
@@ -66,15 +73,14 @@ class Player extends GameCharacter
 
     if (viewSide == ViewSide.isometric) {
       _findGroundBeneath();
-    }
+      }
     //Provider logic follow
     //the ref.watch here makes sure that the player component rebuilds and PlayerData changes its values when the player state changes
     final playerState = ref.watch(playerProvider);
 
-
     //Hit-Logic
     //if the player is respawning we play the respawn animation and call the respawn logic when it is complete
-    if(playerState.isRespawning && !_isRespawningAnimationPlaying){
+    if (playerState.isRespawning && !_isRespawningAnimationPlaying) {
       _isRespawningAnimationPlaying = true;
 
       playAnimation('hit').whenComplete(() {
@@ -83,8 +89,7 @@ class Player extends GameCharacter
         //now we call the respawn logic
         _respawn();
       });
-      }
-
+    }
     //Respawn logic
     //if the player got hit and the hit animation is not already playing we play the hit animation and reset the gotHit state when it is complete
     else if (playerState.gotHit && !_isHitAnimationPlaying) {
@@ -95,7 +100,6 @@ class Player extends GameCharacter
         _isHitAnimationPlaying = false;
       });
     }
-
   }
 
   @override
@@ -206,53 +210,37 @@ class Player extends GameCharacter
   void _findGroundBeneath() {
     // the highest ground block beneath the player
     final blocks = game.gameWorld.children.whereType<CollisionBlock>();
-    print("number of blocks: ${blocks.length}");
-
-    CollisionBlock? highestGroundBlock;
+    //print("number of blocks: ${blocks.length}");
+    double highestZ = 0.0; //default floor
     //the players foot rectangle which mesn easier collision detection with the block
-    final playerFootRectangle = Rect.fromLTRB(
-      position.x - size.x / 2,
-      position.y,
-      position.x + size.x / 2,
-      position.y + size.y,
+    final playerFootRectangle = Rect.fromCenter(
+      center: absolutePositionOfAnchor(Anchor.bottomCenter).toOffset(),
+      width: size.x, //maybe adjust necessary for debugging
+      height: 4.0, //thin slice is sufficient
     );
-    print("player foot rectangle: $playerFootRectangle");
+
     for (final block in blocks) {
       //make a rectangle from the block position and size
-      final blockGroundRectangle = Rect.fromLTRB(
-        block.position.x,
-        block.position.y,
-        block.size.x,
-        block.size.y,
-      );
-      print(
-        "checking block at position: ${block.position} with size: ${block.size}",
-      );
+      final blockGroundRectangle = block.toRect();
       if (playerFootRectangle.overlaps(blockGroundRectangle)) {
         //what is it ground and what is the zHeight of the block;
         final blockCeiling = block.zPosition! + block.zHeight!;
-        print("block ceiling: $blockCeiling");
-        //if the zPosition of the player is higher than the block ceiling and the block ceiling is higher than the current highest ground block, we set the highest ground block to this block
-        if (zPosition >= blockCeiling &&
-            (blockCeiling >
-                (highestGroundBlock!.zPosition! +
-                    highestGroundBlock.zHeight!))) {
-          highestGroundBlock = block;
+        if (blockCeiling > highestZ) {
+          highestZ = blockCeiling.toDouble();
+          //print('blockceiling:$blockCeiling');
         }
       }
     }
-    if (highestGroundBlock != null) {
-      zGround =
-          (highestGroundBlock.zPosition! + highestGroundBlock.zHeight!)
-              as double;
-      print("zGround: $zGround");
-    } else {
-      zGround = 0;
-    }
-    print("final zGround: $zGround");
+    zGround = highestZ;
   }
 
   //Getters
+
+  @override
+  double getzPosition() => zPosition;
+
+  double getzGround() => zGround;
+
   @override
   ShapeHitbox getHitbox() => hitbox;
 

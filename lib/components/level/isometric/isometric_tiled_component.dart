@@ -8,6 +8,7 @@ import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.da
 enum RenderCategory {
   tile,
   tileHighlight,
+  characterEffect,
   entity,
   effect,
 }

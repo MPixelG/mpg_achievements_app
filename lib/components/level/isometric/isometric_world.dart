@@ -5,6 +5,7 @@ import 'package:flame/events.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
+import 'package:mpg_achievements_app/components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/level/game_world.dart';
 
 import '../../../mpg_pixel_adventure.dart';
@@ -31,8 +32,9 @@ class IsometricWorld extends GameWorld {
 
   @override
   Future<void> onLoad() async {
-   // Initialize the player as an IsometricPlayer
+   // Initialize the player as an IsometricPlayer and its shadow
    player = IsometricPlayer(playerCharacter: 'Pink Man');
+
 
     await super.onLoad();
     //find the collision layer
