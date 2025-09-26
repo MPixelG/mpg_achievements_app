@@ -1,6 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
-
-//Manages the tasks in the game
 
 var uuid = Uuid();
 
@@ -55,3 +54,66 @@ class Task {
     }
   }
 }
+
+/// ---- RIVERPOD TASK MANAGEMENT ----
+
+
+class TaskNotifier extends StateNotifier<List<Task>> {
+  TaskNotifier() : super([]);
+
+  /// Task hinzufügen
+  void addTask(String description, {int goal = 1}) {
+    state = [
+      ...state,
+      Task(id: uuid.v4(), description: description, goal: goal),
+    ];
+  }
+
+  /// Task starten
+  void startTask(String id) {
+    state = [
+      for (final task in state)
+        if (task.id == id)
+          (task..start())   // ruft start() auf, gibt Task zurück
+        else
+          task
+    ];
+  }
+
+  /// Fortschritt updaten
+  void updateProgress(String id, int amount) {
+    state = [
+      for (final task in state)
+        if (task.id == id)
+          (task..updateProgress(amount))
+        else
+          task
+    ];
+  }
+
+  /// Task direkt abschließen
+  void completeTask(String id) {
+    state = [
+      for (final task in state)
+        if (task.id == id)
+          (task..complete())
+        else
+          task
+    ];
+  }
+
+  /// Task fehlschlagen lassen
+  void failTask(String id) {
+    state = [
+      for (final task in state)
+        if (task.id == id)
+          (task..fail())
+        else
+          task
+    ];
+  }
+}
+
+/// Provider global definieren
+final taskProvider =
+StateNotifierProvider<TaskNotifier, List<Task>>((ref) => TaskNotifier());
