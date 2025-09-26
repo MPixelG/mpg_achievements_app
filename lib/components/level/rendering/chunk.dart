@@ -19,18 +19,23 @@ class Chunk {
   final int y;
   final int z;
 
+  NeighborChunkCluster? neighborChunkCluster;
+  bool usesTempNeighborTileRendering = false;
+  bool isUsedByNeighbor = false;
+
   int zHeightUsedPixels = 0;
 
-  final List<ChunkTile> _tiles = [];
+  final List<ChunkTile> tiles = [];
 
   Image? albedoMap;
   Image? normalAndDepthMap;
 
 
-  Chunk(this.x, this.y, this.z);
+  Chunk(this.x, this.y, this.z, [this.neighborChunkCluster]);
 
 
-  Chunk.fromGameTileMap(GameTileMap gameTileMap, this.x, this.y, this.z){
+  Chunk.fromGameTileMap(GameTileMap gameTileMap, this.x, this.y, this.z, [this.neighborChunkCluster]){
+    neighborChunkCluster ??= NeighborChunkCluster();
     worldSize = Vector2(
       gameTileMap.tiledMap.width.toDouble() * tilesize.x,
       gameTileMap.tiledMap.height.toDouble() * tilesize.z,
@@ -48,7 +53,7 @@ class Chunk {
         final localX = x - chunkX * chunkSize;
         final localY = y - chunkY * chunkSize;
 
-        _tiles.add(ChunkTile(gid, localX, localY, x, y, z, 0));
+        tiles.add(ChunkTile(gid, localX, localY, x, y, z, 0));
 
 
         int topPos = ((z) * tilesize.z).toInt();
@@ -97,7 +102,7 @@ class Chunk {
     }
     totalZLayers = layerIndex;
 
-    _tiles.forEach((element) => element.zAdjustPos = zHeightUsedPixels);
+    tiles.forEach((element) => element.zAdjustPos = zHeightUsedPixels);
 
     reSortTiles([]);
     Future.delayed(Duration(seconds: 1), () => rebuildMaps([]));
@@ -106,10 +111,15 @@ class Chunk {
   static Vector2 worldSize = Vector2.zero();
 
   List<IsometricRenderable> allRenderables = [];
-  void reSortTiles(Iterable<IsometricRenderable> additionals){
+  void reSortTiles(Iterable<IsometricRenderable> additionals, {Iterable<IsometricRenderable>? neighborChunkTiles}){
     allRenderables.clear();
-    allRenderables.addAll(_tiles);
+
+    allRenderables.addAll(tiles);
     allRenderables.addAll(additionals);
+
+    if(neighborChunkTiles != null) {
+      allRenderables.addAll(neighborChunkTiles);
+    }
 
     allRenderables.sort((a, b) {
       Vector3 pos1 = a.gridFeetPos;
@@ -128,24 +138,99 @@ class Chunk {
     });
   }
 
-
   Future<void> rebuildMaps(Iterable<IsometricRenderable> additionals) async{
-    reSortTiles(additionals);
+
+    Iterable<IsometricRenderable> containedAdditionals = additionals.toList().where((element) => containsRenderable(element));
+
+    if(neighborChunkCluster != null) {
+      usesTempNeighborTileRendering = true;
+
+      List<IsometricRenderable> neighborChunkTiles = [];
+      List<Chunk> neighborChunks = [];
+
+      for (var value in additionals) {
+        neighborChunks.addAll(neighborChunkCluster!.getWhereContained(value));
+      }
+
+      for (var element in neighborChunks) {
+        neighborChunkTiles.addAll(element.tiles);
+      }
+
+      reSortTiles(containedAdditionals, neighborChunkTiles: neighborChunkTiles);
+    } else{
+      usesTempNeighborTileRendering = false;
+      reSortTiles(containedAdditionals);
+    }
+
     await Future.wait([
-      buildAlbedoMap(additionals),
-      buildNormalAndDepthMap(additionals)
+      buildAlbedoMap(containedAdditionals),
+      buildNormalAndDepthMap(containedAdditionals)
     ]);
   }
 
-  Future<void> buildAlbedoMap(Iterable<IsometricRenderable> additionals) async{
+  Vector2 getStartRenderPos([int? correctedX, int? correctedY]){
+    return toWorldPos(Vector3(((correctedX ?? x)-1) * chunkSize.toDouble(), (correctedY??y) * chunkSize.toDouble(), 0)) + Vector2(0, (tilesize.z * chunkSize / 2) - zHeightUsedPixels);
+  }
+
+  void adjustRenderingBounds(Vector2 gridPos, Vector2 bottomRightPos, Iterable<IsometricRenderable> additionals){
+    bool l = false;
+    bool r = false;
+    bool t = false;
+    bool b = false;
+
+    for(final element in additionals) {
+      if(!(b&&r) && (neighborChunkCluster?.bottomRight?.containsRenderable(element) ?? false)) {
+        b = true;
+        r = true;
+      }
+      if(!(b&&l) && (neighborChunkCluster?.bottomLeft?.containsRenderable(element) ?? false)) {
+        b = true;
+        l = true;
+      }
+      if(!(t&&r) && (neighborChunkCluster?.topRight?.containsRenderable(element) ?? false)) {
+        t = true;
+        r = true;
+      }
+      if(!(t&&l) && (neighborChunkCluster?.topLeft?.containsRenderable(element) ?? false)) {
+        t = true;
+        l = true;
+      }
+      if(!t && (neighborChunkCluster?.top?.containsRenderable(element) ?? false)) t = true;
+      if(!b && (neighborChunkCluster?.bottom?.containsRenderable(element) ?? false)) b = true;
+      if(!r && (neighborChunkCluster?.right?.containsRenderable(element) ?? false)) r = true;
+      if(!l && (neighborChunkCluster?.left?.containsRenderable(element) ?? false)) l = true;
+    }
+
+    if (l) {
+      gridPos.x--;
+    }
+    if(t) {
+      gridPos.y--;
+    }
+
+    if (r) {
+      bottomRightPos.x *= 2;
+    }
+    if(b) {
+      bottomRightPos.y *= 2;
+    }
+
+  }
+
+  Future<void> buildAlbedoMap(Iterable<IsometricRenderable> additionals) async {
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
     canvas.save();
-    Vector2 worldPos = toWorldPos(Vector3((x-1) * chunkSize.toDouble(), y * chunkSize.toDouble(), 0)) + Vector2(0, (tilesize.z * chunkSize / 2) - zHeightUsedPixels);
 
-    Vector2 bottomLeftPos = Vector2(Chunk.chunkSize * tilesize.x, (Chunk.chunkSize + 1) * tilesize.z + zHeightUsedPixels);
+    Vector2 adjustedGridPos = Vector2(x.toDouble(), y.toDouble());
+    Vector2 bottomRightPos = Vector2(Chunk.chunkSize * tilesize.x, (Chunk.chunkSize + 1) * tilesize.z + zHeightUsedPixels);
+    adjustRenderingBounds(adjustedGridPos, bottomRightPos, additionals);
 
-    //if(additionals.isNotEmpty) canvas.drawRect(Offset.zero & Size(bottomLeftPos.x, bottomLeftPos.y), Paint()..color = Color(hashCode).withValues(alpha: 0.5));
+
+    Vector2 worldPos = getStartRenderPos(adjustedGridPos.x.toInt(), adjustedGridPos.y.toInt());
+
+
+    if(usesTempNeighborTileRendering) canvas.drawRect(Offset.zero & Size(bottomRightPos.x, bottomRightPos.y), Paint()..color = Color(hashCode).withValues(alpha: 0.5));
 
     canvas.translate(-worldPos.x, -worldPos.y);
 
@@ -156,7 +241,7 @@ class Chunk {
 
 
     final picture = recorder.endRecording();
-    albedoMap = await picture.toImage(bottomLeftPos.x.toInt(), bottomLeftPos.y.toInt());
+    albedoMap = await picture.toImage(bottomRightPos.x.toInt(), bottomRightPos.y.toInt());
   }
 
   Future<void> buildNormalAndDepthMap(Iterable<IsometricRenderable> additionals) async{
@@ -164,7 +249,7 @@ class Chunk {
     final canvas = Canvas(recorder);
     canvas.save();
     print("current maxz: $zHeightUsedPixels");
-    Vector2 worldPos = toWorldPos(Vector3((x -1) * chunkSize.toDouble(), y * chunkSize.toDouble(), 0));
+    Vector2 worldPos = getStartRenderPos();
     if(additionals.isNotEmpty) canvas.drawRect(Offset.zero & Size(((Chunk.chunkSize) * tilesize.x), ((Chunk.chunkSize) * tilesize.z)), Paint()..color = Color(hashCode).withValues(alpha: 0.5));
     canvas.translate(-worldPos.x, -worldPos.y);
 
@@ -201,19 +286,29 @@ class Chunk {
     return localPoint + layerOffset;
   }
 
-
-  Paint paint = Paint();
-  Set<IsometricRenderable> currentAdditionalComponents = {};
-  void render(Canvas canvas, Iterable<IsometricRenderable> components, [Offset offset = Offset.zero]) {
-    Set<IsometricRenderable> newComponents = {};
-
+  bool containsRenderable(IsometricRenderable renderable){
     double xPos = x * chunkSize.toDouble();
     double yPos = y * chunkSize.toDouble();
     double xPosEnd = (x + 1) * chunkSize.toDouble();
     double yPosEnd = (y + 1) * chunkSize.toDouble();
+
+    return (renderable.gridHeadPos.x >= xPos && renderable.gridFeetPos.x < xPosEnd &&
+        renderable.gridHeadPos.y >= yPos && renderable.gridFeetPos.y < yPosEnd);
+  }
+
+
+  Paint paint = Paint();
+  Set<IsometricRenderable> currentAdditionalComponents = {};
+  void render(Canvas canvas, Iterable<IsometricRenderable> components, NeighborChunkCluster neighborChunkCluster, [Offset offset = Offset.zero]) {
+    if(isUsedByNeighbor) return;
+    this.neighborChunkCluster = neighborChunkCluster;
+
+
+    Set<IsometricRenderable> newComponents = {};
+
+
     components.where((element) => element.dirty).forEach((element) {
-      if(element.gridHeadPos.x >= xPos && element.gridFeetPos.x < xPosEnd &&
-         element.gridHeadPos.y >= yPos && element.gridFeetPos.y < yPosEnd){
+      if(containsRenderable(element)){
         newComponents.add(element);
         element.updatesNextFrame = true;
       }
@@ -333,5 +428,32 @@ Future<GameSprite> getTextureOfGid(int gid) async{
 extension VectorComparing on Vector3 {
   int compareTo(Vector3 gridPos) {
     return (distanceTo(Vector3.zero()).compareTo(gridPos.distanceTo(Vector3.zero())));
+  }
+}
+
+class NeighborChunkCluster{
+  Chunk? top;
+  Chunk? right;
+  Chunk? left;
+  Chunk? bottom;
+  Chunk? topRight;
+  Chunk? topLeft;
+  Chunk? bottomRight;
+  Chunk? bottomLeft;
+  NeighborChunkCluster({this.top, this.right, this.left, this.bottom, this.topLeft, this.topRight, this.bottomLeft, this.bottomRight});
+
+  List<Chunk> getWhereContained(IsometricRenderable renderable){
+    List<Chunk> out = [];
+
+    if(top != null && top!.containsRenderable(renderable)) out.add(top!);
+    if(right != null && right!.containsRenderable(renderable)) out.add(right!);
+    if(left != null && left!.containsRenderable(renderable)) out.add(left!);
+    if(bottom != null && bottom!.containsRenderable(renderable)) out.add(bottom!);
+    if(topRight != null && topRight!.containsRenderable(renderable)) out.add(topRight!);
+    if(topLeft != null && topLeft!.containsRenderable(renderable)) out.add(topLeft!);
+    if(bottomRight != null && bottomRight!.containsRenderable(renderable)) out.add(bottomRight!);
+    if(bottomLeft != null && bottomLeft!.containsRenderable(renderable)) out.add(bottomLeft!);
+
+    return out;
   }
 }

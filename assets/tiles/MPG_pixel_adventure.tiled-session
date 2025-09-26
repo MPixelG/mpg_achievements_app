@@ -109,11 +109,11 @@
             }
         },
         "Level_8.tmx": {
-            "scale": 2,
+            "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1024,
-                "y": 512.25
+                "x": 1178.8333333333333,
+                "y": 348
             }
         },
         "Lever_3.tmx": {

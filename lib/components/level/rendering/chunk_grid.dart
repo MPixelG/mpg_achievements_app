@@ -18,6 +18,18 @@ class ChunkGrid {
     generateChunks();
   }
 
+  NeighborChunkCluster getNeighborChunkCluster(Chunk chunk){
+    Chunk? tl = chunks[Vector2(chunk.x - 1, chunk.y - 1)];
+    Chunk? t = chunks[Vector2(chunk.x.toDouble(), chunk.y - 1)];
+    Chunk? tr = chunks[Vector2(chunk.x + 1, chunk.y + 1)];
+    Chunk? r = chunks[Vector2(chunk.x + 1, chunk.y.toDouble())];
+    Chunk? bl = chunks[Vector2(chunk.x - 1, chunk.y - 1)];
+    Chunk? b = chunks[Vector2(chunk.x.toDouble(), chunk.y + 1)];
+    Chunk? br = chunks[Vector2(chunk.x + 1, chunk.y + 1)];
+    Chunk? l = chunks[Vector2(chunk.x - 1, chunk.y.toDouble())];
+    return NeighborChunkCluster(topLeft: tl, top: t, topRight: tr, right: r, bottomLeft: bl, bottom: b, bottomRight: br, left: l);
+  }
+
   void render(Canvas canvas, Iterable<IsometricRenderable> components, Vector2 camPos, Vector2 viewportSize, [Offset offset = Offset.zero]){
     for (var value in chunks.entries) {
       Chunk chunk = value.value;
@@ -48,7 +60,7 @@ class ChunkGrid {
         continue;
       }
 
-      chunk.render(canvas, components, chunkPos.toOffset());
+      chunk.render(canvas, components, getNeighborChunkCluster(chunk), chunkPos.toOffset());
       //canvas.drawLine((chunkPos - Vector2(0, chunk.zHeightUsedPixels.toDouble())).toOffset(), chunkPos.toOffset(), Paint()..color = Colors.green);
     }
     components.where((element) => element.updatesNextFrame).forEach((element) {
