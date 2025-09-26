@@ -55,7 +55,7 @@ class Task {
   }
 }
 
-/// ---- RIVERPOD TASK MANAGEMENT ----
+/// ---- RIVERPOD TASK STATE MANAGEMENT ----
 
 
 class TaskNotifier extends StateNotifier<List<Task>> {
