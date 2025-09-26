@@ -17,7 +17,8 @@ class IsometricPlayer extends Player with IsometricRenderable{
 
   @override
   Future<void> onLoad() async {
-    shadow = ShadowComponent(owner: this);
+    shadow = ShadowComponent(gridFeetPos, owner: this); //removable when positioning is correct
+    shadow.anchor = Anchor.topCenter;
     add(shadow);
     return super.onLoad();
   }
