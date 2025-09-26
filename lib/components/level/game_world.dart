@@ -70,7 +70,7 @@ abstract class GameWorld extends World
     }
 
    await add(game.gameWorld.player);
-    // Add the level to the game world so it gets rendered.
+        // Add the level to the game world so it gets rendered.
    await add(level);
 
     // If level not Parallax, load level with  scrolling background, property is added in Tiled

@@ -43,16 +43,18 @@ mixin KeyboardControllableMovement
       if (keysPressed.contains(LogicalKeyboardKey.space)) {
         // First, check for special movement states that override a standard jump.
         if (debugFlyMode || isClimbing) {
-          verticalMovement = isClimbing ? -0.6 : 1.0;
-        }
+          final upwardThrottle = isClimbing ? -0.6 : -1.0;
 
-        if (viewSide == ViewSide.isometric) {
-          print('isometric jump');
-          zMovement = verticalMovement;
-          verticalMovement = 0;
+          if (viewSide == ViewSide.isometric) {
+            print('isometric jump');
+            zMovement = upwardThrottle;
+          } else {
+            verticalMovement = upwardThrottle;
+          }
+        } else {
+          hasJumped = true;
+          print('hasJumped:$hasJumped');
         }
-        hasJumped = true;
-
       }
 
       if (keysPressed.contains(LogicalKeyboardKey.shiftLeft)) {

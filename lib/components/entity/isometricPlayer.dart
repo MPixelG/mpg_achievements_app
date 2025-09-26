@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:mpg_achievements_app/components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
 
@@ -6,9 +7,20 @@ import '../../mpg_pixel_adventure.dart';
 import '../level/isometric/isometric_tiled_component.dart';
 
 class IsometricPlayer extends Player with IsometricRenderable{
+
+  late ShadowComponent shadow;
+
   IsometricPlayer({required super.playerCharacter}){
     setCustomAnimationName("falling", "running");
     setCustomAnimationName("jumping", "running");
+  }
+
+  @override
+  Future<void> onLoad() async {
+    shadow = ShadowComponent(gridFeetPos, owner: this); //removable when positioning is correct
+    shadow.anchor = Anchor.topCenter;
+    add(shadow);
+    return super.onLoad();
   }
 
   @override
@@ -42,5 +54,6 @@ class IsometricPlayer extends Player with IsometricRenderable{
 
   @override
   RenderCategory get renderCategory => RenderCategory.entity;
+
 
 }
