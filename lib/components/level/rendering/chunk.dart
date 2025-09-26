@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -22,6 +23,10 @@ class Chunk {
   NeighborChunkCluster? neighborChunkCluster;
   bool usesTempNeighborTileRendering = false;
   bool isUsedByNeighbor = false;
+
+  Vector2? albedoWorldTopLeft;
+  int albedoWidth = 0;
+  int albedoHeight = 0;
 
   int zHeightUsedPixels = 0;
 
@@ -152,6 +157,11 @@ class Chunk {
         neighborChunks.addAll(neighborChunkCluster!.getWhereContained(value));
       }
 
+      for (var n in neighborChunks) {
+        n.isUsedByNeighbor = true;
+      }
+      usesTempNeighborTileRendering = neighborChunks.isNotEmpty;
+
       for (var element in neighborChunks) {
         neighborChunkTiles.addAll(element.tiles);
       }
@@ -218,37 +228,59 @@ class Chunk {
   }
 
   Future<void> buildAlbedoMap(Iterable<IsometricRenderable> additionals) async {
+    if (allRenderables.isEmpty) return;
+
+    int minGridX = 1 << 30, minGridY = 1 << 30;
+    int maxGridX = -1 << 30, maxGridY = -1 << 30;
+    int maxZ = 0;
+    for (final r in allRenderables) {
+      minGridX = math.min(minGridX, r.gridFeetPos.x.toInt());
+      minGridY = math.min(minGridY, r.gridFeetPos.y.toInt());
+      maxGridX = math.max(maxGridX, r.gridHeadPos.x.toInt());
+      maxGridY = math.max(maxGridY, r.gridHeadPos.y.toInt());
+      maxZ = math.max(maxZ, r.gridHeadPos.z.toInt());
+    }
+
+    final corners = [
+      toWorldPos(Vector3(minGridX.toDouble(), minGridY.toDouble(), 0)) - Vector2(tilesize.x / 2, 0),
+      toWorldPos(Vector3(minGridX.toDouble(), maxGridY.toDouble(), 0)) - Vector2(tilesize.x / 2, 0),
+      toWorldPos(Vector3(maxGridX.toDouble(), minGridY.toDouble(), 0)) - Vector2(tilesize.x / 2, 0),
+      toWorldPos(Vector3(maxGridX.toDouble(), maxGridY.toDouble(), 0)) - Vector2(tilesize.x / 2, 0),
+    ];
+    double minX = corners.map((c) => c.x).reduce(math.min);
+    double minY = corners.map((c) => c.y).reduce(math.min);
+    double maxX = corners.map((c) => c.x).reduce(math.max);
+    double maxY = corners.map((c) => c.y).reduce(math.max);
+
+    double padTop = tilesize.z.toDouble();
+    double padBottom = (maxZ.toDouble() * tilesize.z) + tilesize.z.toDouble();
+
+    final width = (maxX - minX + tilesize.x).ceil();
+    final height = (maxY - minY + padTop + padBottom).ceil();
+
+    albedoWorldTopLeft = Vector2(minX, minY - padTop);
+    albedoWidth = math.max(1, width);
+    albedoHeight = math.max(1, height);
+
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
     canvas.save();
-
-    Vector2 adjustedGridPos = Vector2(x.toDouble(), y.toDouble());
-    Vector2 bottomRightPos = Vector2(Chunk.chunkSize * tilesize.x, (Chunk.chunkSize + 1) * tilesize.z + zHeightUsedPixels);
-    adjustRenderingBounds(adjustedGridPos, bottomRightPos, additionals);
-
-
-    Vector2 worldPos = getStartRenderPos(adjustedGridPos.x.toInt(), adjustedGridPos.y.toInt());
-
-
-    if(usesTempNeighborTileRendering) canvas.drawRect(Offset.zero & Size(bottomRightPos.x, bottomRightPos.y), Paint()..color = Color(hashCode).withValues(alpha: 0.5));
-
-    canvas.translate(-worldPos.x, -worldPos.y);
+    canvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
 
     for (final tile in allRenderables) {
       tile.renderAlbedo(canvas);
     }
     canvas.restore();
 
-
     final picture = recorder.endRecording();
-    albedoMap = await picture.toImage(bottomRightPos.x.toInt(), bottomRightPos.y.toInt());
+    albedoMap = await picture.toImage(albedoWidth, albedoHeight);
   }
+
 
   Future<void> buildNormalAndDepthMap(Iterable<IsometricRenderable> additionals) async{
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
     canvas.save();
-    print("current maxz: $zHeightUsedPixels");
     Vector2 worldPos = getStartRenderPos();
     if(additionals.isNotEmpty) canvas.drawRect(Offset.zero & Size(((Chunk.chunkSize) * tilesize.x), ((Chunk.chunkSize) * tilesize.z)), Paint()..color = Color(hashCode).withValues(alpha: 0.5));
     canvas.translate(-worldPos.x, -worldPos.y);
@@ -286,15 +318,13 @@ class Chunk {
     return localPoint + layerOffset;
   }
 
-  bool containsRenderable(IsometricRenderable renderable){
-    double xPos = x * chunkSize.toDouble();
-    double yPos = y * chunkSize.toDouble();
-    double xPosEnd = (x + 1) * chunkSize.toDouble();
-    double yPosEnd = (y + 1) * chunkSize.toDouble();
-
-    return (renderable.gridHeadPos.x >= xPos && renderable.gridFeetPos.x < xPosEnd &&
-        renderable.gridHeadPos.y >= yPos && renderable.gridFeetPos.y < yPosEnd);
+  bool containsRenderable(IsometricRenderable r){
+    double fx = r.gridFeetPos.x;
+    double fy = r.gridFeetPos.y;
+    return fx >= x * chunkSize && fx < (x + 1) * chunkSize &&
+        fy >= y * chunkSize && fy < (y + 1) * chunkSize;
   }
+
 
 
   Paint paint = Paint();
@@ -315,7 +345,6 @@ class Chunk {
     });
 
     if(newComponents.isNotEmpty || currentAdditionalComponents.isNotEmpty){
-      //print("updating chunk at $x,$y. current has ${currentAdditionalComponents.length} new has ${newComponents.length}");
       currentAdditionalComponents = newComponents;
       rebuildMaps(currentAdditionalComponents);
     }

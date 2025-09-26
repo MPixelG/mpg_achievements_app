@@ -18,21 +18,29 @@ class ChunkGrid {
     generateChunks();
   }
 
-  NeighborChunkCluster getNeighborChunkCluster(Chunk chunk){
-    Chunk? tl = chunks[Vector2(chunk.x - 1, chunk.y - 1)];
-    Chunk? t = chunks[Vector2(chunk.x.toDouble(), chunk.y - 1)];
-    Chunk? tr = chunks[Vector2(chunk.x + 1, chunk.y + 1)];
-    Chunk? r = chunks[Vector2(chunk.x + 1, chunk.y.toDouble())];
-    Chunk? bl = chunks[Vector2(chunk.x - 1, chunk.y - 1)];
-    Chunk? b = chunks[Vector2(chunk.x.toDouble(), chunk.y + 1)];
-    Chunk? br = chunks[Vector2(chunk.x + 1, chunk.y + 1)];
-    Chunk? l = chunks[Vector2(chunk.x - 1, chunk.y.toDouble())];
-    return NeighborChunkCluster(topLeft: tl, top: t, topRight: tr, right: r, bottomLeft: bl, bottom: b, bottomRight: br, left: l);
+  NeighborChunkCluster getNeighborChunkCluster(Chunk chunk) {
+    final cx = chunk.x;
+    final cy = chunk.y;
+    Chunk? tl = chunks[Vector2((cx - 1).toDouble(), (cy - 1).toDouble())];
+    Chunk? t  = chunks[Vector2(cx.toDouble(), (cy - 1).toDouble())];
+    Chunk? tr = chunks[Vector2((cx + 1).toDouble(), (cy - 1).toDouble())];
+    Chunk? r  = chunks[Vector2((cx + 1).toDouble(), cy.toDouble())];
+    Chunk? br = chunks[Vector2((cx + 1).toDouble(), (cy + 1).toDouble())];
+    Chunk? b  = chunks[Vector2(cx.toDouble(), (cy + 1).toDouble())];
+    Chunk? bl = chunks[Vector2((cx - 1).toDouble(), (cy + 1).toDouble())];
+    Chunk? l  = chunks[Vector2((cx - 1).toDouble(), cy.toDouble())];
+    return NeighborChunkCluster(
+        topLeft: tl, top: t, topRight: tr,
+        right: r, bottomRight: br, bottom: b,
+        bottomLeft: bl, left: l
+    );
   }
+
 
   void render(Canvas canvas, Iterable<IsometricRenderable> components, Vector2 camPos, Vector2 viewportSize, [Offset offset = Offset.zero]){
     for (var value in chunks.entries) {
       Chunk chunk = value.value;
+
       Vector2 chunkPos = Vector2(
         ((chunk.x - chunk.y + 3) * (Chunk.chunkSize + CHUNK_SPACING)) * tilesize.x / 2,
         (chunk.x + chunk.y) * (Chunk.chunkSize + CHUNK_SPACING) * tilesize.z / 2 ,
@@ -60,7 +68,13 @@ class ChunkGrid {
         continue;
       }
 
-      chunk.render(canvas, components, getNeighborChunkCluster(chunk), chunkPos.toOffset());
+      Vector2 drawPos;
+      if (chunk.albedoWorldTopLeft != null) {
+        drawPos = chunk.albedoWorldTopLeft!;
+      } else {
+        drawPos = chunkPos;
+      }
+      chunk.render(canvas, components, getNeighborChunkCluster(chunk), drawPos.toOffset());
       //canvas.drawLine((chunkPos - Vector2(0, chunk.zHeightUsedPixels.toDouble())).toOffset(), chunkPos.toOffset(), Paint()..color = Colors.green);
     }
     components.where((element) => element.updatesNextFrame).forEach((element) {
@@ -68,8 +82,9 @@ class ChunkGrid {
       //element.setDirty(false);
     });
 
-    components.forEach((element) {
-    },);
+    for (final c in chunks.values) {
+      c.isUsedByNeighbor = false;
+    }
 
   }
 
