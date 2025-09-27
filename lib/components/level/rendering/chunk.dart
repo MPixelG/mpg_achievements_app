@@ -28,6 +28,7 @@ class Chunk {
   int albedoHeight = 0;
 
   int zHeightUsedPixels = 0;
+  static int highestZTileInWorld = 0;
 
   final List<ChunkTile> tiles = [];
 
@@ -60,13 +61,16 @@ class Chunk {
         final localX = x - chunkX * chunkSize;
         final localY = y - chunkY * chunkSize;
 
-        tiles.add(ChunkTile(gid, localX, localY, x, y, z, 0));
 
         int topPos = ((z) * tilesize.z).toInt();
         if (gid != 0 && topPos > zHeightUsedPixels) {
-          print("new top pos in chunk ${this.x}, ${this.y}: $topPos");
           zHeightUsedPixels = topPos;
         }
+        if(z > highestZTileInWorld){
+          highestZTileInWorld = z;
+        }
+
+        tiles.add(ChunkTile(gid, localX, localY, x, y, z, 0));
       }
     }
 
@@ -329,8 +333,8 @@ class Chunk {
     for (final tile in allRenderables) {
       if (tile.renderNormal == null) continue;
 
-      final double startVal = ((tile.gridFeetPos.z - 1) / (zHeightUsedPixels)) * 255;
-      final double endVal = (tile.gridFeetPos.z / zHeightUsedPixels);
+      final double startVal = ((tile.gridFeetPos.z - 1) / (highestZTileInWorld)) * 255;
+      final double endVal = (tile.gridFeetPos.z / highestZTileInWorld);
 
       tile.renderNormal!(normalCanvas, Paint()..colorFilter = ColorFilter.matrix([
         1, 0, 0, 0, 0,
@@ -395,8 +399,8 @@ class Chunk {
       rebuildMaps(currentAdditionalComponents);
     }
 
-    if (albedoMap != null) {
-      canvas.drawImage(albedoMap!, offset, paint);
+    if (normalAndDepthMap != null) {
+      canvas.drawImage(normalAndDepthMap!, offset, paint);
     }
   }
 
