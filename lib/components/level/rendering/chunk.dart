@@ -9,7 +9,9 @@ import 'package:mpg_achievements_app/components/level/isometric/isometric_render
 import 'package:mpg_achievements_app/components/level/isometric/isometric_tiled_component.dart';
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
 import 'package:mpg_achievements_app/components/level/rendering/tileset_utils.dart';
+import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 import 'package:mpg_achievements_app/components/util/isometric_utils.dart';
+import 'package:mpg_achievements_app/main.dart';
 
 import '../../../mpg_pixel_adventure.dart';
 import 'game_sprite.dart';
@@ -121,6 +123,12 @@ class Chunk {
 
     reSortTiles([]);
     Future.delayed(Duration(seconds: 1), () => rebuildMaps([]));
+
+    if(!shaderInitialized && !shaderBeingInitialized){
+      shaderBeingInitialized = true;
+      initShader();
+    }
+
   }
 
   static Vector2 worldSize = Vector2.zero();
@@ -388,7 +396,9 @@ class Chunk {
         fy < (y + 1) * chunkSize;
   }
 
-  Paint paint = Paint();
+  Paint shaderPaint = Paint();
+  bool shaderInitialized = false;
+  bool shaderBeingInitialized = false;
   Set<IsometricRenderable> currentAdditionalComponents = {};
   void render(
     Canvas canvas,
@@ -413,9 +423,34 @@ class Chunk {
       rebuildMaps(currentAdditionalComponents);
     }
 
-    if (albedoMap != null) {
-      canvas.drawImage(albedoMap!, offset, paint);
+    if (albedoMap != null && normalAndDepthMap != null && shader != null) {
+
+      Vector2 playerGridPos = gameWidgetKey.currentState!.currentGame.gameWorld.player.gridPos;
+      Vector2 playerWorldPos = toWorldPos(Vector3(playerGridPos.x, playerGridPos.y, 1));
+
+      Vector3 lightPos = Vector3(100, 100, 200);
+
+      shader!.setImageSampler(0, albedoMap!);
+      shader!.setImageSampler(1, normalAndDepthMap!);
+      shader!.setFloatUniforms((val) {
+        val.setFloats([
+          albedoWorldTopLeft!.x, albedoWorldTopLeft!.y,
+          albedoWidth.toDouble(), albedoHeight.toDouble(),
+          lightPos.x, lightPos.y, lightPos.z,
+          0.5,
+        ]);
+      });
+
+      shaderPaint.shader = shader;
+      //canvas.drawImage(albedoMap!, offset, shaderPaint);
+      canvas.drawRect(offset & Size(albedoWidth.toDouble(),albedoHeight.toDouble()), shaderPaint);
     }
+  }
+
+  FragmentShader? shader;
+  void initShader() async{
+    FragmentProgram program = await FragmentProgram.fromAsset("assets/shaders/lighting.frag");
+    shader = program.fragmentShader();
   }
 
   static Set<Tileset> knownTilesets = {};

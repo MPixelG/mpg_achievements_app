@@ -81,11 +81,10 @@ class TileHighlightRenderable extends PositionComponent
   Vector3 get gridHeadPos => gridFeetPos + Vector3(0.1, 0.1, 1);
 
   @override
-  void Function(Canvas canvas, Paint? overridePaint)? get renderNormal =>
-      (Canvas canvas, Paint? overridePaint) {
-        renderTree(canvas);
-      };
+  void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {
+    renderTree(canvas);
+  };
   @override
-  void Function(Canvas canvas, {Vector2? position, Vector2? size})
-  get renderAlbedo => (Canvas canvas, {Vector2? position, Vector2? size}) {};
+  void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
+          (Canvas canvas, Paint? overridePaint) {};
 }

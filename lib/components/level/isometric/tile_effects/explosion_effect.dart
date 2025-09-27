@@ -47,23 +47,4 @@ class ExplosionEffect extends SpriteAnimationGroupComponent
       stepTime: 0.1,
     ),
   ];
-
-  @override
-  Vector3 get gridFeetPos => gridPos;
-
-  @override
-  RenderCategory get renderCategory => RenderCategory.effect;
-
-  @override
-  Vector3 get gridHeadPos => gridFeetPos + Vector3(2, 2, 20);
-
-  @override
-  // TODO: implement renderAlbedo
-  void Function(Canvas canvas, {Vector2 position, Vector2 size})
-  get renderAlbedo => throw UnimplementedError();
-
-  @override
-  // TODO: implement renderNormal
-  void Function(Canvas canvas, {Vector2 position, Vector2 size})?
-  get renderNormal => throw UnimplementedError();
 }

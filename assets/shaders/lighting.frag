@@ -3,6 +3,7 @@ precision mediump float;
 
 uniform sampler2D albedoMap;
 uniform sampler2D depthMap;
+uniform vec2 offset;
 uniform vec2 screenSize;
 uniform vec3 lightPos;
 uniform float heightScale;
@@ -18,8 +19,8 @@ vec2 iso2orth(vec3 iso) {
 }
 
 
-vec3 calculateBasicLighting(){
-    vec2 uv = FlutterFragCoord().xy / screenSize;
+vec3 calculateBasicLighting(vec3 lightPos){
+    vec2 uv = (FlutterFragCoord().xy - offset) / screenSize;
 
 
     vec4 depthMapPixel = texture(depthMap, uv);
@@ -39,8 +40,8 @@ vec3 calculateBasicLighting(){
     float range = 20.2;
     float att = 1.0 / (1.0 + 16.0 * (dist / range) * (dist / range));
 
-    vec3 lightColor = vec3(0, 0.2, 1);
-    vec3 diffuse = lightColor * NdotL * att * 3;
+    vec3 lightColor = vec3(0.9, 0.8, 0.8);
+    vec3 diffuse = lightColor * NdotL;
 
     return diffuse;
 }
@@ -68,18 +69,21 @@ float calculateShadow(vec3 fragPos, vec3 dirToLight, float heightScale){
     return shadow;
 }
 void main() {
-    vec2 uv = FlutterFragCoord().xy / screenSize;
+    vec3 adjustedLightPos = lightPos;
+    vec2 uv = (FlutterFragCoord().xy - offset) / screenSize;
     vec4 albedoPixel = texture(albedoMap, uv);
-    float pixelHeight = texture(depthMap, uv).b;
+    vec4 normalPixel = texture(depthMap, uv);
+    float pixelHeight = normalPixel.b;
+
+    if(normalPixel.a == 0) return;
 
     float heightScale = 0.5;
     vec3 fragPos = vec3(uv, pixelHeight * heightScale);
-    vec3 dirToLight = normalize(lightPos - fragPos);
+    vec3 dirToLight = normalize(adjustedLightPos - fragPos);
 
 
-    //vec3 diffuse = calculateBasicLighting();
-//    float shadow = calculateShadow(fragPos, dirToLight, heightScale);
-    vec3 color = albedoPixel.rgb * (vec3(0.15, 0.1, 0.3));
+    vec3 diffuse = calculateBasicLighting(adjustedLightPos);
+    vec3 color = albedoPixel.rgb * (vec3(0.11, 0.1, 0.1) + diffuse);
 
     fragColor = vec4(color, albedoPixel.a);
 }
