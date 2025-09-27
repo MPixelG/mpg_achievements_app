@@ -112,7 +112,9 @@ class Chunk {
     }
     totalZLayers = layerIndex;
 
-    tiles.forEach((element) => element.zAdjustPos = zHeightUsedPixels);
+    for (var element in tiles) {
+      element.zAdjustPos = zHeightUsedPixels;
+    }
 
     reSortTiles([]);
     Future.delayed(Duration(seconds: 1), () => rebuildMaps([]));
@@ -233,8 +235,7 @@ class Chunk {
             (correctedY ?? y) * chunkSize.toDouble(),
             0,
           ),
-        ) +
-        Vector2(0, (tilesize.z * chunkSize / 2) - zHeightUsedPixels);
+        ) + Vector2(0, (tilesize.z * chunkSize / 2) - zHeightUsedPixels);
   }
 
   void adjustRenderingBounds(
@@ -272,18 +273,18 @@ class Chunk {
         t = true;
         l = true;
       }
-      if (!t &&
-          (neighborChunkCluster?.top?.containsRenderable(element) ?? false))
+      if (!t && (neighborChunkCluster?.top?.containsRenderable(element) ?? false)) {
         t = true;
-      if (!b &&
-          (neighborChunkCluster?.bottom?.containsRenderable(element) ?? false))
+      }
+      if (!b && (neighborChunkCluster?.bottom?.containsRenderable(element) ?? false)) {
         b = true;
-      if (!r &&
-          (neighborChunkCluster?.right?.containsRenderable(element) ?? false))
+      }
+      if (!r && (neighborChunkCluster?.right?.containsRenderable(element) ?? false)) {
         r = true;
-      if (!l &&
-          (neighborChunkCluster?.left?.containsRenderable(element) ?? false))
+      }
+      if (!l && (neighborChunkCluster?.left?.containsRenderable(element) ?? false)) {
         l = true;
+      }
     }
 
     if (l) {
