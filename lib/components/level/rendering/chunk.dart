@@ -220,7 +220,7 @@ class Chunk {
     double maxX = corners.map((c) => c.x).reduce(math.max);
     double maxY = corners.map((c) => c.y).reduce(math.max);
 
-    double padTop = tilesize.z.toDouble();
+    double padTop = zHeightUsedPixels.toDouble();
     double padBottom = (maxZ.toDouble() * tilesize.z) + tilesize.z.toDouble();
 
     final width = (maxX - minX + tilesize.x).ceil();
@@ -315,12 +315,16 @@ class Chunk {
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
     canvas.save();
-    canvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
 
+
+    canvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
     for (final tile in allRenderables) {
       tile.renderAlbedo(canvas);
     }
     canvas.restore();
+
+
+    //canvas.drawRect(Offset.zero & Size(albedoWidth.toDouble(), albedoHeight.toDouble()), Paint()..color = Color(hashCode).withValues(alpha: 0.5));
 
     final picture = recorder.endRecording();
     albedoMap = await picture.toImage(albedoWidth, albedoHeight);
@@ -345,26 +349,11 @@ class Chunk {
         normalCanvas,
         Paint()
           ..colorFilter = ColorFilter.matrix([
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            endVal,
-            0,
-            startVal,
-            0,
-            0,
-            0,
-            1,
-            0,
+            1, 0, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 0,
+            endVal, 0, startVal, 0,
+            0, 0, 1, 0,
           ]),
       );
     }
@@ -424,8 +413,8 @@ class Chunk {
       rebuildMaps(currentAdditionalComponents);
     }
 
-    if (normalAndDepthMap != null) {
-      canvas.drawImage(normalAndDepthMap!, offset, paint);
+    if (albedoMap != null) {
+      canvas.drawImage(albedoMap!, offset, paint);
     }
   }
 
