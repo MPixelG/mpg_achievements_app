@@ -30,13 +30,11 @@ class ScrollingBackground extends Background with HasGameReference{
     else { //if a camera is given, then you can get the visible game size, with the zoom of it calculated.
       size = game.size * camera!.viewfinder.zoom;
     }
-    size = game.size;
 
     updateTiles(size); //adds and positions the tiles
 
     return super.onLoad();
   }
-
   @override
   void update(double dt) {
     time+= dt; //increase the time variable

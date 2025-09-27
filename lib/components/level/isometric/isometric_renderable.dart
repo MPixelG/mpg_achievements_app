@@ -7,6 +7,8 @@ import 'package:mpg_achievements_app/components/level/isometric/isometric_tiled_
 mixin IsometricRenderable{
   Vector3 get gridFeetPos;
   Vector3 get gridHeadPos;
+
+
   RenderCategory get renderCategory;
   bool _dirty = true;
   bool updatesNextFrame = false;
