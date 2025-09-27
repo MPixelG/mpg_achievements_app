@@ -8,7 +8,8 @@ import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 //A positionComponent can have an x, y , width and height, zPosition and zHeight
-class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameReference<PixelAdventure> {
+class CollisionBlock extends PositionComponent
+    with CollisionCallbacks, HasGameReference<PixelAdventure> {
   //position and size is given and passed in to the PositionComponent with super
   bool isPlatform;
   bool isLadder;
@@ -45,18 +46,17 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
     add(hitbox);
   }
 
-
-
-  Vector2 get gridPos =>
-      worldToTileIsometric(position);
+  Vector2 get gridPos => worldToTileIsometric(position);
 
   set gridPos(Vector2 newGridPos) {
     position = toWorldPos(newGridPos);
   }
 
   Vector2 worldToTileIsometric(Vector2 worldPos) {
-    final tileX = (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.y / 2)) / 2;
-    final tileY = (worldPos.y / (tilesize.y / 2) - worldPos.x / (tilesize.x / 2)) / 2;
+    final tileX =
+        (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.y / 2)) / 2;
+    final tileY =
+        (worldPos.y / (tilesize.y / 2) - worldPos.x / (tilesize.x / 2)) / 2;
 
     return Vector2(tileX, tileY);
   }
@@ -67,5 +67,4 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
       (gridPos.x + gridPos.y) * (tilesize.y / 2),
     );
   }
-
 }

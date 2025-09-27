@@ -13,9 +13,8 @@ import '../physics/collision_block.dart';
 
 void generateSpawningObjectsForLevel(GameWorld gameWorld) {
   //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list
-  final ObjectGroup? spawnPointsLayer = gameWorld.level.tileMap.getLayer<ObjectGroup>(
-    'Spawnpoints',
-  );
+  final ObjectGroup? spawnPointsLayer = gameWorld.level.tileMap
+      .getLayer<ObjectGroup>('Spawnpoints');
 
   //if there is no Spawnpoint-layer the game can never the less run and does not crash / Nullcheck-Safety
   if (spawnPointsLayer != null) {
@@ -24,12 +23,12 @@ void generateSpawningObjectsForLevel(GameWorld gameWorld) {
     for (final spawnPoint in spawnPointsLayer.objects) {
       switch (spawnPoint.class_) {
         case 'Player':
-        //player spawning
+          //player spawning
           gameWorld.player.position = Vector2(spawnPoint.x, spawnPoint.y);
           gameWorld.player.priority = 1;
           break;
         case 'Collectable':
-        //checking type for spawning
+          //checking type for spawning
           bool interactiveTask =
               spawnPoint.properties.getValue('interactiveTask') ?? false;
           String collectablePath(bool task) =>
@@ -78,7 +77,7 @@ void generateSpawningObjectsForLevel(GameWorld gameWorld) {
           gameWorld.add(checkpoint);
           break;
         case "Enemy":
-        //enemy spawning
+          //enemy spawning
           gameWorld.enemy = Enemy(enemyCharacter: "Virtual Guy");
           gameWorld.enemy.position = Vector2(spawnPoint.x, spawnPoint.y);
           gameWorld.add(gameWorld.enemy);
@@ -89,14 +88,15 @@ void generateSpawningObjectsForLevel(GameWorld gameWorld) {
   }
 }
 
-
 void generateCollisionsForLevel(GameWorld gameWorld) {
-  final collisionsLayer = gameWorld.level.tileMap.getLayer<ObjectGroup>('Collisions');
+  final collisionsLayer = gameWorld.level.tileMap.getLayer<ObjectGroup>(
+    'Collisions',
+  );
   //convert orthogonal to isometric coordinates
   Vector2 _orthogonalToIsometric(Vector2 orthoPos) {
     return Vector2(
-        ((orthoPos.x - orthoPos.y) * 1.0),
-        (orthoPos.x + orthoPos.y) * 0.5
+      ((orthoPos.x - orthoPos.y) * 1.0),
+      (orthoPos.x + orthoPos.y) * 0.5,
     );
   }
 
@@ -104,11 +104,12 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
 
   if (collisionsLayer != null) {
     for (final collision in collisionsLayer.objects) {
-
       Vector2 pos;
 
-      if(gameWorld is IsometricWorld){
-        pos = _orthogonalToIsometric(collision.position) + Vector2(Chunk.worldSize.x / 2, 0);
+      if (gameWorld is IsometricWorld) {
+        pos =
+            _orthogonalToIsometric(collision.position) +
+            Vector2(Chunk.worldSize.x / 2, 0);
         pos += _orthogonalToIsometric(Vector2(tilesize.x / 2, tilesize.y / 2));
       } else {
         pos = collision.position;
@@ -124,7 +125,7 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
             size: Vector2(collision.width, collision.height),
             hasCollisionDown: false,
             hasHorizontalCollision: false,
-            isIsometric: isIsometric
+            isIsometric: isIsometric,
           );
           gameWorld.add(platform);
         case 'Ladder':
@@ -136,7 +137,7 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
             hasCollisionUp: true,
             hasHorizontalCollision: false,
             isLadder: true,
-            isIsometric: isIsometric
+            isIsometric: isIsometric,
           );
           gameWorld.add(ladder);
         default:
@@ -145,12 +146,10 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
             size: Vector2(collision.width, collision.height),
             isIsometric: isIsometric,
             zPosition: z,
-            zHeight: zHeight
+            zHeight: zHeight,
           );
           gameWorld.add(block);
       }
     }
   }
-
-
 }

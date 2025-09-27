@@ -67,10 +67,7 @@ class ChunkGrid {
         ((chunk.x - chunk.y + 3) * (Chunk.chunkSize + chunkSpacing)) *
             tilesize.x /
             2,
-        (chunk.x + chunk.y) *
-            (Chunk.chunkSize + chunkSpacing) *
-            tilesize.z /
-            2,
+        (chunk.x + chunk.y) * (Chunk.chunkSize + chunkSpacing) * tilesize.z / 2,
       );
       chunkPos += offset.toVector2();
       chunkPos.y -= chunk.zHeightUsedPixels;

@@ -5,16 +5,10 @@ import 'package:mpg_achievements_app/components/level/rendering/chunk_grid.dart'
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
 
 // An enumeration to categorize renderable objects.
-enum RenderCategory {
-  tile,
-  tileHighlight,
-  entity,
-  effect,
-}
+enum RenderCategory { tile, tileHighlight, entity, effect }
 
 // A data class designed to hold all the necessary information for rendering a single object,
 class RenderInstance {
-
   // A function reference that knows how to draw the object.
   final void Function(Canvas, {Vector2 position, Vector2 size}) render;
   final void Function(Canvas, {Vector2 position, Vector2 size})? renderNormal;
@@ -22,13 +16,18 @@ class RenderInstance {
   final Vector3 gridPos;
   // The layer index from the Tiled map. This serves as the primary sorting key
   final RenderCategory category;
-  RenderInstance(this.render, this.screenPos, this.gridPos, this.category, {this.renderNormal});
+  RenderInstance(
+    this.render,
+    this.screenPos,
+    this.gridPos,
+    this.category, {
+    this.renderNormal,
+  });
 }
-
 
 // Instead of letting Flame render layer by layer, this component deconstructs the map
 // into a list of individual `RenderInstance` objects
-class IsometricTiledComponent extends TiledComponent{
+class IsometricTiledComponent extends TiledComponent {
   IsometricTiledComponent(super.map);
 
   late GameTileMap gameTileMap;
@@ -43,12 +42,16 @@ class IsometricTiledComponent extends TiledComponent{
     // Pre-build the tile cache for efficient rendering later reading data from the Tiled map (every layer every tile)
   }
 
-
   List<RenderInstance>? lastRenderables;
   Iterable<IsometricRenderable>? lastComponents;
-  void renderComponentsInTree(Canvas canvas, Iterable<IsometricRenderable> components, Vector2 position, Vector2 viewportSize){
+  void renderComponentsInTree(
+    Canvas canvas,
+    Iterable<IsometricRenderable> components,
+    Vector2 position,
+    Vector2 viewportSize,
+  ) {
     chunks.render(canvas, components, position, viewportSize);
   }
-  void forceRebuildCache(){
-  }
+
+  void forceRebuildCache() {}
 }

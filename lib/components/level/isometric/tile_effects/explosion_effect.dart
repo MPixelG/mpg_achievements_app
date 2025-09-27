@@ -10,13 +10,11 @@ import '../isometric_tiled_component.dart';
 
 class ExplosionEffect extends SpriteAnimationGroupComponent
     with HasGameReference<PixelAdventure>, AnimationManager {
-
   final Vector3 gridPos;
   TileHighlightRenderable tileHighlight;
   int? currentZIndex;
 
-  ExplosionEffect(this.tileHighlight, this.gridPos) {
-  }
+  ExplosionEffect(this.tileHighlight, this.gridPos) {}
 
   @override
   Future<void> onLoad() async {
@@ -61,9 +59,11 @@ class ExplosionEffect extends SpriteAnimationGroupComponent
 
   @override
   // TODO: implement renderAlbedo
-  void Function(Canvas canvas, {Vector2 position, Vector2 size}) get renderAlbedo => throw UnimplementedError();
+  void Function(Canvas canvas, {Vector2 position, Vector2 size})
+  get renderAlbedo => throw UnimplementedError();
 
   @override
   // TODO: implement renderNormal
-  void Function(Canvas canvas, {Vector2 position, Vector2 size})? get renderNormal => throw UnimplementedError();
+  void Function(Canvas canvas, {Vector2 position, Vector2 size})?
+  get renderNormal => throw UnimplementedError();
 }

@@ -9,8 +9,8 @@ import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
 import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-class LayeredImageBackground extends Background with HasGameReference<PixelAdventure>{
-
+class LayeredImageBackground extends Background
+    with HasGameReference<PixelAdventure> {
   AdvancedCamera camera;
   Set<TiledImage> tiledImages;
 
@@ -20,7 +20,12 @@ class LayeredImageBackground extends Background with HasGameReference<PixelAdven
 
   List<Vector2> startPositions;
 
-  LayeredImageBackground(this.tiledImages, this.camera, {this.parallaxFactors, required this.startPositions});
+  LayeredImageBackground(
+    this.tiledImages,
+    this.camera, {
+    this.parallaxFactors,
+    required this.startPositions,
+  });
 
   Paint _paint = Paint();
 
@@ -29,51 +34,56 @@ class LayeredImageBackground extends Background with HasGameReference<PixelAdven
     await super.onLoad();
     priority = -1;
 
-
     for (var tiledImage in tiledImages) {
       if (tiledImage.source != null) {
         int lastSlash = tiledImage.source!.lastIndexOf("/");
-        String newString = tiledImage.source!.substring(lastSlash+1);
+        String newString = tiledImage.source!.substring(lastSlash + 1);
 
         loadedImages.add(await game.images.load("sky/$newString"));
         imagesLoaded = true;
       }
     }
-
   }
 
   @override
   void render(Canvas canvas) {
     if (imagesLoaded) {
-
-
       for (int i = 0; i < loadedImages.length; i++) {
         final loadedImage = loadedImages.elementAt(i);
 
-        Vector2 parralaxFactor = parallaxFactors?.elementAt(i) ?? Vector2.all(1);
+        Vector2 parralaxFactor =
+            parallaxFactors?.elementAt(i) ?? Vector2.all(1);
 
-        final cameraOffset = (startPositions[i] + ((camera.viewfinder.position.clone()..multiply(Vector2.all(1) - parralaxFactor))));
+        final cameraOffset =
+            (startPositions[i] +
+            ((camera.viewfinder.position.clone()
+              ..multiply(Vector2.all(1) - parralaxFactor))));
 
         canvas.drawImage(loadedImage, cameraOffset.toOffset(), _paint);
-        canvas.drawImage(loadedImage, cameraOffset.toOffset() - Offset(loadedImage.size.x-1, 0), _paint);
-        canvas.drawImage(loadedImage, cameraOffset.toOffset() + Offset(loadedImage.size.x-1, 0), _paint);
+        canvas.drawImage(
+          loadedImage,
+          cameraOffset.toOffset() - Offset(loadedImage.size.x - 1, 0),
+          _paint,
+        );
+        canvas.drawImage(
+          loadedImage,
+          cameraOffset.toOffset() + Offset(loadedImage.size.x - 1, 0),
+          _paint,
+        );
       }
-
     }
 
     super.render(canvas);
   }
 
-
-  factory LayeredImageBackground.ofLevel(GameWorld level, AdvancedCamera cam){
-
+  factory LayeredImageBackground.ofLevel(GameWorld level, AdvancedCamera cam) {
     int amountOfBackgroundImages =
         (level.level.tileMap
-            .getLayer("Level")
-            ?.properties
-            .byName["BackgroundImages"]
-            ?.value
-        as int);
+                .getLayer("Level")
+                ?.properties
+                .byName["BackgroundImages"]
+                ?.value
+            as int);
 
     // Lists to store background images and their corresponding parallax factors.
     // Lists (not Sets) are used to preserve the order — each image must match its parallax factor by index.
@@ -88,7 +98,7 @@ class LayeredImageBackground extends Background with HasGameReference<PixelAdven
       // Try to get the image layer from the Tiled map.
       imageLayer = level.level.tileMap.getLayer("background$i") as ImageLayer;
       imageLayer.visible =
-      false; // Disable visibility in the Tiled layer — we’ll render it manually for the parallax effect.
+          false; // Disable visibility in the Tiled layer — we’ll render it manually for the parallax effect.
       images.add(imageLayer.image);
       // Retrieve the custom parallax factor property from the image layer.
       // If not found, default to 0.3.
@@ -103,17 +113,15 @@ class LayeredImageBackground extends Background with HasGameReference<PixelAdven
       );
     }
 
-
     // Add a custom LayeredImageBackground component that will handle rendering
     // parallax background images with different scrolling speeds.
     // Pass in the camera and the start position for background rendering.
 
-
     return LayeredImageBackground(
-        images,
-        cam,
-        parallaxFactors: parralaxFactors,
-        startPositions: startPositions,
-      );
+      images,
+      cam,
+      parallaxFactors: parralaxFactors,
+      startPositions: startPositions,
+    );
   }
 }

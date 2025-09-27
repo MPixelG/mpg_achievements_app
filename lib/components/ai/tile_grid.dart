@@ -17,7 +17,13 @@ class TileGrid extends Component {
 
   ObjectGroup? collisionLayer;
 
-  TileGrid(this.width, this.height, this.tileSize, this.collisionLayer, this.level) {
+  TileGrid(
+    this.width,
+    this.height,
+    this.tileSize,
+    this.collisionLayer,
+    this.level,
+  ) {
     grid = List.generate(
       width,
       (_) => List.filled(height, TileType.air),
@@ -28,13 +34,11 @@ class TileGrid extends Component {
     ); //fills the 2d grid list with false
 
     addCollisions();
-
   }
 
-  void addCollisions(){
+  void addCollisions() {
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
-
         grid[x][y] = getTileTypeAt(
           toWorldPos(Vector3(x.toDouble(), y.toDouble(), 0)),
         );
@@ -77,26 +81,40 @@ class TileGrid extends Component {
     renderDebugTiles(canvas);
     super.render(canvas);
   }
-  
-  void renderDebugTiles(Canvas canvas){
 
+  void renderDebugTiles(Canvas canvas) {
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
         TileType val = grid[x][y];
-        if(val != TileType.air) {
-          canvas.drawRect(Rect.fromPoints(
-              (Vector2(x.toDouble(), y.toDouble())..multiply(tileSize)).toOffset(),
-              (Vector2(x.toDouble(), y.toDouble())..multiply(tileSize)).toOffset() +
-                  Offset(tileSize.x - 2, tileSize.y - 2)), Paint()
-            ..color = Colors.green);
+        if (val != TileType.air) {
+          canvas.drawRect(
+            Rect.fromPoints(
+              (Vector2(
+                x.toDouble(),
+                y.toDouble(),
+              )..multiply(tileSize)).toOffset(),
+              (Vector2(
+                    x.toDouble(),
+                    y.toDouble(),
+                  )..multiply(tileSize)).toOffset() +
+                  Offset(tileSize.x - 2, tileSize.y - 2),
+            ),
+            Paint()..color = Colors.green,
+          );
         }
 
         bool highlighted = highlightedSpots[x][y];
         if (highlighted) {
           canvas.drawRect(
             Rect.fromPoints(
-              (Vector2(x.toDouble(), y.toDouble())..multiply(tileSize)).toOffset(),
-              (Vector2(x.toDouble(), y.toDouble())..multiply(tileSize)).toOffset() +
+              (Vector2(
+                x.toDouble(),
+                y.toDouble(),
+              )..multiply(tileSize)).toOffset(),
+              (Vector2(
+                    x.toDouble(),
+                    y.toDouble(),
+                  )..multiply(tileSize)).toOffset() +
                   Offset(tileSize.x - 2, tileSize.y - 2),
             ),
             Paint()..color = Colors.red,
@@ -106,15 +124,10 @@ class TileGrid extends Component {
     }
   }
 
-
-
-
-
   TileType getTileTypeAt(Vector2 worldPos) {
     if (collisionLayer == null) return TileType.air;
 
     for (final obj in collisionLayer!.objects) {
-
       final rect = Rect.fromLTWH(obj.x, obj.y, obj.width, obj.height);
       if (rect.contains(
         worldPos.toOffset() + Offset(tileSize.x / 2, tileSize.y / 2),

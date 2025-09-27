@@ -1,9 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/ai/goals/goal_manager.dart';
 
-abstract class Goal extends Component{
-
-
+abstract class Goal extends Component {
   double goalPriority;
   bool Function(GoalAttributes attributes) prequisite;
   bool repeat;
@@ -11,7 +9,6 @@ abstract class Goal extends Component{
   GoalAttributes? attributes;
 
   bool _done = false;
-
 
   Goal(this.prequisite, this.goalPriority, [this.repeat = true]);
 

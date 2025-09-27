@@ -17,14 +17,12 @@ import 'tile_effects/highlighted_tile.dart';
 
 class TileSelectionResult {
   final Vector3 gridPosition;
-  final Gid tileGid;// The Gid object from Tiled, which contains the tile ID
+  final Gid tileGid; // The Gid object from Tiled, which contains the tile ID
 
   TileSelectionResult(this.gridPosition, this.tileGid);
 }
 
-
 class IsometricWorld extends GameWorld {
-
   late IsometricTileGrid tileGrid;
   Vector2? selectedTile;
   TileHighlightRenderable? highlightedTile;
@@ -34,8 +32,8 @@ class IsometricWorld extends GameWorld {
 
   @override
   Future<void> onLoad() async {
-   // Initialize the player as an IsometricPlayer
-   player = IsometricPlayer(playerCharacter: 'Pink Man');
+    // Initialize the player as an IsometricPlayer
+    player = IsometricPlayer(playerCharacter: 'Pink Man');
 
     await super.onLoad();
     //find the collision layer
@@ -43,24 +41,28 @@ class IsometricWorld extends GameWorld {
     tileGrid = IsometricTileGrid(
       level.tileMap.map.width,
       level.tileMap.map.height,
-      tilesize.xy,//setting the tile size to match the isometric tile dimensions
+      tilesize
+          .xy, //setting the tile size to match the isometric tile dimensions
       collisionLayer,
       this,
     );
   }
 
   @override
-  Future<TiledComponent> createTiledLevel(String filename, Vector2 destTilesize) async{
-    return IsometricTiledComponent((await TiledComponent.load(filename, destTilesize)).tileMap);
+  Future<TiledComponent> createTiledLevel(
+    String filename,
+    Vector2 destTilesize,
+  ) async {
+    return IsometricTiledComponent(
+      (await TiledComponent.load(filename, destTilesize)).tileMap,
+    );
   }
-
 
   @override
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
 
     removeWhere((component) => component is TileHighlightRenderable);
-
 
     // Convert the tap position from screen space to world space.
     final screenPositionTap = event.localPosition;
@@ -90,8 +92,9 @@ class IsometricWorld extends GameWorld {
 
       add(highlightedTile);
 
-      print("Selected tile at ${selectionResult
-          .gridPosition.xy} on layer ${selectionResult.gridPosition.z}");
+      print(
+        "Selected tile at ${selectionResult.gridPosition.xy} on layer ${selectionResult.gridPosition.z}",
+      );
     } else {
       // No tile was found at this position (clicked on empty space).
       highlightedTile = null;
@@ -105,13 +108,20 @@ class IsometricWorld extends GameWorld {
     assert(CameraComponent.currentCamera != null);
     super.renderTree(canvas);
 
-    if(level is! IsometricTiledComponent) return;
+    if (level is! IsometricTiledComponent) return;
 
-    for (final child in children.where((element) => element is! IsometricRenderable && element != level)) {
+    for (final child in children.where(
+      (element) => element is! IsometricRenderable && element != level,
+    )) {
       child.renderTree(canvas);
     }
 
-    (level as IsometricTiledComponent).renderComponentsInTree(canvas, children.whereType<IsometricRenderable>(), CameraComponent.currentCamera!.viewfinder.position, CameraComponent.currentCamera!.viewport.size);
+    (level as IsometricTiledComponent).renderComponentsInTree(
+      canvas,
+      children.whereType<IsometricRenderable>(),
+      CameraComponent.currentCamera!.viewfinder.position,
+      CameraComponent.currentCamera!.viewport.size,
+    );
   }
 
   @override
@@ -124,14 +134,19 @@ class IsometricWorld extends GameWorld {
     // Check boundaries of the tile data if outside return true for collision
 
     for (var value in layer.objects) {
-      assert(value.isRectangle, 'Only rectangle objects are supported in the Collisions layer.');
+      assert(
+        value.isRectangle,
+        'Only rectangle objects are supported in the Collisions layer.',
+      );
 
       Vector2 gridObjectPos = toGridPos(value.position);
 
-      if(Rect.fromPoints(gridObjectPos.toOffset(), gridObjectPos.toOffset() + (value.size..divide(tilesize.xz)).toOffset()).contains(gridPos.toOffset())){
+      if (Rect.fromPoints(
+        gridObjectPos.toOffset(),
+        gridObjectPos.toOffset() + (value.size..divide(tilesize.xz)).toOffset(),
+      ).contains(gridPos.toOffset())) {
         return true;
       }
-
     }
     return false;
   }
@@ -151,14 +166,16 @@ class IsometricWorld extends GameWorld {
       if (layer is TileLayer) {
         // Make sure the coordinates are within the bounds of this layer.
         if (x >= 0 && x < layer.width && y >= 0 && y < layer.height) {
-
           // Tiled stores tile data in [row][column] format, so we use [y][x].
           final gid = layer.tileData![y][x];
 
           // A GID of 0 means the tile is empty. If it's not empty, we've found our target! that means the first tile we find in the top-most layer is our tile that we look for
           if (gid.tile != 0) {
             // Success! Return all the info about the tile we found.
-            return TileSelectionResult(Vector3(gridPos.x, gridPos.y, i.toDouble()), gid);
+            return TileSelectionResult(
+              Vector3(gridPos.x, gridPos.y, i.toDouble()),
+              gid,
+            );
           }
         }
       }
@@ -167,5 +184,4 @@ class IsometricWorld extends GameWorld {
     // If we looped through all layers and found nothing, return null.
     return null;
   }
-
 }

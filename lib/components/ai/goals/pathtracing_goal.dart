@@ -9,15 +9,14 @@ import '../../entity/player.dart';
 import '../../physics/collisions.dart';
 import '../../physics/movement.dart';
 
-class PathtracingGoal extends Goal{
-
-
+class PathtracingGoal extends Goal {
   BasicMovement get movement => parent!.parent as BasicMovement;
-  PixelAdventure get game => (parent!.parent as HasGameReference<PixelAdventure>).game;
+  PixelAdventure get game =>
+      (parent!.parent as HasGameReference<PixelAdventure>).game;
   Vector2 get center => (parent!.parent as PositionComponent).center;
-  Vector2 get absolutePosition => (parent!.parent as PositionComponent).absolutePosition;
+  Vector2 get absolutePosition =>
+      (parent!.parent as PositionComponent).absolutePosition;
   ShapeHitbox? get hitbox => (parent!.parent as HasCollisions).hitbox;
-
 
   double time = 0;
   double timeSinceLastUpdate = 1;
@@ -34,10 +33,8 @@ class PathtracingGoal extends Goal{
 
   PathtracingGoal(super.prequisite, super.goalPriority);
 
-
-
   @override
-  void updateGoal(double dt){
+  void updateGoal(double dt) {
     time += dt; //increase the timers
     timeSinceLastUpdate += dt;
 
@@ -61,14 +58,10 @@ class PathtracingGoal extends Goal{
       out: results,
       ignoreHitboxes: [?hitbox],
       hitboxFilter: (candidate) {
-
-
-        if(candidate.parent is CollisionBlock){
+        if (candidate.parent is CollisionBlock) {
           return !(candidate.parent as CollisionBlock).isLadder;
         }
         return candidate.parent is Player;
-
-
       },
     );
 
@@ -77,27 +70,32 @@ class PathtracingGoal extends Goal{
       timeSinceLastUpdate = 0; //reset the timer
     }
 
-
     double shortestPlayerDistance = double.infinity;
     Vector2? shortestPlayerDistancePos;
 
     for (var element in results) {
-      if(element.hitbox != null && element.hitbox!.parent is Player){
-        if(element.intersectionPoint!.distanceTo(rayOriginPoint) < shortestPlayerDistance) {shortestPlayerDistance = element.intersectionPoint!.distanceTo(rayOriginPoint); shortestPlayerDistancePos = element.intersectionPoint!;}
+      if (element.hitbox != null && element.hitbox!.parent is Player) {
+        if (element.intersectionPoint!.distanceTo(rayOriginPoint) <
+            shortestPlayerDistance) {
+          shortestPlayerDistance = element.intersectionPoint!.distanceTo(
+            rayOriginPoint,
+          );
+          shortestPlayerDistancePos = element.intersectionPoint!;
+        }
         continue;
       }
     }
 
-
     attributes!.attributes["playerPositions"] = results;
-    if(shortestPlayerDistancePos != null) attributes!.attributes["nearestPlayerPosition"] = shortestPlayerDistancePos;
+    if (shortestPlayerDistancePos != null)
+      attributes!.attributes["nearestPlayerPosition"] =
+          shortestPlayerDistancePos;
   }
 
-
   bool checkIntersectionChange<T>(
-      List<RaycastResult> currentRayIntersections,
-      List<RaycastResult> lastRayIntersections,) {
-
+    List<RaycastResult> currentRayIntersections,
+    List<RaycastResult> lastRayIntersections,
+  ) {
     if (currentRayIntersections.length != lastRayIntersections.length) {
       return false; //if the lists dont have the same length, they cant be equal
     }
@@ -145,5 +143,4 @@ class PathtracingGoal extends Goal{
 
     return parent;
   }
-
 }

@@ -9,4 +9,6 @@ interface class GameSprite {
 
   GameSprite(this.albedo, [this.normalAndDepth]);
 }
-Image get noTextureImage => Flame.images.fromCache("Pixel_ArtTop_Down/noTextureBlock.png");
+
+Image get noTextureImage =>
+    Flame.images.fromCache("Pixel_ArtTop_Down/noTextureBlock.png");

@@ -12,12 +12,16 @@ import '../util/isometric_utils.dart';
 import 'collision_block.dart';
 import 'movement.dart';
 
-
 enum ViewSide { topDown, side, isometric }
 
 /// Mixin for adding collision detection behavior to a component.
 /// Requires implementing methods to provide hitbox, position, velocity, etc
-mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<PixelAdventure>, BasicMovement {
+mixin HasCollisions
+    on
+        GameCharacter,
+        CollisionCallbacks,
+        HasGameReference<PixelAdventure>,
+        BasicMovement {
   ShapeHitbox? getHitbox();
 
   Vector2 getScale();
@@ -37,17 +41,11 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
   ShapeHitbox? hitbox;
   @override
   FutureOr<void> onLoad() {
-    if(viewSide == ViewSide.isometric) {
-      hitbox = IsometricHitbox(
-          Vector2.all(1),
-          Vector2.zero(),
-      );
+    if (viewSide == ViewSide.isometric) {
+      hitbox = IsometricHitbox(Vector2.all(1), Vector2.zero());
       hitbox!.position = Vector2(0, 16);
     } else {
-      hitbox = RectangleHitbox(
-        size: Vector2(20, 26),
-        position: Vector2(6, 4)
-      );
+      hitbox = RectangleHitbox(size: Vector2(20, 26), position: Vector2(6, 4));
     }
 
     add(hitbox!);
@@ -56,7 +54,9 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if(viewSide != ViewSide.side && other is CollisionBlock && !_debugNoClipMode) {
+    if (viewSide != ViewSide.side &&
+        other is CollisionBlock &&
+        !_debugNoClipMode) {
       velocity = Vector2.zero();
       gridPos = lastSafePosition;
       return;
@@ -71,9 +71,9 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
   // Called when the collision with another object ends
   @override
   void onCollisionEnd(PositionComponent other) {
-    if(viewSide == ViewSide.side){
-
-      Future.delayed((Duration(milliseconds: 100)), () { //reset isOnGround after a short delay so that its a bit more forgiving when jumping from edges (lol)
+    if (viewSide == ViewSide.side) {
+      Future.delayed((Duration(milliseconds: 100)), () {
+        //reset isOnGround after a short delay so that its a bit more forgiving when jumping from edges (lol)
         if (!activeCollisions.any((element) => element is CollisionBlock)) {
           isOnGround = false;
         }
@@ -101,8 +101,8 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
 
     Vector2 posDiff =
         hitbox!.absolutePosition -
-            other
-                .absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
+        other
+            .absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
 
     //if the player faces in the other direction, we want to measure the distances from the other side of the hitbox. so we just add the width of it to the value.
     if (scale.x < 0) {
@@ -139,7 +139,8 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
       position.x -= distanceLeft;
       velocity.x = 0;
     } //make sure the block isn't a platform, so that you can go through it horizontally
-    else if (smallestDistance == distanceRight && other.hasHorizontalCollision) {
+    else if (smallestDistance == distanceRight &&
+        other.hasHorizontalCollision) {
       position.x += distanceRight;
       velocity.x = 0;
     }
@@ -147,7 +148,7 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
   }
 
   //TODO FIX
-  void checkCollisionIsometric(CollisionBlock other){
+  void checkCollisionIsometric(CollisionBlock other) {
     hitbox!.aabb.intersectsWithAabb2(other.hitbox.aabb);
 
     Vector2 gridPos = toGridPos(position);
@@ -164,22 +165,28 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
     final double distanceRight = (other.width / 32) - posDiff.x;
     final double distanceDown = (other.height / 32) - posDiff.y;
 
-    double smallestDistance = min(min(distanceUp, distanceLeft), min(distanceRight, distanceDown));
+    double smallestDistance = min(
+      min(distanceUp, distanceLeft),
+      min(distanceRight, distanceDown),
+    );
 
     Vector2 newGridPos = gridPos;
-    if(smallestDistance == distanceUp){
+    if (smallestDistance == distanceUp) {
       print("up");
       newGridPos.x -= 0.1;
       velocity.x = 0;
-    }if(smallestDistance == distanceLeft){
+    }
+    if (smallestDistance == distanceLeft) {
       print("left");
       newGridPos.y += 0.1;
       velocity.y = 0;
-    }if(smallestDistance == distanceRight){
+    }
+    if (smallestDistance == distanceRight) {
       print("right");
       newGridPos.x += 0.1;
       velocity.x = 0;
-    }if(smallestDistance == distanceDown){
+    }
+    if (smallestDistance == distanceDown) {
       print("down");
       newGridPos.y -= 0.1;
       velocity.y = 0;
@@ -191,17 +198,20 @@ mixin HasCollisions on GameCharacter, CollisionCallbacks, HasGameReference<Pixel
   Vector2 lastSafePosition = Vector2.zero();
   @override
   void update(double dt) {
-    if (viewSide != ViewSide.isometric || _debugNoClipMode) return super.update(dt);
+    if (viewSide != ViewSide.isometric || _debugNoClipMode)
+      return super.update(dt);
 
-    if(!game.gameWorld.checkCollisionAt(gridPos.clone()..floor())){
+    if (!game.gameWorld.checkCollisionAt(gridPos.clone()..floor())) {
       lastSafePosition = gridPos;
-    } else {
-    }
+    } else {}
     super.update(dt);
   }
 
   bool isHitboxInside(Hitbox? hitboxA, Hitbox? hitboxB) {
-    if(hitboxB == null || hitboxA == null) return false;
-    return hitboxB.aabb.toRect().translate(0.8, 0.8).overlaps(hitboxA.aabb.toRect());
+    if (hitboxB == null || hitboxA == null) return false;
+    return hitboxB.aabb
+        .toRect()
+        .translate(0.8, 0.8)
+        .overlaps(hitboxA.aabb.toRect());
   }
 }

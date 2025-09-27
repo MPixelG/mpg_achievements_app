@@ -17,7 +17,7 @@ class NinePatchButton extends StatefulWidget {
     required this.onPressed,
     this.child,
     String textureName = "button_0",
-  }){
+  }) {
     painter = NinePatchPainter(NinePatchTexture.loadFromCache(textureName));
   }
 
@@ -34,10 +34,8 @@ class _NinePatchButtonState extends State<NinePatchButton> {
         painter: widget.painter,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Center(
-            child: widget.child
-          ),
-        )
+          child: Center(child: widget.child),
+        ),
       ),
     );
   }

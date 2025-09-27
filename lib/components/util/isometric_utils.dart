@@ -20,11 +20,11 @@ Vector2 toWorldPos(Vector3 gridPos, [double? levelWidth]) {
 
 Vector2 toGridPos(Vector2 worldPos, [double? levelWidth]) {
   return worldToTileIsometric(
-    worldPos -
-        Vector2((levelWidth ?? Chunk.worldSize.x) / 2, 0)
-  ) +
+        worldPos - Vector2((levelWidth ?? Chunk.worldSize.x) / 2, 0),
+      ) +
       Vector2(1, 1);
 }
+
 // Convert world position to isometric tile coordinates used in toGridPos
 Vector2 worldToTileIsometric(Vector2 worldPos) {
   final tileX =

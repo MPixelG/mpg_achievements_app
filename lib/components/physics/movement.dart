@@ -18,7 +18,8 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
 
   double horizontalMovement = 0; // Directional input (left/right)
   double verticalMovement = 0; // Directional input (up/down)
-  double zMovement = 0; // Directional input (up/down) for z axis for isometric view
+  double zMovement =
+      0; // Directional input (up/down) for z axis for isometric view
   Vector2 velocity = Vector2.zero();
 
   double zVelocity = 0.0;
@@ -144,7 +145,7 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
     //access the player's ground level
     final player = this as Player;
     final currentZGround = player.zGround;
-    if(player.zGround == null || player.zPosition == null) return;
+    if (player.zGround == null || player.zPosition == null) return;
 
     // Apply gravity to Z velocity
     zVelocity += _gravity * dt;

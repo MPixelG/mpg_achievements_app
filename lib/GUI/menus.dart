@@ -44,15 +44,17 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       // Add a small delay to ensure the widget tree is fully built
       await Future.delayed(const Duration(milliseconds: 100));
 
-      final widget = await WidgetJsonUtils.importScreen("test", context: context);
+      final widget = await WidgetJsonUtils.importScreen(
+        "test",
+        context: context,
+      );
 
       setState(() {
         loadedWidget = widget;
         isLoading = false;
       });
-
     } catch (e, stackTrace) {
-      if(kDebugMode) {
+      if (kDebugMode) {
         print("Error loading screen: $e");
         print("Stack trace: $stackTrace");
       }
@@ -112,10 +114,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadScreen,
-              child: Text("Retry"),
-            ),
+            ElevatedButton(onPressed: _loadScreen, child: Text("Retry")),
           ],
         ),
       );
@@ -123,13 +122,9 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
 
     if (loadedWidget == null) {
       return const Center(
-        child: Text(
-          "No widget loaded",
-          style: TextStyle(color: Colors.white),
-        ),
+        child: Text("No widget loaded", style: TextStyle(color: Colors.white)),
       );
     }
-
 
     try {
       return SizedBox(
@@ -156,10 +151,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
 class GameScreen extends StatelessWidget {
   final PixelAdventure game;
 
-
-
   const GameScreen({super.key, required this.game});
-
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +161,10 @@ class GameScreen extends StatelessWidget {
       overlayBuilderMap: {
         'TextOverlay': (BuildContext context, PixelAdventure game) {
           return TextOverlay(
-            game: game, onTextOverlayDone: () {game.overlays.remove("TextOverlay");},
+            game: game,
+            onTextOverlayDone: () {
+              game.overlays.remove("TextOverlay");
+            },
           );
         },
         'DialogueScreen': (BuildContext context, PixelAdventure game) {

@@ -8,15 +8,14 @@ import '../../mpg_pixel_adventure.dart';
 import '../level/isometric/isometric_tiled_component.dart';
 import '../util/isometric_utils.dart';
 
-class IsometricPlayer extends Player with IsometricRenderable{
-  IsometricPlayer({required super.playerCharacter}){
+class IsometricPlayer extends Player with IsometricRenderable {
+  IsometricPlayer({required super.playerCharacter}) {
     setCustomAnimationName("falling", "running");
     setCustomAnimationName("jumping", "running");
   }
 
   @override
-  Vector2 get gridPos =>
-      worldToTileIsometric(absoluteCenter);
+  Vector2 get gridPos => worldToTileIsometric(absoluteCenter);
 
   @override
   set gridPos(Vector2 newGridPos) {
@@ -24,8 +23,10 @@ class IsometricPlayer extends Player with IsometricRenderable{
   }
 
   Vector2 worldToTileIsometric(Vector2 worldPos) {
-    final tileX = (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.z / 2)) / 2;
-    final tileY = (worldPos.y / (tilesize.z / 2) - worldPos.x / (tilesize.x / 2)) / 2;
+    final tileX =
+        (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.z / 2)) / 2;
+    final tileY =
+        (worldPos.y / (tilesize.z / 2) - worldPos.x / (tilesize.x / 2)) / 2;
 
     return Vector2(tileX, tileY);
   }
@@ -40,7 +41,7 @@ class IsometricPlayer extends Player with IsometricRenderable{
   @override
   Vector3 get gridFeetPos {
     Vector2 xYGridPos;
-    if(hitbox != null) {
+    if (hitbox != null) {
       xYGridPos = toGridPos(absoluteCenter) - Vector2(1, 1);
     } else {
       xYGridPos = toGridPos(absoluteCenter);
@@ -59,5 +60,6 @@ class IsometricPlayer extends Player with IsometricRenderable{
     renderTree(canvas);
   };
   @override
-  void Function(Canvas canvas, Paint? overridePaint) get renderNormal => (Canvas canvas, Paint? overridePaint) {};
+  void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
+      (Canvas canvas, Paint? overridePaint) {};
 }

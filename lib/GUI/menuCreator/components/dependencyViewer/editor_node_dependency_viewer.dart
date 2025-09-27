@@ -7,7 +7,8 @@ import 'layout_widget.dart';
 class NodeViewer extends StatefulWidget {
   // a widget to view and manage a tree of LayoutWidgets
   final LayoutWidget root; // the root node of the tree to display
-  final void Function()? updateViewport; // a function to update the viewport, not used in this widget but can be used to refresh the view of the parent
+  final void Function()?
+  updateViewport; // a function to update the viewport, not used in this widget but can be used to refresh the view of the parent
 
   late final List<LayoutWidget> _currentSelectedWidget;
 
@@ -18,11 +19,13 @@ class NodeViewer extends StatefulWidget {
     super.key,
     this.updateViewport,
     required this.updateWithNewSelectedWidget,
-  }) { //default constructor with an optional root node
+  }) {
+    //default constructor with an optional root node
     _currentSelectedWidget = [root];
   }
 
-  LayoutWidget get currentSelectedWidget => _currentSelectedWidget.firstOrNull ?? root;
+  LayoutWidget get currentSelectedWidget =>
+      _currentSelectedWidget.firstOrNull ?? root;
   set currentSelectedWidget(LayoutWidget newVal) {
     _currentSelectedWidget[0] = newVal;
     updateViewport!();
@@ -42,10 +45,10 @@ class NodeViewerState extends State<NodeViewer> {
     super.initState();
   }
 
-
   void _handleReorder(LayoutWidget dragged, LayoutWidget target) {
     //handle the reordering of nodes when a widget is dragged and dropped onto another
-    if (dragged == target || //if the dragged widget is the same as the target, do nothing
+    if (dragged ==
+            target || //if the dragged widget is the same as the target, do nothing
         isDescendant(dragged, target)) {
       //if the dragged widget is a descendant (a child / grand child / ...) of the target, do nothing
       return;
@@ -62,7 +65,8 @@ class NodeViewerState extends State<NodeViewer> {
 
     if (widget.updateViewport != null) {
       //if there is a function to update the viewport, call it
-      widget.updateViewport!(); //this is used to refresh the view of the parent widget
+      widget
+          .updateViewport!(); //this is used to refresh the view of the parent widget
     }
   }
 
@@ -86,19 +90,19 @@ class NodeViewerState extends State<NodeViewer> {
 
   LayoutWidget? selectedNode;
 
-  void updateSelectedNode(LayoutWidget node){
+  void updateSelectedNode(LayoutWidget node) {
     setState(() {
-
-      if(DisplayNode.widgetToDropOff != null){
-
-        if((DisplayNode.widgetToDropOff != null && DisplayNode.widgetToDropOff!.canDropOn(node) && node.canAddChild)) {
+      if (DisplayNode.widgetToDropOff != null) {
+        if ((DisplayNode.widgetToDropOff != null &&
+            DisplayNode.widgetToDropOff!.canDropOn(node) &&
+            node.canAddChild)) {
           node.addChild(DisplayNode.widgetToDropOff!);
 
           widget.updateViewport!();
 
           DisplayNode.widgetToDropOff = null;
         }
-      }else {
+      } else {
         selectedNode = node;
         widget._currentSelectedWidget[0] = node;
         widget.updateWithNewSelectedWidget(node);
@@ -147,8 +151,7 @@ class NodeViewerState extends State<NodeViewer> {
 
       body: InteractiveViewer(
         //allows us to zoom and move the content
-        constrained:
-            false, //we dont want to constrain the size of the content
+        constrained: false, //we dont want to constrain the size of the content
         boundaryMargin: const EdgeInsets.all(
           60,
         ), //the margin around the content so that we can scroll a bit outside the content
@@ -168,13 +171,16 @@ class NodeViewerState extends State<NodeViewer> {
               ),
               child: DisplayNode(
                 //the actual display node. it also displays all the children recursively
-                node: widget.root, //the root widget is the node we want to display
-                onReorder: _handleReorder, //the function to handle reordering of nodes when they are dragged and dropped onto each other
+                node: widget
+                    .root, //the root widget is the node we want to display
+                onReorder:
+                    _handleReorder, //the function to handle reordering of nodes when they are dragged and dropped onto each other
                 updateViewport: () {
                   widget.updateViewport!();
                   setState(() {});
                 }, //the function to update the viewport, not used in this widget but can be used to refresh the view of the parent
-                onClickOnNode: updateSelectedNode, getSelectedNode: () => selectedNode,
+                onClickOnNode: updateSelectedNode,
+                getSelectedNode: () => selectedNode,
               ),
             ),
           ),
@@ -183,4 +189,3 @@ class NodeViewerState extends State<NodeViewer> {
     );
   }
 }
-

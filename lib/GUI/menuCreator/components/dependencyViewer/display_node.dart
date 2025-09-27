@@ -26,24 +26,24 @@ class DisplayNode extends StatefulWidget {
     required this.getSelectedNode,
   });
 
-
   @override
   State<StatefulWidget> createState() => _DisplayNodeState();
 }
 
 class _DisplayNodeState extends State<DisplayNode> {
-
-  static bool hasTapped = false; //a static variable to check if a menu is currently shown
-
+  static bool hasTapped =
+      false; //a static variable to check if a menu is currently shown
 
   @override
   Widget build(BuildContext context) {
     LayoutWidget node = widget.node;
 
     //build the widget tree for the DisplayNode and its children
-    final children = widget.node.children; //get the children of the node to display
+    final children =
+        widget.node.children; //get the children of the node to display
 
-    List<Widget> displayedChildren = []; //a list to hold the widgets that will be displayed as children
+    List<Widget> displayedChildren =
+        []; //a list to hold the widgets that will be displayed as children
     for (int i = 0; i < children.length; i++) {
       //iterate over them
 
@@ -55,18 +55,20 @@ class _DisplayNodeState extends State<DisplayNode> {
           onReorder: widget.onReorder, //and the function to reorder them
           key: ValueKey(children[i].id), //and a key to identify it
           updateViewport:
-          widget.updateViewport, //and the function to update the viewport
-          onClickOnNode: widget.onClickOnNode, getSelectedNode: widget.getSelectedNode,
+              widget.updateViewport, //and the function to update the viewport
+          onClickOnNode: widget.onClickOnNode,
+          getSelectedNode: widget.getSelectedNode,
         ),
       );
     }
 
     bool canMoveUp =
-        (node.parent?.children.indexOf(node) ?? 0) > 0; //check if the node can be moved up (if its not the first child)
+        (node.parent?.children.indexOf(node) ?? 0) >
+        0; //check if the node can be moved up (if its not the first child)
     bool canMoveDown =
         (node.parent?.children.indexOf(node) ?? 0) <
-            (node.parent?.children.length ?? 0) -
-                1; //check if the node can be moved down (if its not the last child)
+        (node.parent?.children.length ?? 0) -
+            1; //check if the node can be moved down (if its not the last child)
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -74,14 +76,14 @@ class _DisplayNodeState extends State<DisplayNode> {
         if (!hasTapped) {
           //if no menu is currently shown, we show the context menu. we need to do this to prevent multiple menus from parents of this widgets from being shown at the same time
           hasTapped =
-          true; //set the static variable to true to indicate that a menu is shown
+              true; //set the static variable to true to indicate that a menu is shown
           _showContextMenu(
             context,
             details,
           ); //show the context menu at the position of the tap
           Future.delayed(
             Duration(milliseconds: 10),
-                () => hasTapped = false,
+            () => hasTapped = false,
           ); // reset the static variable after a short delay to allow the menu to be shown again
         }
       },
@@ -90,7 +92,8 @@ class _DisplayNodeState extends State<DisplayNode> {
         if (hasTapped) {
           return; //if there has been tapped before, we dont want to do anything
         }
-        hasTapped = true; //set the static variable to true to indicate that a menu is shown
+        hasTapped =
+            true; //set the static variable to true to indicate that a menu is shown
 
         Future.delayed(Duration(milliseconds: 10), () => hasTapped = false);
 
@@ -100,8 +103,7 @@ class _DisplayNodeState extends State<DisplayNode> {
           return;
         }
 
-        double secondButtonX =
-            16 * 3; //the position of the second button
+        double secondButtonX = 16 * 3; //the position of the second button
 
         if ((buttonX - details.localPosition.dx).abs() <
             (secondButtonX - details.localPosition.dx).abs()) {
@@ -111,7 +113,7 @@ class _DisplayNodeState extends State<DisplayNode> {
             widget.updateViewport(); //and update the viewport
           }
         } //if the tap is closer to the first button, we press the first one
-        else if (details.localPosition.dx < 16*3) {
+        else if (details.localPosition.dx < 16 * 3) {
           if (canMoveDown) {
             node.moveDown(); //if the tap is closer to the second button and the node can be moved down, we move the node down
             widget.updateViewport();
@@ -206,24 +208,31 @@ class _DisplayNodeState extends State<DisplayNode> {
   }
 
   Widget _buildNodeContent(
-      //a helper function to build the content of the DisplayNode
-      BuildContext context, //the context of the widget
-      bool isHovering, //if the DisplayNode is currently being hovered over
-      List<Widget>
-      displayedChildren, //the list of widgets that are the children of the node
-      ) {
-
+    //a helper function to build the content of the DisplayNode
+    BuildContext context, //the context of the widget
+    bool isHovering, //if the DisplayNode is currently being hovered over
+    List<Widget>
+    displayedChildren, //the list of widgets that are the children of the node
+  ) {
     LayoutWidget node = widget.node;
 
-    Color containerColor = isHovering || (DisplayNode.widgetToDropOff != null && DisplayNode.widgetToDropOff!.canDropOn(node) && node.canAddChild)
+    Color containerColor =
+        isHovering ||
+            (DisplayNode.widgetToDropOff != null &&
+                DisplayNode.widgetToDropOff!.canDropOn(node) &&
+                node.canAddChild)
         ? Colors.green.shade50
-        : widget.getSelectedNode() == node ? Colors.blue.shade300 : Colors.grey.shade100;
-
+        : widget.getSelectedNode() == node
+        ? Colors.blue.shade300
+        : Colors.grey.shade100;
 
     BoxBorder boxBorder =
-    isHovering || (DisplayNode.widgetToDropOff != null && DisplayNode.widgetToDropOff!.canDropOn(node) && node.canAddChild) //if the DisplayNode is being hovered over, we use a green border, otherwise we use a light grey border
-          ? Border.all(color: Colors.green, width: 2) // a green border
-          : Border.all(
+        isHovering ||
+            (DisplayNode.widgetToDropOff != null &&
+                DisplayNode.widgetToDropOff!.canDropOn(node) &&
+                node.canAddChild) //if the DisplayNode is being hovered over, we use a green border, otherwise we use a light grey border
+        ? Border.all(color: Colors.green, width: 2) // a green border
+        : Border.all(
             color: Colors.grey.shade300, // a light grey border
             width: 1,
           );
@@ -232,7 +241,8 @@ class _DisplayNodeState extends State<DisplayNode> {
       //the container that holds the content of the DisplayNode
       decoration: BoxDecoration(
         //the decoration of the container
-        color: Colors.white, //if the DisplayNode is being hovered over, we use a light green background color, otherwise we use white
+        color: Colors
+            .white, //if the DisplayNode is being hovered over, we use a light green background color, otherwise we use white
         border: boxBorder,
         borderRadius: BorderRadius.circular(2), //with a border radius of 8
       ),
@@ -240,7 +250,8 @@ class _DisplayNodeState extends State<DisplayNode> {
         //the content of the DisplayNode should have an intrinsic width (a width that is determined by the content)
         child: Column(
           //the content is a column
-          crossAxisAlignment: CrossAxisAlignment.start, //with the children aligned to the start (left side)
+          crossAxisAlignment: CrossAxisAlignment
+              .start, //with the children aligned to the start (left side)
           mainAxisSize: MainAxisSize.min, //it takes as little space as needed
           children: [
             //the children of the column are the content of the DisplayNode
@@ -260,7 +271,7 @@ class _DisplayNodeState extends State<DisplayNode> {
               child: Row(
                 //the content of the container is a row
                 mainAxisSize:
-                MainAxisSize.min, //it takes as little space as needed
+                    MainAxisSize.min, //it takes as little space as needed
                 children: [
                   //the children of the row are the icon and the id of the node
                   Icon(
@@ -274,8 +285,8 @@ class _DisplayNodeState extends State<DisplayNode> {
                     Icons.keyboard_arrow_down,
                     size: 16,
                     color:
-                    (node.parent?.children.indexOf(node) ?? 0) <
-                        (node.parent?.children.length ?? 0) - 1
+                        (node.parent?.children.indexOf(node) ?? 0) <
+                            (node.parent?.children.length ?? 0) - 1
                         ? Colors.blue.shade700
                         : Colors.grey.shade400,
                   ),
@@ -289,7 +300,7 @@ class _DisplayNodeState extends State<DisplayNode> {
                       //the style of the text
                       fontSize: 14, //the font size is 14
                       fontWeight:
-                      FontWeight.w600, //the font weight is semi-bold
+                          FontWeight.w600, //the font weight is semi-bold
                       color: Colors
                           .blue
                           .shade800, //the text color is a darker blue
@@ -310,7 +321,7 @@ class _DisplayNodeState extends State<DisplayNode> {
                   crossAxisAlignment: CrossAxisAlignment
                       .start, //the children are aligned to the start (left side)
                   children:
-                  displayedChildren, //the children are the widgets we created earlier
+                      displayedChildren, //the children are the widgets we created earlier
                 ),
               ),
             ],
@@ -320,14 +331,12 @@ class _DisplayNodeState extends State<DisplayNode> {
     );
   }
 
-
   void _showContextMenu(BuildContext context, TapDownDetails details) {
-
     LayoutWidget node = widget.node;
 
     //a function to show a context menu when the user right clicks on the DisplayNode
     hasTapped =
-    true; //set the static variable to true to indicate that a menu is shown
+        true; //set the static variable to true to indicate that a menu is shown
     showMenu(
       //show a menu with options
       context: context, //the context of the widget
@@ -367,14 +376,14 @@ class _DisplayNodeState extends State<DisplayNode> {
                 node.children,
               ); //add the children of the node to the parent
               node.removeFromParent(node); //remove the node from its parent
-              widget.updateViewport(); //update the viewport to reflect the changes
+              widget
+                  .updateViewport(); //update the viewport to reflect the changes
             }
           },
         ),
       ],
     );
   }
-
 
   void showPropertiesEditor(BuildContext context) {
     //a function to show the properties editor for the node
@@ -383,7 +392,10 @@ class _DisplayNodeState extends State<DisplayNode> {
       context: context,
       barrierDismissible: true,
       builder: (context) {
-        return OptionEditorMenu(node: widget.node, updateView: () => widget.updateViewport());
+        return OptionEditorMenu(
+          node: widget.node,
+          updateView: () => widget.updateViewport(),
+        );
       },
     );
   }

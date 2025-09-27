@@ -23,7 +23,8 @@ import '../physics/movement.dart';
 //with is used to additonal classes here our game class
 //import/reference to Keyboardhandler
 class Player extends GameCharacter
-    with RiverpodComponentMixin,
+    with
+        RiverpodComponentMixin,
         KeyboardHandler,
         CollisionCallbacks,
         BasicMovement,
@@ -31,7 +32,6 @@ class Player extends GameCharacter
         HasMovementAnimations,
         JoystickControllableMovement,
         HasCollisions {
-
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
   //we need this local state flag because of the animation and movement logic, it refers to the global state bool gotHit
@@ -71,10 +71,9 @@ class Player extends GameCharacter
     //the ref.watch here makes sure that the player component rebuilds and PlayerData changes its values when the player state changes
     final playerState = ref.watch(playerProvider);
 
-
     //Hit-Logic
     //if the player is respawning we play the respawn animation and call the respawn logic when it is complete
-    if(playerState.isRespawning && !_isRespawningAnimationPlaying){
+    if (playerState.isRespawning && !_isRespawningAnimationPlaying) {
       _isRespawningAnimationPlaying = true;
 
       playAnimation('hit').whenComplete(() {
@@ -83,8 +82,7 @@ class Player extends GameCharacter
         //now we call the respawn logic
         _respawn();
       });
-      }
-
+    }
     //Respawn logic
     //if the player got hit and the hit animation is not already playing we play the hit animation and reset the gotHit state when it is complete
     else if (playerState.gotHit && !_isHitAnimationPlaying) {
@@ -95,7 +93,6 @@ class Player extends GameCharacter
         _isHitAnimationPlaying = false;
       });
     }
-
   }
 
   @override

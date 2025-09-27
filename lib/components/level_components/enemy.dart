@@ -33,7 +33,7 @@ class Enemy extends GameCharacter
         CollisionCallbacks,
         BasicMovement,
         HasCollisions,
-        HasMovementAnimations{
+        HasMovementAnimations {
   bool gotHit = false;
   bool isRespawning = false;
 
@@ -181,7 +181,6 @@ class Enemy extends GameCharacter
   @override
   Vector2 getVelocity() => velocity;
 
-
   bool climbing = false;
 
   @override
@@ -197,11 +196,26 @@ class Enemy extends GameCharacter
 
   @override
   List<AnimationLoadOptions> get animationOptions => [
-    AnimationLoadOptions("appearing", "Main Characters/Appearing", textureSize: 96, loop: false),
-    AnimationLoadOptions("disappearing", "Main Characters/Disappearing", textureSize: 96, loop: false),
-    AnimationLoadOptions("hit", "$componentSpriteLocation/Hit" , textureSize: 32, loop: false),
+    AnimationLoadOptions(
+      "appearing",
+      "Main Characters/Appearing",
+      textureSize: 96,
+      loop: false,
+    ),
+    AnimationLoadOptions(
+      "disappearing",
+      "Main Characters/Disappearing",
+      textureSize: 96,
+      loop: false,
+    ),
+    AnimationLoadOptions(
+      "hit",
+      "$componentSpriteLocation/Hit",
+      textureSize: 32,
+      loop: false,
+    ),
 
-    ...movementAnimationDefaultOptions
+    ...movementAnimationDefaultOptions,
   ];
 
   @override

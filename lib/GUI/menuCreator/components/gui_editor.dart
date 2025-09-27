@@ -32,10 +32,10 @@ class _GuiEditorState extends State<GuiEditor> {
 
   late LayoutWidget root; //just temp to be initialized later in initState()
 
-  NodeViewer? nodeViewer; //this is the node viewer that will be used to show the dependencies of a node.
+  NodeViewer?
+  nodeViewer; //this is the node viewer that will be used to show the dependencies of a node.
   final GlobalKey<NodeViewerState> _nodeViewerKey =
       GlobalKey<NodeViewerState>();
-
 
   OptionEditorMenu? optionEditor;
   final editorKey = GlobalKey<OptionEditorMenuState>();
@@ -48,8 +48,6 @@ class _GuiEditorState extends State<GuiEditor> {
       () {},
     ); //we call setState on the node viewer to rebuild it and show the current state of the layout
   }
-
-
 
   @override
   void initState() {
@@ -85,12 +83,13 @@ class _GuiEditorState extends State<GuiEditor> {
     );
 
     widgetSearchBar = WidgetSearchBar(
-        onWidgetSelected: (WidgetDeclaration widgetDeclaration) {
-          _nodeViewerKey.currentState!.setState(() {
-            DisplayNode.widgetToDropOff = widgetDeclaration.builder(root);
-          });
-      print("new widget to drop off set!");
-    });
+      onWidgetSelected: (WidgetDeclaration widgetDeclaration) {
+        _nodeViewerKey.currentState!.setState(() {
+          DisplayNode.widgetToDropOff = widgetDeclaration.builder(root);
+        });
+        print("new widget to drop off set!");
+      },
+    );
 
     doneLoading = true;
   }
@@ -264,22 +263,23 @@ class _GuiEditorState extends State<GuiEditor> {
                   ),
                 ),
                 ResizableChild(
-
                   child: ResizableContainer(
-
                     direction: Axis.horizontal,
                     children: [
-                      ResizableChild(child: optionEditor!,
+                      ResizableChild(
+                        child: optionEditor!,
                         divider: ResizableDivider(thickness: 3),
                       ),
-                      ResizableChild(child: Container(), size: ResizableSize.ratio(0.6)),
+                      ResizableChild(
+                        child: Container(),
+                        size: ResizableSize.ratio(0.6),
+                      ),
                     ],
                   ),
                 ),
               ],
               direction: Axis.vertical,
-            )
-
+            ),
           ),
         ],
 
@@ -303,7 +303,8 @@ class _GuiEditorState extends State<GuiEditor> {
 
     setState(() {
       //we call setState to rebuild the widget tree and show the new widget
-      root ??= this.root; //if no root is provided, we use the current root widget
+      root ??=
+          this.root; //if no root is provided, we use the current root widget
 
       root!.addChild(
         layoutWidget,

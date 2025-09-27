@@ -29,8 +29,7 @@ abstract class GameWorld extends World
         KeyboardHandler,
         PointerMoveCallbacks,
         TapCallbacks,
-        RiverpodComponentMixin{
-
+        RiverpodComponentMixin {
   final String levelName;
   late TiledComponent level;
   late final bool isometricLevel;
@@ -48,8 +47,11 @@ abstract class GameWorld extends World
   //In dart, late keyword is used to declare a variable or field that will be initialized at a later time.e.g. late String name
   //
   //constructor
-  GameWorld(
-      {required this.levelName, Background? background, required this.calculatedTileSize}) {
+  GameWorld({
+    required this.levelName,
+    Background? background,
+    required this.calculatedTileSize,
+  }) {
     if (background != null) this.background = background;
   }
 
@@ -62,31 +64,34 @@ abstract class GameWorld extends World
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
     // Determine if the level is isometric based on the game world's type.
-    isometricLevel = (game.gameWorld is IsometricWorld) ? true: false;
-    if(isometricLevel) {
-    level = IsometricTiledComponent((await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap);
-    level.position = Vector2.zero();}
-    else {
-      level = TiledComponent((await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap);
+    isometricLevel = (game.gameWorld is IsometricWorld) ? true : false;
+    if (isometricLevel) {
+      level = IsometricTiledComponent(
+        (await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap,
+      );
+      level.position = Vector2.zero();
+    } else {
+      level = TiledComponent(
+        (await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap,
+      );
     }
 
-   await add(game.gameWorld.player);
+    await add(game.gameWorld.player);
     // Add the level to the game world so it gets rendered.
-   await add(level);
+    await add(level);
 
     // If level not Parallax, load level with  scrolling background, property is added in Tiled
-    if (level.tileMap
-        .getLayer('Level')
-        ?.properties
-        .getValue('Parallax') ?? false) {
+    if (level.tileMap.getLayer('Level')?.properties.getValue('Parallax') ??
+        false) {
       _loadParallaxBackground();
     } else {
       _loadScrollingBackground();
     }
 
-
-    generator = POIGenerator(this); // Initialize the POI generator with the current level
-   await add(generator); // Add the POI generator to the game world
+    generator = POIGenerator(
+      this,
+    ); // Initialize the POI generator with the current level
+    await add(generator); // Add the POI generator to the game world
 
     //spawn objects
     generateSpawningObjectsForLevel(this);
@@ -96,21 +101,20 @@ abstract class GameWorld extends World
     // Debug mode off by default
     add(debugOverlays);
     debugOverlays.scale = Vector2.zero(); // Start hidden/scaled down
-    debugOverlays.priority = 2; // Ensure overlays draw above the rest of the game
+    debugOverlays.priority =
+        2; // Ensure overlays draw above the rest of the game
 
     // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
     game.cam.setMoveBounds(Vector2.zero(), level.size);
 
-
     //runs all the other onLoad-events the method is referring to, now not important
     await super.onLoad();
-
-
-
-
   }
 
-  Future<TiledComponent> createTiledLevel(String filename, Vector2 destTileSize) async{
+  Future<TiledComponent> createTiledLevel(
+    String filename,
+    Vector2 destTileSize,
+  ) async {
     return TiledComponent.load(filename, destTileSize);
   }
 
@@ -131,7 +135,9 @@ abstract class GameWorld extends World
       }
     } //press V to toggle the visibility of the overlays
     if (keysPressed.contains(LogicalKeyboardKey.keyN)) {
-      (parent as PixelAdventure).cam.shakeCamera(6, 5,
+      (parent as PixelAdventure).cam.shakeCamera(
+        6,
+        5,
         animationStyle: AnimationStyle.easeOut,
       );
     } //press N to shake the camera
@@ -155,7 +161,8 @@ abstract class GameWorld extends World
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
     //_highlightedTile?.removeFromParent();
-    final Vector2 screenPositionTap = event.localPosition; //screen position of the tap
+    final Vector2 screenPositionTap =
+        event.localPosition; //screen position of the tap
     final Vector2 worldPositionTap = level.toLocal(screenPositionTap);
     //selectedTile = toGridPos(worldPositionTap)..floor();
     //final Vector2 calculatedGridPos = toGridPos(worldPositionTap);
@@ -163,20 +170,15 @@ abstract class GameWorld extends World
     Vector2 clickGridPos = toGridPos(worldPositionTap);
 
     //highlight the selected tile
-   // _highlightedTile = TileHighlightRenderable(selectedTile!);
-   // _highlightedTile?.position = toWorldPos(selectedTile!) - Vector2(0, tileSize.y/2);
+    // _highlightedTile = TileHighlightRenderable(selectedTile!);
+    // _highlightedTile?.position = toWorldPos(selectedTile!) - Vector2(0, tileSize.y/2);
 
-
-
-   // add(_highlightedTile!);
-
-
-
+    // add(_highlightedTile!);
 
     // ---  Debugging Logs ---
     //POI generator
-   // print(generator.grid.isBlocked(clickGridPos..floor()));
-   // print("world pos: $worldPositionTap");
+    // print(generator.grid.isBlocked(clickGridPos..floor()));
+    // print("world pos: $worldPositionTap");
     //mouse pos -> grid po
     //print("grid pos: ${clickGridPos}\n\n");
     //print('Screen Position of Tap: $screenPositionTap');
@@ -189,24 +191,20 @@ abstract class GameWorld extends World
 
     //clickGridPos.clamp(Vector2.zero(), Vector2(level.width / tileSize.x - 1, level.height / tileSize.y - 1));
 
-    if(this is IsometricWorld) {
+    if (this is IsometricWorld) {
       inspectTile(clickGridPos.x.toInt(), clickGridPos.y.toInt());
     }
-
   }
 
   @override //update the overlays
   void update(double dt) {
     if (debugOverlays.scale == Vector2.zero()) return;
 
-    Vector2 roundedPlayerPos = player.position.clone()
-      ..round();
+    Vector2 roundedPlayerPos = player.position.clone()..round();
 
     String playerCoords = roundedPlayerPos.toString();
     debugOverlays.text =
-    "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${toGridPos(_mouseCoords)
-      ..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tilesize.x)
-        .floor()}, ${(mousePos.y / tilesize.y).floor()}";
+        "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${toGridPos(_mouseCoords)..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tilesize.x).floor()}, ${(mousePos.y / tilesize.y).floor()}";
     debugOverlays.position =
         game.cam.pos - game.cam.visibleWorldRect.size.toVector2() / 2;
 
@@ -272,29 +270,29 @@ abstract class GameWorld extends World
       print('Tile at ($x, $y) has GID: ${gid.tile}');
     }
 
-         // 1. Use the map's helper function to get the tileset for this GID
-      final tileset = level.tileMap.map.tilesetByTileGId(gid!.tile);
-      print(tileset.firstGid);
+    // 1. Use the map's helper function to get the tileset for this GID
+    final tileset = level.tileMap.map.tilesetByTileGId(gid!.tile);
+    print(tileset.firstGid);
 
-      // get localID of tile
+    // get localID of tile
     ///GID (Global ID): A map-wide unique identifier for a tile. It's what's stored in the layer data. Its primary job is to be unique across all tilesets. GID 0 is always "empty".
     /// Local ID: A tileset-specific identifier, always starting from 0 for the first tile in that tileset. It's used to look up a tile's data (like custom properties) within its own tileset.
-      final localId = gid.tile - tileset.firstGid!;
-      print(localId);
+    final localId = gid.tile - tileset.firstGid!;
+    print(localId);
 
-      // 3. Get the Tile object from the tileset using the local ID
-      final tile = tileset.tiles[localId];
+    // 3. Get the Tile object from the tileset using the local ID
+    final tile = tileset.tiles[localId];
 
-      // 4. Access the properties
-      final properties = tile.properties;
+    // 4. Access the properties
+    final properties = tile.properties;
 
-      if (properties.isNotEmpty) {
-        print('Properties for tile at ($x, $y):');
-        for (var property in properties) {
-          print('  - ${property.name}: ${property.value}');
-        }
+    if (properties.isNotEmpty) {
+      print('Properties for tile at ($x, $y):');
+      for (var property in properties) {
+        print('  - ${property.name}: ${property.value}');
       }
     }
+  }
 
   bool checkCollisionAt(Vector2 gridPos);
 }

@@ -61,12 +61,11 @@ class Chunk {
         final localX = x - chunkX * chunkSize;
         final localY = y - chunkY * chunkSize;
 
-
         int topPos = ((z) * tilesize.z).toInt();
         if (gid != 0 && topPos > zHeightUsedPixels) {
           zHeightUsedPixels = topPos;
         }
-        if(z > highestZTileInWorld){
+        if (z > highestZTileInWorld) {
           highestZTileInWorld = z;
         }
 
@@ -192,7 +191,7 @@ class Chunk {
     });
   }
 
-  Future<void> prepareBuildImageMaps() async{
+  Future<void> prepareBuildImageMaps() async {
     if (allRenderables.isEmpty) return;
 
     int minGridX = 1 << 30, minGridY = 1 << 30;
@@ -239,7 +238,8 @@ class Chunk {
             (correctedY ?? y) * chunkSize.toDouble(),
             0,
           ),
-        ) + Vector2(0, (tilesize.z * chunkSize / 2) - zHeightUsedPixels);
+        ) +
+        Vector2(0, (tilesize.z * chunkSize / 2) - zHeightUsedPixels);
   }
 
   void adjustRenderingBounds(
@@ -277,16 +277,21 @@ class Chunk {
         t = true;
         l = true;
       }
-      if (!t && (neighborChunkCluster?.top?.containsRenderable(element) ?? false)) {
+      if (!t &&
+          (neighborChunkCluster?.top?.containsRenderable(element) ?? false)) {
         t = true;
       }
-      if (!b && (neighborChunkCluster?.bottom?.containsRenderable(element) ?? false)) {
+      if (!b &&
+          (neighborChunkCluster?.bottom?.containsRenderable(element) ??
+              false)) {
         b = true;
       }
-      if (!r && (neighborChunkCluster?.right?.containsRenderable(element) ?? false)) {
+      if (!r &&
+          (neighborChunkCluster?.right?.containsRenderable(element) ?? false)) {
         r = true;
       }
-      if (!l && (neighborChunkCluster?.left?.containsRenderable(element) ?? false)) {
+      if (!l &&
+          (neighborChunkCluster?.left?.containsRenderable(element) ?? false)) {
         l = true;
       }
     }
@@ -321,7 +326,6 @@ class Chunk {
     albedoMap = await picture.toImage(albedoWidth, albedoHeight);
   }
 
-
   Future<void> buildNormalAndDepthMap(
     Iterable<IsometricRenderable> additionals,
   ) async {
@@ -333,15 +337,36 @@ class Chunk {
     for (final tile in allRenderables) {
       if (tile.renderNormal == null) continue;
 
-      final double startVal = ((tile.gridFeetPos.z - 1) / (highestZTileInWorld)) * 255;
+      final double startVal =
+          ((tile.gridFeetPos.z - 1) / highestZTileInWorld) * 256;
       final double endVal = (tile.gridFeetPos.z / highestZTileInWorld);
 
-      tile.renderNormal!(normalCanvas, Paint()..colorFilter = ColorFilter.matrix([
-        1, 0, 0, 0, 0,
-        0, 1, 0, 0, 0,
-        0, 0, endVal, 0, startVal,
-        0, 0, 0, 1, 0,
-      ]));
+      tile.renderNormal!(
+        normalCanvas,
+        Paint()
+          ..colorFilter = ColorFilter.matrix([
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            endVal,
+            0,
+            startVal,
+            0,
+            0,
+            0,
+            1,
+            0,
+          ]),
+      );
     }
     normalCanvas.restore();
 
@@ -432,7 +457,6 @@ class ChunkTile with IsometricRenderable {
     this.z,
     this.zAdjustPos,
   ) {
-    print("$gid at $worldX, $worldY, $z");
     Future.microtask(_loadSprite);
   }
 
@@ -560,13 +584,17 @@ class NeighborChunkCluster {
     if (left != null && left!.containsRenderable(renderable)) out.add(left!);
     if (bottom != null && bottom!.containsRenderable(renderable)) {
       out.add(bottom!);
-    } if (topRight != null && topRight!.containsRenderable(renderable)) {
+    }
+    if (topRight != null && topRight!.containsRenderable(renderable)) {
       out.add(topRight!);
-    } if (topLeft != null && topLeft!.containsRenderable(renderable)) {
+    }
+    if (topLeft != null && topLeft!.containsRenderable(renderable)) {
       out.add(topLeft!);
-    } if (bottomRight != null && bottomRight!.containsRenderable(renderable)) {
+    }
+    if (bottomRight != null && bottomRight!.containsRenderable(renderable)) {
       out.add(bottomRight!);
-    } if (bottomLeft != null && bottomLeft!.containsRenderable(renderable)) {
+    }
+    if (bottomLeft != null && bottomLeft!.containsRenderable(renderable)) {
       out.add(bottomLeft!);
     }
 

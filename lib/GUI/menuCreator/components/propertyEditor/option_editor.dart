@@ -7,17 +7,15 @@ import '../dependencyViewer/layout_widget.dart';
 import 'button_action.dart';
 
 class OptionEditorMenu extends StatefulWidget {
-
   OptionEditorMenu({
     super.key,
     required LayoutWidget node,
-    required this.updateView
-  }){
+    required this.updateView,
+  }) {
     _currentWidget = [node];
   }
 
   final VoidCallback updateView;
-
 
   late final List<LayoutWidget> _currentWidget;
 
@@ -26,8 +24,6 @@ class OptionEditorMenu extends StatefulWidget {
     _currentWidget[0] = newNode;
     updateView();
   }
-
-
 
   @override
   State<StatefulWidget> createState() => OptionEditorMenuState();
@@ -105,13 +101,14 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
 
     if (_textControllers.containsKey(controllerName + name + widgetId)) {
       if (_textControllers[controllerName + name + widgetId]!.text != value &&
-          !_textControllers[controllerName + name + widgetId]!.selection.isValid) {
+          !_textControllers[controllerName + name + widgetId]!
+              .selection
+              .isValid) {
         _textControllers[controllerName + name + widgetId]!.text = value;
       }
     } else {
-      _textControllers[controllerName + name + widgetId] = TextEditingController(
-        text: value,
-      );
+      _textControllers[controllerName + name + widgetId] =
+          TextEditingController(text: value);
     }
 
     return _textControllers[controllerName + name + widgetId]!;
@@ -160,7 +157,9 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
     String currentValue =
         widget.node.properties[option.name]?.toString() ?? "none";
 
-    String prefix = currentValue.contains(".") ? currentValue.split(".").first : "";
+    String prefix = currentValue.contains(".")
+        ? currentValue.split(".").first
+        : "";
 
     return DropdownButton<String>(
       value: widget.node.properties[option.name]?.toString(),
@@ -194,7 +193,8 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
   }) {
     properties ??= widget.node.properties;
 
-    Color currentColor = parseColor(properties[customOptionName ?? option.name]) ?? Colors.black;
+    Color currentColor =
+        parseColor(properties[customOptionName ?? option.name]) ?? Colors.black;
     return Row(
       children: [
         GestureDetector(
