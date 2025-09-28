@@ -6,8 +6,9 @@ import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
-import 'package:mpg_achievements_app/components/level/game_world.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
+import '../../core/level/game_world.dart';
 
 class LayeredImageBackground extends Background
     with HasGameReference<PixelAdventure> {

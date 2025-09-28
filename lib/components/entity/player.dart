@@ -15,7 +15,7 @@ import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 
-import '../level/isometric/isometric_world.dart';
+import '../../core/level/isometric/isometric_world.dart';
 import '../level_components/saw.dart';
 import '../physics/controllableMixins.dart';
 import '../physics/movement.dart';

@@ -11,12 +11,11 @@ import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
 import 'package:mpg_achievements_app/components/util/utils.dart';
-
-import 'components/level/game_world.dart';
-import 'components/level/orthogonal/orthogonal_world.dart';
 import 'components/level_components/enemy.dart';
+import 'core/level/game_world.dart';
+import 'core/level/isometric/isometric_world.dart';
+import 'core/level/orthogonal/orthogonal_world.dart';
 
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame

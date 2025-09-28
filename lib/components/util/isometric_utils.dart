@@ -1,6 +1,6 @@
-import 'package:mpg_achievements_app/components/level/rendering/chunk.dart';
 import 'package:vector_math/vector_math.dart';
 
+import '../../core/level/rendering/chunk.dart';
 import '../../mpg_pixel_adventure.dart';
 
 Vector2 toWorldPos(Vector3 gridPos, [double? levelWidth]) {

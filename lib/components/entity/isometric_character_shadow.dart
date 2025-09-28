@@ -1,9 +1,10 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_tiled_component.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
+import '../../core/level/isometric/isometric_renderable.dart';
+import '../../core/level/isometric/isometric_tiled_component.dart';
 
 
 
@@ -55,5 +56,28 @@ class ShadowComponent extends PositionComponent implements IsometricRenderable {
 
   @override
     Vector3 get gridFeetPos => gridPos;
+
+  @override
+  bool updatesNextFrame = false;
+
+
+  @override
+  bool dirty = false;
+
+  @override
+  Vector3 get gridHeadPos => throw UnimplementedError();
+
+  @override
+  void Function(Canvas canvas) get renderAlbedo => renderTree;
+
+  @override
+  void Function(Canvas canvas, Paint? overridePaint)? get renderNormal {
+    return null;
+  }
+
+  @override
+  void setDirty([bool value = true]) {
+    dirty = value;
+  }
 
 }

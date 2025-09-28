@@ -9,11 +9,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/ai/tile_grid.dart';
-import 'package:mpg_achievements_app/components/level/game_world.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
-import 'package:mpg_achievements_app/components/level/rendering/chunk.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
+import '../../core/level/game_world.dart';
+import '../../core/level/isometric/isometric_world.dart';
 
 enum PathfindingAction { walk, jump, fall, climbUp, climbDown }
 

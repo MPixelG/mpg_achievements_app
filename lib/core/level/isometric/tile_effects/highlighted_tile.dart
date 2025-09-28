@@ -3,10 +3,10 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/level/isometric/tile_effects/explosion_effect.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../isometric_renderable.dart';
 import '../isometric_tiled_component.dart';
+import 'explosion_effect.dart';
 
 class TileHighlightRenderable extends PositionComponent
     with

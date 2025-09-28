@@ -5,11 +5,11 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:mpg_achievements_app/components/level/rendering/game_sprite.dart';
-import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../isometric/isometric_renderable.dart';
+import 'game_sprite.dart';
+import 'game_tile_map.dart';
 
 class IsometricShaderManager {
   late FragmentProgram program;

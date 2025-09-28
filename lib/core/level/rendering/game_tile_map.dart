@@ -3,14 +3,12 @@ import 'dart:ui' as ui;
 
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:mpg_achievements_app/components/level/rendering/tileset_utils.dart';
+import 'package:mpg_achievements_app/core/level/rendering/tileset_utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import '../../util/utils.dart';
+import '../../../components/util/utils.dart';
 import '../isometric/isometric_tiled_component.dart';
-import 'chunk.dart';
 import 'game_sprite.dart';
 
 class GameTileMap {

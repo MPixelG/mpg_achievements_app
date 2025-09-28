@@ -1,6 +1,5 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/level/game_world.dart';
 
 import '../util/isometric_utils.dart';
 

@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:mpg_achievements_app/components/entity/player.dart';
-import 'package:mpg_achievements_app/components/level/game_world.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:vector_math/vector_math.dart';
+
+import '../game_world.dart';
 
 class OrthogonalWorld extends GameWorld {
   OrthogonalWorld({

@@ -1,15 +1,15 @@
 import 'package:flame/components.dart';
-import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
-import 'package:mpg_achievements_app/components/level/game_world.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_world.dart';
-import 'package:mpg_achievements_app/components/level/rendering/chunk.dart';
+import 'package:flame_tiled/flame_tiled.dart' show ObjectGroup, TiledObjectHelpers;
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import '../level_components/checkpoint/checkpoint.dart';
-import '../level_components/collectables.dart';
-import '../level_components/enemy.dart';
-import '../level_components/saw.dart';
-import '../physics/collision_block.dart';
+import '../../components/level_components/checkpoint/checkpoint.dart';
+import '../../components/level_components/collectables.dart';
+import '../../components/level_components/enemy.dart';
+import '../../components/level_components/saw.dart';
+import '../../components/physics/collision_block.dart';
+import 'game_world.dart';
+import 'isometric/isometric_world.dart';
+import 'rendering/chunk.dart';
 
 void generateSpawningObjectsForLevel(GameWorld gameWorld) {
   //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list

@@ -4,10 +4,10 @@ import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/entity/isometric_character_shadow.dart';
 import 'package:flame/flame.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
 
+import '../../core/level/isometric/isometric_renderable.dart';
+import '../../core/level/isometric/isometric_tiled_component.dart';
 import '../../mpg_pixel_adventure.dart';
-import '../level/isometric/isometric_tiled_component.dart';
 import '../util/isometric_utils.dart';
 
 class IsometricPlayer extends Player with IsometricRenderable{

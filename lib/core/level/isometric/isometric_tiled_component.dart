@@ -1,8 +1,9 @@
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
-import 'package:mpg_achievements_app/components/level/rendering/chunk_grid.dart';
-import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
+
+import '../rendering/chunk_grid.dart';
+import '../rendering/game_tile_map.dart';
+import 'isometric_renderable.dart';
 
 // An enumeration to categorize renderable objects.
 enum RenderCategory { tile, tileHighlight, characterEffect, entity, effect }

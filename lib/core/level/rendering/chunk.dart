@@ -5,16 +5,16 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
-import 'package:mpg_achievements_app/components/level/isometric/isometric_tiled_component.dart';
-import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
-import 'package:mpg_achievements_app/components/level/rendering/tileset_utils.dart';
 import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 import 'package:mpg_achievements_app/components/util/isometric_utils.dart';
+import 'package:mpg_achievements_app/core/level/rendering/tileset_utils.dart';
 import 'package:mpg_achievements_app/main.dart';
 
 import '../../../mpg_pixel_adventure.dart';
+import '../isometric/isometric_renderable.dart';
+import '../isometric/isometric_tiled_component.dart';
 import 'game_sprite.dart';
+import 'game_tile_map.dart';
 
 class Chunk {
   final int x;

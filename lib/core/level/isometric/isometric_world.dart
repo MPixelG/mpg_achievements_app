@@ -6,11 +6,10 @@ import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
-import 'package:mpg_achievements_app/components/level/game_world.dart';
-import 'package:mpg_achievements_app/components/level/rendering/chunk.dart';
 
+import '../../../components/util/isometric_utils.dart';
 import '../../../mpg_pixel_adventure.dart';
-import '../../util/isometric_utils.dart';
+import '../game_world.dart';
 import 'isometric_renderable.dart';
 import 'isometric_tiled_component.dart';
 import 'tile_effects/highlighted_tile.dart';
