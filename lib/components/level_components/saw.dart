@@ -9,7 +9,6 @@ class Saw extends SpriteAnimationComponent
   //how often the animation is rendered
   static const sawRotationSpeed = 0.05;
   static const moveSpeed = 50;
-  static const tileSize = 16;
   double moveDirection = 1;
   double rangeNeg = 0;
   double rangePos = 0;
@@ -37,11 +36,11 @@ class Saw extends SpriteAnimationComponent
     //here we calculate the range of pixels the objects can move from the upper left corner of the obstacle, so you need to
     //add(left border) or subtract(right border) one tilesize for the borders of the movement
     if (isVertical) {
-      rangeNeg = position.y - offNeg * tileSize + height;
-      rangePos = position.y + offPos * tileSize - height;
+      rangeNeg = position.y - offNeg * tilesize.y + height;
+      rangePos = position.y + offPos * tilesize.y - height;
     } else {
-      rangeNeg = position.x - offNeg * tileSize + width;
-      rangePos = position.x + offPos * tileSize + width;
+      rangeNeg = position.x - offNeg * tilesize.x + width;
+      rangePos = position.x + offPos * tilesize.x + width;
     }
 
     animation = SpriteAnimation.fromFrameData(

@@ -18,8 +18,7 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
 
   double horizontalMovement = 0; // Directional input (left/right)
   double verticalMovement = 0; // Directional input (up/down)
-  double zMovement =
-      0; // Directional input (up/down) for z axis for isometric view
+  double zMovement = 0; // Directional input (up/down) for z axis for isometric view
   Vector2 velocity = Vector2.zero();
 
   double zVelocity = 0.0;
@@ -71,10 +70,8 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
 
       case ViewSide.side:
         velocity.x += horizontalMovement * moveSpeed;
-        velocity.x *=
-            _friction *
-            (dt +
-                1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+        velocity.x *= _friction *
+            (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
         if (gravityEnabled) {
           _performGravity(dt);
         } else {
@@ -131,14 +128,12 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
     velocity.x += horizontalMovement * moveSpeed;
     velocity.x *=
         _friction *
-        (dt +
-            1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+        (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
 
     velocity.y += verticalMovement * moveSpeed;
     velocity.y *=
         _friction *
-        (dt +
-            1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+        (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
   }
 
   void _performIsometricGravity(double dt) {

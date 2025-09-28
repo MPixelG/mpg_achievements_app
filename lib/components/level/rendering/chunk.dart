@@ -123,12 +123,6 @@ class Chunk {
 
     reSortTiles([]);
     Future.delayed(Duration(seconds: 1), () => rebuildMaps([]));
-
-    if(!shaderInitialized && !shaderBeingInitialized){
-      shaderBeingInitialized = true;
-      initShader();
-    }
-
   }
 
   static Vector2 worldSize = Vector2.zero();
@@ -193,9 +187,9 @@ class Chunk {
       usesTempNeighborTileRendering = false;
       reSortTiles(containedAdditionals);
     }
-    prepareBuildImageMaps().then((value) {
-      buildAlbedoMap(containedAdditionals);
-      buildNormalAndDepthMap(containedAdditionals);
+    await prepareBuildImageMaps().then((value) async {
+      await buildAlbedoMap(containedAdditionals);
+      await buildNormalAndDepthMap(containedAdditionals);
     });
   }
 
@@ -396,12 +390,11 @@ class Chunk {
         fy < (y + 1) * chunkSize;
   }
 
-  Paint shaderPaint = Paint();
-  bool shaderInitialized = false;
-  bool shaderBeingInitialized = false;
+
   Set<IsometricRenderable> currentAdditionalComponents = {};
   void render(
     Canvas canvas,
+    Canvas normalCanvas,
     Iterable<IsometricRenderable> components,
     NeighborChunkCluster neighborChunkCluster, [
     Offset offset = Offset.zero,
@@ -423,35 +416,13 @@ class Chunk {
       rebuildMaps(currentAdditionalComponents);
     }
 
-    if (albedoMap != null && normalAndDepthMap != null && shader != null) {
-
-      Vector2 playerGridPos = gameWidgetKey.currentState!.currentGame.gameWorld.player.gridPos;
-      Vector2 playerWorldPos = toWorldPos(Vector3(playerGridPos.x, playerGridPos.y, 1));
-
-      Vector3 lightPos = Vector3(100, 100, 200);
-
-      shader!.setImageSampler(0, albedoMap!);
-      shader!.setImageSampler(1, normalAndDepthMap!);
-      shader!.setFloatUniforms((val) {
-        val.setFloats([
-          albedoWorldTopLeft!.x, albedoWorldTopLeft!.y,
-          albedoWidth.toDouble(), albedoHeight.toDouble(),
-          lightPos.x, lightPos.y, lightPos.z,
-          0.5,
-        ]);
-      });
-
-      shaderPaint.shader = shader;
-      //canvas.drawImage(albedoMap!, offset, shaderPaint);
-      canvas.drawRect(offset & Size(albedoWidth.toDouble(),albedoHeight.toDouble()), shaderPaint);
+    if (albedoMap != null && normalAndDepthMap != null) {
+      canvas.drawImage(albedoMap!, offset, Paint());
+      normalCanvas.drawImage(normalAndDepthMap!, offset, Paint());
     }
   }
 
-  FragmentShader? shader;
-  void initShader() async{
-    FragmentProgram program = await FragmentProgram.fromAsset("assets/shaders/lighting.frag");
-    shader = program.fragmentShader();
-  }
+
 
   static Set<Tileset> knownTilesets = {};
   static const int chunkSize = 16; // Size of each chunk in tiles
@@ -480,20 +451,15 @@ class ChunkTile with IsometricRenderable {
     this.worldY,
     this.z,
     this.zAdjustPos,
-  ) {
-    Future.microtask(_loadSprite);
+  ){
+    Future.microtask(() {
+      loadTextureOfGid(gid);
+    });
   }
 
-  GameSprite? _sprite;
+  GameSprite get cachedSprite => textures[gid]!;
 
   bool loadingSprite = false;
-
-  Future<void> _loadSprite() async {
-    if (loadingSprite) return;
-    _sprite ??= await getTextureOfGid(gid);
-
-    loadingSprite = false;
-  }
 
   @override
   Vector3 get gridFeetPos => posWorld;
@@ -506,18 +472,17 @@ class ChunkTile with IsometricRenderable {
 
   @override
   void Function(Canvas canvas) get renderAlbedo {
-    return (Canvas canvas) {
+    return (Canvas canvas) async {
       Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, 0);
-      _sprite!.albedo.render(canvas, position: position);
+      cachedSprite.albedo.render(canvas, position: position);
     };
   }
 
   @override
   void Function(Canvas canvas, Paint? overridePaint)? get renderNormal {
-    if (_sprite == null || _sprite!.normalAndDepth == null) return null;
-    return (Canvas canvas, Paint? overridePaint) {
+    return (Canvas canvas, Paint? overridePaint) async {
       Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, 0);
-      _sprite!.normalAndDepth!.render(
+      cachedSprite.normalAndDepth?.render(
         canvas,
         position: position,
         overridePaint: overridePaint,
@@ -527,11 +492,12 @@ class ChunkTile with IsometricRenderable {
 }
 
 Map<int, GameSprite> textures = {};
-Future<GameSprite> getTextureOfGid(int gid) async {
-  GameSprite? cacheResult = textures[gid];
-  if (cacheResult != null) {
-    return cacheResult;
+List<int> currentOperations = [];
+void loadTextureOfGid(int gid) async {
+  if(currentOperations.contains(gid)){
+    return;
   }
+  currentOperations.add(gid);
 
   Tileset tileset = findTileset(gid, Chunk.knownTilesets);
   Image tilesetImage = (await getImageFromTileset(tileset))!;
@@ -567,9 +533,7 @@ Future<GameSprite> getTextureOfGid(int gid) async {
     srcSize: srcSize, //and its size
   );
 
-  GameSprite gameSprite = GameSprite(sprite, normalSprite);
-  textures[gid] = gameSprite;
-  return gameSprite;
+  textures[gid] = GameSprite(sprite, normalSprite);;
 }
 
 extension VectorComparing on Vector3 {

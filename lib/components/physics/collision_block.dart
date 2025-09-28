@@ -39,7 +39,7 @@ class CollisionBlock extends PositionComponent
   @override
   FutureOr<void> onLoad() {
     if (isIsometric != null && isIsometric!) {
-      hitbox = IsometricHitbox(size / 16 - Vector2.all(0.1), Vector2.all(0.1));
+      hitbox = IsometricHitbox(size / tilesize.z - Vector2.all(0.1), Vector2.all(0.1));
     } else {
       hitbox = RectangleHitbox(position: Vector2(0, 0), size: size);
     }

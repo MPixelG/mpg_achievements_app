@@ -3,7 +3,6 @@ precision mediump float;
 
 uniform sampler2D albedoMap;
 uniform sampler2D depthMap;
-uniform vec2 offset;
 uniform vec2 screenSize;
 uniform vec3 lightPos;
 uniform float heightScale;
@@ -20,7 +19,7 @@ vec2 iso2orth(vec3 iso) {
 
 
 vec3 calculateBasicLighting(vec3 lightPos){
-    vec2 uv = (FlutterFragCoord().xy - offset) / screenSize;
+    vec2 uv = (FlutterFragCoord().xy) / screenSize;
 
 
     vec4 depthMapPixel = texture(depthMap, uv);
@@ -37,13 +36,13 @@ vec3 calculateBasicLighting(vec3 lightPos){
     L = normalize(L);
 
     float NdotL = max(dot(n, L), 0);
-    float range = 20.2;
+    float range = 2000.2;
     float att = 1.0 / (1.0 + 16.0 * (dist / range) * (dist / range));
 
-    vec3 lightColor = vec3(0.9, 0.8, 0.8);
-    vec3 diffuse = lightColor * NdotL;
+    vec3 lightColor = vec3(1, 0.7, 0.75);
+    vec3 diffuse = lightColor * NdotL * att;
 
-    return diffuse;
+    return diffuse * (((depthMapPixel.b) / 5) + 0.75);
 }
 
 float calculateShadow(vec3 fragPos, vec3 dirToLight, float heightScale){
@@ -70,7 +69,7 @@ float calculateShadow(vec3 fragPos, vec3 dirToLight, float heightScale){
 }
 void main() {
     vec3 adjustedLightPos = lightPos;
-    vec2 uv = (FlutterFragCoord().xy - offset) / screenSize;
+    vec2 uv = (FlutterFragCoord().xy) / screenSize;
     vec4 albedoPixel = texture(albedoMap, uv);
     vec4 normalPixel = texture(depthMap, uv);
     float pixelHeight = normalPixel.b;

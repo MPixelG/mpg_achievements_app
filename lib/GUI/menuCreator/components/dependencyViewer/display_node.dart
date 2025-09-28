@@ -97,7 +97,7 @@ class _DisplayNodeState extends State<DisplayNode> {
 
         Future.delayed(Duration(milliseconds: 10), () => hasTapped = false);
 
-        double buttonX = 16 * 1;
+        double buttonX = 16;
 
         if (buttonX - details.localPosition.dx > 20) {
           return;

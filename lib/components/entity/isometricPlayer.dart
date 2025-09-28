@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
 
@@ -59,7 +60,10 @@ class IsometricPlayer extends Player with IsometricRenderable {
   void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {
     renderTree(canvas);
   };
+  Sprite normalSprite = Sprite(Flame.images.fromCache("playerNormal.png"), srcSize: tilesize.xy, srcPosition: Vector2.zero());
   @override
   void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
-      (Canvas canvas, Paint? overridePaint) {};
+      (Canvas canvas, Paint? overridePaint) {
+        normalSprite.render(canvas, position: position - Vector2(((scale.x < 0) ? 32 : 0), 0));
+      };
 }
