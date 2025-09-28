@@ -1,7 +1,6 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/components/state_management/models/TaskData.dart';
-import 'package:mpg_achievements_app/components/state_management/tasks/TaskStateManagement.dart';
 
 
 // Provider global definieren
@@ -36,6 +35,14 @@ class TaskNotifier extends Notifier<List<TaskData>> {
     ];
   }
 
+  void startTaskByDescription(String description) {
+    state = [
+      for (final task in state)
+        if (task.description == description) (task..start()) else task
+    ];
+  }
+
+
   /// Fortschritt updaten
   void updateProgress(String id, int amount) {
     state = [
@@ -44,6 +51,13 @@ class TaskNotifier extends Notifier<List<TaskData>> {
           (task..updateProgress(amount))
         else
           task
+    ];
+  }
+
+  void updateProgressByDescription(String description, int amount) {
+    state = [
+      for (final task in state)
+        if (task.description == description) (task..updateProgress(amount)) else task
     ];
   }
 

@@ -10,9 +10,10 @@ import '../level/game_world.dart';
 import '../util/utils.dart' as util;
 import 'collisions.dart';
 import 'movement.dart';
+import 'isometric_movement.dart';
 
 mixin KeyboardControllableMovement
-    on PositionComponent, BasicMovement, KeyboardHandler {
+    on PositionComponent, BasicMovement, KeyboardHandler, IsometricMovement {
   bool _active = true;
   Vector2 mouseCoords = Vector2.zero();
 
@@ -47,7 +48,7 @@ mixin KeyboardControllableMovement
 
           if (viewSide == ViewSide.isometric) {
             print('isometric jump');
-            zMovement = upwardThrottle;
+             zMovement = upwardThrottle;
           } else {
             verticalMovement = upwardThrottle;
           }
@@ -61,8 +62,10 @@ mixin KeyboardControllableMovement
         //when in fly mode and shift is pressed, the player gets moved down
         if (isClimbing) {
           verticalMovement = 0.06;
-        } else if (debugFlyMode)
+        } else if (debugFlyMode) {
           verticalMovement = 1;
+        }
+
 
         isShifting = true;
       } else {

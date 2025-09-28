@@ -22,6 +22,7 @@ class DialogueYarnCreator extends Component with DialogueView {
   Future<YarnProject> loadYarnFile(String yarnfile) async {
     script = await rootBundle.loadString(yarnfile);
     project = YarnProject()
+      ..commands.addCommand2<String, int>('createTask', createTask)
       ..commands.addCommand0('playeryes', playeryes as FutureOr<void> Function())
       ..commands.addCommand0('playerno', playerno as FutureOr<void> Function() )
       ..commands.addCommand1<String>('progressStart', progressStart)
@@ -38,12 +39,15 @@ class DialogueYarnCreator extends Component with DialogueView {
     print('no');
   }
 
-  void progressStart(String taskId) {
-    ref.read(taskProvider.notifier).startTask(taskId);
+  void progressStart(String taskDesc) {
+    ref.read(taskProvider.notifier).startTaskByDescription(taskDesc);
   }
 
   void progressUpdate(String taskId, int amount) {
-    ref.read(taskProvider.notifier).updateProgress(taskId, amount);
+    ref.read(taskProvider.notifier).updateProgressByDescription(taskId, amount);
+  }
+  void createTask(String description, int goal) {
+    ref.read(taskProvider.notifier).addTask(description, goal: goal);
   }
 }
 
