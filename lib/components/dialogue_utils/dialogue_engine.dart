@@ -20,7 +20,6 @@ import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_yarn_cre
 // like `onLineStart`, `onChoiceStart`, and `onDialogueFinish`.
 
 class DialogueScreenState extends State<DialogueScreen> with DialogueView {
-
   // General layout and positioning constants.
   static const EdgeInsets _dialogueCardPadding = EdgeInsets.all(16.0);
   static const double _dialogueCardOpacity = 0.85;
@@ -30,27 +29,20 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
 
   // Typography definitions. Using a getter `=>` allows access to `context`.
   static const String _gameFont = "gameFont";
-  TextStyle get _characterNameStyle =>
-      Theme.of(context).textTheme.titleMedium!.copyWith(
-        fontFamily: _gameFont,
-        fontWeight: FontWeight.bold,
-      );
+  TextStyle get _characterNameStyle => Theme.of(context).textTheme.titleMedium!
+      .copyWith(fontFamily: _gameFont, fontWeight: FontWeight.bold);
   TextStyle get _dialogueTextStyle =>
-      Theme.of(context).textTheme.bodyLarge!.copyWith(
-        fontFamily: _gameFont,
-      );
+      Theme.of(context).textTheme.bodyLarge!.copyWith(fontFamily: _gameFont);
   TextStyle get _buttonTextStyle => const TextStyle(fontFamily: _gameFont);
 
   // Color definitions. Using getters allows theme-dependent color resolution.
   Color get _dialogueCardColor => Theme.of(context).colorScheme.inversePrimary;
   Color get _scriptButtonColor =>
-      Theme.of(context).colorScheme.secondary.withAlpha((255*0.8).round());
+      Theme.of(context).colorScheme.secondary.withAlpha((255 * 0.8).round());
   Color get _choiceSheetColor => Colors.blueGrey.shade800;
-
 
   // region State Variables
   // These variables hold the state of the dialogue system at any given time.
-
 
   // The compiled Yarn project containing all nodes, lines, and commands.
   late final YarnProject _project;
@@ -102,7 +94,10 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
 
     // Create the DialogueRunner, providing it with the project and a
     // list of views. `[this]` means this class will handle UI events.
-    _dialogueRunner = DialogueRunner(yarnProject: _project, dialogueViews: [this]);
+    _dialogueRunner = DialogueRunner(
+      yarnProject: _project,
+      dialogueViews: [this],
+    );
 
     // Start the dialogue from the node named 'Start'.
     _dialogueRunner?.startDialogue('Start');
@@ -132,20 +127,17 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
               onPressed: _closeDialogue,
               backgroundColor: _scriptButtonColor,
               tooltip: 'Close Dialogue',
-              child: const Icon(Icons.close,size:20),
-              ),
+              child: const Icon(Icons.close, size: 20),
+            ),
           ),
-      _buildDialogueCard(_currentLine!),
-
-         ],
+          _buildDialogueCard(_currentLine!),
+        ],
       ),
     );
   }
 
-
   // region Widget Builder Methods
   // These methods break down the UI into smaller, manageable pieces.
-
 
   // Builds the small floating button used to display the raw script.
   Widget _buildShowScriptButton() {
@@ -176,13 +168,18 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
           child: Padding(
             padding: _dialogueCardPadding,
             child: Column(
-              mainAxisSize: MainAxisSize.min, // The card should only be as tall as its content.
+              mainAxisSize: MainAxisSize
+                  .min, // The card should only be as tall as its content.
               children: [
                 // Display the character's name, or an empty string if none.
                 Text(line.character?.name ?? '', style: _characterNameStyle),
                 const SizedBox(height: 8),
                 // Display the actual dialogue text.
-                Text(line.text, textAlign: TextAlign.center, style: _dialogueTextStyle),
+                Text(
+                  line.text,
+                  textAlign: TextAlign.center,
+                  style: _dialogueTextStyle,
+                ),
                 const SizedBox(height: _buttonSpacing),
                 // This method will decide whether to show a "Next" or "Close" button.
                 _buildActionButton(),
@@ -220,10 +217,8 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
     return const SizedBox.shrink();
   }
 
-
   // region DialogueView Implementation
   // These methods are called by the `DialogueRunner` to interact with the UI.
-
 
   @override
   Future<bool> onLineStart(DialogueLine line) {
@@ -234,7 +229,8 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
     // `setState` triggers a rebuild, showing the new text and the "Next" button.
     setState(() {
       _currentLine = line;
-      _isDialogueFinished = false; // A new line means the dialogue is not finished.
+      _isDialogueFinished =
+          false; // A new line means the dialogue is not finished.
       _lineCompleter = completer;
     });
 
@@ -251,7 +247,8 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
     showModalBottomSheet<void>(
       context: context,
       isDismissible: false, // The user must make a choice to proceed.
-      backgroundColor: Colors.transparent, // Allows our custom container to define the look.
+      backgroundColor:
+          Colors.transparent, // Allows our custom container to define the look.
       builder: (context) => _buildChoiceSheet(choice, completer),
     );
 
@@ -267,14 +264,11 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
       widget.onDialogueFinished();
       // Mark the dialogue as finished to show the "Close" button.
       _isDialogueFinished = true;
-
     });
   }
 
-
   // region UI Actions and Helpers
   // Methods called in response to user interaction (button presses).
-
 
   // Hides the entire dialogue UI and resets its visible state.
   void _closeDialogue() {
@@ -317,7 +311,10 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
           Container(
             constraints: const BoxConstraints(maxHeight: 400, maxWidth: 300),
             child: SingleChildScrollView(
-              child: Text(_rawYarnScript, style: const TextStyle(fontFamily: 'monospace')),
+              child: Text(
+                _rawYarnScript,
+                style: const TextStyle(fontFamily: 'monospace'),
+              ),
             ),
           ),
           const SizedBox(height: _buttonSpacing),
@@ -334,7 +331,7 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
       ),
     );
 
-    if(mounted) {
+    if (mounted) {
       // Resume the game engine after the dialog is closed.
       widget.game.resumeEngine();
     }
@@ -360,11 +357,11 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
               // A choice can be unavailable if its condition (e.g., `<<if $seen_key>>`) is false.
               onPressed: option.isAvailable
                   ? () {
-                // Complete the future with the index of the chosen option.
-                completer.complete(index);
-                // Close the bottom sheet.
-                Navigator.pop(context);
-              }
+                      // Complete the future with the index of the chosen option.
+                      completer.complete(index);
+                      // Close the bottom sheet.
+                      Navigator.pop(context);
+                    }
                   : null, // `null` onPressed disables the button.
               child: Text(option.text, style: _buttonTextStyle),
             ),

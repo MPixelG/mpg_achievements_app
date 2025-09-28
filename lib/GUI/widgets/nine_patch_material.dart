@@ -1,10 +1,8 @@
-
 import 'package:flutter/material.dart';
 
 import 'nine_patch_widgets.dart';
 
 class NinePatchPainter extends CustomPainter {
-
   NinePatchTexture ninePatchTexture;
 
   double scale = 2;
@@ -13,8 +11,7 @@ class NinePatchPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-
-    if(!ninePatchTexture.isLoaded) return;
+    if (!ninePatchTexture.isLoaded) return;
 
     final paint = Paint();
 
@@ -27,8 +24,10 @@ class NinePatchPainter extends CustomPainter {
       Rect.fromLTWH(
         ninePatchTexture.borderX.toDouble(),
         ninePatchTexture.borderY.toDouble(),
-        (ninePatchTexture.texture!.width - 2 * ninePatchTexture.borderX).toDouble(),
-        (ninePatchTexture.texture!.height - 3 * ninePatchTexture.borderY).toDouble(),
+        (ninePatchTexture.texture!.width - 2 * ninePatchTexture.borderX)
+            .toDouble(),
+        (ninePatchTexture.texture!.height - 3 * ninePatchTexture.borderY)
+            .toDouble(),
       ),
       dst,
       paint,

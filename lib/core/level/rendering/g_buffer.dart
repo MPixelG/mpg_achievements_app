@@ -1,8 +1,10 @@
+/*
 import 'dart:ui' as ui;
 import 'dart:ui';
 
 import 'package:flame/extensions.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
+import 'package:mpg_achievements_app/components/level/rendering/chunk_grid.dart';
 import 'package:mpg_achievements_app/components/level/rendering/game_tile_map.dart';
 import 'package:mpg_achievements_app/main.dart';
 
@@ -14,11 +16,13 @@ class GBuffer {
   Image? normalAndDepthMap;
   Image? albedoMap;
 
+  ChunkGrid chunkGrid;
+
   bool _corrupted = true;
 
   void setCorrupted() => _corrupted = true;
 
-  GameTileMap gameTileMap;
+
   GBuffer(this.gameTileMap){
     setupPaintShader();
   }
@@ -60,13 +64,12 @@ class GBuffer {
       });
 
       paint.shader ??= shader;
-      canvas.drawRect(Rect.fromPoints(Offset.zero, Offset(width.toDouble(), height / 2)), paint);
-      //canvas.drawImage(albedoMap!, Offset.zero, paint);
+      //canvas.drawRect(Rect.fromPoints(gameWidgetKey.currentState!.currentGame.cam.viewport.position.toOffset(),gameWidgetKey.currentState!.currentGame.cam.pos.toOffset() + gameWidgetKey.currentState!.currentGame.cam.visibleWorldRect.toOffset()), paint);
+      canvas.drawImage(albedoMap!, Offset.zero, paint);
 
       //to draw a little light bulb at the current light
       // canvas.drawLine(Offset(x * width, y * height), Offset(x * width, y * height - z * tilesize.z + 5), Paint()..color = Colors.white70);
       // canvas.drawCircle(Offset(x * width, y * height - z * tilesize.z), 3, Paint()..color = Colors.white70);
-
     }
   }
 
@@ -95,9 +98,13 @@ class GBuffer {
     return allRenderables;
   }
 
+  double lastReorder = 0;
   void buildMaps(Iterable<IsometricRenderable> components){
     lastComponents = components;
-    lastRenderables = calculateSortedRenderInstances(components);
+    if(lastReorder < DateTime.now().second + 2) {
+      lastRenderables = calculateSortedRenderInstances(components);
+      lastReorder = DateTime.now().second.toDouble();
+    }
     buildAlbedoMap();
     buildNormalAndDepthMap();
     _corrupted = false;
@@ -123,14 +130,17 @@ class GBuffer {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
 
+    Rect visibleWorldRect = gameWidgetKey.currentState!.currentGame.cam.visibleWorldRect;
 
     for (final r in lastRenderables!) { //render everything in the sorted order
-      r.render(canvas, position: r.screenPos - tilesize.xz/2,
-          size: tilesize.xy);
+      if(visibleWorldRect.containsPoint(r.screenPos - tilesize.xy  / 2)) {
+        r.render(canvas, position: r.screenPos - tilesize.xz / 2,
+            size: tilesize.xy);
+      }
     }
 
     final picture = recorder.endRecording();
-    albedoMap = await picture.toImage(((gameTileMap.tiledMap.width+1) * tilesize.x).toInt(), ((gameTileMap.tiledMap.height+1) * tilesize.y).toInt());
+    albedoMap = await picture.toImage(screenSize.x.toInt(), screenSize.y.toInt());
   }
 
   void render(Canvas canvas, Iterable<IsometricRenderable> components){
@@ -145,3 +155,4 @@ extension on Vector3 {
     return (distanceTo(Vector3.zero()).compareTo(gridPos.distanceTo(Vector3.zero())));
   }
 }
+*/

@@ -1,20 +1,20 @@
+import 'dart:ui';
+
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
-import 'package:mpg_achievements_app/components/level/isometric/tile_effects/highlighted_tile.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../isometric_renderable.dart';
 import '../isometric_tiled_component.dart';
+import 'highlighted_tile.dart';
 
 class ExplosionEffect extends SpriteAnimationGroupComponent
-    with HasGameReference<PixelAdventure>, AnimationManager, IsometricRenderable {
-
+    with HasGameReference<PixelAdventure>, AnimationManager {
   final Vector3 gridPos;
   TileHighlightRenderable tileHighlight;
   int? currentZIndex;
 
-  ExplosionEffect(this.tileHighlight, this.gridPos) {
-  }
+  ExplosionEffect(this.tileHighlight, this.gridPos) {}
 
   @override
   Future<void> onLoad() async {
@@ -47,10 +47,4 @@ class ExplosionEffect extends SpriteAnimationGroupComponent
       stepTime: 0.1,
     ),
   ];
-
-  @override
-  Vector3 get gridFeetPos => gridPos;
-
-  @override
-  RenderCategory get renderCategory => RenderCategory.effect;
 }

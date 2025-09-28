@@ -12,8 +12,8 @@ import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/level_components/saw.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 
+import '../../core/level/isometric/isometric_world.dart';
 import '../ai/goals/move_goal.dart';
-import '../level/isometric/isometric_world.dart';
 import '../particles/Particles.dart';
 import '../physics/movement.dart';
 
@@ -33,7 +33,7 @@ class Enemy extends GameCharacter
         CollisionCallbacks,
         BasicMovement,
         HasCollisions,
-        HasMovementAnimations{
+        HasMovementAnimations {
   bool gotHit = false;
   bool isRespawning = false;
 
@@ -170,7 +170,7 @@ class Enemy extends GameCharacter
   }
 
   @override
-  ShapeHitbox getHitbox() => hitbox;
+  ShapeHitbox? getHitbox() => hitbox;
 
   @override
   Vector2 getPosition() => position;
@@ -180,7 +180,6 @@ class Enemy extends GameCharacter
 
   @override
   Vector2 getVelocity() => velocity;
-
 
   bool climbing = false;
 
@@ -197,11 +196,26 @@ class Enemy extends GameCharacter
 
   @override
   List<AnimationLoadOptions> get animationOptions => [
-    AnimationLoadOptions("appearing", "Main Characters/Appearing", textureSize: 96, loop: false),
-    AnimationLoadOptions("disappearing", "Main Characters/Disappearing", textureSize: 96, loop: false),
-    AnimationLoadOptions("hit", "$componentSpriteLocation/Hit" , textureSize: 32, loop: false),
+    AnimationLoadOptions(
+      "appearing",
+      "Main Characters/Appearing",
+      textureSize: 96,
+      loop: false,
+    ),
+    AnimationLoadOptions(
+      "disappearing",
+      "Main Characters/Disappearing",
+      textureSize: 96,
+      loop: false,
+    ),
+    AnimationLoadOptions(
+      "hit",
+      "$componentSpriteLocation/Hit",
+      textureSize: 32,
+      loop: false,
+    ),
 
-    ...movementAnimationDefaultOptions
+    ...movementAnimationDefaultOptions,
   ];
 
   @override

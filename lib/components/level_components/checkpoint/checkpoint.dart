@@ -5,7 +5,7 @@ import 'package:mpg_achievements_app/components/animation/animation_manager.dart
 import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import '../../level/game_world.dart';
+import '../../../core/level/game_world.dart';
 import '../../state_management/providers/playerStateProvider.dart';
 
 class Checkpoint extends SpriteAnimationGroupComponent

@@ -1,6 +1,3 @@
 import 'package:flame/components.dart';
 
-class Background extends Component{
-
-
-}
+class Background extends Component {}

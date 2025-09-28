@@ -10,7 +10,8 @@ import 'GUI/widgets/nine_patch_widgets.dart';
 
 //a global key to access the game widget state from outside the RiverPodAwareGameWidget or services that live outside the game, but when Riverpod ref logic is available use the standard way of accessing the game via ref.read(gameProvider)
 // because our game is of type game you would normally not need a type specifier, but here the RiverpodAwareGameWidget needs it to know which game it is dealing with
-final GlobalKey<RiverpodAwareGameWidgetState<PixelAdventure>> gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState<PixelAdventure>>();
+final GlobalKey<RiverpodAwareGameWidgetState<PixelAdventure>> gameWidgetKey =
+    GlobalKey<RiverpodAwareGameWidgetState<PixelAdventure>>();
 
 // must be async because device loads fullScreen and setsLandscape and then at last the joystick
 void main() async {
@@ -27,7 +28,7 @@ void main() async {
   NinePatchTexture.loadTextures();
   declareWidgets();
 
-  runApp(const ProviderScope(child: MainApp(),));
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatelessWidget {

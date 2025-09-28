@@ -22,7 +22,9 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
 
   late final Set<WidgetSearchBarEntry> searchBarEntries;
 
-  Set<WidgetSearchBarEntry> buildEntries() => WidgetDeclaration.declarationCache.map<WidgetSearchBarEntry>((e) => WidgetSearchBarEntry(e)).toSet();
+  Set<WidgetSearchBarEntry> buildEntries() => WidgetDeclaration.declarationCache
+      .map<WidgetSearchBarEntry>((e) => WidgetSearchBarEntry(e))
+      .toSet();
 
   @override
   void initState() {
@@ -31,12 +33,13 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
     super.initState();
 
     _controlAndExitListener = (event) {
-      if(!mounted) return;
+      if (!mounted) return;
 
-      final isControlPressed = event.physicalKey == PhysicalKeyboardKey.controlLeft;
+      final isControlPressed =
+          event.physicalKey == PhysicalKeyboardKey.controlLeft;
       final isEscapePressed = event.physicalKey == PhysicalKeyboardKey.escape;
 
-      if(isEscapePressed && isVisible){
+      if (isEscapePressed && isVisible) {
         setState(() {
           isVisible = false;
           _searchBarFocusNode.unfocus();
@@ -44,7 +47,7 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
         });
       }
 
-      if(isControlPressed && !isVisible){
+      if (isControlPressed && !isVisible) {
         setState(() {
           isVisible = true;
           _searchBarFocusNode.requestFocus();
@@ -68,12 +71,11 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
     super.dispose();
   }
 
-
   void _handleRawKey(KeyEvent event) {
     if (event is KeyDownEvent) {
       final isEnterPressed = event.physicalKey == PhysicalKeyboardKey.enter;
 
-      if(isEnterPressed){
+      if (isEnterPressed) {
         setState(() {
           isVisible = false;
           _rootFocus.requestFocus();
@@ -84,12 +86,9 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
 
   @override
   Widget build(BuildContext context) {
-
     WidgetDeclaration? currentBestMatch;
 
     SearchController searchController = SearchController();
-
-
 
     return KeyboardListener(
       focusNode: _rootFocus,
@@ -121,18 +120,22 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
             );
             return searchBar;
           },
-          suggestionsBuilder: (BuildContext context, SearchController controller) {
+          suggestionsBuilder:
+              (BuildContext context, SearchController controller) {
+                var allElements = WidgetDeclaration.declarationCache.toList();
+                allElements.sort(
+                  (a, b) => jaroWinkler(
+                    b.displayName,
+                    controller.text,
+                  ).compareTo(jaroWinkler(a.displayName, controller.text)),
+                );
 
-            var allElements = WidgetDeclaration.declarationCache.toList();
-            allElements.sort(
-              (a, b) =>
-                jaroWinkler(b.displayName, controller.text).compareTo(jaroWinkler(a.displayName, controller.text))
-            );
+                currentBestMatch = allElements.firstOrNull;
 
-            currentBestMatch = allElements.firstOrNull;
-
-            return allElements.map<ListTile>((e) => ListTile(title: Text(e.displayName)));
-          },
+                return allElements.map<ListTile>(
+                  (e) => ListTile(title: Text(e.displayName)),
+                );
+              },
           viewOnSubmitted: (value) {
             setState(() {
               _searchBarFocusNode.unfocus();
@@ -141,10 +144,9 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
               print(currentBestMatch);
             });
           },
-        )
-      )
+        ),
+      ),
     );
-
   }
 }
 

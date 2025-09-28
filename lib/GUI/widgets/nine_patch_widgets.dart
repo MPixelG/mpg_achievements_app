@@ -3,12 +3,11 @@ import 'dart:ui' as ui;
 import 'package:flame/flame.dart';
 import 'package:flutter/cupertino.dart';
 
-class NinePatchContainer extends Container{
+class NinePatchContainer extends Container {
   NinePatchContainer({super.key});
 }
 
 class NinePatchTexture {
-
   ui.Image? texture;
   String imageName = "";
 
@@ -19,7 +18,13 @@ class NinePatchTexture {
 
   bool isLoaded = false;
 
-  NinePatchTexture(this.imageName, this.borderX, this.borderY, this.borderX2, this.borderY2){
+  NinePatchTexture(
+    this.imageName,
+    this.borderX,
+    this.borderY,
+    this.borderX2,
+    this.borderY2,
+  ) {
     Flame.images.load('Menu/Buttons/$imageName.png').then((image) {
       texture = image;
       isLoaded = true;
@@ -31,28 +36,31 @@ class NinePatchTexture {
   static final Map<String, NinePatchTexture> _cache = {};
 
   factory NinePatchTexture.loadFromCache(String imageName) {
-    if (_cache.containsKey(imageName)) { // If the texture is already in the cache, return it
+    if (_cache.containsKey(imageName)) {
+      // If the texture is already in the cache, return it
       return _cache[imageName]!;
     }
 
-    throw Exception('NinePatchTexture for $imageName not found in cache. Please create it first.');
+    throw Exception(
+      'NinePatchTexture for $imageName not found in cache. Please create it first.',
+    );
   }
 
   static bool existsInCache(String name) => _cache[name] != null;
 
   static List<String> getLoadedTextureNames() => _cache.keys.toList();
 
-
   static bool currentlyLoading = false;
-  static void loadTextures() async{
-
+  static void loadTextures() async {
     List<NinePatchTexture> textures = [
       NinePatchTexture("button_0", 3, 3, 3, 3),
       NinePatchTexture("test_button", 3, 3, 3, 3),
       NinePatchTexture("test_button_2", 3, 3, 3, 3),
     ];
     Future.doWhile(() async {
-      await Future.delayed(const Duration(milliseconds: 10)); // Check every 100ms
+      await Future.delayed(
+        const Duration(milliseconds: 10),
+      ); // Check every 100ms
 
       bool allLoaded = true;
       for (var texture in textures) {

@@ -6,8 +6,8 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../physics/movement.dart';
 
-mixin AnimationManager on SpriteAnimationGroupComponent, HasGameReference<PixelAdventure>{
-
+mixin AnimationManager
+    on SpriteAnimationGroupComponent, HasGameReference<PixelAdventure> {
   final double stepTime = 0.05; //the time for every frame
 
   String get componentSpriteLocation; //the path to the objects animations
@@ -17,10 +17,11 @@ mixin AnimationManager on SpriteAnimationGroupComponent, HasGameReference<PixelA
   final Map<String, String> animationNames = {};
 
   bool initialized = false;
+
   ///lets you re-map your animation names. for example if your running animation isnt named "running", you can change the animation for that here!
   ///example: use setCustomAnimationName("idle", "doingNothing") so that it uses "doingNothing" as an idle animation
   void setCustomAnimationName(String realName, String mappedName) {
-    if(!initialized) {
+    if (!initialized) {
       animationNamesToAddOnInitialized ??= [];
       animationNamesToAddOnInitialized!.add(MapEntry(realName, mappedName));
     } else {
@@ -28,11 +29,13 @@ mixin AnimationManager on SpriteAnimationGroupComponent, HasGameReference<PixelA
     }
   }
 
-  List<MapEntry<String, String>>? animationNamesToAddOnInitialized; //a function that is called when the animations are initialized
+  List<MapEntry<String, String>>?
+  animationNamesToAddOnInitialized; //a function that is called when the animations are initialized
 
   ///takes a animation you want to play (for example "idle") and gives you the used animation name for that. this way you can change animations.
   String getAnimation(String name) {
-    if(!initialized) { //if we havent loaded the animations yet, we load them in the background and return "idle" for that frame
+    if (!initialized) {
+      //if we havent loaded the animations yet, we load them in the background and return "idle" for that frame
       _loadAnimations();
       return "idle";
     }
@@ -44,41 +47,61 @@ mixin AnimationManager on SpriteAnimationGroupComponent, HasGameReference<PixelA
     return converted!;
   }
 
-
   ///plays the animation. its async so you can put an await before the method call so that you wait until its over
-  Future<void> playAnimation(String name) async{
-    if(!initialized) await _loadAnimations();
+  Future<void> playAnimation(String name) async {
+    if (!initialized) await _loadAnimations();
     current = animationNames[name];
     return animationTicker?.completed;
   }
 
-  List<AnimationLoadOptions> get animationOptions; //so that you can provide the different options
+  List<AnimationLoadOptions>
+  get animationOptions; //so that you can provide the different options
 
-  Future<void> _loadAnimations() async{
-    if(initialized) return;
+  Future<void> _loadAnimations() async {
+    if (initialized) return;
 
-    Map<String, SpriteAnimation> newAnimations = { //create a new map of animation names and the animations
+    Map<String, SpriteAnimation> newAnimations = {
+      //create a new map of animation names and the animations
       for (var option in animationOptions)
-        option.name : loadAnimation(option.name, path: option.path, frames: option.frames, loop: option.loop, textureSize: option.textureSize, stepTime: option.stepTime),
+        option.name: loadAnimation(
+          option.name,
+          path: option.path,
+          frames: option.frames,
+          loop: option.loop,
+          textureSize: option.textureSize,
+          stepTime: option.stepTime,
+        ),
     };
 
     animations = newAnimations; //update the animation map
     initialized = true;
-    if(animationNamesToAddOnInitialized != null) {
+    if (animationNamesToAddOnInitialized != null) {
       animationNames.addEntries(animationNamesToAddOnInitialized!);
     }
   }
 
+  SpriteAnimation loadAnimation(
+    String name, {
+    required String path,
+    int? frames,
+    double stepTime = 0.05,
+    bool loop = true,
+    double textureSize = 32,
+  }) {
+    Image image = game.images.fromCache(
+      "$path ${getTextureSizeFileEnding(textureSize)}",
+    ); //load the image with the path and the right file ending (bsp: " (32x32) .png")
 
-  SpriteAnimation loadAnimation(String name, {required String path, int? frames, double stepTime = 0.05, bool loop = true, double textureSize = 32}){
-    Image image = game.images.fromCache("$path ${getTextureSizeFileEnding(textureSize)}"); //load the image with the path and the right file ending (bsp: " (32x32) .png")
-
-    animationNames[name] = name; //map it. this can be changed later to set a different animation for sth
+    animationNames[name] =
+        name; //map it. this can be changed later to set a different animation for sth
 
     return SpriteAnimation.fromFrameData(
       image, //the image containing the animation frames as a spritesheet
       SpriteAnimationData.sequenced(
-        amount: frames ?? (image.width / textureSize).toInt(), //if we dont have the amount of frames of the animation, we calculate it by using the full texture width and the single frame width
+        amount:
+            frames ??
+            (image.width / textureSize)
+                .toInt(), //if we dont have the amount of frames of the animation, we calculate it by using the full texture width and the single frame width
         stepTime: stepTime,
         textureSize: Vector2.all(textureSize),
         loop: loop,
@@ -87,54 +110,87 @@ mixin AnimationManager on SpriteAnimationGroupComponent, HasGameReference<PixelA
   }
 
   ///formats a given double to a file ending including the format
-  String getTextureSizeFileEnding(double textureSize, {String fileFormat = "png"}){
+  String getTextureSizeFileEnding(
+    double textureSize, {
+    String fileFormat = "png",
+  }) {
     int intTextureSize = textureSize.toInt(); //convert it to an int
 
-    return "(${intTextureSize}x$intTextureSize).$fileFormat";  //and add brackets and the file type
+    return "(${intTextureSize}x$intTextureSize).$fileFormat"; //and add brackets and the file type
   }
 }
 
-class AnimationLoadOptions{ //options for creating an animation
+class AnimationLoadOptions {
+  //options for creating an animation
 
   String name; //the name the animation is registered of
   String path; //the path to the animation
-  int? frames; //the amount of frames. if nothing is provided, it will get calculated using the image width and single frame width
+  int?
+  frames; //the amount of frames. if nothing is provided, it will get calculated using the image width and single frame width
   double stepTime; //the time for every frame
   bool loop; //if it loops
   double textureSize; //the size of the texture
 
-  AnimationLoadOptions(this.name, this.path, {this.frames, this.stepTime = 0.05, this.loop = true, this.textureSize = 32});
+  AnimationLoadOptions(
+    this.name,
+    this.path, {
+    this.frames,
+    this.stepTime = 0.05,
+    this.loop = true,
+    this.textureSize = 32,
+  });
 }
-
 
 enum AnimatedComponentGroup {
-  entity, object, effect //for later use, indicates if the object changes in some vals or not.
+  entity,
+  object,
+  effect, //for later use, indicates if the object changes in some vals or not.
 }
 
-
-mixin HasMovementAnimations on AnimationManager, BasicMovement{
-
+mixin HasMovementAnimations on AnimationManager, BasicMovement {
   List<AnimationLoadOptions> get movementAnimationDefaultOptions => [
-    AnimationLoadOptions("idle", "$componentSpriteLocation/Idle", loop: true, textureSize: 32), //some pre-defined animations for movement
-    AnimationLoadOptions("running", "$componentSpriteLocation/Run", loop: true, textureSize: 32),
-    AnimationLoadOptions("jumping", "$componentSpriteLocation/Jump", loop: true, textureSize: 32),
-    AnimationLoadOptions("falling", "$componentSpriteLocation/Fall", loop: true, textureSize: 32),
+    AnimationLoadOptions(
+      "idle",
+      "$componentSpriteLocation/Idle",
+      loop: true,
+      textureSize: 32,
+    ), //some pre-defined animations for movement
+    AnimationLoadOptions(
+      "running",
+      "$componentSpriteLocation/Run",
+      loop: true,
+      textureSize: 32,
+    ),
+    AnimationLoadOptions(
+      "jumping",
+      "$componentSpriteLocation/Jump",
+      loop: true,
+      textureSize: 32,
+    ),
+    AnimationLoadOptions(
+      "falling",
+      "$componentSpriteLocation/Fall",
+      loop: true,
+      textureSize: 32,
+    ),
   ];
 
-  bool get isInHitFrames; //if the player is currently being hit, we dont want to overwrite the animation
-  bool get isInRespawnFrames; //if the player is currently respawning, we dont want to overwrite the animation
+  bool
+  get isInHitFrames; //if the player is currently being hit, we dont want to overwrite the animation
+  bool
+  get isInRespawnFrames; //if the player is currently respawning, we dont want to overwrite the animation
 
   @override
-  void update(double dt){
+  void update(double dt) {
     updatePlayerstate();
     animationTicker?.update(dt);
     super.update(dt);
   }
 
- //todo renameing necessary
+  //todo renameing necessary
   void updatePlayerstate() {
-
-    if(isInRespawnFrames || isInHitFrames) return; //if we are in respawn or hit frames we dont want to change the animation
+    if (isInRespawnFrames || isInHitFrames)
+      return; //if we are in respawn or hit frames we dont want to change the animation
 
     String animation = getAnimation("idle");
 
@@ -158,9 +214,4 @@ mixin HasMovementAnimations on AnimationManager, BasicMovement{
     //here the animation ist set after checking all of the conditions above
     playAnimation(animation);
   }
-
-
-
-
-
 }

@@ -14,7 +14,11 @@ class BackgroundTile extends SpriteComponent with HasGameReference {
 
   double zoom;
 
-  BackgroundTile({required this.color, required this.backgroundPos, this.zoom = 1});
+  BackgroundTile({
+    required this.color,
+    required this.backgroundPos,
+    this.zoom = 1,
+  });
   @override
   FutureOr<void> onLoad() {
     //background priority can be set to change order in layers

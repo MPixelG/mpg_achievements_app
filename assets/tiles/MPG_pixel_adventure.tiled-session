@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Level_7.tmx",
+    "activeFile": "Level_8.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -28,26 +28,26 @@
         },
         "Level_1.tmx": {
             "expandedObjectLayers": [
-                3,
-                2
+                2,
+                3
             ],
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 320.75,
+                "x": 320.5,
                 "y": 184.25
             }
         },
         "Level_2.tmx": {
             "expandedObjectLayers": [
-                2,
-                4
+                4,
+                2
             ],
             "scale": 2,
             "selectedLayer": 10,
             "viewCenter": {
-                "x": 266.75,
-                "y": 599.75
+                "x": 520,
+                "y": 531.75
             }
         },
         "Level_3.tmx": {
@@ -66,7 +66,7 @@
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1024.5,
+                "x": 1024,
                 "y": 448.5
             }
         },
@@ -77,7 +77,7 @@
             "scale": 0.25,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1026,
+                "x": 1024,
                 "y": 1022
             }
         },
@@ -85,8 +85,16 @@
             "scale": 0.75,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 2048.6666666666665,
+                "x": 2048,
                 "y": 1024.6666666666665
+            }
+        },
+        "Level_7..tmj": {
+            "scale": 2.7961914062499997,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 256.06258512904697,
+                "y": 127.85247791010376
             }
         },
         "Level_7.tmx": {
@@ -94,10 +102,18 @@
                 4
             ],
             "scale": 2,
-            "selectedLayer": 3,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 236.25,
-                "y": 86.75
+                "x": 256,
+                "y": 127.75
+            }
+        },
+        "Level_8.tmx": {
+            "scale": 3,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1178.8333333333333,
+                "y": 348
             }
         },
         "Lever_3.tmx": {
@@ -188,17 +204,30 @@
                 "x": 496.3309231545318,
                 "y": -512.2582814864638
             }
+        },
+        "testTileset.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 11
+        },
+        "testTileset16.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "testTilesetHenry.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         }
     },
     "last.externalTilesetPath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/tiles",
     "last.imagePath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/images/Pixel_ArtTop_Down",
     "map.fixedSize": true,
-    "map.height": 16,
+    "map.height": 64,
     "map.lastUsedFormat": "tmx",
     "map.orientation": "2",
-    "map.tileHeight": 32,
+    "map.tileHeight": 16,
     "map.tileWidth": 32,
-    "map.width": 16,
+    "map.width": 64,
+    "mapScene.enableWorlds": false,
     "openFiles": [
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",
@@ -209,7 +238,8 @@
         "Level_6.tmx",
         "industrial_tiles_bg_2.tsx",
         "Level_7.tmx",
-        "isometric.tsx"
+        "Level_8.tmx",
+        "Level_7..tmj"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
     "property.type": "int",
@@ -222,15 +252,15 @@
         "grass_concrete.tsx",
         "Level_6.tmx",
         "industrial_tiles_bg_2.tsx",
-        "isometric.tsx",
         "Level_7.tmx",
-        "IndustrialTile_81.png.tsx",
-        "industrial_tiles_2.tsx"
+        "Level_7..tmj",
+        "Level_8.tmx",
+        "isometric.tsx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
-        "height": 32,
+        "height": 16,
         "width": 32
     },
     "tileset.type": 0

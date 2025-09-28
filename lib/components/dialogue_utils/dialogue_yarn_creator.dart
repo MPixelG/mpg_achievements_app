@@ -19,6 +19,8 @@ class DialogueYarnCreator extends Component with DialogueView {
     await loadYarnFile('assets/yarn/test.yarn');
   }
 
+
+  // Parse the Yarn script into a YarnProject
   Future<YarnProject> loadYarnFile(String yarnfile) async {
     script = await rootBundle.loadString(yarnfile);
     project = YarnProject()
@@ -50,10 +52,4 @@ class DialogueYarnCreator extends Component with DialogueView {
     ref.read(taskProvider.notifier).addTask(description, goal: goal);
   }
 }
-
-
-
-
-
-
 

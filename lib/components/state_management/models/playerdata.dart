@@ -2,12 +2,9 @@ import 'package:uuid/uuid.dart';
 
 import '../../level_components/checkpoint/checkpoint.dart';
 
-
 var uuid = Uuid();
 
-
 class PlayerData {
-
   final String id;
   final String playerCharacter;
   final int lives;
@@ -23,14 +20,13 @@ class PlayerData {
     this.lives = 3,
     this.gotHit = false,
     this.isRespawning = false,
-    this.lastCheckpoint,})
-      : id = id ?? uuid.v4(); // Generate a unique ID if not provided;
+    this.lastCheckpoint,
+  }) : id = id ?? uuid.v4(); // Generate a unique ID if not provided;
 
-
-//The copyWith method allows you to create a new instance of PlayerData with some properties modified
-//while keeping the others unchanged. This is useful for immutability and state management.
-//It returns a new PlayerData object with the specified properties updated or the current value if
-//no new value is provided for a property.
+  //The copyWith method allows you to create a new instance of PlayerData with some properties modified
+  //while keeping the others unchanged. This is useful for immutability and state management.
+  //It returns a new PlayerData object with the specified properties updated, or the current value if
+  //no new value is provided for a property.
   PlayerData copyWith({
     String? id, // ID is optional here, as it should not change after creation
     String? playerCharacter,

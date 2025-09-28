@@ -772,7 +772,9 @@ void declareWidgets() {
           return Transform(
             alignment: options.getValue("alignment", properties["alignment"]),
             transform: vm64.Matrix4.identity()
-              ..rotateZ(radians(options.getValue("rotation", properties["rotation"])))
+              ..rotateZ(
+                radians(options.getValue("rotation", properties["rotation"])),
+              )
               ..scale(options.getValue("scale", properties["scale"])),
             child: children.isNotEmpty ? children.first : Container(),
           );

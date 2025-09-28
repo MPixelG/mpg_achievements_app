@@ -27,7 +27,7 @@ bool checkCollision(Player player, CollisionBlock block) {
 
   /* Convert the player's hitbox to its absolute rectangular bounds in the game world.
   `toAbsoluteRect()` takes into account the component's position and anchor.*/
-  final playerRect = playerHitbox.toAbsoluteRect();
+  final playerRect = playerHitbox!.toAbsoluteRect();
 
   /* The block is also a PositionComponent, so we can get its absolute bounding box.
   Convert the block (also a PositionComponent) to its absolute rectangle.
@@ -95,55 +95,73 @@ Vector2 safeNormalize(Vector2 vector) {
   return vector / length;
 }
 
-
-Future<Vector2> getTilesizeOfLevel(String levelName) async{
-
+Future<Vector2> getTilesizeOfLevel(String levelName) async {
   String content = await rootBundle.loadString('assets/tiles/$levelName.tmx');
   List<String> lines = content.split('\n');
 
-  int indexOfTilesizeWidthDeclaration = lines[1].indexOf("tilewidth=\"") + 11; //include the length of 'tilewidh="'
-  int indexOfTilesizeHeightDeclaration = lines[1].indexOf("tileheight=\"") + 12; //include the length of 'tileheight="'
+  int indexOfTilesizeWidthDeclaration =
+      lines[1].indexOf("tilewidth=\"") +
+      11; //include the length of 'tilewidh="'
+  int indexOfTilesizeHeightDeclaration =
+      lines[1].indexOf("tileheight=\"") +
+      12; //include the length of 'tileheight="'
 
-  int indexOfNextSemicolonWidth = lines[1].indexOf("\"", indexOfTilesizeWidthDeclaration);
-  int indexOfNextSemicolonHeight = lines[1].indexOf("\"", indexOfTilesizeHeightDeclaration);
+  int indexOfNextSemicolonWidth = lines[1].indexOf(
+    "\"",
+    indexOfTilesizeWidthDeclaration,
+  );
+  int indexOfNextSemicolonHeight = lines[1].indexOf(
+    "\"",
+    indexOfTilesizeHeightDeclaration,
+  );
 
-  String tilesizeWidthString = lines[1].substring(indexOfTilesizeWidthDeclaration, indexOfNextSemicolonWidth);
-  String tilesizeHeightString = lines[1].substring(indexOfTilesizeHeightDeclaration, indexOfNextSemicolonHeight);
+  String tilesizeWidthString = lines[1].substring(
+    indexOfTilesizeWidthDeclaration,
+    indexOfNextSemicolonWidth,
+  );
+  String tilesizeHeightString = lines[1].substring(
+    indexOfTilesizeHeightDeclaration,
+    indexOfNextSemicolonHeight,
+  );
 
   print("width: $tilesizeWidthString ($indexOfNextSemicolonWidth)");
   print("height: $tilesizeHeightString ($indexOfNextSemicolonHeight)");
 
-
-  return Vector2(double.parse(tilesizeWidthString), double.parse(tilesizeHeightString));
+  return Vector2(
+    double.parse(tilesizeWidthString),
+    double.parse(tilesizeHeightString),
+  );
 }
 
-num max<T extends num>(List<T> vals){
+num max<T extends num>(List<T> vals) {
   T? smallestVal;
   for (var value in vals) {
-    if(smallestVal == null || value < smallestVal) smallestVal = value;
+    if (smallestVal == null || value < smallestVal) smallestVal = value;
   }
 
   return smallestVal ?? 0;
 }
 
-
-Future<String> getOrientationOfLevel(String levelName) async{
-
+Future<String> getOrientationOfLevel(String levelName) async {
   String content = await rootBundle.loadString('assets/tiles/$levelName.tmx');
   List<String> lines = content.split('\n');
 
-  int indexOfOrientationDeclaration = lines[1].indexOf("orientation=\"") + 13; //include the length of 'orientation="'
-  int indexOfNextSemicolon = lines[1].indexOf("\"", indexOfOrientationDeclaration);
+  int indexOfOrientationDeclaration =
+      lines[1].indexOf("orientation=\"") +
+      13; //include the length of 'orientation="'
+  int indexOfNextSemicolon = lines[1].indexOf(
+    "\"",
+    indexOfOrientationDeclaration,
+  );
 
-  return lines[1].substring(indexOfOrientationDeclaration, indexOfNextSemicolon);
+  return lines[1].substring(
+    indexOfOrientationDeclaration,
+    indexOfNextSemicolon,
+  );
 }
 
-
 Vector2 orthogonalToIsometric(Vector2 ortho) {
-  return Vector2(
-      ortho.x - ortho.y,
-      (ortho.x + ortho.y) / 2
-  );
+  return Vector2(ortho.x - ortho.y, (ortho.x + ortho.y) / 2);
 }
 
 ///takes 2 strings and returns a value between 0 and 1, representing the similarity of the 2 strings.
@@ -159,7 +177,7 @@ double jaro(String s1, String s2) {
   final int len1 = a.length;
   final int len2 = b.length;
 
-  final int matchDistance = ( (len1 > len2 ? len1 : len2) ~/ 2 ) - 1;
+  final int matchDistance = ((len1 > len2 ? len1 : len2) ~/ 2) - 1;
   final List<bool> matched1 = List<bool>.filled(len1, false);
   final List<bool> matched2 = List<bool>.filled(len2, false);
 
@@ -191,38 +209,42 @@ double jaro(String s1, String s2) {
   final double m = matches.toDouble();
   final double t = transpositions / 2.0;
 
-  return ( (m / len1) + (m / len2) + ((m - t) / m) ) / 3.0;
+  return ((m / len1) + (m / len2) + ((m - t) / m)) / 3.0;
 }
 
 ///an upgraded version of [jaro], also considering typos
-double jaroWinkler(String s1, String s2, {double prefixScale = 0.1, int maxPrefix = 4}) {
+double jaroWinkler(
+  String s1,
+  String s2, {
+  double prefixScale = 0.1,
+  int maxPrefix = 4,
+}) {
   final double j = jaro(s1, s2);
   if (j == 0.0) return 0.0;
 
   int prefix = 0;
   final int limit = s1.length < s2.length ? s1.length : s2.length;
   for (int i = 0; i < limit && i < maxPrefix; i++) {
-    if (s1[i] == s2[i]) prefix++;
-    else break;
+    if (s1[i] == s2[i])
+      prefix++;
+    else
+      break;
   }
 
   return j + (prefix * prefixScale * (1.0 - j));
 }
 
-
-
 Future<File> saveImage(ui.Image image, String filename) async {
   final directory = await Directory.systemTemp.createTemp();
   final file = File('${directory.path}/$filename');
 
-
-
-  return file.writeAsBytes((await image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asInt8List(), flush: true);
+  return file.writeAsBytes(
+    (await image.toByteData(
+      format: ui.ImageByteFormat.png,
+    ))!.buffer.asInt8List(),
+    flush: true,
+  );
 }
-
-
-
-
 
 //Check OS for Joystick support
 

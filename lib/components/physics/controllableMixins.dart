@@ -5,8 +5,8 @@ import 'package:flame/palette.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
+import '../../core/level/game_world.dart';
 import '../../mpg_pixel_adventure.dart';
-import '../level/game_world.dart';
 import '../util/utils.dart' as util;
 import 'collisions.dart';
 import 'movement.dart';

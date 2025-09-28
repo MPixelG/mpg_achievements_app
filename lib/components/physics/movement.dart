@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flame/components.dart';
@@ -20,6 +19,7 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
 
   double horizontalMovement = 0; // Directional input (left/right)
   double verticalMovement = 0; // Directional input (up/down)
+  double zMovement = 0; // Directional input (up/down) for z axis for isometric view
   Vector2 velocity = Vector2.zero();
   //character's height off the ground plane
 
