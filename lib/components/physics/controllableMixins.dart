@@ -10,9 +10,10 @@ import '../level/game_world.dart';
 import '../util/utils.dart' as util;
 import 'collisions.dart';
 import 'movement.dart';
+import 'isometric_movement.dart';
 
 mixin KeyboardControllableMovement
-    on PositionComponent, BasicMovement, KeyboardHandler {
+    on PositionComponent, BasicMovement, KeyboardHandler, IsometricMovement {
   bool _active = true;
   Vector2 mouseCoords = Vector2.zero();
 
@@ -29,10 +30,23 @@ mixin KeyboardControllableMovement
     final isRightKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
         keysPressed.contains(LogicalKeyboardKey.keyD);
+    if (viewSide == ViewSide.isometric) {
+      if (isLeftKeyPressed) {
+        horizontalMovement--;
+        verticalMovement++;
+      }
+      if (isRightKeyPressed) {
+        horizontalMovement++;
+        verticalMovement--;
+      }
 
+    }
+    else {
+      if (isLeftKeyPressed) horizontalMovement--;
+      if (isRightKeyPressed) horizontalMovement++;
+    }
     //ternary statement if left key pressed then add -1 to horizontal movement if not add 0 = not moving
-    if (isLeftKeyPressed) horizontalMovement--;
-    if (isRightKeyPressed) horizontalMovement++;
+
 
     if (viewSide == ViewSide.isometric || viewSide == ViewSide.side) {
       if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) {
@@ -47,7 +61,7 @@ mixin KeyboardControllableMovement
 
           if (viewSide == ViewSide.isometric) {
             print('isometric jump');
-            zMovement = upwardThrottle;
+             zMovement = upwardThrottle;
           } else {
             verticalMovement = upwardThrottle;
           }
@@ -61,8 +75,10 @@ mixin KeyboardControllableMovement
         //when in fly mode and shift is pressed, the player gets moved down
         if (isClimbing) {
           verticalMovement = 0.06;
-        } else if (debugFlyMode)
+        } else if (debugFlyMode) {
           verticalMovement = 1;
+        }
+
 
         isShifting = true;
       } else {
@@ -70,7 +86,7 @@ mixin KeyboardControllableMovement
       }
     }
 
-    if (viewSide == ViewSide.topDown || viewSide == ViewSide.isometric) {
+    if (viewSide == ViewSide.isometric) {
       final isUpKeyPressed =
           keysPressed.contains(LogicalKeyboardKey.keyW) ||
           keysPressed.contains(LogicalKeyboardKey.arrowUp);
@@ -80,8 +96,16 @@ mixin KeyboardControllableMovement
 
       if (isUpKeyPressed) {
         verticalMovement--;
+        horizontalMovement--;
       }
-      if (isDownKeyPressed) verticalMovement++;
+      if (isDownKeyPressed) {
+        verticalMovement++;
+        horizontalMovement++;
+      }
+
+    }
+    if (viewSide == ViewSide.topDown) {
+      throw UnimplementedError();
     }
 
     if (keysPressed.contains(LogicalKeyboardKey.keyT)) {
@@ -93,6 +117,7 @@ mixin KeyboardControllableMovement
     } //press b to toggle debug mode (visibility of hitboxes and more)
     return super.onKeyEvent(event, keysPressed);
   }
+
 
   // Enable/disable player control
   bool setControllable(bool val) => _active = val;
