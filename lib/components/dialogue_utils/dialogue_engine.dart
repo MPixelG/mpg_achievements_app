@@ -1,6 +1,7 @@
 import 'dart:async'; // Required for async operations and the Completer class.
 
 import 'package:flutter/material.dart'; // Flutter's material design widget library.
+import 'package:flutter_riverpod/src/consumer.dart';
 import 'package:jenny/jenny.dart'; // The core Jenny dialogue engine library.
 // The following are project-specific imports and may vary.
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';
@@ -76,6 +77,8 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
   // When `true`, a "Close" button is shown instead of a "Next" button.
   bool _isDialogueFinished = false;
 
+  late WidgetRef board;
+
 
   // region Widget Lifecycle
 
@@ -90,7 +93,7 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
   /// initializes the [DialogueRunner].
   Future<void> _initializeDialogue() async {
     // Helper class to load and parse the .yarn file.
-    final yarnCreator = DialogueYarnCreator();
+    final yarnCreator = DialogueYarnCreator(board);
     await yarnCreator.loadYarnFile('assets/yarn/test.yarn');
 
     // Store the compiled project and the raw script text.
