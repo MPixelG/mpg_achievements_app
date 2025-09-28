@@ -26,17 +26,19 @@ class _AnimatedWidgetGroupState extends State<AnimatedWidgetGroup>
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(
-        milliseconds:
-        (widget.keyframes[_currentIndex].animationDuration * 1000).toInt(),
-      ),
-    )..addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        _nextKeyframe();
-      }
-    });
+    _controller =
+        AnimationController(
+          vsync: this,
+          duration: Duration(
+            milliseconds:
+                (widget.keyframes[_currentIndex].animationDuration * 1000)
+                    .toInt(),
+          ),
+        )..addStatusListener((status) {
+          if (status == AnimationStatus.completed) {
+            _nextKeyframe();
+          }
+        });
 
     _controller.forward();
   }
@@ -80,7 +82,7 @@ class _AnimatedWidgetGroupState extends State<AnimatedWidgetGroup>
           child: Container(
             width: width,
             height: height,
-            child: NinePatchButton(text: "", onPressed: () {},),
+            child: NinePatchButton(text: "", onPressed: () {}),
           ),
         );
       },
@@ -108,4 +110,5 @@ class WidgetAnimationKeyframe {
   });
 }
 
-double? lerpDouble(double a, double b, double t) => easeOut(t, startVal: a, endVal: b);
+double? lerpDouble(double a, double b, double t) =>
+    easeOut(t, startVal: a, endVal: b);

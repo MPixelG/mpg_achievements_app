@@ -78,7 +78,9 @@ mixin KeyboardControllableMovement
           keysPressed.contains(LogicalKeyboardKey.keyS) ||
           keysPressed.contains(LogicalKeyboardKey.arrowDown);
 
-      if (isUpKeyPressed) verticalMovement--;
+      if (isUpKeyPressed) {
+        verticalMovement--;
+      }
       if (isDownKeyPressed) verticalMovement++;
     }
 

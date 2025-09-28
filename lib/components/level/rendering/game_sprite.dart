@@ -1,8 +1,14 @@
 import 'dart:ui';
 
-interface class GameSprite {
-  Image texture;
-  Image? normalTexture;
+import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 
-  GameSprite(this.texture, [this.normalTexture]);
+interface class GameSprite {
+  Sprite albedo;
+  Sprite? normalAndDepth;
+
+  GameSprite(this.albedo, [this.normalAndDepth]);
 }
+
+Image get noTextureImage =>
+    Flame.images.fromCache("Pixel_ArtTop_Down/noTextureBlock.png");

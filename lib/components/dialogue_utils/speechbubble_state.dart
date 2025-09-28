@@ -71,7 +71,6 @@ class SpeechBubbleState extends State<SpeechBubble>
   @override
   void initState() {
     super.initState();
-
     // Initialize the scale controller for entrance animation
     _scaleController = AnimationController(
       //Provided by the TickerProviderStateMixin

@@ -242,7 +242,7 @@ class Player extends GameCharacter
   double getzGround() => zGround;
 
   @override
-  ShapeHitbox getHitbox() => hitbox;
+  ShapeHitbox? getHitbox() => hitbox;
 
   @override
   Vector2 getPosition() => position;

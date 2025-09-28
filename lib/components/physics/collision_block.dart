@@ -8,7 +8,8 @@ import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 //A positionComponent can have an x, y , width and height, zPosition and zHeight
-class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameReference<PixelAdventure> {
+class CollisionBlock extends PositionComponent
+    with CollisionCallbacks, HasGameReference<PixelAdventure> {
   //position and size is given and passed in to the PositionComponent with super
   bool isPlatform;
   bool isLadder;
@@ -19,7 +20,7 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
   int? zPosition;
   int? zHeight;
 
-  GameWorld? gameWorld;
+  bool? isIsometric;
   CollisionBlock({
     super.position,
     super.size,
@@ -29,7 +30,7 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
     this.hasHorizontalCollision = true,
     this.climbable = false,
     this.isLadder = false,
-    this.gameWorld,
+    this.isIsometric,
     this.zPosition = 0,
     this.zHeight = 16,
   });
@@ -37,26 +38,25 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
   ShapeHitbox hitbox = RectangleHitbox();
   @override
   FutureOr<void> onLoad() {
-    if (gameWorld != null && gameWorld is IsometricWorld) {
-      hitbox = IsometricHitbox(size / 16 - Vector2.all(0.1), gameWorld!, Vector2.all(0.1));
+    if (isIsometric != null && isIsometric!) {
+      hitbox = IsometricHitbox(size / tilesize.z - Vector2.all(0.1), Vector2.all(0.1));
     } else {
       hitbox = RectangleHitbox(position: Vector2(0, 0), size: size);
     }
     add(hitbox);
   }
 
-
-
-  Vector2 get gridPos =>
-      worldToTileIsometric(position);
+  Vector2 get gridPos => worldToTileIsometric(position);
 
   set gridPos(Vector2 newGridPos) {
     position = toWorldPos(newGridPos);
   }
 
   Vector2 worldToTileIsometric(Vector2 worldPos) {
-    final tileX = (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.y / 2)) / 2;
-    final tileY = (worldPos.y / (tilesize.y / 2) - worldPos.x / (tilesize.x / 2)) / 2;
+    final tileX =
+        (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.y / 2)) / 2;
+    final tileY =
+        (worldPos.y / (tilesize.y / 2) - worldPos.x / (tilesize.x / 2)) / 2;
 
     return Vector2(tileX, tileY);
   }
@@ -67,5 +67,4 @@ class CollisionBlock extends PositionComponent with CollisionCallbacks, HasGameR
       (gridPos.x + gridPos.y) * (tilesize.y / 2),
     );
   }
-
 }

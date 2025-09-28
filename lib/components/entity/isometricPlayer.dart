@@ -1,10 +1,14 @@
+import 'dart:ui';
+
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/entity/isometric_character_shadow.dart';
+import 'package:flame/flame.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/level/isometric/isometric_renderable.dart';
 
 import '../../mpg_pixel_adventure.dart';
 import '../level/isometric/isometric_tiled_component.dart';
+import '../util/isometric_utils.dart';
 
 class IsometricPlayer extends Player with IsometricRenderable{
 
@@ -24,8 +28,7 @@ class IsometricPlayer extends Player with IsometricRenderable{
   }
 
   @override
-  Vector2 get gridPos =>
-      worldToTileIsometric(absoluteCenter);
+  Vector2 get gridPos => worldToTileIsometric(absoluteCenter);
 
   @override
   set gridPos(Vector2 newGridPos) {
@@ -33,8 +36,10 @@ class IsometricPlayer extends Player with IsometricRenderable{
   }
 
   Vector2 worldToTileIsometric(Vector2 worldPos) {
-    final tileX = (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.z / 2)) / 2;
-    final tileY = (worldPos.y / (tilesize.z / 2) - worldPos.x / (tilesize.x / 2)) / 2;
+    final tileX =
+        (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.z / 2)) / 2;
+    final tileY =
+        (worldPos.y / (tilesize.z / 2) - worldPos.x / (tilesize.x / 2)) / 2;
 
     return Vector2(tileX, tileY);
   }
@@ -48,12 +53,29 @@ class IsometricPlayer extends Player with IsometricRenderable{
 
   @override
   Vector3 get gridFeetPos {
-    Vector2 xYGridPos = game.gameWorld.toGridPos(absolutePositionOfAnchor(Anchor.topCenter));
+    Vector2 xYGridPos;
+    if (hitbox != null) {
+      xYGridPos = toGridPos(absoluteCenter) - Vector2(1, 1);
+    } else {
+      xYGridPos = toGridPos(absoluteCenter);
+    }
     return Vector3(xYGridPos.x, xYGridPos.y, 1);
   }
 
   @override
   RenderCategory get renderCategory => RenderCategory.entity;
 
+  @override
+  Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 1);
 
+  @override
+  void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {
+    renderTree(canvas);
+  };
+  Sprite normalSprite = Sprite(Flame.images.fromCache("playerNormal.png"), srcSize: tilesize.xy, srcPosition: Vector2.zero());
+  @override
+  void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
+      (Canvas canvas, Paint? overridePaint) {
+        normalSprite.render(canvas, position: position - Vector2(((scale.x < 0) ? 32 : 0), 0));
+      };
 }

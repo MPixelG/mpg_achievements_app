@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
@@ -18,15 +19,14 @@ import 'components/level/orthogonal/orthogonal_world.dart';
 import 'components/level_components/enemy.dart';
 
 //DragCallbacks are imported for touch controls
-class PixelAdventure extends FlameGame with
-    HasKeyboardHandlerComponents,
-    DragCallbacks,
-    HasCollisionDetection,
-    ScrollDetector,
-    CollisionCallbacks,
-    RiverpodGameMixin {
-
-
+class PixelAdventure extends FlameGame
+    with
+        HasKeyboardHandlerComponents,
+        DragCallbacks,
+        HasCollisionDetection,
+        ScrollDetector,
+        CollisionCallbacks,
+        RiverpodGameMixin {
   static PixelAdventure? _currentInstance;
 
   static PixelAdventure get currentInstance {
@@ -35,13 +35,12 @@ class PixelAdventure extends FlameGame with
     return _currentInstance!;
   }
 
-
   ///Game components
   late final AdvancedCamera cam;
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
-  late String currentLevel = "Level_7";
+  late String currentLevel = "Level_8";
 
   //bools for game logic
   //needs to go into the overlay_controller later
@@ -61,15 +60,21 @@ class PixelAdventure extends FlameGame with
     Vector2 tileSize = await getTilesizeOfLevel(currentLevel);
     String orientationOfLevel = await getOrientationOfLevel(currentLevel);
 
-    if(orientationOfLevel == "orthogonal"){
-      gameWorld = OrthogonalWorld(levelName: currentLevel, calculatedTileSize: tileSize.xyy);
-    } else if(orientationOfLevel == "isometric"){
-      gameWorld = IsometricWorld(levelName: currentLevel, calculatedTileSize: tileSize.xxy); //on the horizontal axis, the tile is rectangular. on the side its half the size (z-axis)
+    if (orientationOfLevel == "orthogonal") {
+      gameWorld = OrthogonalWorld(
+        levelName: currentLevel,
+        calculatedTileSize: tileSize.xyy,
+      );
+    } else if (orientationOfLevel == "isometric") {
+      gameWorld = IsometricWorld(
+        levelName: currentLevel,
+        calculatedTileSize: tileSize.xxy,
+      ); //on the horizontal axis, the tile is rectangular. on the side its half the size (z-axis)
     } else {
       throw UnimplementedError(
-          "an orientation of $orientationOfLevel isn't implemented! please use either orthogonal or isometric!");
+        "an orientation of $orientationOfLevel isn't implemented! please use either orthogonal or isometric!",
+      );
     }
-
 
     cam = AdvancedCamera(world: gameWorld);
     cam.viewfinder.anchor = Anchor.center;
@@ -101,7 +106,7 @@ class PixelAdventure extends FlameGame with
       ),
       position: Vector2(500, size.y - 380),
       onPressed: () {
-      print('Button Pressed');
+        print('Button Pressed');
       },
     );
 
@@ -116,26 +121,24 @@ class PixelAdventure extends FlameGame with
     scrollFactor += info.scrollDelta.global.y;
     zoomFactor = pow(0.9, scrollFactor / 30).toDouble();
   }
-
 }
 
-Vector3 get tilesize => PixelAdventure.currentInstance.gameWorld.calculatedTileSize;
+Vector3 get tilesize =>
+    PixelAdventure.currentInstance.gameWorld.calculatedTileSize;
 
+Vector2 get screenSize =>
+    PixelAdventure.currentInstance.cam.visibleWorldRect.toVector2();
 
 //helper class to follow the player after the world and player are loaded
-class _FollowCameraComponent extends Component with HasGameReference<PixelAdventure> {
+class _FollowCameraComponent extends Component
+    with HasGameReference<PixelAdventure> {
   @override
   void onMount() {
     super.onMount();
     // Now that the world is mounted, we know its player exists.
     game.cam.player = game.gameWorld.player;
-    game.cam.setFollowPlayer(
-      true,
-      player: game.gameWorld.player,
-      accuracy: 50,
-    );
+    game.cam.setFollowPlayer(true, player: game.gameWorld.player, accuracy: 50);
     // This component's only job is to run once, so we remove it immediately.
     removeFromParent();
   }
 }
-
