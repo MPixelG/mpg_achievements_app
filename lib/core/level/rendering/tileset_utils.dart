@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:ui';
 import 'dart:ui' as ui;
+import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';

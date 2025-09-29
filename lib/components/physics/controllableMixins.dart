@@ -9,8 +9,8 @@ import '../../core/level/game_world.dart';
 import '../../mpg_pixel_adventure.dart';
 import '../util/utils.dart' as util;
 import 'collisions.dart';
-import 'movement.dart';
 import 'isometric_movement.dart';
+import 'movement.dart';
 
 mixin KeyboardControllableMovement
     on PositionComponent, BasicMovement, KeyboardHandler, IsometricMovement {

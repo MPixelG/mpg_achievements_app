@@ -1,5 +1,5 @@
-import 'package:mpg_achievements_app/components/physics/movement.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
+import 'package:mpg_achievements_app/components/physics/movement.dart';
 
 mixin IsometricMovement on BasicMovement {
   double zMovement =

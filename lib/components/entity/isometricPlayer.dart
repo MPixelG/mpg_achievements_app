@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/entity/isometric_character_shadow.dart';
 import 'package:flame/flame.dart';
+import 'package:mpg_achievements_app/components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
 
 import '../../core/level/isometric/isometric_renderable.dart';

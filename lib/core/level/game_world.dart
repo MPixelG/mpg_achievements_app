@@ -100,7 +100,7 @@ abstract class GameWorld extends World
     debugOverlays.priority = 2; // Ensure overlays draw above the rest of the game
 
     // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
-    game.cam.setMoveBounds(Vector2.zero(), level.size);
+    //game.cam.setMoveBounds(Vector2.zero(), level.size);
 
     //runs all the other onLoad-events the method is referring to, now not important
     await super.onLoad();

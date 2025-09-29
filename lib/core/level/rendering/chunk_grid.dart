@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flame/extensions.dart';
+import 'package:mpg_achievements_app/main.dart';
 
 import '../../../mpg_pixel_adventure.dart';
 import '../isometric/isometric_renderable.dart';
@@ -83,10 +84,12 @@ class ChunkGrid {
       Chunk chunk = value.value;
 
       Vector2 chunkPos = Vector2(
-        ((chunk.x - chunk.y + 3) * (Chunk.chunkSize + chunkSpacing)) *
+        ((chunk.x - chunk.y) * (Chunk.chunkSize + chunkSpacing)) *
             tilesize.x / 2,
         (chunk.x + chunk.y) * (Chunk.chunkSize + chunkSpacing) * tilesize.z / 2,
       );
+      chunkPos.x += Chunk.worldSize.x / 3;
+      print("world: ${Chunk.worldSize}, level: ${gameWidgetKey.currentState!.currentGame.gameWorld.level.width}");
       chunkPos += offset.toVector2();
       chunkPos.y -= chunk.zHeightUsedPixels;
       Vector2 unPositionedChunkPos = chunkPos - camPos + (viewportSize / 2);

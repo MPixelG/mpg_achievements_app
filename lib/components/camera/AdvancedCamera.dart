@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:mpg_achievements_app/components/camera/camera_effect.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
 
 import '../animation/animation_style.dart';
@@ -58,21 +57,10 @@ class AdvancedCamera extends CameraComponent {
     double time = 0,
     double? zoom,
   }) {
-    Vector2 boundsMinRelative = Vector2.zero();
-    Vector2 boundsMaxRelative = Vector2.zero();
+    Vector2? boundsMinRelative;
+    Vector2? boundsMaxRelative;
 
-    Vector2.min(
-      boundsMin + (viewport.virtualSize / 2),
-      boundsMax - (viewport.virtualSize / 2),
-      boundsMinRelative,
-    );
-    Vector2.max(
-      boundsMin + (viewport.virtualSize / 2),
-      boundsMax - (viewport.virtualSize / 2),
-      boundsMaxRelative,
-    );
-
-    point.clamp(boundsMinRelative, boundsMaxRelative);
+    point.clamp(boundsMinRelative ?? Vector2.all(double.negativeInfinity), boundsMaxRelative ?? Vector2.all(double.infinity));
 
     if (speed == double.infinity && time == 0) {
       // if theres no speed and time for the camera given, we complete it instant

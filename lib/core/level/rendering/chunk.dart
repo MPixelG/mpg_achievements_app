@@ -5,10 +5,8 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 import 'package:mpg_achievements_app/components/util/isometric_utils.dart';
 import 'package:mpg_achievements_app/core/level/rendering/tileset_utils.dart';
-import 'package:mpg_achievements_app/main.dart';
 
 import '../../../mpg_pixel_adventure.dart';
 import '../isometric/isometric_renderable.dart';
@@ -158,7 +156,12 @@ class Chunk {
     });
   }
 
+  int currentlyActiveOperations = 0;
+  static const int maxOperations = 10;
   Future<void> rebuildMaps(Iterable<IsometricRenderable> additionals) async {
+    if(currentlyActiveOperations > maxOperations) return;
+
+    currentlyActiveOperations++;
     Iterable<IsometricRenderable> containedAdditionals = additionals
         .toList()
         .where((element) => containsRenderable(element));
@@ -190,7 +193,7 @@ class Chunk {
     await prepareBuildImageMaps().then((value) async {
       await buildAlbedoMap(containedAdditionals);
       await buildNormalAndDepthMap(containedAdditionals);
-    });
+    }).then((value) => currentlyActiveOperations--);
   }
 
   Future<void> prepareBuildImageMaps() async {

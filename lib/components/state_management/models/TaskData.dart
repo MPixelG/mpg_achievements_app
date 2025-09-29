@@ -1,5 +1,4 @@
 import 'package:uuid/uuid.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 var uuid = Uuid();
 

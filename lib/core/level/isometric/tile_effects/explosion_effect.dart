@@ -1,10 +1,7 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import '../isometric_renderable.dart';
 import '../isometric_tiled_component.dart';
 import 'highlighted_tile.dart';
 
