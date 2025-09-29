@@ -109,6 +109,8 @@ flutter:
     - assets/images/Pixel_ArtTop_Down/iso_tile_export_normalMap.png
     - assets/images/Pixel_ArtTop_Down/noTextureBlock.png
     - assets/images/playerNormal.png
+    - assets/images/Pixel_ArtTop_Down/iso_sprite_sheet.png
+    - assets/images/Pixel_ArtTop_Down/iso_sprite_sheet_normalMap.png
 
   shaders:
     - assets/shaders/lighting.frag

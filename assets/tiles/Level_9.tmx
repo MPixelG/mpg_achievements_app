@@ -91,6 +91,10 @@
   <object id="212" x="0" y="448" width="48" height="16"/>
  </objectgroup>
  <layer id="1" name="Ground" width="40" height="30">
+  <properties>
+   <property name="isometric" type="bool" value="true"/>
+   <property name="zHeight" type="int" value="0"/>
+  </properties>
   <data encoding="csv">
 100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,39,39,39,39,39,39,39,39,39,39,23,23,23,23,23,23,23,23,23,23,23,0,0,
 13,13,13,13,100,100,100,100,100,100,100,100,100,100,100,39,39,39,2,2,39,39,39,39,39,39,39,23,23,23,23,23,23,23,23,23,23,23,23,23,
@@ -124,10 +128,13 @@
 39,39,39,39,39,39,39,39,39,39,39,61,61,61,61,61,61,61,61,61,39,39,39,39,39,39,39,39,39,39,39,39,72,72,72,72,72,72,83,83
 </data>
  </layer>
- <objectgroup id="11" name="Spawnpoints" class="Player">
+ <objectgroup id="11" name="Spawnpoints">
   <object id="214" name="Player" type="Player" x="144" y="112" width="16" height="16"/>
  </objectgroup>
- <layer id="2" name="Kachelebene 2" width="40" height="30">
+ <layer id="2" name="Layer1" width="40" height="30">
+  <properties>
+   <property name="zHeight" type="int" value="100"/>
+  </properties>
   <data encoding="csv">
 22,22,69,52,52,52,52,52,52,52,52,0,0,0,0,0,0,0,0,0,0,0,0,39,0,0,0,0,0,0,0,0,0,23,23,23,23,23,23,0,
 0,0,0,52,52,52,52,52,52,0,0,0,0,0,35,0,0,0,0,0,0,0,0,35,0,0,0,0,0,0,0,0,0,0,0,0,23,23,23,0,
@@ -161,7 +168,10 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="3" name="Kachelebene 3" width="40" height="30">
+ <layer id="3" name="Layer2" width="40" height="30">
+  <properties>
+   <property name="zHeight" type="int" value="200"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,72,0,0,0,0,0,0,0,0,0,0,
@@ -195,7 +205,10 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="4" name="Kachelebene 4" width="40" height="30">
+ <layer id="4" name="Layer3" width="40" height="30">
+  <properties>
+   <property name="zHeight" type="int" value="300"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,76,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,76,0,0,0,0,0,0,0,
@@ -229,7 +242,10 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="5" name="Kachelebene 5" width="40" height="30">
+ <layer id="5" name="Layer4" width="40" height="30">
+  <properties>
+   <property name="zHeight" type="int" value="400"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -263,7 +279,10 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="6" name="Kachelebene 6" width="40" height="30">
+ <layer id="6" name="Layer5" width="40" height="30">
+  <properties>
+   <property name="zHeight" type="int" value="500"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -297,7 +316,10 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="7" name="Kachelebene 7" width="40" height="30">
+ <layer id="7" name="Layer6" width="40" height="30">
+  <properties>
+   <property name="zHeight" type="int" value="600"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -331,7 +353,10 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="8" name="Kachelebene 8" width="40" height="30">
+ <layer id="8" name="Layer7" width="40" height="30">
+  <properties>
+   <property name="zHeight" type="int" value="700"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
