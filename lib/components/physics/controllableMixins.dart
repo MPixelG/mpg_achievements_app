@@ -30,60 +30,46 @@ mixin KeyboardControllableMovement
     final isRightKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
         keysPressed.contains(LogicalKeyboardKey.keyD);
-    if (viewSide == ViewSide.isometric) {
-      if (isLeftKeyPressed) {
-        horizontalMovement--;
-        verticalMovement++;
-      }
-      if (isRightKeyPressed) {
-        horizontalMovement++;
-        verticalMovement--;
-      }
-
-    }
-    else {
-      if (isLeftKeyPressed) horizontalMovement--;
-      if (isRightKeyPressed) horizontalMovement++;
-    }
+    if (isLeftKeyPressed) horizontalMovement--;
+    if (isRightKeyPressed) horizontalMovement++;
     //ternary statement if left key pressed then add -1 to horizontal movement if not add 0 = not moving
 
 
-    if (viewSide == ViewSide.isometric || viewSide == ViewSide.side) {
-      if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) {
-        debugFlyMode = !debugFlyMode; // press left ctrl to toggle fly mode
-      }
+    if (viewSide != ViewSide.isometric && viewSide != ViewSide.side) super.onKeyEvent(event, keysPressed);
+    if (keysPressed.contains(LogicalKeyboardKey.controlLeft)) {
+      debugFlyMode = !debugFlyMode; // press left ctrl to toggle fly mode
+    }
 
-      // If the space key is pressed, handle the jump/fly logic.
-      if (keysPressed.contains(LogicalKeyboardKey.space)) {
-        // First, check for special movement states that override a standard jump.
-        if (debugFlyMode || isClimbing) {
-          final upwardThrottle = isClimbing ? -0.6 : -1.0;
+    // If the space key is pressed, handle the jump/fly logic.
+    if (keysPressed.contains(LogicalKeyboardKey.space)) {
+      // First, check for special movement states that override a standard jump.
+      if (debugFlyMode || isClimbing) {
+        final upwardThrottle = isClimbing ? -0.6 : -1.0;
 
-          if (viewSide == ViewSide.isometric) {
-            print('isometric jump');
-             zMovement = upwardThrottle;
-          } else {
-            verticalMovement = upwardThrottle;
-          }
+        if (viewSide == ViewSide.isometric) {
+          print('isometric jump');
+           zMovement = upwardThrottle;
         } else {
-          hasJumped = true;
-          print('hasJumped:$hasJumped');
+          verticalMovement = upwardThrottle;
         }
-      }
-
-      if (keysPressed.contains(LogicalKeyboardKey.shiftLeft)) {
-        //when in fly mode and shift is pressed, the player gets moved down
-        if (isClimbing) {
-          verticalMovement = 0.06;
-        } else if (debugFlyMode) {
-          verticalMovement = 1;
-        }
-
-
-        isShifting = true;
       } else {
-        isShifting = false;
+        hasJumped = true;
+        print('hasJumped:$hasJumped');
       }
+    }
+
+    if (keysPressed.contains(LogicalKeyboardKey.shiftLeft)) {
+      //when in fly mode and shift is pressed, the player gets moved down
+      if (isClimbing) {
+        verticalMovement = 0.06;
+      } else if (debugFlyMode) {
+        verticalMovement = 1;
+      }
+
+
+      isShifting = true;
+    } else {
+      isShifting = false;
     }
 
     if (viewSide == ViewSide.isometric) {
@@ -96,11 +82,9 @@ mixin KeyboardControllableMovement
 
       if (isUpKeyPressed) {
         verticalMovement--;
-        horizontalMovement--;
       }
       if (isDownKeyPressed) {
         verticalMovement++;
-        horizontalMovement++;
       }
 
     }

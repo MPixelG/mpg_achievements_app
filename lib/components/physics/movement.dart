@@ -23,8 +23,6 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
   Vector2 velocity = Vector2.zero();
   //character's height off the ground plane
 
-
-
   bool debugFlyMode = false;
   bool hasJumped = false;
   bool isOnGround = false;
@@ -59,8 +57,7 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
       velocity.x += horizontalMovement * moveSpeed;
       velocity.x *=
           _friction *
-          (dt +
-              1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+          (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
       if (gravityEnabled) {
         _performGravity(dt);
       }
@@ -89,20 +86,10 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
     velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
   }
 
-
-
-
   void jump() {
     velocity.y = -_jumpForce;
     //otherwise the player can even jump even if he is in the air
     isOnGround = false;
     hasJumped = false;
   }
-
-
-
-
-
-
-
 }

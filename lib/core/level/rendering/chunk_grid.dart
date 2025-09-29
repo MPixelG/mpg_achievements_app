@@ -1,7 +1,7 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/extensions.dart';
-import 'package:mpg_achievements_app/main.dart';
 
 import '../../../mpg_pixel_adventure.dart';
 import '../isometric/isometric_renderable.dart';
@@ -14,6 +14,12 @@ class ChunkGrid {
   Map<Vector2, Chunk> chunks = {};
 
   GameTileMap gameTileMap;
+
+
+  bool _needsUpdate = true;
+  Future<void>? _currentBuildTask;
+
+  void markForUpdate() => _needsUpdate = true;
   ChunkGrid(this.gameTileMap) {
     generateChunks();
     if(!shaderInitialized && !shaderBeingInitialized){
@@ -89,7 +95,6 @@ class ChunkGrid {
         (chunk.x + chunk.y) * (Chunk.chunkSize + chunkSpacing) * tilesize.z / 2,
       );
       chunkPos.x += Chunk.worldSize.x / 3;
-      print("world: ${Chunk.worldSize}, level: ${gameWidgetKey.currentState!.currentGame.gameWorld.level.width}");
       chunkPos += offset.toVector2();
       chunkPos.y -= chunk.zHeightUsedPixels;
       Vector2 unPositionedChunkPos = chunkPos - camPos + (viewportSize / 2);
@@ -113,13 +118,7 @@ class ChunkGrid {
         continue;
       }
 
-      Vector2 drawPos;
-      if (chunk.albedoWorldTopLeft != null) {
-        drawPos = chunk.albedoWorldTopLeft!;
-      } else {
-        drawPos = chunkPos;
-      }
-      drawPos = chunkPos;
+      Vector2 drawPos = chunk.albedoWorldTopLeft ?? chunkPos;
 
       albedoCanvas.save();
       normalCanvas.save();
@@ -143,10 +142,17 @@ class ChunkGrid {
     }
 
     await Future.wait([
-      normalRecorder.endRecording().toImage(viewportSize.x.toInt(), viewportSize.y.toInt()).then((value) => fullNormal = value),
-      albedoRecorder.endRecording().toImage(viewportSize.x.toInt(), viewportSize.y.toInt()).then((value) => fullAlbedo = value)
-    ]);
+      normalRecorder.endRecording().toImage(viewportSize.x.toInt(), viewportSize.y.toInt()).then((value) => lastNormal = value),
+      albedoRecorder.endRecording().toImage(viewportSize.x.toInt(), viewportSize.y.toInt()).then((value) => lastAlbedo = value)
+    ]).then((value) {
+      fullAlbedo = lastAlbedo;
+      fullNormal = lastNormal;
+      //print("frame on ${DateTime.now().millisecond}");
+    });
   }
+
+  Image? lastAlbedo;
+  Image? lastNormal;
 
   Image? fullAlbedo;
   Image? fullNormal;
@@ -163,16 +169,30 @@ class ChunkGrid {
     Offset offset = Offset.zero,
       ]) {
 
-    buildMaps(components, camPos, viewportSize);
-
+    if (_needsUpdate && _currentBuildTask == null) {
+      _currentBuildTask = buildMaps(components, camPos, viewportSize)
+          .then((_) {
+        _currentBuildTask = null;
+      });
+    }
     if(fullAlbedo == null || fullNormal == null || shader == null) return;
 
     shader!.setImageSampler(0, fullAlbedo!);
     shader!.setImageSampler(1, fullNormal!);
+
+    //Vector2 mousePos = PixelAdventure.currentInstance.gameWorld.mousePos - camPos;
+    // mousePos.x /= viewportSize.x;
+    // mousePos.y /= viewportSize.y;
+    //print(mousePos);
+
+    double time = DateTime.now().millisecondsSinceEpoch / 10000;
+    double lightX = cos(time) * 600;
+    double lightY = sin(time) * 600;
+
     shader!.setFloatUniforms((val) {
       val.setFloats([
         viewportSize.x, viewportSize.y,
-        10, 100, 100,
+        lightX, lightY, 15,
         0.5,
       ]);
     });

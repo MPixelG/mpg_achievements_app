@@ -36,11 +36,11 @@ vec3 calculateBasicLighting(vec3 lightPos){
     L = normalize(L);
 
     float NdotL = max(dot(n, L), 0);
-    float range = 2000.2;
+    float range = 2.2;
     float att = 1.0 / (1.0 + 16.0 * (dist / range) * (dist / range));
 
     vec3 lightColor = vec3(1, 0.7, 0.75);
-    vec3 diffuse = lightColor * NdotL * att;
+    vec3 diffuse = lightColor * NdotL;
 
     return diffuse * (((depthMapPixel.b) / 5) + 0.75);
 }
@@ -82,7 +82,7 @@ void main() {
 
 
     vec3 diffuse = calculateBasicLighting(adjustedLightPos);
-    vec3 color = albedoPixel.rgb * (vec3(0.11, 0.1, 0.1) + diffuse);
+    vec3 color = albedoPixel.rgb * (vec3(0.11, 0.1, 0.1)*2 + diffuse);
 
     fragColor = vec4(color, albedoPixel.a);
 }

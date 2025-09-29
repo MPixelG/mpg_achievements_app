@@ -21,12 +21,12 @@ mixin IsometricMovement on BasicMovement {
   }
 
   void _updateMovement(double dt) {
-          _performIsometricMovement(dt);
-          if (gravityEnabled) {
-            _performIsometricGravity(dt);
-          }
-          gridPos += velocity * dt;
-      }
+    _performIsometricMovement(dt);
+    if (gravityEnabled) {
+      _performIsometricGravity(dt);
+    }
+    gridPos += velocity * dt;
+  }
 
   void _performIsometricGravity(double dt) {
     //access the player's ground level
@@ -73,15 +73,9 @@ mixin IsometricMovement on BasicMovement {
 
   void _performIsometricMovement(double dt) {
     velocity.x += horizontalMovement * moveSpeed;
-    velocity.x *=
-        _friction *
-            (dt +
-                1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
-    velocity.y += verticalMovement  *  moveSpeed;
-    velocity.y *=
-        _friction *
-            (dt +
-                1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+    velocity.x *= _friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+    velocity.y += verticalMovement * moveSpeed;
+    velocity.y *= _friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
 
   }
   double getzPosition() => zPosition;

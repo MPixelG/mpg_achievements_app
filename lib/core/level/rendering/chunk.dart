@@ -35,6 +35,10 @@ class Chunk {
   Image? albedoMap;
   Image? normalAndDepthMap;
 
+
+  DateTime? _lastRebuild;
+  static const Duration _minRebuildInterval = Duration(milliseconds: 15);
+
   Chunk(this.x, this.y, this.z, [this.neighborChunkCluster]);
 
   Chunk.fromGameTileMap(
@@ -159,6 +163,15 @@ class Chunk {
   int currentlyActiveOperations = 0;
   static const int maxOperations = 10;
   Future<void> rebuildMaps(Iterable<IsometricRenderable> additionals) async {
+
+    final now = DateTime.now();
+    if (_lastRebuild != null &&
+        now.difference(_lastRebuild!) < _minRebuildInterval) {
+      return;
+    }
+
+    _lastRebuild = now;
+
     if(currentlyActiveOperations > maxOperations) return;
 
     currentlyActiveOperations++;
@@ -335,11 +348,11 @@ class Chunk {
     albedoMap = await picture.toImage(albedoWidth, albedoHeight);
   }
 
-  Future<void> buildNormalAndDepthMap(
-    Iterable<IsometricRenderable> additionals,
-  ) async {
+  Future<void> buildNormalAndDepthMap(Iterable<IsometricRenderable> additionals,) async {
+
     final normalRecorder = PictureRecorder();
     final normalCanvas = Canvas(normalRecorder);
+
     normalCanvas.save();
     normalCanvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
 
@@ -420,8 +433,8 @@ class Chunk {
     }
 
     if (albedoMap != null && normalAndDepthMap != null) {
-      canvas.drawImage(albedoMap!, offset, Paint());
       normalCanvas.drawImage(normalAndDepthMap!, offset, Paint());
+      canvas.drawImage(albedoMap!, offset, Paint());
     }
   }
 
