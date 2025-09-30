@@ -22,7 +22,7 @@ class ShadowComponent extends PositionComponent with IsometricRenderable {
   @override
   FutureOr<void> onLoad() {
     gridPos = owner.gridFeetPos;
-    position = Vector2(owner.size.x/2, owner.height);
+    position.setFrom(owner.absolutePosition.xy);
     return super.onLoad();
   }
 
@@ -33,7 +33,7 @@ class ShadowComponent extends PositionComponent with IsometricRenderable {
    // Continuously update the shadow's grid position to match the owner's.
    // This ensures correct render sorting as the player moves.
    gridPos = owner.gridFeetPos;
-   position = Vector2(owner.size.x /2 , owner.height);
+   position.setFrom(owner.shadowAnchor.absolutePosition +  Vector2(owner.size.x/2, owner.size.y));
  }
 
 

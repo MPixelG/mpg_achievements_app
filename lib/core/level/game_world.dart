@@ -72,10 +72,10 @@ abstract class GameWorld extends World
       level = TiledComponent((await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap);
     }
 
+    //add player
    await add(game.gameWorld.player);
-   await add(game.gameWorld.player.shadow);
 
-        // Add the level to the game world so it gets rendered.
+    // Add the level to the game world so it gets rendered.
    await add(level);
 
 
