@@ -22,7 +22,12 @@ class AppRouter {
         name: "game",
         builder: (context, state) => gameScreen,
       ),
-      GoRoute(path: "/settings", builder: (context, state) => MainMenuScreen()),
+      GoRoute(
+        path: "/settings",
+        name: "settings", // Settings
+        builder: (context, state) => const SettingsScreen(),
+      ),
+
       GoRoute(
         path: "/widgetBuilder",
         name: "widgetBuilder",
@@ -31,3 +36,4 @@ class AppRouter {
     ],
   );
 }
+

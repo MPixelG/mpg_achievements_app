@@ -174,7 +174,7 @@
                           "properties": {
                             "text": "SETTINGS",
                             "onPressed": {
-                              "screen": "Settings",
+                              "screen": "settings",
                               "actionType": "screenChange"
                             },
                             "imageName": "test_button_2"

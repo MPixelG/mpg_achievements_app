@@ -40,7 +40,12 @@ class PixelAdventure extends FlameGame
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
-  late String currentLevel = "Level_9";
+  late String currentLevel = "Level_7";
+
+  //adding debugMode for settings screen
+  @override
+  bool debugState = false;
+
 
   //bools for game logic
   //needs to go into the overlay_controller later
