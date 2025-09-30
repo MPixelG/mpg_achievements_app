@@ -12,8 +12,6 @@ import '../util/isometric_utils.dart';
 
 class IsometricPlayer extends Player with IsometricRenderable{
 
-  late ShadowComponent shadow;
-
   IsometricPlayer({required super.playerCharacter}){
     setCustomAnimationName("falling", "running");
     setCustomAnimationName("jumping", "running");
@@ -21,9 +19,8 @@ class IsometricPlayer extends Player with IsometricRenderable{
 
   @override
   Future<void> onLoad() async {
-    shadow = ShadowComponent(gridFeetPos, owner: this); //removable when positioning is correct
-    shadow.anchor = Anchor.topCenter;
-    add(shadow);
+    shadow = ShadowComponent(owner: this); //removable when positioning is correct
+    shadow.anchor = Anchor.center;
     return super.onLoad();
   }
 

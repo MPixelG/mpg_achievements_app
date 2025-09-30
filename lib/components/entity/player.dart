@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
+import 'package:mpg_achievements_app/components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
@@ -43,6 +44,8 @@ class Player extends GameCharacter
   Vector2 startingPosition = Vector2.zero();
   //Player name
   String playerCharacter;
+  //Shadow of player
+  late ShadowComponent shadow;
   //Find the ground of player position
   late double zGround = 0.0;
 

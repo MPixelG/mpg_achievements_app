@@ -32,7 +32,9 @@ class IsometricWorld extends GameWorld {
     // Initialize the player as an IsometricPlayer
     player = IsometricPlayer(playerCharacter: 'Pink Man');
 
+
     await super.onLoad();
+
     //find the collision layer
     final collisionLayer = level.tileMap.getLayer<ObjectGroup>('Collisions');
     tileGrid = IsometricTileGrid(
