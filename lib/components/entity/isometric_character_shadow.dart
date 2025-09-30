@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
@@ -8,12 +10,21 @@ import '../../core/level/isometric/isometric_tiled_component.dart';
 
 
 
-class ShadowComponent extends PositionComponent implements IsometricRenderable {
+class ShadowComponent extends PositionComponent with IsometricRenderable {
 
  late Vector3 gridPos;
  final IsometricPlayer owner;
 
-  ShadowComponent(this.gridPos, {required this.owner});
+
+  ShadowComponent({required this.owner});
+
+
+  @override
+  FutureOr<void> onLoad() {
+    gridPos = owner.gridFeetPos;
+    position = Vector2(owner.size.x/2, owner.height);
+    return super.onLoad();
+  }
 
 
  @override
@@ -22,11 +33,11 @@ class ShadowComponent extends PositionComponent implements IsometricRenderable {
    // Continuously update the shadow's grid position to match the owner's.
    // This ensures correct render sorting as the player moves.
    gridPos = owner.gridFeetPos;
+   position = Vector2(owner.size.x /2 , owner.height);
  }
 
 
-
- @override
+@override
  void render(Canvas canvas) {
    super.render(canvas);
    // Convert the selected tile's grid coordinates into its center position in the isometric world.
@@ -50,34 +61,23 @@ class ShadowComponent extends PositionComponent implements IsometricRenderable {
 
 
 
-  @override
+@override
   RenderCategory get renderCategory =>
       RenderCategory.characterEffect;
 
-  @override
-    Vector3 get gridFeetPos => gridPos;
+@override
+    Vector3 get gridFeetPos => owner.gridFeetPos;
 
-  @override
-  bool updatesNextFrame = false;
+ @override
+ Vector3 get gridHeadPos => gridFeetPos + Vector3(0.1, 0.1, 1);
 
+ @override
+ void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {
+   renderTree(canvas);
+ };
 
-  @override
-  bool dirty = false;
-
-  @override
-  Vector3 get gridHeadPos => throw UnimplementedError();
-
-  @override
-  void Function(Canvas canvas) get renderAlbedo => renderTree;
-
-  @override
-  void Function(Canvas canvas, Paint? overridePaint)? get renderNormal {
-    return null;
-  }
-
-  @override
-  void setDirty([bool value = true]) {
-    dirty = value;
-  }
-
+ @override
+ void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
+         (Canvas canvas, Paint? overridePaint) {};
 }
+
