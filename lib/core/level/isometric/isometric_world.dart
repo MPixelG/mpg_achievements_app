@@ -22,6 +22,7 @@ class TileSelectionResult {
 class IsometricWorld extends GameWorld {
   late IsometricTileGrid tileGrid;
   Vector2? selectedTile;
+
   TileHighlightRenderable? highlightedTile;
 
   // Example isometric tile size (width, height)
@@ -32,9 +33,10 @@ class IsometricWorld extends GameWorld {
     // Initialize the player as an IsometricPlayer
     player = IsometricPlayer(playerCharacter: 'Pink Man');
 
-
     await super.onLoad();
 
+    add(game.gameWorld.player.shadow);
+    game.gameWorld.player.shadow.parent = game.gameWorld;
     //find the collision layer
     final collisionLayer = level.tileMap.getLayer<ObjectGroup>('Collisions');
     tileGrid = IsometricTileGrid(
@@ -165,7 +167,6 @@ class IsometricWorld extends GameWorld {
       if (layer is TileLayer) {
         // Make sure the coordinates are within the bounds of this layer.
         if (x >= 0 && x < layer.width && y >= 0 && y < layer.height) {
-
           // Tiled stores tile data in [row][column] format, so we use [y][x].
           final gid = layer.tileData![y][x];
 
