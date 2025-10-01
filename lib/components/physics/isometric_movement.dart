@@ -3,7 +3,7 @@ import 'package:mpg_achievements_app/components/physics/movement.dart';
 
 mixin IsometricMovement on BasicMovement {
   double zMovement =
-  0; // Directional input (up/down) for z axis for isometric view
+      0; // Directional input (up/down) for z axis for isometric view
   final double _isometricJumpForce = 150;
   final double _isometricGravity = 50;
   double zVelocity = 0.0;
@@ -11,7 +11,6 @@ mixin IsometricMovement on BasicMovement {
   final double _friction = 0.75;
   final double _terminalVelocity = 150;
   //character's height off the ground plan
-
 
   @override
   void update(double dt) {
@@ -34,16 +33,16 @@ mixin IsometricMovement on BasicMovement {
     final currentZGround = player.zGround;
 
     if (!debugFlyMode && !isClimbing) {
-      if(!isOnGround || zVelocity < 0){
-
-        zVelocity += _isometricGravity * dt;} //fall
+      if (!isOnGround || zVelocity < 0) {
+        zVelocity += _isometricGravity * dt;
+      } //fall
       //limit falls speed
       zVelocity = zVelocity.clamp(-_isometricJumpForce, _terminalVelocity);
       // Apply Z velocity to Z position
       zPosition += zVelocity * dt;
     }
     //only print when counter is below 10
-   /* if(DateTime.now().millisecondsSinceEpoch % 100 < 10){
+    /* if(DateTime.now().millisecondsSinceEpoch % 100 < 10){
       print('currentGround:$currentZGround');
       print('zPosition:$zPosition');
       print('zV:$zVelocity');
@@ -55,16 +54,17 @@ mixin IsometricMovement on BasicMovement {
       isOnGround = true;
       //print('Player landed at:$zPosition');
     } else {
-      isOnGround = false;}
+      isOnGround = false;
+    }
 
-    if(debugFlyMode){
-      zPosition += zMovement * moveSpeed * dt*10 ;
+    if (debugFlyMode) {
+      zPosition += zMovement * moveSpeed * dt * 10;
       zVelocity = 0;
-      isOnGround =(zPosition >= currentZGround);
+      isOnGround = (zPosition >= currentZGround);
     }
   }
 
-@override
+  @override
   void jump() {
     zVelocity = -_isometricJumpForce;
     isOnGround = false;
@@ -73,10 +73,16 @@ mixin IsometricMovement on BasicMovement {
 
   void _performIsometricMovement(double dt) {
     velocity.x += horizontalMovement * moveSpeed;
-    velocity.x *= _friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+    velocity.x *=
+        _friction *
+        (dt +
+            1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
     velocity.y += verticalMovement * moveSpeed;
-    velocity.y *= _friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
-
+    velocity.y *=
+        _friction *
+        (dt +
+            1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
   }
+
   double getzPosition() => zPosition;
 }
