@@ -1,6 +1,6 @@
 # mpg_achievements_app
 
-An Isometric game using Flutter and Flame. Setting and Storyline MPG. Contribute to the community at your school and become a change-maker by helping with real-life social, environmental or financial challenges and receive rewards. Additionally, learn OOP with challenges and tasks in a 2D adventure/J'n'R.
+An Isometric game using Flutter and Flame. Setting and storyline MPG. Contribute to the community at your school and become a change-maker by helping with real-life social, environmental or financial challenges and receive rewards. Additionally, learn OOP with challenges and tasks in a 2D adventure/J'n'R.
 Made by pupils for pupils!
 
 ## Getting Started
@@ -20,4 +20,4 @@ More resources to get you started if this is your first Flutter project:
 
 ![image](https://github.com/user-attachments/assets/26d9d7df-1468-494d-bd11-59f8db91c957)
 
-You can try out the newest version in the web [here](https://florebore.github.io/mpg_achievements_app/).
+You can try out the newest version on the web [here](https://mpixelg.github.io/mpg_achievements_app/).
