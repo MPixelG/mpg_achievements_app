@@ -22,6 +22,7 @@ class TileSelectionResult {
 class IsometricWorld extends GameWorld {
   late IsometricTileGrid tileGrid;
   Vector2? selectedTile;
+
   TileHighlightRenderable? highlightedTile;
 
   // Example isometric tile size (width, height)
