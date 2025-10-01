@@ -43,11 +43,11 @@ mixin IsometricMovement on BasicMovement {
       zPosition += zVelocity * dt;
     }
     //only print when counter is below 10
-    if(DateTime.now().millisecondsSinceEpoch % 100 < 10){
+   /* if(DateTime.now().millisecondsSinceEpoch % 100 < 10){
       print('currentGround:$currentZGround');
       print('zPosition:$zPosition');
       print('zV:$zVelocity');
-      print('zM:$zMovement');}
+      print('zM:$zMovement');}*/
     // Only apply gravity if not on the ground
     if (zPosition >= currentZGround && zVelocity >= 0) {
       zPosition = currentZGround;

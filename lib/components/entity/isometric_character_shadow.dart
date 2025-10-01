@@ -33,7 +33,8 @@ class ShadowComponent extends PositionComponent with IsometricRenderable {
    // Continuously update the shadow's grid position to match the owner's.
    // This ensures correct render sorting as the player moves.
    gridPos = owner.gridFeetPos;
-   position.setFrom(owner.shadowAnchor.absolutePosition +  Vector2(owner.size.x/2, owner.size.y));
+   if(owner.isFlippedHorizontally) {position.setFrom(owner.shadowAnchor.absolutePosition + Vector2(-owner.size.x/2, owner.size.y));}
+   else {position.setFrom(owner.shadowAnchor.absolutePosition +  Vector2(owner.size.x/2, owner.size.y));}
  }
 
 
