@@ -70,10 +70,10 @@ class ShadowComponent extends PositionComponent with IsometricRenderable {
   RenderCategory get renderCategory => RenderCategory.characterEffect;
 
   @override
-  Vector3 get gridFeetPos => owner.gridFeetPos;
+  Vector3 get gridFeetPos => owner.gridFeetPos - Vector3(0.5,0.5,0.5)  ;
 
   @override
-  Vector3 get gridHeadPos => gridFeetPos + Vector3(0.1, 0.1, 1);
+  Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 1);
 
   @override
   void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {
