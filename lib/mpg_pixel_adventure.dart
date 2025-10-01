@@ -40,11 +40,11 @@ class PixelAdventure extends FlameGame
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
-  late String currentLevel = "Level_7";
+  late String currentLevel = "Level_8";
 
-  //adding debugMode for settings screen
-  @override
-  bool debugState = false;
+  //variable for normal N E S W Movement and isometric Movement
+  //a normal hot reload to change the movement isn't enough, you have to do a hot restart!
+  static bool isometricMovement = true;
 
 
   //bools for game logic

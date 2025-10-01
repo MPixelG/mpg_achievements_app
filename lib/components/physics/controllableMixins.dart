@@ -30,8 +30,26 @@ mixin KeyboardControllableMovement
     final isRightKeyPressed =
         keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
         keysPressed.contains(LogicalKeyboardKey.keyD);
-    if (isLeftKeyPressed) horizontalMovement--;
-    if (isRightKeyPressed) horizontalMovement++;
+    if (isLeftKeyPressed) {
+      //checking if isometric Movement is set to true or false
+      if(!PixelAdventure.isometricMovement){
+        horizontalMovement = horizontalMovement - 0.5;
+        verticalMovement = verticalMovement + 0.5;
+      }
+      else{
+        horizontalMovement--;
+      }
+    }
+    if (isRightKeyPressed) {
+      //checking if isometric Movement is set to true or false
+      if(!PixelAdventure.isometricMovement){
+        horizontalMovement = horizontalMovement + 0.5;
+        verticalMovement = verticalMovement - 0.5;
+      }
+      else{
+        horizontalMovement++;
+      }
+    }
     //ternary statement if left key pressed then add -1 to horizontal movement if not add 0 = not moving
 
 
@@ -81,11 +99,26 @@ mixin KeyboardControllableMovement
           keysPressed.contains(LogicalKeyboardKey.arrowDown);
 
       if (isUpKeyPressed) {
-        verticalMovement--;
+        //checking if isometric Movement is set to true or false
+        if(!PixelAdventure.isometricMovement){
+          verticalMovement = verticalMovement - 0.5;
+          horizontalMovement = horizontalMovement - 0.5;
+        }
+        else{
+          verticalMovement--;
+        }
       }
       if (isDownKeyPressed) {
-        verticalMovement++;
+        //checking if isometric Movement is set to true or false
+        if(!PixelAdventure.isometricMovement){
+          verticalMovement = verticalMovement + 0.5;
+          horizontalMovement = horizontalMovement + 0.5;
+        }
+        else{
+          verticalMovement++;
+        }
       }
+
 
     }
     if (viewSide == ViewSide.topDown) {
