@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
+import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/entity/player.dart';
 
@@ -32,7 +33,7 @@ class IsometricPlayer extends Player with IsometricRenderable{
 
   @override
   set gridPos(Vector2 newGridPos) {
-    position = (position - absoluteCenter) + toWorldPos(newGridPos);
+    position = (position - absoluteCenter) + toWorldPos2D(newGridPos, 0);
   }
 
   Vector2 worldToTileIsometric(Vector2 worldPos) {
@@ -44,18 +45,11 @@ class IsometricPlayer extends Player with IsometricRenderable{
     return Vector2(tileX, tileY);
   }
 
-  Vector2 toWorldPos(Vector2 gridPos) {
-    return Vector2(
-      (gridPos.x - gridPos.y) * (tilesize.x / 2),
-      (gridPos.x + gridPos.y) * (tilesize.z / 2),
-    );
-  }
-
   @override
   Vector3 get gridFeetPos {
     Vector2 xYGridPos;
     if (hitbox != null) {
-      xYGridPos = toGridPos(absoluteCenter) - Vector2(1, 1);
+      xYGridPos = toGridPos(absoluteCenter);
     } else {
       xYGridPos = toGridPos(absoluteCenter);
     }
@@ -66,16 +60,22 @@ class IsometricPlayer extends Player with IsometricRenderable{
   RenderCategory get renderCategory => RenderCategory.entity;
 
   @override
-  Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 1);
+  Vector3 get gridHeadPos {
+    return gridFeetPos + Vector3(0.8, 0.8, 1);
+  }
 
   @override
   void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {
     renderTree(canvas);
+    //canvas.drawCircle(toWorldPos(gridHeadPos).toOffset(), 4, Paint()..color = Colors.red);
+    //canvas.drawCircle(toWorldPos(gridFeetPos).toOffset(), 2, Paint()..color = Colors.yellow);
   };
   Sprite normalSprite = Sprite(Flame.images.fromCache("playerNormal.png"), srcSize: tilesize.xy, srcPosition: Vector2.zero());
   @override
   void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
       (Canvas canvas, Paint? overridePaint) {
         normalSprite.render(canvas, position: position - Vector2(((scale.x < 0) ? 32 : 0), 0));
+        canvas.drawCircle(toWorldPos(gridFeetPos).toOffset(), 3, Paint()..color = Colors.blue);
+        canvas.drawCircle(toWorldPos(gridHeadPos).toOffset(), 3, Paint()..color = Colors.blue);
       };
 }

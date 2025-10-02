@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter/material.dart' show Colors;
 import 'package:mpg_achievements_app/components/util/isometric_utils.dart';
 import 'package:mpg_achievements_app/core/level/rendering/tileset_utils.dart';
 
@@ -34,6 +35,11 @@ class Chunk {
 
   Image? albedoMap;
   Image? normalAndDepthMap;
+
+
+  static Set<Tileset> knownTilesets = {};
+  static const int chunkSize = 16; // Size of each chunk in tiles
+  static int totalZLayers = 1;
 
 
   DateTime? _lastRebuild;
@@ -134,50 +140,19 @@ class Chunk {
     Iterable<IsometricRenderable> additionals, {
     Iterable<IsometricRenderable>? neighborChunkTiles,
   }) {
-    allRenderables.clear();
-
-    allRenderables.addAll(tiles);
-    allRenderables.addAll(additionals);
-
-    if (neighborChunkTiles != null) {
-      allRenderables.addAll(neighborChunkTiles);
-    }
-
-    allRenderables.sort((a, b) {
-      Vector3 pos1 = a.gridFeetPos;
-      Vector3 pos2 = b.gridFeetPos;
-
-      pos1.z *= tilesize.z;
-      pos2.z *= tilesize.z;
-
-      int comparedPos = pos1.compareTo(pos2); //compare the foot y positions
-
-      if (comparedPos != 0) {
-        return comparedPos;
-      }
-
-      return 0;
+    tiles.sort((a, b) {
+      return depth(a).compareTo(depth(b));
     });
   }
 
   int currentlyActiveOperations = 0;
   static const int maxOperations = 10;
-  Future<void> rebuildMaps(Iterable<IsometricRenderable> additionals) async {
-
-    final now = DateTime.now();
-    if (_lastRebuild != null &&
-        now.difference(_lastRebuild!) < _minRebuildInterval) {
-      return;
-    }
-
-    _lastRebuild = now;
-
+  Future<void> rebuildMaps(List<IsometricRenderable> additionals) async {
     if(currentlyActiveOperations > maxOperations) return;
 
     currentlyActiveOperations++;
-    Iterable<IsometricRenderable> containedAdditionals = additionals
-        .toList()
-        .where((element) => containsRenderable(element));
+    List<IsometricRenderable> containedAdditionals = additionals
+        .where((element) => containsRenderable(element)).toList();
 
     if (neighborChunkCluster != null) {
       usesTempNeighborTileRendering = true;
@@ -198,24 +173,22 @@ class Chunk {
         neighborChunkTiles.addAll(element.tiles);
       }
 
-      reSortTiles(containedAdditionals, neighborChunkTiles: neighborChunkTiles);
     } else {
       usesTempNeighborTileRendering = false;
-      reSortTiles(containedAdditionals);
     }
-    await prepareBuildImageMaps().then((value) async {
-      await buildAlbedoMap(containedAdditionals);
-      await buildNormalAndDepthMap(containedAdditionals);
-    }).then((value) => currentlyActiveOperations--);
+    prepareBuildImageMaps();
+    await buildAlbedoMap(containedAdditionals);
+    await buildNormalAndDepthMap(containedAdditionals);
+    currentlyActiveOperations--;
   }
 
-  Future<void> prepareBuildImageMaps() async {
-    if (allRenderables.isEmpty) return;
+  void prepareBuildImageMaps() {
+    if (tiles.isEmpty) return;
 
     int minGridX = 1 << 30, minGridY = 1 << 30;
     int maxGridX = -1 << 30, maxGridY = -1 << 30;
     int maxZ = 0;
-    for (final r in allRenderables) {
+    for (final r in tiles) {
       minGridX = math.min(minGridX, r.gridFeetPos.x.toInt());
       minGridY = math.min(minGridY, r.gridFeetPos.y.toInt());
       maxGridX = math.max(maxGridX, r.gridHeadPos.x.toInt());
@@ -329,18 +302,11 @@ class Chunk {
     }
   }
 
-  Future<void> buildAlbedoMap(Iterable<IsometricRenderable> additionals) async {
+  Future<void> buildAlbedoMap(List<IsometricRenderable> additionals) async {
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
-    canvas.save();
 
-
-    canvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
-    for (final tile in allRenderables) {
-      tile.renderAlbedo(canvas);
-    }
-    canvas.restore();
-
+    renderAlbedoMap(canvas, additionals);
 
     //canvas.drawRect(Offset.zero & Size(albedoWidth.toDouble(), albedoHeight.toDouble()), Paint()..color = Color(hashCode).withValues(alpha: 0.5));
 
@@ -348,53 +314,114 @@ class Chunk {
     albedoMap = await picture.toImage(albedoWidth, albedoHeight);
   }
 
-  Future<void> buildNormalAndDepthMap(Iterable<IsometricRenderable> additionals,) async {
+  void renderAlbedoMap(Canvas canvas, List<IsometricRenderable> additionals){
+    canvas.save();
+    canvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
+
+    int ti = 0, ei = 0;
+    double tileDepth;
+    double entityDepth = 0;
+    int lastEntityIndex = -1;
+    bool allEntitiesDone = false;
+    bool allTilesDone = false;
+    while (ti < tiles.length || ei < additionals.length) {
+      if(ei != lastEntityIndex) {
+        if(ei < additionals.length) {
+          entityDepth = depth(additionals[ei]);
+        } else {
+          allEntitiesDone = true;
+        }
+        lastEntityIndex = ei;
+      }
+
+      tileDepth = depth(tiles.elementAtOrNull(ti));
+
+      if ((tileDepth <= entityDepth || allEntitiesDone) && !allTilesDone) {
+        IsometricRenderable? tile = tiles.elementAtOrNull(ti++);
+        if(tile == null) {
+          allTilesDone = true;
+          continue;
+        }
+        tile.renderAlbedo(canvas);
+        //if(!allEntitiesDone) {
+        //  canvas.drawCircle(toWorldPos(tile.gridFeetPos).toOffset(), 3, Paint()
+        //    ..color = Colors.blue);
+        //  canvas.drawCircle(toWorldPos(tile.gridHeadPos).toOffset(), 3, Paint()
+        //    ..color = Colors.blue);
+        //}
+      } else {
+        additionals[ei++].renderAlbedo(canvas);
+      }
+
+    }
+    canvas.restore();
+  }
+
+  Future<void> buildNormalAndDepthMap(List<IsometricRenderable> additionals) async {
 
     final normalRecorder = PictureRecorder();
     final normalCanvas = Canvas(normalRecorder);
 
-    normalCanvas.save();
-    normalCanvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
-
-    for (final tile in allRenderables) {
-      if (tile.renderNormal == null) continue;
-
-      final double startVal =
-          ((tile.gridFeetPos.z - 1) / highestZTileInWorld) * 256;
-      final double endVal = (tile.gridFeetPos.z / highestZTileInWorld);
-
-      tile.renderNormal!(
-        normalCanvas,
-        Paint()
-          ..colorFilter = ColorFilter.matrix([
-            1, 0, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 0,
-            endVal, 0, startVal, 0,
-            0, 0, 1, 0,
-          ]),
-      );
-    }
-    normalCanvas.restore();
+    renderNormalAndDepthMap(normalCanvas, additionals);
 
     final normalPicture = normalRecorder.endRecording();
     normalAndDepthMap = await normalPicture.toImage(albedoWidth, albedoHeight);
   }
 
-  Vector2 toLocalPos(Vector2 gridPos, {double layerIndex = 0}) {
-    gridPos -= Vector2(x.toDouble() * chunkSize, y.toDouble() * chunkSize);
+  void renderNormalAndDepthMap(Canvas canvas, List<IsometricRenderable> additionals){
+    canvas.save();
+    canvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
 
-    final localPoint = Vector2(
-      (gridPos.x - gridPos.y + (chunkSize)) * (tilesize.x / 2),
-      (gridPos.x + gridPos.y) * (tilesize.z / 2),
-    );
+    Paint overridePaint = Paint();
+    double currentPaintZPos = double.infinity;
 
-    final layerOffset = Vector2(
-      -tilesize.x / 2,
-      zHeightUsedPixels - (0.0 * layerIndex * tilesize.z / 32),
-    );
 
-    return localPoint + layerOffset;
+    int ti = 0, ei = 0;
+    double tileDepth;
+    double entityDepth = double.negativeInfinity;
+    int lastEntityIndex = -1;
+    bool allEntitiesDone = false;
+    bool allTilesDone = false;
+    IsometricRenderable? nextRenderable;
+    while (ti < tiles.length || ei < additionals.length) {
+
+      if(ei != lastEntityIndex) {
+        if(ei < additionals.length) {
+          entityDepth = depth(additionals[ei]);
+        } else {
+          allEntitiesDone = true;
+        }
+        lastEntityIndex = ei;
+      }
+      tileDepth = depth(tiles.elementAtOrNull(ti));
+      if ((tileDepth <= entityDepth || allEntitiesDone) && !allTilesDone) {
+        nextRenderable = tiles.elementAtOrNull(ti++);
+        if(nextRenderable == null) {
+          allTilesDone = true;
+          continue;
+        }
+      } else {
+        nextRenderable = additionals[ei++];
+      }
+      if(nextRenderable.renderNormal == null) continue;
+
+      if(nextRenderable.gridFeetPos.z != currentPaintZPos) {
+        final double startVal =
+            ((nextRenderable.gridFeetPos.z - 1) / highestZTileInWorld) * 256;
+        final double endVal = (nextRenderable.gridFeetPos.z / highestZTileInWorld);
+
+        overridePaint.colorFilter = ColorFilter.matrix([
+          1, 0, 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 0,
+          endVal, 0, startVal, 0,
+          0, 0, 1, 0,
+        ]);
+      }
+
+      nextRenderable.renderNormal!(canvas, overridePaint);
+    }
+    canvas.restore();
   }
 
   bool containsRenderable(IsometricRenderable r) {
@@ -407,18 +434,18 @@ class Chunk {
   }
 
 
-  Set<IsometricRenderable> currentAdditionalComponents = {};
+  List<IsometricRenderable> currentAdditionalComponents = [];
   void render(
     Canvas canvas,
     Canvas normalCanvas,
-    Iterable<IsometricRenderable> components,
+    List<IsometricRenderable> components,
     NeighborChunkCluster neighborChunkCluster, [
     Offset offset = Offset.zero,
   ]) {
     if (isUsedByNeighbor) return;
     this.neighborChunkCluster = neighborChunkCluster;
 
-    Set<IsometricRenderable> newComponents = {};
+    List<IsometricRenderable> newComponents = [];
 
     components.where((element) => element.dirty).forEach((element) {
       if (containsRenderable(element)) {
@@ -427,22 +454,20 @@ class Chunk {
       }
     });
 
-    if (newComponents.isNotEmpty || currentAdditionalComponents.isNotEmpty) {
-      currentAdditionalComponents = newComponents;
-      rebuildMaps(currentAdditionalComponents);
+    if(currentAdditionalComponents.isNotEmpty && newComponents.isEmpty) {
+      rebuildMaps(newComponents);
     }
 
-    if (albedoMap != null && normalAndDepthMap != null) {
+    if (newComponents.isNotEmpty) {
+      currentAdditionalComponents = newComponents;
+      prepareBuildImageMaps();
+      renderAlbedoMap(canvas, components);
+      renderNormalAndDepthMap(normalCanvas, components);
+    } else if (albedoMap != null && normalAndDepthMap != null) {
       normalCanvas.drawImage(normalAndDepthMap!, offset, Paint());
       canvas.drawImage(albedoMap!, offset, Paint());
     }
   }
-
-
-
-  static Set<Tileset> knownTilesets = {};
-  static const int chunkSize = 16; // Size of each chunk in tiles
-  static int totalZLayers = 1;
 }
 
 class ChunkTile with IsometricRenderable {
@@ -454,10 +479,8 @@ class ChunkTile with IsometricRenderable {
   final int z;
   int zAdjustPos;
 
-  Vector3 get posWorld =>
-      Vector3(worldX.toDouble(), worldY.toDouble(), z.toDouble());
-  Vector3 get posLocal =>
-      Vector3(localX.toDouble(), localY.toDouble(), z.toDouble());
+  Vector3 get posWorld => Vector3(worldX.toDouble(), worldY.toDouble(), z.toDouble());
+  Vector3 get posLocal => Vector3(localX.toDouble(), localY.toDouble(), z.toDouble());
 
   ChunkTile(
     this.gid,
@@ -481,7 +504,7 @@ class ChunkTile with IsometricRenderable {
   Vector3 get gridFeetPos => posWorld;
 
   @override
-  Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 1);
+  Vector3 get gridHeadPos => gridFeetPos;
 
   @override
   RenderCategory get renderCategory => RenderCategory.tile;

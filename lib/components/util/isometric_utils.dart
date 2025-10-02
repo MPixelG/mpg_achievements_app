@@ -17,6 +17,20 @@ Vector2 toWorldPos(Vector3 gridPos, [double? levelWidth]) {
   //apply vertical movement for different layers according to z-index
   return localPoint + offset;
 }
+Vector2 toWorldPos2D(Vector2 gridPos, [double? levelWidth]) {
+  final localPoint = Vector2(
+    (gridPos.x - gridPos.y) * (tilesize.x / 2),
+    (gridPos.x + gridPos.y) * (tilesize.z / 2),
+  );
+  // Convert local point to global world position, Add the maps's visual origin offset back to the local point
+  // to get the correct world position
+  final offset = Vector2(
+    (levelWidth ?? Chunk.worldSize.x) / 2, //map origin
+    0, //height offset
+  );
+  //apply vertical movement for different layers according to z-index
+  return localPoint + offset;
+}
 
 Vector2 toGridPos(Vector2 worldPos, [double? levelWidth]) {
   return worldToTileIsometric(

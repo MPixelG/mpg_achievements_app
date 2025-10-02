@@ -1,6 +1,8 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'isometric_tiled_component.dart';
 
@@ -24,4 +26,12 @@ mixin IsometricRenderable {
 
   @override
   int get hashCode => Object.hashAll([gridFeetPos, renderCategory]);
+}
+
+double depth(IsometricRenderable? renderable){
+  if(renderable == null) return 0;
+  double feetLength = Vector3(renderable.gridFeetPos.x, renderable.gridFeetPos.y, renderable.gridFeetPos.z).length;
+  double headLength = Vector3(renderable.gridHeadPos.x, renderable.gridHeadPos.y, renderable.gridHeadPos.z).length;
+
+  return max(feetLength, headLength);
 }

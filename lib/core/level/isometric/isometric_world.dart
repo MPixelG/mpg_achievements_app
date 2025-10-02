@@ -115,7 +115,7 @@ class IsometricWorld extends GameWorld {
 
     (level as IsometricTiledComponent).renderComponentsInTree(
       canvas,
-      children.whereType<IsometricRenderable>(),
+      children.whereType<IsometricRenderable>().toList(),
       CameraComponent.currentCamera!.viewfinder.position,
       CameraComponent.currentCamera!.viewport.size,
     );

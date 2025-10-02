@@ -44,10 +44,10 @@ class IsometricTiledComponent extends TiledComponent {
   }
 
   List<RenderInstance>? lastRenderables;
-  Iterable<IsometricRenderable>? lastComponents;
+  List<IsometricRenderable>? lastComponents;
   void renderComponentsInTree(
     Canvas canvas,
-    Iterable<IsometricRenderable> components,
+    List<IsometricRenderable> components,
     Vector2 position,
     Vector2 viewportSize,
   ) {

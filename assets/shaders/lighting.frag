@@ -6,6 +6,7 @@ uniform sampler2D depthMap;
 uniform vec2 screenSize;
 uniform vec3 lightPos;
 uniform float heightScale;
+uniform float testUniform;
 
 out vec4 fragColor;
 

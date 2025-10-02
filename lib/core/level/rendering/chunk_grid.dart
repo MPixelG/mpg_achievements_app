@@ -66,7 +66,7 @@ class ChunkGrid {
 
   bool currentlyRebuilding = false;
   Future<void> buildMaps(
-      Iterable<IsometricRenderable> components,
+      List<IsometricRenderable> components,
       Vector2 camPos,
       Vector2 viewportSize,[
         Offset offset = Offset.zero,
@@ -163,7 +163,7 @@ class ChunkGrid {
 
   void render(
     Canvas canvas,
-    Iterable<IsometricRenderable> components,
+    List<IsometricRenderable> components,
     Vector2 camPos,
     Vector2 viewportSize, [
     Offset offset = Offset.zero,
@@ -193,7 +193,6 @@ class ChunkGrid {
       val.setFloats([
         viewportSize.x, viewportSize.y,
         lightX, lightY, 15,
-        0.5,
       ]);
     });
 
@@ -220,5 +219,7 @@ class ChunkGrid {
   void initShader() async{
     FragmentProgram program = await FragmentProgram.fromAsset("assets/shaders/lighting.frag");
     shader = program.fragmentShader();
+    print(program.toString());
+    print(program.fragmentShader().toString());
   }
 }
