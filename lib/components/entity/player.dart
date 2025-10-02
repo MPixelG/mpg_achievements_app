@@ -57,15 +57,17 @@ class Player extends GameCharacter
     // The player inspects its environment (the world) and configures itself.
     if (game.gameWorld is IsometricWorld) {
       setMovementType(ViewSide.isometric);
+      if (zPosition == zGround) {
+        isOnGround = true;
+        _findGroundBeneath();
+      }
     } else {
       setMovementType(ViewSide.side); // Default
     }
-    _findGroundBeneath();
+
     startingPosition = Vector2(position.x, position.y);
 
-   if (zPosition == zGround) {
-      isOnGround = true;
-    }
+
 
     return super.onLoad();
   }
@@ -73,10 +75,22 @@ class Player extends GameCharacter
   @override
   void update(double dt) {
     super.update(dt);
+    if (updateMovement) {
+      switch (viewSide) {
+        case ViewSide.side:
+          updateSideMovement(dt);
 
-    if (viewSide == ViewSide.isometric) {
-      _findGroundBeneath();
+        case ViewSide.isometric:
+          updateIsometricMovement(dt);
+          _findGroundBeneath();
+
+        case ViewSide.topDown:
+          // TODO: Handle this case.
+          throw UnimplementedError();
+
       }
+    }
+
     //Provider logic follow
     //the ref.watch here makes sure that the player component rebuilds and PlayerData changes its values when the player state changes
     final playerState = ref.watch(playerProvider);

@@ -12,14 +12,11 @@ mixin IsometricMovement on BasicMovement {
   final double _terminalVelocity = 150;
   //character's height off the ground plan
 
-  @override
-  void update(double dt) {
-    if (updateMovement) {
-      _updateMovement(dt);
+  void updateIsometricMovement(double dt) {
+    if (hasJumped) {
+      _jump();
+      hasJumped = false;
     }
-  }
-
-  void _updateMovement(double dt) {
     _performIsometricMovement(dt);
     if (gravityEnabled) {
       _performIsometricGravity(dt);
@@ -64,8 +61,7 @@ mixin IsometricMovement on BasicMovement {
     }
   }
 
-  @override
-  void jump() {
+  void _jump() {
     zVelocity = -_isometricJumpForce;
     isOnGround = false;
     hasJumped = false;

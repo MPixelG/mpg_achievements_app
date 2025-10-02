@@ -1,7 +1,5 @@
 import 'dart:math';
-
 import 'package:flame/components.dart';
-
 import '../../mpg_pixel_adventure.dart';
 import '../entity/gameCharacter.dart';
 import 'collisions.dart';
@@ -9,9 +7,7 @@ import 'collisions.dart';
 mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
   //constants for configuring basic movement
   final double _gravity = 20;
-
   final double _jumpForce = 12;
-
   final double _terminalVelocity = 150;
   final double _friction = 0.75;
 
@@ -19,7 +15,8 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
 
   double horizontalMovement = 0; // Directional input (left/right)
   double verticalMovement = 0; // Directional input (up/down)
-  double zMovement = 0; // Directional input (up/down) for z axis for isometric view
+  double zMovement =
+      0; // Directional input (up/down) for z axis for isometric view
   Vector2 velocity = Vector2.zero();
   //character's height off the ground plane
 
@@ -32,40 +29,29 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
 
   late ViewSide viewSide;
 
-
-  void update(double dt) {
-    if (updateMovement) {
-      _updateMovement(dt);
-    }
-  }
-
   void setMovementType(ViewSide newType) => viewSide = newType;
 
   void setGravityEnabled(bool val) => gravityEnabled = val;
 
   bool get isClimbing;
 
-
-
   // Updates movement logic based on input and physics
-  void _updateMovement(double dt) {
+  void updateSideMovement(double dt) {
     if (hasJumped) {
-        hasJumped = false;
+      jump();
+      hasJumped = false;
     }
     // Horizontal movement and friction
-    if (viewSide case ViewSide.side) {
       velocity.x += horizontalMovement * moveSpeed;
       velocity.x *=
           _friction *
-          (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+          (dt +
+              1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
       if (gravityEnabled) {
         _performGravity(dt);
       }
-    } else if (viewSide case ViewSide.topDown) {
-      throw UnimplementedError();
-    }
 
-    // Apply final velocity to position
+      // Apply final velocity to position
 
     gridPos += velocity * dt;
   }
