@@ -74,7 +74,12 @@
 </data>
  </layer>
  <objectgroup id="6" name="Collisions">
-  <object id="20" x="432" y="288" width="48" height="96"/>
+  <object id="20" x="432" y="288" width="48" height="96">
+   <properties>
+    <property name="zHeight" type="int" value="16"/>
+    <property name="zPosition" type="int" value="0"/>
+   </properties>
+  </object>
   <object id="22" x="192" y="192" width="192" height="160"/>
   <object id="23" x="240" y="352" width="192" height="64"/>
   <object id="24" x="384" y="272" width="48" height="80"/>

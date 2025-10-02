@@ -64,17 +64,23 @@ abstract class GameWorld extends World
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
     // Determine if the level is isometric based on the game world's type.
-    isometricLevel = (game.gameWorld is IsometricWorld) ? true: false;
-    if(isometricLevel) {
-    level = IsometricTiledComponent((await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap);
-    level.position = Vector2.zero();}
-    else {
-      level = TiledComponent((await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap);
+    isometricLevel = (game.gameWorld is IsometricWorld) ? true : false;
+    if (isometricLevel) {
+      level = IsometricTiledComponent(
+        (await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap,
+      );
+      level.position = Vector2.zero();
+    } else {
+      level = TiledComponent(
+        (await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap,
+      );
     }
 
-   await add(game.gameWorld.player);
-        // Add the level to the game world so it gets rendered.
-   await add(level);
+    //add player
+    await add(game.gameWorld.player);
+
+    // Add the level to the game world so it gets rendered.
+    await add(level);
 
     // If level not Parallax, load level with  scrolling background, property is added in Tiled
     if (level.tileMap.getLayer('Level')?.properties.getValue('Parallax') ??
@@ -97,7 +103,8 @@ abstract class GameWorld extends World
     // Debug mode off by default
     add(debugOverlays);
     debugOverlays.scale = Vector2.zero(); // Start hidden/scaled down
-    debugOverlays.priority = 2; // Ensure overlays draw above the rest of the game
+    debugOverlays.priority =
+        2; // Ensure overlays draw above the rest of the game
 
     // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
     //game.cam.setMoveBounds(Vector2.zero(), level.size);
@@ -130,7 +137,9 @@ abstract class GameWorld extends World
       }
     } //press V to toggle the visibility of the overlays
     if (keysPressed.contains(LogicalKeyboardKey.keyN)) {
-      (parent as PixelAdventure).cam.shakeCamera(6, 5,
+      (parent as PixelAdventure).cam.shakeCamera(
+        6,
+        5,
         animationStyle: AnimationStyle.easeOut,
       );
     } //press N to shake the camera
@@ -197,7 +206,7 @@ abstract class GameWorld extends World
 
     String playerCoords = roundedPlayerPos.toString();
     debugOverlays.text =
-        "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${toGridPos(_mouseCoords)..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tilesize.x).floor()}, ${(mousePos.y / tilesize.y).floor()}";
+        "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${toGridPos(_mouseCoords)..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tilesize.x).floor()}, ${(mousePos.y / tilesize.y).floor()}\nCurrentZ ground:${player.zGround}\nzPosition Player:${player.zPosition}\nzMovement:${player.zMovement}\nzVelocity:${player.zVelocity}\nisonGround:${player.isOnGround}";
     debugOverlays.position =
         game.cam.pos - game.cam.visibleWorldRect.size.toVector2() / 2;
 

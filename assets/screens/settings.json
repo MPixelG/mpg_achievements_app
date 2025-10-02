@@ -1,5 +1,5 @@
 {
-  "id": "container7",
+  "id": "container_settings",
   "widgetType": "Container",
   "properties": {
     "width": 0.1,
@@ -17,17 +17,16 @@
       "right": 0.0,
       "bottom": 0.0
     },
-    "margin": null,
     "alignment": null
   },
   "children": [
     {
-      "id": "stack2",
+      "id": "stack_settings",
       "widgetType": "Stack",
       "properties": {},
       "children": [
         {
-          "id": "image3",
+          "id": "image_background",
           "widgetType": "Image",
           "properties": {
             "path": "assets/images/Background/main_menu.png",
@@ -38,39 +37,33 @@
           "children": []
         },
         {
-          "id": "container28",
+          "id": "container_overlay",
           "widgetType": "Container",
           "properties": {
             "width": 1.0,
             "height": 1.0,
-            "color": null,
-            "padding": {
-              "left": 0.2,
-              "top": 0.35,
-              "right": 0.2,
-              "bottom": 0.35
-            },
-            "margin": {
-              "left": 0.0,
-              "top": 0.0,
-              "right": 0.0,
-              "bottom": 0.0
-            },
-            "alignment": null
+            "color": null
           },
           "children": [
             {
-              "id": "column5",
-              "widgetType": "Column",
+              "id": "container_content",
+              "widgetType": "Container",
               "properties": {
-                "mainAxisSize": "MainAxisSize.max",
-                "crossAxisAlignment": "CrossAxisAlignment.center",
-                "mainAxisAlignment": "MainAxisAlignment.spaceAround"
+                "width": 0.5,
+                "height": 0.6,
+                "color": null,
+                "padding": {
+                  "left": 0.05,
+                  "top": 0.05,
+                  "right": 0.05,
+                  "bottom": 0.05
+                },
+                "alignment": "Alignment.topCenter"
               },
               "children": [
                 {
-                  "id": "row4",
-                  "widgetType": "Row",
+                  "id": "column_settings",
+                  "widgetType": "Column",
                   "properties": {
                     "mainAxisSize": "MainAxisSize.max",
                     "crossAxisAlignment": "CrossAxisAlignment.center",
@@ -78,484 +71,189 @@
                   },
                   "children": [
                     {
-                      "id": "container27",
+                      "id": "text_header",
+                      "widgetType": "Text",
+                      "properties": {
+                        "text": "SETTINGS",
+                        "style": {
+                          "fontSize": 0.02,
+                          "color": {
+                            "_type": "Color",
+                            "a": 1.0,
+                            "r": 1.0,
+                            "g": 1.0,
+                            "b": 1.0
+                          }
+                        },
+                        "alignment": "Alignment.center"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "container_info",
                       "widgetType": "Container",
                       "properties": {
-                        "width": 0.3,
-                        "height": 0.05,
+                        "width": 0.9,
+                        "height": 0.2,
                         "color": {
                           "_type": "Color",
-                          "a": 0.0,
+                          "a": 0.3,
                           "r": 0.0,
                           "g": 0.0,
                           "b": 0.0
                         },
-                        "padding": null,
-                        "margin": null,
-                        "alignment": null
+                        "padding": {
+                          "left": 0.02,
+                          "top": 0.02,
+                          "right": 0.02,
+                          "bottom": 0.02
+                        },
+                        "alignment": "Alignment.center"
                       },
                       "children": [
                         {
-                          "id": "ninepatch_button12",
-                          "widgetType": "NinePatchButton",
+                          "id": "text_info",
+                          "widgetType": "Text",
                           "properties": {
-                            "text": "",
-                            "onPressed": {
-                              "printText": "Debug button pressed!",
-                              "actionType": "debug"
+                            "text": "Here you can toggle debug mode and switch between isometric and normal movement. Adjust the settings to your preference.",
+                            "style": {
+                              "fontSize": 0.01,
+                              "color": {
+                                "_type": "Color",
+                                "a": 1.0,
+                                "r": 1.0,
+                                "g": 1.0,
+                                "b": 1.0
+                              }
                             },
-                            "imageName": "button_0"
+                            "alignment": "Alignment.center"
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "button_debug",
+                      "widgetType": "NinePatchButton",
+                      "properties": {
+                        "text": "Toggle Debug Mode",
+                        "onPressed": {
+                          "actionType": "toggleDebug"
+                        },
+                        "imageName": "test_button_2"
+                      },
+                      "children": [
+                        {
+                          "id": "fitted_box_debug",
+                          "widgetType": "FittedBox",
+                          "properties": {
+                            "alignment": "Alignment.center",
+                            "fit": "BoxFit.contain"
                           },
                           "children": [
                             {
-                              "id": "fitted_box13",
-                              "widgetType": "FittedBox",
+                              "id": "text_debug",
+                              "widgetType": "Text",
                               "properties": {
-                                "alignment": "Alignment.center",
-                                "fit": "BoxFit.contain"
+                                "text": "Toggle Debug Mode",
+                                "style": {
+                                  "fontSize": 0.01,
+                                  "color": {
+                                    "_type": "Color",
+                                    "a": 1.0,
+                                    "r": 1.0,
+                                    "g": 1.0,
+                                    "b": 1.0
+                                  }
+                                },
+                                "alignment": "Alignment.center"
                               },
-                              "children": [
-                                {
-                                  "id": "text15",
-                                  "widgetType": "Text",
-                                  "properties": {
-                                    "text": "Acessability",
-                                    "style": {
-                                      "fontSize": 0.01,
-                                      "color": {
-                                        "_type": "Color",
-                                        "a": 1.0,
-                                        "r": 1.0,
-                                        "g": 1.0,
-                                        "b": 1.0
-                                      }
-                                    },
-                                    "alignment": null
-                                  },
-                                  "children": []
-                                }
-                              ]
+                              "children": []
                             }
                           ]
                         }
                       ]
                     },
                     {
-                      "id": "container29",
-                      "widgetType": "Container",
+                      "id": "button_movement",
+                      "widgetType": "NinePatchButton",
                       "properties": {
-                        "width": 0.05,
-                        "height": 0.05,
-                        "color": null,
-                        "padding": null,
-                        "margin": null,
-                        "alignment": null
+                        "text": "Toggle Isometric",
+                        "onPressed": {
+                          "actionType": "toggleIsometric"
+                        },
+                        "imageName": "test_button_2"
                       },
                       "children": [
                         {
-                          "id": "ninepatch_button13",
-                          "widgetType": "NinePatchButton",
+                          "id": "fitted_box_movement",
+                          "widgetType": "FittedBox",
                           "properties": {
-                            "text": "",
-                            "onPressed": {
-                              "printText": "Debug button pressed!",
-                              "actionType": "debug"
-                            },
-                            "imageName": "button_0"
+                            "alignment": "Alignment.center",
+                            "fit": "BoxFit.contain"
                           },
                           "children": [
                             {
-                              "id": "fitted_box12",
-                              "widgetType": "FittedBox",
+                              "id": "text_movement",
+                              "widgetType": "Text",
                               "properties": {
-                                "alignment": "Alignment.center",
-                                "fit": "BoxFit.contain"
+                                "text": "Toggle Isometric",
+                                "style": {
+                                  "fontSize": 0.01,
+                                  "color": {
+                                    "_type": "Color",
+                                    "a": 1.0,
+                                    "r": 1.0,
+                                    "g": 1.0,
+                                    "b": 1.0
+                                  }
+                                },
+                                "alignment": "Alignment.center"
                               },
-                              "children": [
-                                {
-                                  "id": "text14",
-                                  "widgetType": "Text",
-                                  "properties": {
-                                    "text": "Credits",
-                                    "style": {
-                                      "fontSize": 0.01,
-                                      "color": {
-                                        "_type": "Color",
-                                        "a": 1.0,
-                                        "r": 1.0,
-                                        "g": 1.0,
-                                        "b": 1.0
-                                      }
-                                    },
-                                    "alignment": null
-                                  },
-                                  "children": []
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "id": "row5",
-                  "widgetType": "Row",
-                  "properties": {
-                    "mainAxisSize": "MainAxisSize.max",
-                    "crossAxisAlignment": "CrossAxisAlignment.center",
-                    "mainAxisAlignment": "MainAxisAlignment.spaceAround"
-                  },
-                  "children": [
-                    {
-                      "id": "container30",
-                      "widgetType": "Container",
-                      "properties": {
-                        "width": 0.1,
-                        "height": 0.05,
-                        "color": null,
-                        "padding": null,
-                        "margin": null,
-                        "alignment": null
-                      },
-                      "children": [
-                        {
-                          "id": "ninepatch_button16",
-                          "widgetType": "NinePatchButton",
-                          "properties": {
-                            "text": "",
-                            "onPressed": {
-                              "printText": "Debug button pressed!",
-                              "actionType": "debug"
-                            },
-                            "imageName": "button_0"
-                          },
-                          "children": [
-                            {
-                              "id": "fitted_box10",
-                              "widgetType": "FittedBox",
-                              "properties": {
-                                "alignment": "Alignment.center",
-                                "fit": "BoxFit.contain"
-                              },
-                              "children": [
-                                {
-                                  "id": "text12",
-                                  "widgetType": "Text",
-                                  "properties": {
-                                    "text": "Controls",
-                                    "style": {
-                                      "fontSize": 0.01,
-                                      "color": {
-                                        "_type": "Color",
-                                        "a": 1.0,
-                                        "r": 1.0,
-                                        "g": 1.0,
-                                        "b": 1.0
-                                      }
-                                    },
-                                    "alignment": null
-                                  },
-                                  "children": []
-                                }
-                              ]
+                              "children": []
                             }
                           ]
                         }
                       ]
                     },
                     {
-                      "id": "container31",
-                      "widgetType": "Container",
+                      "id": "button_back",
+                      "widgetType": "NinePatchButton",
                       "properties": {
-                        "width": 0.15,
-                        "height": 0.05,
-                        "color": null,
-                        "padding": null,
-                        "margin": null,
-                        "alignment": null
+                        "text": "BACK",
+                        "onPressed": {
+                          "screen": "main_menu",
+                          "actionType": "screenChange"
+                        },
+                        "imageName": "test_button_2"
                       },
                       "children": [
                         {
-                          "id": "ninepatch_button15",
-                          "widgetType": "NinePatchButton",
+                          "id": "fitted_box_back",
+                          "widgetType": "FittedBox",
                           "properties": {
-                            "text": "",
-                            "onPressed": {
-                              "printText": "Debug button pressed!",
-                              "actionType": "debug"
-                            },
-                            "imageName": "button_0"
+                            "alignment": "Alignment.center",
+                            "fit": "BoxFit.contain"
                           },
                           "children": [
                             {
-                              "id": "fitted_box11",
-                              "widgetType": "FittedBox",
+                              "id": "text_back",
+                              "widgetType": "Text",
                               "properties": {
-                                "alignment": "Alignment.center",
-                                "fit": "BoxFit.contain"
+                                "text": "BACK",
+                                "style": {
+                                  "fontSize": 0.01,
+                                  "color": {
+                                    "_type": "Color",
+                                    "a": 1.0,
+                                    "r": 1.0,
+                                    "g": 1.0,
+                                    "b": 1.0
+                                  }
+                                },
+                                "alignment": "Alignment.center"
                               },
-                              "children": [
-                                {
-                                  "id": "text13",
-                                  "widgetType": "Text",
-                                  "properties": {
-                                    "text": "Quit Game",
-                                    "style": {
-                                      "fontSize": 0.01,
-                                      "color": {
-                                        "_type": "Color",
-                                        "a": 1.0,
-                                        "r": 1.0,
-                                        "g": 1.0,
-                                        "b": 1.0
-                                      }
-                                    },
-                                    "alignment": null
-                                  },
-                                  "children": []
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "id": "container32",
-                      "widgetType": "Container",
-                      "properties": {
-                        "width": 0.1,
-                        "height": 0.05,
-                        "color": null,
-                        "padding": null,
-                        "margin": null,
-                        "alignment": null
-                      },
-                      "children": [
-                        {
-                          "id": "ninepatch_button14",
-                          "widgetType": "NinePatchButton",
-                          "properties": {
-                            "text": "",
-                            "onPressed": {
-                              "printText": "Debug button pressed!",
-                              "actionType": "debug"
-                            },
-                            "imageName": "button_0"
-                          },
-                          "children": [
-                            {
-                              "id": "fitted_box9",
-                              "widgetType": "FittedBox",
-                              "properties": {
-                                "alignment": "Alignment.center",
-                                "fit": "BoxFit.contain"
-                              },
-                              "children": [
-                                {
-                                  "id": "text11",
-                                  "widgetType": "Text",
-                                  "properties": {
-                                    "text": "Bugs",
-                                    "style": {
-                                      "fontSize": 0.01,
-                                      "color": {
-                                        "_type": "Color",
-                                        "a": 1.0,
-                                        "r": 1.0,
-                                        "g": 1.0,
-                                        "b": 1.0
-                                      }
-                                    },
-                                    "alignment": null
-                                  },
-                                  "children": []
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "id": "row6",
-                  "widgetType": "Row",
-                  "properties": {
-                    "mainAxisSize": "MainAxisSize.max",
-                    "crossAxisAlignment": "CrossAxisAlignment.center",
-                    "mainAxisAlignment": "MainAxisAlignment.spaceAround"
-                  },
-                  "children": [
-                    {
-                      "id": "container33",
-                      "widgetType": "Container",
-                      "properties": {
-                        "width": 0.1,
-                        "height": 0.05,
-                        "color": null,
-                        "padding": null,
-                        "margin": null,
-                        "alignment": null
-                      },
-                      "children": [
-                        {
-                          "id": "ninepatch_button17",
-                          "widgetType": "NinePatchButton",
-                          "properties": {
-                            "text": "",
-                            "onPressed": {
-                              "printText": "Debug button pressed!",
-                              "actionType": "debug"
-                            },
-                            "imageName": "button_0"
-                          },
-                          "children": [
-                            {
-                              "id": "fitted_box6",
-                              "widgetType": "FittedBox",
-                              "properties": {
-                                "alignment": "Alignment.center",
-                                "fit": "BoxFit.contain"
-                              },
-                              "children": [
-                                {
-                                  "id": "text8",
-                                  "widgetType": "Text",
-                                  "properties": {
-                                    "text": "Visual",
-                                    "style": {
-                                      "fontSize": 0.01,
-                                      "color": {
-                                        "_type": "Color",
-                                        "a": 1.0,
-                                        "r": 1.0,
-                                        "g": 1.0,
-                                        "b": 1.0
-                                      }
-                                    },
-                                    "alignment": null
-                                  },
-                                  "children": []
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "id": "container34",
-                      "widgetType": "Container",
-                      "properties": {
-                        "width": 0.1,
-                        "height": 0.05,
-                        "color": null,
-                        "padding": null,
-                        "margin": null,
-                        "alignment": null
-                      },
-                      "children": [
-                        {
-                          "id": "ninepatch_button18",
-                          "widgetType": "NinePatchButton",
-                          "properties": {
-                            "text": "",
-                            "onPressed": {
-                              "printText": "Debug button pressed!",
-                              "actionType": "debug"
-                            },
-                            "imageName": "button_0"
-                          },
-                          "children": [
-                            {
-                              "id": "fitted_box8",
-                              "widgetType": "FittedBox",
-                              "properties": {
-                                "alignment": "Alignment.center",
-                                "fit": "BoxFit.contain"
-                              },
-                              "children": [
-                                {
-                                  "id": "text10",
-                                  "widgetType": "Text",
-                                  "properties": {
-                                    "text": "debug",
-                                    "style": {
-                                      "fontSize": 0.01,
-                                      "color": {
-                                        "_type": "Color",
-                                        "a": 1.0,
-                                        "r": 1.0,
-                                        "g": 1.0,
-                                        "b": 1.0
-                                      }
-                                    },
-                                    "alignment": null
-                                  },
-                                  "children": []
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "id": "container35",
-                      "widgetType": "Container",
-                      "properties": {
-                        "width": 0.1,
-                        "height": 0.05,
-                        "color": null,
-                        "padding": null,
-                        "margin": null,
-                        "alignment": null
-                      },
-                      "children": [
-                        {
-                          "id": "ninepatch_button19",
-                          "widgetType": "NinePatchButton",
-                          "properties": {
-                            "text": "",
-                            "onPressed": {
-                              "printText": "Debug button pressed!",
-                              "actionType": "debug"
-                            },
-                            "imageName": "button_0"
-                          },
-                          "children": [
-                            {
-                              "id": "fitted_box7",
-                              "widgetType": "FittedBox",
-                              "properties": {
-                                "alignment": "Alignment.center",
-                                "fit": "BoxFit.contain"
-                              },
-                              "children": [
-                                {
-                                  "id": "text9",
-                                  "widgetType": "Text",
-                                  "properties": {
-                                    "text": "Main Menu",
-                                    "style": {
-                                      "fontSize": 0.01,
-                                      "color": {
-                                        "_type": "Color",
-                                        "a": 1.0,
-                                        "r": 1.0,
-                                        "g": 1.0,
-                                        "b": 1.0
-                                      }
-                                    },
-                                    "alignment": null
-                                  },
-                                  "children": []
-                                }
-                              ]
+                              "children": []
                             }
                           ]
                         }

@@ -42,6 +42,11 @@ class PixelAdventure extends FlameGame
   late JoystickComponent joystick;
   late String currentLevel = "Level_8";
 
+  //variable for normal N E S W Movement and isometric Movement
+  //a normal hot reload to change the movement isn't enough, you have to do a hot restart!
+  static bool isometricMovement = true;
+
+
   //bools for game logic
   //needs to go into the overlay_controller later
   bool showDialogue = true;

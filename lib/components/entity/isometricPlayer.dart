@@ -11,20 +11,22 @@ import '../../core/level/isometric/isometric_tiled_component.dart';
 import '../../mpg_pixel_adventure.dart';
 import '../util/isometric_utils.dart';
 
-class IsometricPlayer extends Player with IsometricRenderable{
+class IsometricPlayer extends Player with IsometricRenderable {
+  late PositionComponent shadowAnchor;
 
-  late ShadowComponent shadow;
-
-  IsometricPlayer({required super.playerCharacter}){
+  IsometricPlayer({required super.playerCharacter}) {
     setCustomAnimationName("falling", "running");
     setCustomAnimationName("jumping", "running");
   }
 
   @override
   Future<void> onLoad() async {
-    shadow = ShadowComponent(gridFeetPos, owner: this); //removable when positioning is correct
-    shadow.anchor = Anchor.topCenter;
-    add(shadow);
+    shadowAnchor = PositionComponent(position: Vector2(0, height / 2));
+    add(shadowAnchor);
+    shadow = ShadowComponent(
+      owner: this,
+    ); //removable when positioning is correct
+    shadow.anchor = Anchor.center;
     return super.onLoad();
   }
 
@@ -70,7 +72,11 @@ class IsometricPlayer extends Player with IsometricRenderable{
     //canvas.drawCircle(toWorldPos(gridHeadPos).toOffset(), 4, Paint()..color = Colors.red);
     //canvas.drawCircle(toWorldPos(gridFeetPos).toOffset(), 2, Paint()..color = Colors.yellow);
   };
-  Sprite normalSprite = Sprite(Flame.images.fromCache("playerNormal.png"), srcSize: tilesize.xy, srcPosition: Vector2.zero());
+  Sprite normalSprite = Sprite(
+    Flame.images.fromCache("playerNormal.png"),
+    srcSize: tilesize.xy,
+    srcPosition: Vector2.zero(),
+  );
   @override
   void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
       (Canvas canvas, Paint? overridePaint) {
