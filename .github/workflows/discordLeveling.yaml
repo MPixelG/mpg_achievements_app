@@ -32,7 +32,8 @@ jobs:
           echo "COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
           echo "$commit_msg" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-          
+        
+        
           echo "COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
           echo "$commit_msg" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
