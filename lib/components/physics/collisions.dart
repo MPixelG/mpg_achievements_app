@@ -4,10 +4,10 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
+import '../level_components/entity/gameCharacter.dart';
 import '../util/isometric_utils.dart';
 import 'collision_block.dart';
 import 'movement.dart';

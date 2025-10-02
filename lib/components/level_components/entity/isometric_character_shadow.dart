@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/entity/isometricPlayer.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import '../../core/level/isometric/isometric_renderable.dart';
-import '../../core/level/isometric/isometric_tiled_component.dart';
+import '../../../core/level/isometric/isometric_renderable.dart';
+import '../../../core/level/isometric/isometric_tiled_component.dart';
+import 'isometricPlayer.dart';
 
 class ShadowComponent extends PositionComponent with IsometricRenderable {
   late Vector3 gridPos;

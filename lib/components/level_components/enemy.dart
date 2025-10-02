@@ -7,8 +7,7 @@ import 'package:mpg_achievements_app/components/ai/goals/follow_player_goal.dart
 import 'package:mpg_achievements_app/components/ai/goals/goal_manager.dart';
 import 'package:mpg_achievements_app/components/ai/goals/pathtracing_goal.dart';
 import 'package:mpg_achievements_app/components/ai/goals/player_locating_goal.dart';
-import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
-import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/level_components/saw.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 
@@ -16,6 +15,7 @@ import '../../core/level/isometric/isometric_world.dart';
 import '../ai/goals/move_goal.dart';
 import '../particles/Particles.dart';
 import '../physics/movement.dart';
+import 'entity/animation/animation_manager.dart';
 
 enum EnemyState {
   idle,

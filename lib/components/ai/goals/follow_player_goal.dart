@@ -2,7 +2,7 @@ import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/ai/goals/move_goal.dart';
 
 import '../../../mpg_pixel_adventure.dart';
-import '../../entity/player.dart';
+import '../../level_components/entity/player.dart';
 
 class FollowPlayerGoal extends MoveGoal {
   Player playerToFollow;

@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
+import '../../../../components/level_components/entity/animation/animation_manager.dart';
 import '../isometric_tiled_component.dart';
 import 'highlighted_tile.dart';
 

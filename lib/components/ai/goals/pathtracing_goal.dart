@@ -5,7 +5,7 @@ import 'package:mpg_achievements_app/components/ai/goals/goal.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import '../../entity/player.dart';
+import '../../level_components/entity/player.dart';
 import '../../physics/collisions.dart';
 import '../../physics/movement.dart';
 

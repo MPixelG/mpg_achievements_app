@@ -2,9 +2,10 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:mpg_achievements_app/components/entity/player.dart';
 
-import '../animation/animation_style.dart';
+import '../level_components/entity/animation/animation_style.dart';
+import '../level_components/entity/player.dart';
+
 
 class AdvancedCamera extends CameraComponent {
   AdvancedCamera({

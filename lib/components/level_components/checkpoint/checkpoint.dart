@@ -1,12 +1,12 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
-import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
-import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../../core/level/game_world.dart';
 import '../../state_management/providers/playerStateProvider.dart';
+import '../entity/animation/animation_manager.dart';
+import '../entity/player.dart';
 
 class Checkpoint extends SpriteAnimationGroupComponent
     with

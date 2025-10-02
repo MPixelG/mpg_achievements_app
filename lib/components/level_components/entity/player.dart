@@ -5,20 +5,20 @@ import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
-import 'package:mpg_achievements_app/components/entity/gameCharacter.dart';
-import 'package:mpg_achievements_app/components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 
-import '../../core/level/isometric/isometric_world.dart';
-import '../level_components/saw.dart';
-import '../physics/controllableMixins.dart';
-import '../physics/isometric_movement.dart';
-import '../physics/movement.dart';
+import '../../../core/level/isometric/isometric_world.dart';
+import '../../physics/controllableMixins.dart';
+import '../../physics/isometric_movement.dart';
+import '../../physics/movement.dart';
+import '../saw.dart';
+import 'animation/animation_manager.dart';
+import 'isometric_character_shadow.dart';
 
 //todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations

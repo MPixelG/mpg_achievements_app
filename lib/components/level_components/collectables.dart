@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:mpg_achievements_app/components/entity/player.dart';
 import 'package:mpg_achievements_app/components/particles/Particles.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../core/level/game_world.dart';
+import 'entity/player.dart';
 
 class Collectable extends SpriteAnimationComponent
     with HasGameReference<PixelAdventure>, CollisionCallbacks {
