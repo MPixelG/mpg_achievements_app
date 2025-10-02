@@ -28,7 +28,6 @@ jobs:
           deleted=$(git show --numstat --pretty="" "$commit_sha" | awk '$2 ~ /^[0-9]+$/ {sum += $2} END {print sum+0}')
           echo "DELETIONS=$deleted" >> $GITHUB_ENV
           commit_msg=$(git log -1 --pretty=format:'%B')
-          
           commit_msg=$(echo "$commit_msg" | tr -dC '\11\12\15\40-\176')
           echo "COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
           echo "$commit_msg" >> $GITHUB_ENV
