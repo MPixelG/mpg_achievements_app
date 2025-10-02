@@ -43,6 +43,7 @@ class Player extends GameCharacter
   bool _isRespawningAnimationPlaying = false;
   //starting position
   Vector2 startingPosition = Vector2.zero();
+
   //Player name
   String playerCharacter;
   //Shadow of player
