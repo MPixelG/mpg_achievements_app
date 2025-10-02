@@ -81,7 +81,7 @@ class IsometricPlayer extends Player with IsometricRenderable {
   void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
       (Canvas canvas, Paint? overridePaint) {
         normalSprite.render(canvas, position: position - Vector2(((scale.x < 0) ? 32 : 0), 0));
-        canvas.drawCircle(toWorldPos(gridFeetPos).toOffset(), 3, Paint()..color = Colors.blue);
-        canvas.drawCircle(toWorldPos(gridHeadPos).toOffset(), 3, Paint()..color = Colors.blue);
+        // canvas.drawCircle(toWorldPos(gridFeetPos).toOffset(), 3, Paint()..color = Colors.blue);
+        // canvas.drawCircle(toWorldPos(gridHeadPos).toOffset(), 3, Paint()..color = Colors.blue);
       };
 }

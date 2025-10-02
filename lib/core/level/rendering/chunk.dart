@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/material.dart' show Colors;
 import 'package:mpg_achievements_app/components/util/isometric_utils.dart';
 import 'package:mpg_achievements_app/core/level/rendering/tileset_utils.dart';
 
@@ -40,10 +39,6 @@ class Chunk {
   static Set<Tileset> knownTilesets = {};
   static const int chunkSize = 16; // Size of each chunk in tiles
   static int totalZLayers = 1;
-
-
-  DateTime? _lastRebuild;
-  static const Duration _minRebuildInterval = Duration(milliseconds: 15);
 
   Chunk(this.x, this.y, this.z, [this.neighborChunkCluster]);
 
@@ -136,17 +131,14 @@ class Chunk {
   static Vector2 worldSize = Vector2.zero();
 
   List<IsometricRenderable> allRenderables = [];
-  void reSortTiles(
-    Iterable<IsometricRenderable> additionals, {
-    Iterable<IsometricRenderable>? neighborChunkTiles,
-  }) {
+  void reSortTiles(Iterable<IsometricRenderable> additionals) {
     tiles.sort((a, b) {
       return depth(a).compareTo(depth(b));
     });
   }
 
   int currentlyActiveOperations = 0;
-  static const int maxOperations = 10;
+  static const int maxOperations = 1;
   Future<void> rebuildMaps(List<IsometricRenderable> additionals) async {
     if(currentlyActiveOperations > maxOperations) return;
 
@@ -160,7 +152,7 @@ class Chunk {
       List<IsometricRenderable> neighborChunkTiles = [];
       List<Chunk> neighborChunks = [];
 
-      for (var value in additionals) {
+      for (var value in containedAdditionals) {
         neighborChunks.addAll(neighborChunkCluster!.getWhereContained(value));
       }
 
@@ -177,8 +169,7 @@ class Chunk {
       usesTempNeighborTileRendering = false;
     }
     prepareBuildImageMaps();
-    await buildAlbedoMap(containedAdditionals);
-    await buildNormalAndDepthMap(containedAdditionals);
+    buildImageMaps(additionals);
     currentlyActiveOperations--;
   }
 
@@ -222,101 +213,30 @@ class Chunk {
     albedoHeight = math.max(1, height);
   }
 
-  Vector2 getStartRenderPos([int? correctedX, int? correctedY]) {
-    return toWorldPos(
-          Vector3(
-            ((correctedX ?? x) - 1) * chunkSize.toDouble(),
-            (correctedY ?? y) * chunkSize.toDouble(),
-            0,
-          ),
-        ) +
-        Vector2(0, (tilesize.z * chunkSize / 2) - zHeightUsedPixels);
+  bool startedBuildingMaps = false;
+  void buildImageMaps(List<IsometricRenderable> additionals) async{
+    if((albedoMap == null || normalAndDepthMap == null) && startedBuildingMaps) return;
+    startedBuildingMaps = true;
+
+    PictureRecorder albedoRecorder = PictureRecorder();
+    PictureRecorder normalRecorder = PictureRecorder();
+    Canvas albedoCanvas = Canvas(albedoRecorder);
+    Canvas normalCanvas = Canvas(normalRecorder);
+
+    renderMaps(albedoCanvas, normalCanvas, additionals);
+
+    albedoRecorder.endRecording().toImage(albedoWidth, albedoHeight).then((value) => albedoMap = value);
+    normalRecorder.endRecording().toImage(albedoWidth, albedoHeight).then((value) => normalAndDepthMap = value);
   }
 
-  void adjustRenderingBounds(
-    Vector2 gridPos,
-    Vector2 bottomRightPos,
-    Iterable<IsometricRenderable> additionals,
-  ) {
-    bool l = false;
-    bool r = false;
-    bool t = false;
-    bool b = false;
+  void renderMaps(Canvas albedoCanvas, Canvas normalCanvas, List<IsometricRenderable> additionals){
+    albedoCanvas.save();
+    normalCanvas.save();
+    albedoCanvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
+    normalCanvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
 
-    for (final element in additionals) {
-      if (!(b && r) &&
-          (neighborChunkCluster?.bottomRight?.containsRenderable(element) ??
-              false)) {
-        b = true;
-        r = true;
-      }
-      if (!(b && l) &&
-          (neighborChunkCluster?.bottomLeft?.containsRenderable(element) ??
-              false)) {
-        b = true;
-        l = true;
-      }
-      if (!(t && r) &&
-          (neighborChunkCluster?.topRight?.containsRenderable(element) ??
-              false)) {
-        t = true;
-        r = true;
-      }
-      if (!(t && l) &&
-          (neighborChunkCluster?.topLeft?.containsRenderable(element) ??
-              false)) {
-        t = true;
-        l = true;
-      }
-      if (!t &&
-          (neighborChunkCluster?.top?.containsRenderable(element) ?? false)) {
-        t = true;
-      }
-      if (!b &&
-          (neighborChunkCluster?.bottom?.containsRenderable(element) ??
-              false)) {
-        b = true;
-      }
-      if (!r &&
-          (neighborChunkCluster?.right?.containsRenderable(element) ?? false)) {
-        r = true;
-      }
-      if (!l &&
-          (neighborChunkCluster?.left?.containsRenderable(element) ?? false)) {
-        l = true;
-      }
-    }
-
-    if (l) {
-      gridPos.x--;
-    }
-    if (t) {
-      gridPos.y--;
-    }
-
-    if (r) {
-      bottomRightPos.x *= 2;
-    }
-    if (b) {
-      bottomRightPos.y *= 2;
-    }
-  }
-
-  Future<void> buildAlbedoMap(List<IsometricRenderable> additionals) async {
-    final recorder = PictureRecorder();
-    final canvas = Canvas(recorder);
-
-    renderAlbedoMap(canvas, additionals);
-
-    //canvas.drawRect(Offset.zero & Size(albedoWidth.toDouble(), albedoHeight.toDouble()), Paint()..color = Color(hashCode).withValues(alpha: 0.5));
-
-    final picture = recorder.endRecording();
-    albedoMap = await picture.toImage(albedoWidth, albedoHeight);
-  }
-
-  void renderAlbedoMap(Canvas canvas, List<IsometricRenderable> additionals){
-    canvas.save();
-    canvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
+    Paint overridePaint = Paint();
+    double currentPaintZPos = double.infinity;
 
     int ti = 0, ei = 0;
     double tileDepth;
@@ -324,6 +244,7 @@ class Chunk {
     int lastEntityIndex = -1;
     bool allEntitiesDone = false;
     bool allTilesDone = false;
+    IsometricRenderable? currentRenderable;
     while (ti < tiles.length || ei < additionals.length) {
       if(ei != lastEntityIndex) {
         if(ei < additionals.length) {
@@ -337,12 +258,11 @@ class Chunk {
       tileDepth = depth(tiles.elementAtOrNull(ti));
 
       if ((tileDepth <= entityDepth || allEntitiesDone) && !allTilesDone) {
-        IsometricRenderable? tile = tiles.elementAtOrNull(ti++);
-        if(tile == null) {
+        currentRenderable = tiles.elementAtOrNull(ti++);
+        if(currentRenderable == null) {
           allTilesDone = true;
           continue;
         }
-        tile.renderAlbedo(canvas);
         //if(!allEntitiesDone) {
         //  canvas.drawCircle(toWorldPos(tile.gridFeetPos).toOffset(), 3, Paint()
         //    ..color = Colors.blue);
@@ -350,65 +270,16 @@ class Chunk {
         //    ..color = Colors.blue);
         //}
       } else {
-        additionals[ei++].renderAlbedo(canvas);
+        currentRenderable = additionals[ei++];
       }
 
-    }
-    canvas.restore();
-  }
+      currentRenderable.renderAlbedo(albedoCanvas);
+      if(currentRenderable.renderNormal == null) continue;
 
-  Future<void> buildNormalAndDepthMap(List<IsometricRenderable> additionals) async {
-
-    final normalRecorder = PictureRecorder();
-    final normalCanvas = Canvas(normalRecorder);
-
-    renderNormalAndDepthMap(normalCanvas, additionals);
-
-    final normalPicture = normalRecorder.endRecording();
-    normalAndDepthMap = await normalPicture.toImage(albedoWidth, albedoHeight);
-  }
-
-  void renderNormalAndDepthMap(Canvas canvas, List<IsometricRenderable> additionals){
-    canvas.save();
-    canvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
-
-    Paint overridePaint = Paint();
-    double currentPaintZPos = double.infinity;
-
-
-    int ti = 0, ei = 0;
-    double tileDepth;
-    double entityDepth = double.negativeInfinity;
-    int lastEntityIndex = -1;
-    bool allEntitiesDone = false;
-    bool allTilesDone = false;
-    IsometricRenderable? nextRenderable;
-    while (ti < tiles.length || ei < additionals.length) {
-
-      if(ei != lastEntityIndex) {
-        if(ei < additionals.length) {
-          entityDepth = depth(additionals[ei]);
-        } else {
-          allEntitiesDone = true;
-        }
-        lastEntityIndex = ei;
-      }
-      tileDepth = depth(tiles.elementAtOrNull(ti));
-      if ((tileDepth <= entityDepth || allEntitiesDone) && !allTilesDone) {
-        nextRenderable = tiles.elementAtOrNull(ti++);
-        if(nextRenderable == null) {
-          allTilesDone = true;
-          continue;
-        }
-      } else {
-        nextRenderable = additionals[ei++];
-      }
-      if(nextRenderable.renderNormal == null) continue;
-
-      if(nextRenderable.gridFeetPos.z != currentPaintZPos) {
+      if(currentRenderable.gridFeetPos.z != currentPaintZPos) {
         final double startVal =
-            ((nextRenderable.gridFeetPos.z - 1) / highestZTileInWorld) * 256;
-        final double endVal = (nextRenderable.gridFeetPos.z / highestZTileInWorld);
+            ((currentRenderable.gridFeetPos.z - 1) / highestZTileInWorld) * 256;
+        final double endVal = (currentRenderable.gridFeetPos.z / highestZTileInWorld);
 
         overridePaint.colorFilter = ColorFilter.matrix([
           1, 0, 0, 0,
@@ -419,11 +290,11 @@ class Chunk {
         ]);
       }
 
-      nextRenderable.renderNormal!(canvas, overridePaint);
+      currentRenderable.renderNormal!(normalCanvas, overridePaint);
     }
-    canvas.restore();
+    albedoCanvas.restore();
+    normalCanvas.restore();
   }
-
   bool containsRenderable(IsometricRenderable r) {
     double fx = r.gridFeetPos.x;
     double fy = r.gridFeetPos.y;
@@ -461,8 +332,7 @@ class Chunk {
     if (newComponents.isNotEmpty) {
       currentAdditionalComponents = newComponents;
       prepareBuildImageMaps();
-      renderAlbedoMap(canvas, components);
-      renderNormalAndDepthMap(normalCanvas, components);
+      renderMaps(canvas, normalCanvas, newComponents);
     } else if (albedoMap != null && normalAndDepthMap != null) {
       normalCanvas.drawImage(normalAndDepthMap!, offset, Paint());
       canvas.drawImage(albedoMap!, offset, Paint());
