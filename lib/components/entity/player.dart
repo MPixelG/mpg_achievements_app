@@ -44,7 +44,6 @@ class Player extends GameCharacter
   //starting position
   Vector2 startingPosition = Vector2.zero();
   //Player name
-
   String playerCharacter;
   //Shadow of player
   late ShadowComponent shadow;
