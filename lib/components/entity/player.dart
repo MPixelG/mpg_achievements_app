@@ -35,6 +35,7 @@ class Player extends GameCharacter
         HasMovementAnimations,
         JoystickControllableMovement,
         HasCollisions {
+
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
   //we need this local state flag because of the animation and movement logic, it refers to the global state bool gotHit
@@ -43,6 +44,7 @@ class Player extends GameCharacter
   //starting position
   Vector2 startingPosition = Vector2.zero();
   //Player name
+
   String playerCharacter;
   //Shadow of player
   late ShadowComponent shadow;
