@@ -11,7 +11,7 @@ class ExplosionEffect extends SpriteAnimationGroupComponent
   TileHighlightRenderable tileHighlight;
   int? currentZIndex;
 
-  ExplosionEffect(this.tileHighlight, this.gridPos) {}
+  ExplosionEffect(this.tileHighlight, this.gridPos);
 
   @override
   Future<void> onLoad() async {

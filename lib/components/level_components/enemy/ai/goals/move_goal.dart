@@ -153,9 +153,10 @@ class MoveGoal extends Goal {
 
     if ((toGridPos(lastPosition).clone()..floor()) ==
         (toGridPos(position).clone()
-          ..floor())) //check if the current position and the last position are about the same.
+          ..floor())) {
+      //check if the current position and the last position are about the same.
       timeSinceLastPosChange += dt; //if they are, we increase the timer
-    else {
+    } else {
       timeSinceLastPosChange = 0; //if the position changed, we reset the timer
     }
 

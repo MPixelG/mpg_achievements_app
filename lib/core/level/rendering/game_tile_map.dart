@@ -60,8 +60,9 @@ class GameTileMap {
         // Iterate through all tilesets
         if (ts.firstGid! <= raw) {
           // If this tileset could contain the gid
-          if (best == null || ts.firstGid! > best.firstGid!)
+          if (best == null || ts.firstGid! > best.firstGid!) {
             best = ts; // Update best if it's a better match
+          }
         }
       }
       if (best == null) {

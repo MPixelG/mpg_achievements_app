@@ -1,10 +1,12 @@
+import 'dart:developer';
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 
 import '../../../components/level_components/enemy/ai/isometric_tile_grid.dart';
-import '../../../components/level_components/entity/isometricPlayer.dart';
+import '../../../components/level_components/entity/isometric_player.dart';
 import '../../../mpg_pixel_adventure.dart';
 import '../../../util/isometric_utils.dart';
 import '../game_world.dart';
@@ -20,7 +22,6 @@ class TileSelectionResult {
 }
 
 class IsometricWorld extends GameWorld {
-  late IsometricTileGrid tileGrid;
   Vector2? selectedTile;
 
   TileHighlightRenderable? highlightedTile;
@@ -52,10 +53,10 @@ class IsometricWorld extends GameWorld {
   @override
   Future<TiledComponent> createTiledLevel(
     String filename,
-    Vector2 destTilesize,
+    Vector2 destTileSize,
   ) async {
     return IsometricTiledComponent(
-      (await TiledComponent.load(filename, destTilesize)).tileMap,
+      (await TiledComponent.load(filename, destTileSize)).tileMap,
     );
   }
 
@@ -70,7 +71,7 @@ class IsometricWorld extends GameWorld {
     final worldPositionTap = level.toLocal(screenPositionTap);
     Vector2? selectedTile = toGridPos(worldPositionTap)..floor();
 
-    print("pos: $selectedTile");
+    log("pos: $selectedTile");
 
     // Use the function to find the top-most tile.
     final selectionResult = getTopmostTileAtGridPos(selectedTile);
@@ -89,18 +90,18 @@ class IsometricWorld extends GameWorld {
       highlightedTile.position = toWorldPos(
         selectionResult.gridPosition,
       ); // Center the highlight on the tile
-      print("Highlight position set to: ${highlightedTile.position}");
+      log("Highlight position set to: ${highlightedTile.position}");
 
       add(highlightedTile);
 
-      print(
+      log(
         "Selected tile at ${selectionResult.gridPosition.xy} on layer ${selectionResult.gridPosition.z}",
       );
     } else {
       // No tile was found at this position (clicked on empty space).
       highlightedTile = null;
       selectedTile = null;
-      print("No tile selected.");
+      log("No tile selected.");
     }
   }
 

@@ -93,7 +93,7 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
     'Collisions',
   );
   //convert orthogonal to isometric coordinates
-  Vector2 _orthogonalToIsometric(Vector2 orthoPos) {
+  Vector2 orthogonalToIsometric(Vector2 orthoPos) {
     return Vector2(
       ((orthoPos.x - orthoPos.y) * 1.0),
       (orthoPos.x + orthoPos.y) * 0.5,
@@ -108,9 +108,9 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
 
       if (gameWorld is IsometricWorld) {
         pos =
-            _orthogonalToIsometric(collision.position) +
+            orthogonalToIsometric(collision.position) +
             Vector2(Chunk.worldSize.x / 2, 0);
-        pos += _orthogonalToIsometric(Vector2(tilesize.x / 2, tilesize.y / 2));
+        pos += orthogonalToIsometric(Vector2(tilesize.x / 2, tilesize.y / 2));
       } else {
         pos = collision.position;
       }

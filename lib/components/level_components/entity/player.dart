@@ -7,13 +7,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy/enemy.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/gameCharacter.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
-import 'package:mpg_achievements_app/components/state_management/providers/playerStateProvider.dart';
 
 import '../../../core/level/isometric/isometric_world.dart';
-import '../../physics/controllableMixins.dart';
+import '../../../state_management/providers/player_state_provider.dart';
+import '../../physics/controllable_mixins.dart';
 import '../../physics/isometric_movement.dart';
 import '../../physics/movement.dart';
 import '../saw.dart';

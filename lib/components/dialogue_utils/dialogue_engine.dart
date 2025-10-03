@@ -1,7 +1,7 @@
 import 'dart:async'; // Required for async operations and the Completer class.
 
 import 'package:flutter/material.dart'; // Flutter's material design widget library.
-import 'package:flutter_riverpod/src/consumer.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jenny/jenny.dart'; // The core Jenny dialogue engine library.
 // The following are project-specific imports and may vary.
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';

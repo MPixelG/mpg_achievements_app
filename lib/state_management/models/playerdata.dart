@@ -1,6 +1,6 @@
 import 'package:uuid/uuid.dart';
 
-import '../../level_components/checkpoint/checkpoint.dart';
+import '../../components/level_components/checkpoint/checkpoint.dart';
 
 var uuid = Uuid();
 

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../propertyEditor/option_editor.dart';
@@ -121,7 +122,9 @@ class _DisplayNodeState extends State<DisplayNode> {
         } else {
           setState(() {
             widget.onClickOnNode(widget.node);
-            print("click");
+            if (kDebugMode) {
+              print("click");
+            }
           });
         }
       },

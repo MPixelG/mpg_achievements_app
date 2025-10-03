@@ -29,7 +29,6 @@ class TileHighlightRenderable extends PositionComponent
   void onLoad() {
     // Position the highlight based on the grid position and tile size.
     tileSize = game.gameWorld.tileGrid.tileSize;
-    print("loaded!");
     explosionEffect = ExplosionEffect(this, gridPos);
     add(explosionEffect!);
   }

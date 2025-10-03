@@ -3,8 +3,6 @@ import 'package:mpg_achievements_app/components/physics/movement.dart';
 import '../level_components/entity/player.dart';
 
 mixin IsometricMovement on BasicMovement {
-  double zMovement =
-      0; // Directional input (up/down) for z axis for isometric view
   final double _isometricJumpForce = 150;
   final double _isometricGravity = 50;
   double zVelocity = 0.0;

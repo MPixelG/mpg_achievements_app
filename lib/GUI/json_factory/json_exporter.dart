@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -115,11 +116,9 @@ class WidgetJsonUtils {
   }
 
   static Future<LayoutWidget> importScreen(
-    String name, {
-    BuildContext? context,
-  }) async {
+    String name) async {
     final jsonMap = await loadJson(name);
-    return WidgetJsonUtils.importWidget(jsonMap, context: context);
+    return WidgetJsonUtils.importWidget(jsonMap);
   }
 
   static Future<Map<String, dynamic>> loadJson(String name) async {
@@ -131,7 +130,6 @@ class WidgetJsonUtils {
   static LayoutWidget importWidget(
     Map<String, dynamic> data, {
     LayoutWidget? parent,
-    BuildContext? context,
   }) {
     // Ensure properties are properly restored
     final restoredProps = restoreProperties(data['properties']);
@@ -146,7 +144,6 @@ class WidgetJsonUtils {
           (child) => importWidget(
             Map<String, dynamic>.from(child),
             parent: widget,
-            context: context,
           ),
         )
         .toList();
@@ -181,7 +178,9 @@ Color mapToColor(Map<String, dynamic> map) {
       blue: (map['b'] as num).toDouble(),
     );
   } catch (e) {
-    print("Error converting map to color: $e, map: $map");
+    if (kDebugMode) {
+      print("Error converting map to color: $e, map: $map");
+    }
     return Colors.transparent; // Fallback color
   }
 }

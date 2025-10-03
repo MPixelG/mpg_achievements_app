@@ -202,7 +202,9 @@ double jaro(String s1, String s2) {
   int k = 0;
   for (int i = 0; i < len1; i++) {
     if (!matched1[i]) continue;
-    while (!matched2[k]) k++;
+    while (!matched2[k]) {
+      k++;
+    }
     if (a[i] != b[k]) transpositions++;
     k++;
   }
@@ -226,10 +228,11 @@ double jaroWinkler(
   int prefix = 0;
   final int limit = s1.length < s2.length ? s1.length : s2.length;
   for (int i = 0; i < limit && i < maxPrefix; i++) {
-    if (s1[i] == s2[i])
+    if (s1[i] == s2[i]) {
       prefix++;
-    else
+    } else {
       break;
+    }
   }
 
   return j + (prefix * prefixScale * (1.0 - j));

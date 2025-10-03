@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mpg_achievements_app/components/state_management/models/playerdata.dart';
-
-import '../../level_components/checkpoint/checkpoint.dart';
+import '../../components/level_components/checkpoint/checkpoint.dart';
+import '../models/playerdata.dart';
 
 // A provider that manages the state of the player in the game.
 // It extends Notifier to provide a way to notify listeners about changes in the player's state.

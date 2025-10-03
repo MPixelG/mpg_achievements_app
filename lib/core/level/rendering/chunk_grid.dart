@@ -219,7 +219,5 @@ class ChunkGrid {
   void initShader() async{
     FragmentProgram program = await FragmentProgram.fromAsset("assets/shaders/lighting.frag");
     shader = program.fragmentShader();
-    print(program.toString());
-    print(program.fragmentShader().toString());
   }
 }

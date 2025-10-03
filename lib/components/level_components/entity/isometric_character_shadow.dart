@@ -6,7 +6,7 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../../core/level/isometric/isometric_renderable.dart';
 import '../../../core/level/isometric/isometric_tiled_component.dart';
-import 'isometricPlayer.dart';
+import 'isometric_player.dart';
 
 class ShadowComponent extends PositionComponent with IsometricRenderable {
   late Vector3 gridPos;

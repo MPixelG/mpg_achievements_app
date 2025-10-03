@@ -135,8 +135,9 @@ bool isDescendant(LayoutWidget dragged, LayoutWidget target) {
   //check if the dragged widget is a descendant of the target widget
   for (var child in dragged.children) {
     //for every child of the dragged widget
-    if (child == target || isDescendant(child, target))
+    if (child == target || isDescendant(child, target)) {
       return true; //if the child is the target or if the child has the target as a descendant, return true. this checks the entire tree of children recursively
+    }
   }
   return false; //if no child is the target or has the target as a descendant, return false
 }

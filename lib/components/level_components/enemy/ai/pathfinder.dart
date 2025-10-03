@@ -160,19 +160,22 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
 
         POINode? otherLeft;
         if (grid.isFree(posDownLeft) &&
-            grid.valAt(posDownLeft) != TileType.platform)
+            grid.valAt(posDownLeft) != TileType.platform) {
           otherLeft = getNodeAt(
             posDownLeft,
           ); //if theres an empty space there, we try to get the node.
+        }
 
         POINode? otherDown;
-        if (grid.isFree(posDown))
+        if (grid.isFree(posDown)) {
           otherDown = getNodeAt(posDown); //same for down
+        }
 
         POINode? otherRight;
         if (grid.isFree(posDownRight) &&
-            grid.valAt(posDownRight) != TileType.platform)
+            grid.valAt(posDownRight) != TileType.platform) {
           otherRight = getNodeAt(posDownRight); //and right.
+        }
 
         if (otherDown != null) {
           //if the node doesnt exist, we dont add it.
@@ -533,8 +536,9 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
 
   void debugDrawPathWithActions(Canvas canvas, List<PathStep> path) {
     //visualizes the given path. marks all of the nodes used as circles and the connections with lines and colors them depending on the action used.
-    if (path.length < 2)
+    if (path.length < 2) {
       return; //if the path is shorter than 2 points, it cant have any movements in it, because one of them is the start and the other one is the end point.
+    }
 
     for (int i = 0; i < path.length - 1; i++) {
       //for every point in the path
@@ -619,8 +623,9 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
       debugDrawPathWithActions(canvas, path!); //if its not null we can draw it
     }
 
-    if (!level.player.debugMode)
+    if (!level.player.debugMode) {
       return; // everything else only gets drawn in debug mode. so we return if thats not the case
+    }
 
     Vector2 selectedGridPos = (toGridPos(level.mousePos))
       ..floor(); //convert the mouse pos to a grid pos

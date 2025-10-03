@@ -22,6 +22,7 @@ class SpeechBubbleState extends State<SpeechBubble>
   //text to display
   late String text = 'Hello, this is a speech bubble example!';
   int _currentIndex = 0;
+  // ignore: unused_field
   bool _isTypingComplete = false;
   bool _isSpeechBubbleVisible = false;
   late final String characterName = widget.characterName;
@@ -260,8 +261,9 @@ class SpeechBubbleState extends State<SpeechBubble>
   }
 
   void _onTypingComplete() {
-    if (!mounted)
+    if (!mounted) {
       return; // Check if the widget is still mounted before updating state
+    }
     setState(() {
       _isTypingComplete = true;
     });

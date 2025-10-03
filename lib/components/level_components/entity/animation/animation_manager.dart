@@ -190,8 +190,9 @@ mixin HasMovementAnimations on AnimationManager, BasicMovement {
 
   //todo renameing necessary
   void updatePlayerstate() {
-    if (isInRespawnFrames || isInHitFrames)
+    if (isInRespawnFrames || isInHitFrames) {
       return; //if we are in respawn or hit frames we dont want to change the animation
+    }
 
     String animation = getAnimation("idle");
 

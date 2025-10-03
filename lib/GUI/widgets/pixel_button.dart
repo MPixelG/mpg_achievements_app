@@ -102,17 +102,20 @@ class _PixelButtonState extends State<PixelButton> {
 
   Color _getBorderColor() {
     //some colors for the borders with bit of contrast to the other colors
-    if (isPressed)
+    if (isPressed) {
       return Color(0xFF2E5F9A); //if its pressed, its pretty dark blue
-    if (hover)
+    }
+    if (hover) {
       return Color(0xFF7BC4FF); // or really light blue when its being hovered
+    }
     return Color(0xFF6BB3FF); //or sth in the middle for the regular state
   }
 
   List<BoxShadow> _getShadow() {
     //the shadow when its hovered
-    if (isPressed)
+    if (isPressed) {
       return []; //if its pressed, we dont want a shadow bc its dark then
+    }
     if (hover) {
       //if its hovered, we add a shadow
       return [

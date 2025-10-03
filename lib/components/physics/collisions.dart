@@ -7,7 +7,7 @@ import 'package:flame/extensions.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import '../level_components/entity/gameCharacter.dart';
+import '../level_components/entity/game_character.dart';
 import 'collision_block.dart';
 import 'movement.dart';
 
@@ -149,8 +149,9 @@ mixin HasCollisions
   Vector2 lastSafePosition = Vector2.zero();
   @override
   void update(double dt) {
-    if (viewSide != ViewSide.isometric || _debugNoClipMode)
+    if (viewSide != ViewSide.isometric || _debugNoClipMode) {
       return super.update(dt);
+    }
 
     if (!game.gameWorld.checkCollisionAt(gridPos.clone()..floor())) {
       lastSafePosition = gridPos;

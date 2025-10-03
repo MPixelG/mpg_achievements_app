@@ -1,13 +1,15 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/background/Background.dart';
-import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
+import 'package:mpg_achievements_app/components/background/background.dart';
+import 'package:mpg_achievements_app/components/background/layered_image_background.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/components/level_components/enemy/enemy.dart';
 import 'package:mpg_achievements_app/components/router/router.dart';
@@ -250,6 +252,8 @@ abstract class GameWorld extends World
 
   //Important for reading information from tiles -> needs to go into utils
   void inspectTile(int x, int y) {
+    if(!kDebugMode) return;
+
     //get map object
     final map = level.tileMap.map;
 
@@ -257,7 +261,7 @@ abstract class GameWorld extends World
     final layer = map.layerByName('Ground') as TileLayer?;
 
     if (layer == null) {
-      print('Layer not found!');
+      log('Layer not found!');
       return;
     }
 
@@ -267,20 +271,19 @@ abstract class GameWorld extends World
 
     // Check if a tile exists there
     if (gid == null || gid.tile == 0) {
-      print('No tile at ($x, $y)');
+      log('No tile at ($x, $y)');
     } else {
-      print('Tile at ($x, $y) has GID: ${gid.tile}');
+      log('Tile at ($x, $y) has GID: ${gid.tile}');
     }
 
     // 1. Use the map's helper function to get the tileset for this GID
     final tileset = level.tileMap.map.tilesetByTileGId(gid!.tile);
-    print(tileset.firstGid);
+    log("${tileset.firstGid}");
 
     // get localID of tile
     ///GID (Global ID): A map-wide unique identifier for a tile. It's what's stored in the layer data. Its primary job is to be unique across all tilesets. GID 0 is always "empty".
     /// Local ID: A tileset-specific identifier, always starting from 0 for the first tile in that tileset. It's used to look up a tile's data (like custom properties) within its own tileset.
     final localId = gid.tile - tileset.firstGid!;
-    print(localId);
 
     // 3. Get the Tile object from the tileset using the local ID
     final tile = tileset.tiles[localId];
@@ -289,9 +292,9 @@ abstract class GameWorld extends World
     final properties = tile.properties;
 
     if (properties.isNotEmpty) {
-      print('Properties for tile at ($x, $y):');
+      log('Properties for tile at ($x, $y):');
       for (var property in properties) {
-        print('  - ${property.name}: ${property.value}');
+        log('  - ${property.name}: ${property.value}');
       }
     }
   }

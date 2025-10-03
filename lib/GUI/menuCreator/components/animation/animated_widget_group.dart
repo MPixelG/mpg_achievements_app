@@ -79,7 +79,7 @@ class _AnimatedWidgetGroupState extends State<AnimatedWidgetGroup>
 
         return Transform.translate(
           offset: Offset(dx, dy),
-          child: Container(
+          child: SizedBox(
             width: width,
             height: height,
             child: NinePatchButton(text: "", onPressed: () {}),

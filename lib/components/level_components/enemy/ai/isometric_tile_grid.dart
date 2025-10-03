@@ -69,28 +69,6 @@ class IsometricTileGrid extends TileGrid {
     );
   }
 
-  /*This function takes a starting position (pos) in world coordinates and applies an offset to it as if that offset were happening on the flat, 2D grid, before converting the final result back into isometric world coordinates.
-  It's a way to move an object by a certain amount in the "logical" grid space (e.g., "move 16 pixels right and 8 pixels down on the grid") and get the correct corresponding position in the "visual" isometric world space.*/
-
-  Offset _applyOffsetIsometric(Vector2 pos, Vector2 offset) {
-    // Step 1: Convert the current world position into grid coordinates.
-    // 'level.toGridPos(pos)' translates the isometric world coordinates (e.g., where something
-    // is drawn on the screen) into its logical grid cell coordinates (e.g., tile [5, 3]).
-    Vector2 gridPos =
-        toGridPos(pos) + Vector2(offset.x / tileSize.y, offset.y / tileSize.y);
-
-    // Step 2: Apply the offset in grid space.
-    // The 'offset' is treated as a movement along the orthogonal grid axes.
-    // We divide the offset components by the tile's height (tileSize.y) because in many
-    // isometric setups, the vertical grid spacing corresponds to the tile height.
-    // This converts the pixel offset into a tile-based offset.
-    // For example, an offset of (0, 16) with a tileSize.y of 16 would mean "move down by one full tile".
-
-    Vector2 offsetWorldPos = toWorldPos(Vector3(gridPos.x, gridPos.y, 0));
-
-    return offsetWorldPos.toOffset();
-  }
-
   // Ray-casting algorithm to determine if a point is inside a polygon defined by [vertices].
   // The algorithm works by counting how many times a ray starting from the point intersects
   // the edges of the polygon. If the count is odd, the point is inside; if even, it's outside.

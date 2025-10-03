@@ -504,8 +504,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
                                         pressProperties,
                                         setDialogState,
                                       ),
-                                    )
-                                    .toList(),
+                                    ),
                               ],
                             ),
                           ),
@@ -600,8 +599,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
                                         option: option,
                                         customOptionName: entry.key,
                                       ),
-                                    )
-                                    .toList(),
+                                    ),
                               ],
                             ),
                           ),
@@ -621,7 +619,9 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
 
   @override
   void dispose() {
-    _textControllers.entries.forEach((element) => element.value.dispose());
+    for (var element in _textControllers.entries) {
+      element.value.dispose();
+    }
 
     super.dispose();
   }

@@ -10,7 +10,7 @@ import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
-import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
+import 'package:mpg_achievements_app/components/camera/advanced_camera.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 
 import 'components/level_components/enemy/enemy.dart';

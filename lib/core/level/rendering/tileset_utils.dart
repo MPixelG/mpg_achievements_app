@@ -19,8 +19,9 @@ Tileset findTileset(int gid, Iterable<Tileset> tilesets) {
     // Iterate through all tilesets
     if (ts.firstGid! <= raw) {
       // If this tileset could contain the gid
-      if (best == null || ts.firstGid! > best.firstGid!)
+      if (best == null || ts.firstGid! > best.firstGid!) {
         best = ts; // Update best if it's a better match
+      }
     }
   }
   if (best == null) {
@@ -71,8 +72,9 @@ FutureOr<Image?> getNormalImageFromTileset(Tileset tileset) async {
 
   Image? calculatedResult = await getImageFromTilesetPath(normalMapPath);
 
-  if (calculatedResult != null)
+  if (calculatedResult != null) {
     _normalTilesetImageCache[tileset] = calculatedResult;
+  }
 
   return calculatedResult;
 }

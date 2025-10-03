@@ -442,7 +442,7 @@ void loadTextureOfGid(int gid) async {
     srcSize: srcSize, //and its size
   );
 
-  textures[gid] = GameSprite(sprite, normalSprite);;
+  textures[gid] = GameSprite(sprite, normalSprite);
 }
 
 extension VectorComparing on Vector3 {

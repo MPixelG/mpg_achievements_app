@@ -1,6 +1,6 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mpg_achievements_app/components/state_management/models/TaskData.dart';
+
+import '../models/task_data.dart';
 
 
 // Provider global definieren

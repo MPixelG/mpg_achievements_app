@@ -46,7 +46,6 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
 
       final widget = await WidgetJsonUtils.importScreen(
         "test",
-        context: context,
       );
 
       setState(() {
@@ -224,7 +223,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       final widget = await WidgetJsonUtils.importScreen(
         "settings", // Settings Widget
-        context: context,
       );
 
       setState(() {

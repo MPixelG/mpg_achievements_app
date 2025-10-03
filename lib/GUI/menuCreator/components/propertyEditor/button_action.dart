@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart' show GoRouterHelper;
 
@@ -47,7 +48,9 @@ class DebugButtonAction extends ButtonAction {
 
   @override
   void press(BuildContext context) {
-    print(printText);
+    if (kDebugMode) {
+      print(printText);
+    }
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Matrix4;
 import 'package:flutter/services.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
@@ -87,7 +88,6 @@ class _GuiEditorState extends State<GuiEditor> {
         _nodeViewerKey.currentState!.setState(() {
           DisplayNode.widgetToDropOff = widgetDeclaration.builder(root);
         });
-        print("new widget to drop off set!");
       },
     );
 
@@ -131,7 +131,9 @@ class _GuiEditorState extends State<GuiEditor> {
                         String json = WidgetJsonUtils.exportWidgetToJson(
                           root,
                         ); //we convert the root widget to a json string
-                        print("json: $json");
+                        if (kDebugMode) {
+                          print("json: $json");
+                        }
                         Clipboard.setData(ClipboardData(text: json));
                       },
                       child: Icon(Icons.outbond_outlined),
@@ -147,7 +149,7 @@ class _GuiEditorState extends State<GuiEditor> {
                         borderRadius: BorderRadius.circular(15.0),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
+                            color: Colors.black.withValues(alpha: 0.3),
                             spreadRadius: 2,
                             blurRadius: 6,
                             offset: Offset(0, 3),
@@ -195,7 +197,6 @@ class _GuiEditorState extends State<GuiEditor> {
                               } //if the value is positioned, we add a positioned widget to the root widget
                             case "Expanded":
                               {
-                                print("adding Expanded!");
                                 LayoutWidget? parent = getNearestFlexRecursive(
                                   root,
                                 ); //we get the nearest stack widget to add the expanded widget to, because you can only add expanded widgets to a row or column
@@ -205,13 +206,11 @@ class _GuiEditorState extends State<GuiEditor> {
                                     .where((element) => element.id == value)
                                     .firstOrNull;
                                 if (widgetDeclaration != null) {
-                                  print("adding widget");
                                   addWidget(widgetDeclaration.builder(parent));
                                 }
                               }
                             default:
                               {
-                                print("default: $value");
                                 var widgetDeclaration = WidgetDeclaration
                                     .declarationCache
                                     .where((element) => element.id == value)
@@ -297,7 +296,6 @@ class _GuiEditorState extends State<GuiEditor> {
   /// The widget is built using the provided LayoutWidget.
   void addWidget(LayoutWidget? layoutWidget, {LayoutWidget? root}) async {
     if (layoutWidget == null) {
-      print("widget is null!");
       return; //if the layoutWidget is null, we return and do not add anything
     }
 

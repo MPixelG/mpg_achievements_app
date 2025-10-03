@@ -1,13 +1,15 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jenny/jenny.dart';
-import 'package:mpg_achievements_app/components/state_management/providers/taskStateProvider.dart';
+
+import '../../state_management/providers/task_state_provider.dart';
 
 class DialogueYarnCreator extends Component with DialogueView {
-  final WidgetRef ref; // <<--- wichtig!
+  final WidgetRef ref;
   DialogueYarnCreator(this.ref);
 
   late YarnProject project;
@@ -26,20 +28,24 @@ class DialogueYarnCreator extends Component with DialogueView {
     script = await rootBundle.loadString(yarnfile);
     project = YarnProject()
       ..commands.addCommand2<String, int>('createTask', createTask)
-      ..commands.addCommand0('playeryes', playeryes as FutureOr<void> Function())
-      ..commands.addCommand0('playerno', playerno as FutureOr<void> Function() )
+      ..commands.addCommand0('playeryes', playerYes as FutureOr<void> Function())
+      ..commands.addCommand0('playerno', playerNo as FutureOr<void> Function() )
       ..commands.addCommand1<String>('progressStart', progressStart)
       ..commands.addCommand2<String, int>('progressUpdate', progressUpdate)
       ..parse(script);
     return project;
   }
 
-  void playeryes() {
-    print('Yes');
+  void playerYes() {
+    if (kDebugMode) {
+      print('Yes');
+    }
   }
 
-  void playerno() {
-    print('no');
+  void playerNo() {
+    if (kDebugMode) {
+      print('no');
+    }
   }
 
   void progressStart(String taskDesc) {
