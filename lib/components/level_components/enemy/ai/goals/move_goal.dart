@@ -4,13 +4,13 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
-import 'package:mpg_achievements_app/components/ai/goals/goal.dart';
-import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
 
-import '../../../core/level/game_world.dart';
-import '../../../mpg_pixel_adventure.dart';
-import '../../physics/collision_block.dart';
-import '../../physics/movement.dart';
+import '../../../../../core/level/game_world.dart';
+import '../../../../../mpg_pixel_adventure.dart';
+import '../../../../physics/collision_block.dart';
+import '../../../../physics/movement.dart';
+import '../pathfinder.dart';
+import 'goal.dart';
 
 class MoveGoal extends Goal {
   late int goalKey;

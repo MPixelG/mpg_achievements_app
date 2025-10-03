@@ -10,8 +10,9 @@ import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import '../level_components/entity/player.dart';
-import '../physics/collision_block.dart';
+import '../components/level_components/entity/player.dart';
+import '../components/physics/collision_block.dart';
+
 
 /* Checks whether a player's hitbox is colliding with a given collision block.
 This function uses Flame's built-in methods to convert both the player's hitbox

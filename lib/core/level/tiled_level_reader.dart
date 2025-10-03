@@ -4,7 +4,7 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../components/level_components/checkpoint/checkpoint.dart';
 import '../../components/level_components/collectables.dart';
-import '../../components/level_components/enemy.dart';
+import '../../components/level_components/enemy/enemy.dart';
 import '../../components/level_components/saw.dart';
 import '../../components/physics/collision_block.dart';
 import 'game_world.dart';

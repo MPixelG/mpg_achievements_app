@@ -5,10 +5,10 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:mpg_achievements_app/components/util/isometric_utils.dart';
 import 'package:mpg_achievements_app/core/level/rendering/tileset_utils.dart';
 
 import '../../../mpg_pixel_adventure.dart';
+import '../../../util/isometric_utils.dart';
 import '../isometric/isometric_renderable.dart';
 import '../isometric/isometric_tiled_component.dart';
 import 'game_sprite.dart';

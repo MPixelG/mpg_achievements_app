@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/util/noise.dart';
+
+import '../../util/noise.dart';
 
 enum CameraEffect { shake }
 

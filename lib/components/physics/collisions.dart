@@ -8,7 +8,6 @@ import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../level_components/entity/gameCharacter.dart';
-import '../util/isometric_utils.dart';
 import 'collision_block.dart';
 import 'movement.dart';
 
@@ -145,54 +144,6 @@ mixin HasCollisions
       velocity.x = 0;
     }
     if (other.climbable && distanceUp > 5) setClimbing(true);
-  }
-
-  //TODO FIX
-  void checkCollisionIsometric(CollisionBlock other) {
-    hitbox!.aabb.intersectsWithAabb2(other.hitbox.aabb);
-
-    Vector2 gridPos = toGridPos(position);
-
-    Vector2 otherGridPos = toGridPos(other.position);
-
-    Vector2 posDiff = gridPos - otherGridPos;
-    print("\nposDiff: $posDiff");
-    print("gridPos: $gridPos");
-    print("other grid pos: $otherGridPos");
-
-    final double distanceUp = posDiff.y + hitbox!.height / 32;
-    final double distanceLeft = posDiff.x + hitbox!.width / 32;
-    final double distanceRight = (other.width / 32) - posDiff.x;
-    final double distanceDown = (other.height / 32) - posDiff.y;
-
-    double smallestDistance = min(
-      min(distanceUp, distanceLeft),
-      min(distanceRight, distanceDown),
-    );
-
-    Vector2 newGridPos = gridPos;
-    if (smallestDistance == distanceUp) {
-      print("up");
-      newGridPos.x -= 0.1;
-      velocity.x = 0;
-    }
-    if (smallestDistance == distanceLeft) {
-      print("left");
-      newGridPos.y += 0.1;
-      velocity.y = 0;
-    }
-    if (smallestDistance == distanceRight) {
-      print("right");
-      newGridPos.x += 0.1;
-      velocity.x = 0;
-    }
-    if (smallestDistance == distanceDown) {
-      print("down");
-      newGridPos.y -= 0.1;
-      velocity.y = 0;
-    }
-
-    gridPos = newGridPos;
   }
 
   Vector2 lastSafePosition = Vector2.zero();

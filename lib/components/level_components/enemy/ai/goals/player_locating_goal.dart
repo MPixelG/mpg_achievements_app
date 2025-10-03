@@ -1,4 +1,4 @@
-import 'package:mpg_achievements_app/components/ai/goals/pathtracing_goal.dart';
+import 'package:mpg_achievements_app/components/level_components/enemy/ai/goals/pathtracing_goal.dart';
 
 class PlayerLocatingGoal extends PathtracingGoal {
   PlayerLocatingGoal(double goalPriority)

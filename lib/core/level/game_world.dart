@@ -6,20 +6,20 @@ import 'package:flame/extensions.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/ai/isometric_tile_grid.dart';
-import 'package:mpg_achievements_app/components/ai/pathfinder.dart';
 import 'package:mpg_achievements_app/components/background/Background.dart';
 import 'package:mpg_achievements_app/components/background/LayeredImageBackground.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
-import 'package:mpg_achievements_app/components/level_components/enemy.dart';
+import 'package:mpg_achievements_app/components/level_components/enemy/enemy.dart';
 import 'package:mpg_achievements_app/components/router/router.dart';
 import 'package:mpg_achievements_app/core/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../components/background/scrolling_background.dart';
+import '../../components/level_components/enemy/ai/isometric_tile_grid.dart';
+import '../../components/level_components/enemy/ai/pathfinder.dart';
 import '../../components/level_components/entity/animation/animation_style.dart';
 import '../../components/level_components/entity/player.dart';
-import '../../components/util/isometric_utils.dart';
+import '../../util/isometric_utils.dart';
 import 'isometric/isometric_tiled_component.dart';
 import 'isometric/isometric_world.dart';
 

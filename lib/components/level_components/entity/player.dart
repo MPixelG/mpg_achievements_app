@@ -6,7 +6,7 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
-import 'package:mpg_achievements_app/components/level_components/enemy.dart';
+import 'package:mpg_achievements_app/components/level_components/enemy/enemy.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/gameCharacter.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';

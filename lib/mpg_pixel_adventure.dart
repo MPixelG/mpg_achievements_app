@@ -11,9 +11,9 @@ import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/components/camera/AdvancedCamera.dart';
-import 'package:mpg_achievements_app/components/util/utils.dart';
+import 'package:mpg_achievements_app/util/utils.dart';
 
-import 'components/level_components/enemy.dart';
+import 'components/level_components/enemy/enemy.dart';
 import 'core/level/game_world.dart';
 import 'core/level/isometric/isometric_world.dart';
 import 'core/level/orthogonal/orthogonal_world.dart';

@@ -1,7 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
-import '../util/isometric_utils.dart';
+import '../../util/isometric_utils.dart';
 
 class IsometricHitbox extends PolygonHitbox {
   IsometricHitbox(Vector2 size, Vector2 offset)

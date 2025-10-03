@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/ai/goals/goal.dart';
+
+import 'goal.dart';
 
 class GoalManager extends Component {
   GoalAttributes attributes = GoalAttributes();

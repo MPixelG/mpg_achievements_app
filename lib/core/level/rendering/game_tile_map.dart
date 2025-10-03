@@ -7,7 +7,7 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/core/level/rendering/tileset_utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import '../../../components/util/utils.dart';
+import '../../../util/utils.dart';
 import '../isometric/isometric_tiled_component.dart';
 import 'game_sprite.dart';
 

@@ -3,10 +3,10 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/ai/tile_grid.dart';
+import 'package:mpg_achievements_app/components/level_components/enemy/ai/tile_grid.dart';
 
-import '../../core/level/rendering/chunk.dart';
-import '../util/isometric_utils.dart';
+import '../../../../core/level/rendering/chunk.dart';
+import '../../../../util/isometric_utils.dart';
 
 class IsometricTileGrid extends TileGrid {
   List<Vertices> vertices = [];
