@@ -3,12 +3,12 @@ import 'package:mpg_achievements_app/components/physics/movement.dart';
 import '../level_components/entity/player.dart';
 
 mixin IsometricMovement on BasicMovement {
-  final double _isometricJumpForce = 150;
-  final double _isometricGravity = 50;
+  final double _isometricJumpForce = 190;
+  final double _isometricGravity = 350;
   double zVelocity = 0.0;
   double zPosition = 0.0;
   final double _friction = 0.75;
-  final double _terminalVelocity = 150;
+  final double _terminalVelocity = 350;
   //character's height off the ground plan
 
   void updateIsometricMovement(double dt) {
@@ -20,6 +20,7 @@ mixin IsometricMovement on BasicMovement {
     if (gravityEnabled) {
       _performIsometricGravity(dt);
     }
+    //Apply 2D velocity to logical ground position
     gridPos += velocity * dt;
   }
 
@@ -61,6 +62,7 @@ mixin IsometricMovement on BasicMovement {
   }
 
   void _jump() {
+    if(!isOnGround) return;
     zVelocity = -_isometricJumpForce;
     isOnGround = false;
     hasJumped = false;
