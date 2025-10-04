@@ -30,7 +30,7 @@ class CollisionBlock extends PositionComponent
     this.isLadder = false,
     this.isIsometric,
     this.zPosition = 0,
-    this.zHeight = 16,
+    this.zHeight = 0,
   });
 
   ShapeHitbox hitbox = RectangleHitbox();
