@@ -29,6 +29,22 @@ class IsometricPlayer extends Player with IsometricRenderable {
   }
 
   @override
+  void render(Canvas canvas){
+    //save the current state of the canvas
+    canvas.save();
+
+    //only move drawing position not ground position
+    canvas.translate(0, zPosition);
+
+    //call original renderer
+    super.render(canvas);
+
+    //restore canvas, important because of other components rendering. If you do not
+    //restore other components will incorrectly be offset
+    canvas.restore();
+  }
+
+  @override
   Vector2 get gridPos => worldToTileIsometric(absoluteCenter);
 
   @override
