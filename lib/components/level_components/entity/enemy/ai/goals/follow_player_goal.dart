@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 
-import '../../../../../mpg_pixel_adventure.dart';
-import '../../../entity/player.dart';
+import '../../../../../../mpg_pixel_adventure.dart';
+import '../../../player.dart';
 import 'move_goal.dart';
 
 class FollowPlayerGoal extends MoveGoal {

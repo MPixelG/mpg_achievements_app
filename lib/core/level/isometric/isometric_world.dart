@@ -5,7 +5,7 @@ import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 
-import '../../../components/level_components/enemy/ai/isometric_tile_grid.dart';
+import '../../../components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
 import '../../../components/level_components/entity/isometric_player.dart';
 import '../../../mpg_pixel_adventure.dart';
 import '../../../util/isometric_utils.dart';

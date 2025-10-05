@@ -13,7 +13,7 @@ import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/components/camera/advanced_camera.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 
-import 'components/level_components/enemy/enemy.dart';
+import 'components/level_components/entity/enemy/enemy.dart';
 import 'core/level/game_world.dart';
 import 'core/level/isometric/isometric_world.dart';
 import 'core/level/orthogonal/orthogonal_world.dart';
@@ -40,7 +40,7 @@ class PixelAdventure extends FlameGame
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
-  late String currentLevel = "Level_8";
+  late String currentLevel = "Level_2";
 
   //variable for normal N E S W Movement and isometric Movement
   //a normal hot reload to change the movement isn't enough, you have to do a hot restart!

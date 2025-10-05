@@ -7,10 +7,10 @@ import 'package:mpg_achievements_app/components/level_components/entity/game_cha
 import 'package:mpg_achievements_app/components/level_components/saw.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 
-import '../../../core/level/isometric/isometric_world.dart';
-import '../../particles/particles.dart';
-import '../../physics/movement.dart';
-import '../entity/animation/animation_manager.dart';
+import '../../../../core/level/isometric/isometric_world.dart';
+import '../../../particles/particles.dart';
+import '../../../physics/movement.dart';
+import '../animation/animation_manager.dart';
 import 'ai/goals/follow_player_goal.dart';
 import 'ai/goals/goal_manager.dart';
 import 'ai/goals/move_goal.dart';

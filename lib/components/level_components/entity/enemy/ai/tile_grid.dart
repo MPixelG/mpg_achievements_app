@@ -2,8 +2,9 @@ import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/level/game_world.dart';
-import '../../../../util/isometric_utils.dart';
+import '../../../../../core/level/game_world.dart';
+import '../../../../../util/isometric_utils.dart';
+
 
 class TileGrid extends Component {
   int width;

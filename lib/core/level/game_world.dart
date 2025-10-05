@@ -11,15 +11,15 @@ import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/background/background.dart';
 import 'package:mpg_achievements_app/components/background/layered_image_background.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
-import 'package:mpg_achievements_app/components/level_components/enemy/enemy.dart';
 import 'package:mpg_achievements_app/components/router/router.dart';
 import 'package:mpg_achievements_app/core/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../components/background/scrolling_background.dart';
-import '../../components/level_components/enemy/ai/isometric_tile_grid.dart';
-import '../../components/level_components/enemy/ai/pathfinder.dart';
 import '../../components/level_components/entity/animation/animation_style.dart';
+import '../../components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
+import '../../components/level_components/entity/enemy/ai/pathfinder.dart';
+import '../../components/level_components/entity/enemy/enemy.dart';
 import '../../components/level_components/entity/player.dart';
 import '../../util/isometric_utils.dart';
 import 'isometric/isometric_tiled_component.dart';

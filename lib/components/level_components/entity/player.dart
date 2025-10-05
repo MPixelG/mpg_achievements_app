@@ -5,25 +5,26 @@ import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
-import 'package:mpg_achievements_app/components/level_components/enemy/enemy.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
 import 'package:mpg_achievements_app/components/physics/collision_block.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 
 import '../../../core/level/isometric/isometric_world.dart';
 import '../../../state_management/providers/player_state_provider.dart';
-import '../../physics/controllable_mixins.dart';
+import '../../controllers/controllable_mixins.dart';
 import '../../physics/isometric_movement.dart';
 import '../../physics/movement.dart';
 import '../saw.dart';
 import 'animation/animation_manager.dart';
+import 'enemy/enemy.dart';
 import 'isometric_character_shadow.dart';
 
 //todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations
-//with is used to additonal classes here our game class
-//import/reference to Keyboardhandler
+//with is used to additional classes here our game class
+//import/reference to Keyboard handler
 class Player extends GameCharacter
     with
         RiverpodComponentMixin,
@@ -54,8 +55,10 @@ class Player extends GameCharacter
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
 
+  KeyboardCharacterController controller = KeyboardCharacterController();
   @override
   Future<void> onLoad() async {
+    add(controller);
     // The player inspects its environment (the world) and configures itself.
     if (game.gameWorld is IsometricWorld) {
       setMovementType(ViewSide.isometric);

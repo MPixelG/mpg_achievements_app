@@ -8,9 +8,9 @@ import 'package:flutter/services.dart';
 import '../../core/level/game_world.dart';
 import '../../mpg_pixel_adventure.dart';
 import '../../util/utils.dart' as util;
-import 'collisions.dart';
-import 'isometric_movement.dart';
-import 'movement.dart';
+import '../physics/collisions.dart';
+import '../physics/isometric_movement.dart';
+import '../physics/movement.dart';
 
 mixin KeyboardControllableMovement
     on PositionComponent, BasicMovement, KeyboardHandler, IsometricMovement {

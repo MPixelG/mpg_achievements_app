@@ -41,7 +41,7 @@ mixin HasCollisions
   @override
   FutureOr<void> onLoad() {
     if (viewSide == ViewSide.isometric) {
-      hitbox = IsometricHitbox(Vector2.all(1), Vector2.zero());
+      hitbox = IsometricHitbox(Vector2.all(1), Vector3.zero());
       hitbox!.position = Vector2(0, 16);
     } else {
       hitbox = RectangleHitbox(size: Vector2(20, 26), position: Vector2(6, 4));

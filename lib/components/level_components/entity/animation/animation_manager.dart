@@ -2,13 +2,14 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../../physics/movement.dart';
 
 
 mixin AnimationManager
-    on SpriteAnimationGroupComponent, HasGameReference<PixelAdventure> {
+    on AnimatedCharacter, HasGameReference<PixelAdventure> {
   final double stepTime = 0.05; //the time for every frame
 
   String get componentSpriteLocation; //the path to the objects animations
@@ -176,15 +177,12 @@ mixin HasMovementAnimations on AnimationManager, BasicMovement {
     ),
   ];
 
-  bool
-  get isInHitFrames; //if the player is currently being hit, we dont want to overwrite the animation
-  bool
-  get isInRespawnFrames; //if the player is currently respawning, we dont want to overwrite the animation
+  bool get isInHitFrames; //if the player is currently being hit, we dont want to overwrite the animation
+  bool get isInRespawnFrames; //if the player is currently respawning, we dont want to overwrite the animation
 
   @override
   void update(double dt) {
     updatePlayerstate();
-    animationTicker?.update(dt);
     super.update(dt);
   }
 

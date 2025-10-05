@@ -31,7 +31,7 @@ class SpeechBubbleState extends State<SpeechBubble>
   late async.Timer? _typingTimer;
   late async.Timer? _dismissTimer;
 
-  //Configuation of Widget and Animations
+  //Configuration of Widget and Animations
   //Duration between character appearing and text displaying
   late final Duration typingSpeed = const Duration(milliseconds: 150);
   late final Duration showDuration = const Duration(seconds: 5);
@@ -55,7 +55,6 @@ class SpeechBubbleState extends State<SpeechBubble>
   final Color borderColor = Colors.black; // Color of the tail border
   final double borderWidth = 1.0; // Width of the tail border
 
-  ///Animationcontrollers
   //controls scaling-in
   late AnimationController _scaleController;
 

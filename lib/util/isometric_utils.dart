@@ -49,7 +49,7 @@ Vector2 worldToTileIsometric(Vector2 worldPos) {
   return Vector2(tileX, tileY);
 }
 
-Vector2 isoToScreen(Vector2 iso) {
+Vector2 isoToScreen(Vector3 iso) {
   return Vector2(
     (iso.x - iso.y) * tilesize.x / 2,
     (iso.x + iso.y) * tilesize.z / 2,
