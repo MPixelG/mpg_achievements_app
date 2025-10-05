@@ -44,16 +44,16 @@ mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {
       hasJumped = false;
     }
     // Horizontal movement and friction
-      velocity.x += horizontalMovement * moveSpeed;
-      velocity.x *=
-          _friction *
-          (dt +
-              1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
-      if (gravityEnabled) {
-        _performGravity(dt);
-      }
+    velocity.x += horizontalMovement * moveSpeed;
+    velocity.x *=
+        _friction *
+        (dt +
+            1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+    if (gravityEnabled) {
+      _performGravity(dt);
+    }
 
-      // Apply final velocity to position
+    // Apply final velocity to position
 
     gridPos += velocity * dt;
   }

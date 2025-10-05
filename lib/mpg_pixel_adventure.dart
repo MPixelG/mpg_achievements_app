@@ -46,7 +46,6 @@ class PixelAdventure extends FlameGame
   //a normal hot reload to change the movement isn't enough, you have to do a hot restart!
   static bool isometricMovement = true;
 
-
   //bools for game logic
   //needs to go into the overlay_controller later
   bool showDialogue = true;
@@ -88,7 +87,9 @@ class PixelAdventure extends FlameGame
     //add overlays
     overlays.add('TextOverlay');
 
-   await add(_FollowCameraComponent()); //helper class to follow the player after the world and player are loaded
+    await add(
+      _FollowCameraComponent(),
+    ); //helper class to follow the player after the world and player are loaded
     return super.onLoad();
   }
 
