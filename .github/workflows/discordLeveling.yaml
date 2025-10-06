@@ -13,14 +13,26 @@ jobs:
       - name: get stats
         id: stats
         run: |
-          echo "=== DEBUG: Analyzing push ===" >&2
-          echo "HEAD: $(git rev-parse HEAD)" >&2
-          echo "origin/main: $(git rev-parse origin/main 2>/dev/null || echo 'not found')" >&2
+          echo "=== DEBUG: GitHub Context ===" >&2
+          echo "GITHUB_SHA: $GITHUB_SHA" >&2
+          echo "GITHUB_BEFORE: ${{ github.event.before }}" >&2
+          echo "GITHUB_AFTER: ${{ github.event.after }}" >&2
 
-          # Hole alle Commits des Pushes
-          range=$(git log --format=%H origin/main..HEAD 2>/dev/null)
-          if [ -z "$range" ]; then
-            range=$(git log --format=%H HEAD^..HEAD 2>/dev/null || git rev-parse HEAD)
+          # Nutze GitHub's before/after commits
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.event.after }}"
+
+          # Bei einem neuen Branch ist 'before' oft 0000000...
+          if [[ "$BEFORE" =~ ^0+$ ]]; then
+            echo "Neuer Branch erkannt, nutze nur HEAD" >&2
+            range=$(git rev-parse HEAD)
+          else
+            # Hole alle Commits zwischen before und after
+            range=$(git log --format=%H $BEFORE..$AFTER 2>/dev/null)
+            if [ -z "$range" ]; then
+              echo "Keine Commits gefunden, nutze HEAD" >&2
+              range=$(git rev-parse HEAD)
+            fi
           fi
 
           echo "=== Commits in range ===" >&2
