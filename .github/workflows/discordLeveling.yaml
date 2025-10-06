@@ -9,8 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
-
+          fetch-depth: 0
       - name: get stats
         id: stats
         run: |
@@ -110,3 +109,6 @@ jobs:
           -H "Authorization: Bot $BOT_TOKEN" \
           -H "Content-Type: application/json" \
           -d "$payload" --ssl-no-revoke || echo "curl failed" >&2
+          
+          
+          
