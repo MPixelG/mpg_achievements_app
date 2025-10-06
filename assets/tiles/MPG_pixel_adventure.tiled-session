@@ -28,26 +28,26 @@
         },
         "Level_1.tmx": {
             "expandedObjectLayers": [
-                2,
-                3
+                3,
+                2
             ],
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 320.75,
+                "x": 320.5,
                 "y": 184.25
             }
         },
         "Level_2.tmx": {
             "expandedObjectLayers": [
-                2,
-                4
+                4,
+                2
             ],
             "scale": 2,
             "selectedLayer": 10,
             "viewCenter": {
-                "x": 500.75,
-                "y": 517.25
+                "x": 520,
+                "y": 531.75
             }
         },
         "Level_3.tmx": {
@@ -66,7 +66,7 @@
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1024.5,
+                "x": 1024,
                 "y": 448.5
             }
         },
@@ -77,7 +77,7 @@
             "scale": 0.25,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1026,
+                "x": 1024,
                 "y": 1022
             }
         },
@@ -85,7 +85,7 @@
             "scale": 0.75,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 2048.6666666666665,
+                "x": 2048,
                 "y": 1024.6666666666665
             }
         },
@@ -93,8 +93,8 @@
             "scale": 2.7961914062499997,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 255.88377047462723,
-                "y": 127.85247791010374
+                "x": 256.06258512904697,
+                "y": 127.85247791010376
             }
         },
         "Level_7.tmx": {
@@ -104,16 +104,16 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 256.25,
+                "x": 256,
                 "y": 127.75
             }
         },
         "Level_8.tmx": {
             "scale": 1,
-            "selectedLayer": 1,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 1312.5,
-                "y": 405.5
+                "x": 935.5,
+                "y": 386
             }
         },
         "Lever_3.tmx": {
