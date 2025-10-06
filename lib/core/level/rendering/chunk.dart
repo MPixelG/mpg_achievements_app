@@ -138,8 +138,8 @@ class Chunk {
   }
 
   int currentlyActiveOperations = 0;
-  static const int maxOperations = 1;
-  Future<void> rebuildMaps(List<IsometricRenderable> additionals) async {
+  static const int maxOperations = 5;
+  void rebuildMaps(List<IsometricRenderable> additionals) {
     if(currentlyActiveOperations > maxOperations) return;
 
     currentlyActiveOperations++;
@@ -214,7 +214,7 @@ class Chunk {
   }
 
   bool startedBuildingMaps = false;
-  void buildImageMaps(List<IsometricRenderable> additionals) async{
+  void buildImageMaps(List<IsometricRenderable> additionals) {
     if((albedoMap == null || normalAndDepthMap == null) && startedBuildingMaps) return;
     startedBuildingMaps = true;
 
@@ -225,8 +225,14 @@ class Chunk {
 
     renderMaps(albedoCanvas, normalCanvas, additionals);
 
-    albedoRecorder.endRecording().toImage(albedoWidth, albedoHeight).then((value) => albedoMap = value);
-    normalRecorder.endRecording().toImage(albedoWidth, albedoHeight).then((value) => normalAndDepthMap = value);
+    albedoRecorder.endRecording().toImage(albedoWidth, albedoHeight).then((value) {
+      albedoMap?.dispose();
+      albedoMap = value;
+    });
+    normalRecorder.endRecording().toImage(albedoWidth, albedoHeight).then((value) {
+      normalAndDepthMap?.dispose();
+      normalAndDepthMap = value;
+    });
   }
 
   void renderMaps(Canvas albedoCanvas, Canvas normalCanvas, List<IsometricRenderable> additionals){
@@ -324,11 +330,6 @@ class Chunk {
         element.updatesNextFrame = true;
       }
     });
-
-    if(currentAdditionalComponents.isNotEmpty && newComponents.isEmpty) {
-      rebuildMaps(newComponents);
-    }
-
     if (newComponents.isNotEmpty) {
       currentAdditionalComponents = newComponents;
       prepareBuildImageMaps();
@@ -403,7 +404,7 @@ class ChunkTile with IsometricRenderable {
 Map<int, GameSprite> textures = {};
 List<int> currentOperations = [];
 void loadTextureOfGid(int gid) async {
-  if(currentOperations.contains(gid)){
+  if(textures.containsKey(gid) || currentOperations.contains(gid)){
     return;
   }
   currentOperations.add(gid);

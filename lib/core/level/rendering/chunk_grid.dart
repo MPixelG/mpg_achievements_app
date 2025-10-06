@@ -71,6 +71,8 @@ class ChunkGrid {
       Vector2 viewportSize,[
         Offset offset = Offset.zero,
       ]) async {
+    print("components: ${components.length}");
+
     if(currentlyRebuilding) return;
     currentlyRebuilding = true;
 
@@ -145,6 +147,8 @@ class ChunkGrid {
       normalRecorder.endRecording().toImage(viewportSize.x.toInt(), viewportSize.y.toInt()).then((value) => lastNormal = value),
       albedoRecorder.endRecording().toImage(viewportSize.x.toInt(), viewportSize.y.toInt()).then((value) => lastAlbedo = value)
     ]).then((value) {
+      fullAlbedo?.dispose();
+      fullNormal?.dispose();
       fullAlbedo = lastAlbedo;
       fullNormal = lastNormal;
       //print("frame on ${DateTime.now().millisecond}");
