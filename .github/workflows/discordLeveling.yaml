@@ -13,14 +13,21 @@ jobs:
       - name: get stats
         id: stats
         run: |
+          echo "=== DEBUG: Analyzing push ===" >&2
+          echo "HEAD: $(git rev-parse HEAD)" >&2
+          echo "origin/main: $(git rev-parse origin/main 2>/dev/null || echo 'not found')" >&2
+
           # Hole alle Commits des Pushes
           range=$(git log --format=%H origin/main..HEAD 2>/dev/null)
           if [ -z "$range" ]; then
-            # Fallback für den ersten Push oder wenn origin/main nicht existiert
             range=$(git log --format=%H HEAD^..HEAD 2>/dev/null || git rev-parse HEAD)
           fi
-          
-          # Prüfe auf Merge-Commits in allen Commits des Pushes
+
+          echo "=== Commits in range ===" >&2
+          echo "$range" >&2
+          echo "=== Count: $(echo "$range" | wc -l) ===" >&2
+
+          # Prüfe auf Merge-Commits
           for sha in $range; do
             parent_count=$(git rev-list --count --parents -n1 $sha | awk '{print NF-1}')
             if [ "$parent_count" -gt 1 ]; then
@@ -28,22 +35,24 @@ jobs:
               exit 0
             fi
           done
-          
+
           total_added=0
           total_deleted=0
           all_msgs=""
           author_name=""
           author_email=""
-          
+
           for sha in $range; do
+            echo "=== Processing commit: $sha ===" >&2
             added=$(git show --numstat --pretty="" "$sha" | awk '$1 ~ /^[0-9]+$/ {sum += $1} END {print sum+0}')
             deleted=$(git show --numstat --pretty="" "$sha" | awk '$2 ~ /^[0-9]+$/ {sum += $2} END {print sum+0}')
             msg=$(git log -1 --pretty=format:'%B' "$sha" | tr -d '\000-\010\013\014\016-\037')
-          
+
+            echo "Added: $added, Deleted: $deleted" >&2
+
             total_added=$((total_added + added))
             total_deleted=$((total_deleted + deleted))
-          
-            # Füge Commit-Message hinzu (mit echtem Newline)
+
             if [ -z "$all_msgs" ]; then
               all_msgs="$msg"
             else
@@ -51,12 +60,15 @@ jobs:
           ${msg}"
           fi
           
-          # Nimm den Autor vom ERSTEN Commit (oder sammle alle Autoren?)
           if [ -z "$author_name" ]; then
           author_name=$(git log -1 --pretty=format:'%an' "$sha")
           author_email=$(git log -1 --pretty=format:'%ae' "$sha")
           fi
           done
+          
+          echo "=== FINAL TOTALS ===" >&2
+          echo "Total added: $total_added" >&2
+          echo "Total deleted: $total_deleted" >&2
           
           echo "COMMIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
           echo "AUTHOR_NAME=$author_name" >> $GITHUB_ENV
