@@ -14,29 +14,46 @@ jobs:
       - name: get stats
         id: stats
         run: |
-          commit_sha=$(git rev-parse HEAD)
-          parent_count=$(git rev-list --count --parents -n1 $commit_sha | awk '{print NF-1}')
-          if [ "$parent_count" -gt 1 ]; then
-            echo "Merge-Commit erkannt, Workflow wird übersprungen."
-            exit 0
+          commit_shas=($(git rev-parse HEAD HEAD~1))
+          for sha in "${commit_shas[@]}"; do
+            parent_count=$(git rev-list --count --parents -n1 $sha | awk '{print NF-1}')
+            if [ "$parent_count" -gt 1 ]; then
+              echo "Merge-Commit erkannt, Workflow wird übersprungen."
+              exit 0
+            fi
+          done
+          
+          range=$(git rev-list origin/main..HEAD)
+          if [ -z "$range" ]; then
+            range=$(git rev-parse HEAD)
           fi
           
-          echo "COMMIT_SHA=$commit_sha" >> $GITHUB_ENV
-          author_name=$(git log -1 --pretty=format:'%an')
-          author_email=$(git log -1 --pretty=format:'%ae')
+          total_added=0
+          total_deleted=0
+          all_msgs=""
+          author_name=""
+          author_email=""
           
+          for sha in $range; do
+            added=$(git show --numstat --pretty="" "$sha" | awk '$1 ~ /^[0-9]+$/ {sum += $1} END {print sum+0}')
+            deleted=$(git show --numstat --pretty="" "$sha" | awk '$2 ~ /^[0-9]+$/ {sum += $2} END {print sum+0}')
+            msg=$(git log -1 --pretty=format:'%B' "$sha" | tr -dC '\11\12\15\40-\176')
+            total_added=$((total_added + added))
+            total_deleted=$((total_deleted + deleted))
+            all_msgs="${all_msgs}\n${msg}"
+            if [ -z "$author_name" ]; then
+              author_name=$(git log -1 --pretty=format:'%an' "$sha")
+              author_email=$(git log -1 --pretty=format:'%ae' "$sha")
+            fi
+          done
+          
+          echo "COMMIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
           echo "AUTHOR_NAME=$author_name" >> $GITHUB_ENV
           echo "AUTHOR_EMAIL=$author_email" >> $GITHUB_ENV
-          
-          added=$(git show --numstat --pretty="" "$commit_sha" | awk '$1 ~ /^[0-9]+$/ {sum += $1} END {print sum+0}')
-          echo "ADDITIONS=$added" >> $GITHUB_ENV
-          
-          deleted=$(git show --numstat --pretty="" "$commit_sha" | awk '$2 ~ /^[0-9]+$/ {sum += $2} END {print sum+0}')
-          echo "DELETIONS=$deleted" >> $GITHUB_ENV
-          commit_msg=$(git log -1 --pretty=format:'%B')
-          commit_msg=$(echo "$commit_msg" | tr -dC '\11\12\15\40-\176')
+          echo "ADDITIONS=$total_added" >> $GITHUB_ENV
+          echo "DELETIONS=$total_deleted" >> $GITHUB_ENV
           echo "COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
-          echo "$commit_msg" >> $GITHUB_ENV
+          echo -e "$all_msgs" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
 
