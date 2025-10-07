@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
 
 import '../../mpg_pixel_adventure.dart';
-import '../level_components/entity/game_character.dart';
 import 'collisions.dart';
 
 mixin BasicMovement on GameCharacter, HasGameReference<PixelAdventure> {

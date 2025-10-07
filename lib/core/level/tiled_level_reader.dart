@@ -1,12 +1,12 @@
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart' show ObjectGroup, TiledObjectHelpers;
+import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../components/level_components/checkpoint/checkpoint.dart';
 import '../../components/level_components/collectables.dart';
 import '../../components/level_components/entity/enemy/enemy.dart';
 import '../../components/level_components/saw.dart';
-import '../../components/physics/collision_block.dart';
 import 'game_world.dart';
 import 'isometric/isometric_world.dart';
 import 'rendering/chunk.dart';

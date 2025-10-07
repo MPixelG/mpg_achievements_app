@@ -5,11 +5,11 @@ import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
 import 'package:mpg_achievements_app/components/level_components/saw.dart';
-import 'package:mpg_achievements_app/components/physics/collisions.dart';
+import 'package:mpg_achievements_app/core/physics/collisions.dart';
+import 'package:mpg_achievements_app/core/physics/movement.dart';
 
 import '../../../../core/level/isometric/isometric_world.dart';
 import '../../../particles/particles.dart';
-import '../../../physics/movement.dart';
 import '../animation/animation_manager.dart';
 import 'ai/goals/follow_player_goal.dart';
 import 'ai/goals/goal_manager.dart';

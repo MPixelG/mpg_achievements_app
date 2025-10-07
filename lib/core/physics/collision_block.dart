@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
+import 'package:mpg_achievements_app/core/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 //A positionComponent can have an x, y , width and height, zPosition and zHeight

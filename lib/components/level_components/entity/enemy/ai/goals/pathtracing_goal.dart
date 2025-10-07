@@ -1,11 +1,11 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
-import 'package:mpg_achievements_app/components/physics/collision_block.dart';
+import 'package:mpg_achievements_app/core/physics/collision_block.dart';
+import 'package:mpg_achievements_app/core/physics/collisions.dart';
+import 'package:mpg_achievements_app/core/physics/movement.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import '../../../../../physics/collisions.dart';
-import '../../../../../physics/movement.dart';
 import '../../../player.dart';
 import 'goal.dart';
 

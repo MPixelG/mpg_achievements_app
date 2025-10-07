@@ -9,9 +9,9 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 
 import '../components/level_components/entity/player.dart';
-import '../components/physics/collision_block.dart';
 
 
 /* Checks whether a player's hitbox is colliding with a given collision block.

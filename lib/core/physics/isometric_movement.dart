@@ -1,6 +1,6 @@
-import 'package:mpg_achievements_app/components/physics/movement.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
+import 'package:mpg_achievements_app/core/physics/movement.dart';
 
-import '../level_components/entity/player.dart';
 //todo Vector3 transfer
 mixin IsometricMovement on BasicMovement {
   final double _isometricJumpForce = 190;

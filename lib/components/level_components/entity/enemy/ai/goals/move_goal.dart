@@ -4,11 +4,10 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
-
-import '../../../../../../core/level/game_world.dart';
-import '../../../../../../mpg_pixel_adventure.dart';
-import '../../../../../physics/collision_block.dart';
-import '../../../../../physics/movement.dart';
+import 'package:mpg_achievements_app/core/level/game_world.dart';
+import 'package:mpg_achievements_app/core/physics/collision_block.dart';
+import 'package:mpg_achievements_app/core/physics/movement.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../pathfinder.dart';
 import 'goal.dart';
 
