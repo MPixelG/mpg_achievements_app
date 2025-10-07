@@ -1,9 +1,9 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
-import 'package:mpg_achievements_app/core/physics/movement.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../../player.dart';
@@ -11,7 +11,6 @@ import 'goal.dart';
 
 
 class PathtracingGoal extends Goal {
-  BasicMovement get movement => parent!.parent as BasicMovement;
   PixelAdventure get game =>
       (parent!.parent as HasGameReference<PixelAdventure>).game;
   Vector2 get center => (parent!.parent as PositionComponent).center;
@@ -118,7 +117,7 @@ class PathtracingGoal extends Goal {
       if (parent1 == null || parent2 == null) {
         continue; //if this or the last intersection has no position (bc its outside of the world) we continue with the next ray
       }
-      if (parent1 is! BasicMovement) {
+      if (parent1 is! GameCharacter) {
         continue; //if the new ray intersects with sth unmovable then we can continue with the next ray
       }
 

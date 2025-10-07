@@ -9,7 +9,6 @@ import 'package:mpg_achievements_app/core/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'collision_block.dart';
-import 'movement.dart';
 
 enum ViewSide { topDown, side, isometric }
 
@@ -19,8 +18,7 @@ mixin HasCollisions
     on
         GameCharacter,
         CollisionCallbacks,
-        HasGameReference<PixelAdventure>,
-        BasicMovement {
+        HasGameReference<PixelAdventure>{
   ShapeHitbox? getHitbox();
 
   Vector2 getScale();
@@ -38,12 +36,8 @@ mixin HasCollisions
   ShapeHitbox? hitbox;
   @override
   FutureOr<void> onLoad() {
-    if (viewSide == ViewSide.isometric) {
-      hitbox = IsometricHitbox(Vector2.all(1), Vector3.zero());
-      hitbox!.position = Vector2(0, 16);
-    } else {
-      hitbox = RectangleHitbox(size: Vector2(20, 26), position: Vector2(6, 4));
-    }
+    hitbox = IsometricHitbox(Vector2.all(1), Vector3.zero());
+    hitbox!.position = Vector2(0, 16);
 
     add(hitbox!);
     return super.onLoad();
@@ -51,8 +45,7 @@ mixin HasCollisions
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (viewSide != ViewSide.side &&
-        other is CollisionBlock &&
+    if (other is CollisionBlock &&
         !_debugNoClipMode) {
       velocity = Vector3.zero();
       gridPos = lastSafePosition;
@@ -64,26 +57,6 @@ mixin HasCollisions
     }
     super.onCollision(intersectionPoints, other);
   }
-
-  // Called when the collision with another object ends
-  @override
-  void onCollisionEnd(PositionComponent other) {
-    if (viewSide == ViewSide.side) {
-      Future.delayed((Duration(milliseconds: 100)), () {
-        //reset isOnGround after a short delay so that its a bit more forgiving when jumping from edges (lol)
-        if (!activeCollisions.any((element) => element is CollisionBlock)) {
-          isOnGround = false;
-        }
-      });
-
-      if (other is CollisionBlock && other.climbable) {
-        setClimbing(false);
-      }
-    }
-
-    super.onCollisionEnd(other);
-  }
-
   //main collision physics
   void checkCollision(PositionComponent other) {
     if (other is! CollisionBlock) {
@@ -124,7 +97,6 @@ mixin HasCollisions
         !(other.isLadder && isTryingToGetDownLadder)) {
       position.y -= distanceUp;
 
-      isOnGround = true;
       velocity.y = 0;
     } //make sure you're falling (for platforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isn't too high, otherwise if half of the player falls through  a platform, he gets teleported up
     else if (smallestDistance == distanceDown && other.hasCollisionDown) {
@@ -146,10 +118,6 @@ mixin HasCollisions
   Vector2 lastSafePosition = Vector2.zero();
   @override
   void update(double dt) {
-    if (viewSide != ViewSide.isometric || _debugNoClipMode) {
-      return super.update(dt);
-    }
-
     if (!game.gameWorld.checkCollisionAt(gridPos.clone()..floor())) {
       lastSafePosition = gridPos;
     } else {}

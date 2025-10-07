@@ -6,7 +6,6 @@ import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:mpg_achievements_app/core/level/game_world.dart';
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
-import 'package:mpg_achievements_app/core/physics/movement.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../pathfinder.dart';
 import 'goal.dart';
@@ -21,17 +20,8 @@ class MoveGoal extends Goal {
   Vector2 get position => (parent!.parent! as PositionComponent).position;
   Vector2 get absoluteCenter =>
       (parent!.parent! as PositionComponent).absoluteCenter;
-  bool get isOnGround => (parent!.parent! as BasicMovement).isOnGround;
-  bool get isShifting => (parent!.parent! as BasicMovement).isShifting;
   GameWorld get level =>
       (parent!.parent! as HasGameReference<PixelAdventure>).game.gameWorld;
-
-  set horizontalMovement(double pos) =>
-      (parent!.parent! as BasicMovement).horizontalMovement = pos;
-  set verticalMovement(double pos) =>
-      (parent!.parent! as BasicMovement).verticalMovement = pos;
-  set isShifting(bool val) =>
-      (parent!.parent! as BasicMovement).isShifting = val;
 
   late Vector2 endPos; //the end pos for the movement
 
@@ -114,7 +104,6 @@ class MoveGoal extends Goal {
       case PathfindingAction
           .jump: //in case of jumping, we jump if we are on ground, because sometimes the jump is diagonal, we also adjust the x pos.
         {
-          if (isOnGround) jump(); //jump if on ground
           adjustHorizontalMovementIfNeeded(currentStepPosCenter); //adjust x pos
         }
       case PathfindingAction
@@ -134,8 +123,6 @@ class MoveGoal extends Goal {
       case PathfindingAction
           .climbDown: //when climbing down, we have to press shift, because otherwise we would just stand there on top of a ladder
         {
-          isShifting =
-              true; //shift so that if we stand on the top of the ladder we get down.
           climb(currentStepPosCenter); //climb
           adjustHorizontalMovementIfNeeded(
             currentStepPosCenter,
@@ -144,9 +131,6 @@ class MoveGoal extends Goal {
         }
       default:
         {
-          horizontalMovement =
-              0; //if theres no current step, we just set all to movement to 0 so that we stay where we are.
-          verticalMovement = 0;
         }
     }
 
@@ -259,13 +243,9 @@ class MoveGoal extends Goal {
       //if we move
       if (difference > 0) {
         //we check in which direction we have to go
-        horizontalMovement = -1; //and then set the horizontal movement.
       } else {
-        horizontalMovement = 1;
       }
     } else {
-      horizontalMovement =
-          0; //if we dont move, we reset the horizontal movement to 0 so that we stop. we will still glide a bit though because of the x velocity.
     }
   }
 
@@ -287,23 +267,15 @@ class MoveGoal extends Goal {
       //if we move
       if (difference > 0) {
         //we check in which direction we have to go
-        verticalMovement = -0.06; //climb up
       } else {
-        verticalMovement = 0.06; //climb down
       }
     } else {
-      verticalMovement =
-          0; //if we dont move, we reset the horizontal movement to 0 so that we stop. we will still glide a bit though because of the y velocity.
     }
   }
 
   Vector2
   get targetedPosition => //returns the position of the currently targeted node. if the path is null, we return the current pos
       path?.elementAtOrNull(0)?.node.poiNode.position ?? position;
-
-  void jump() {
-    (parent!.parent! as BasicMovement).jump();
-  }
 
   Vector2 toWorldPos(Vector2 val) {
     return Vector2(val.x * tilesize.x, val.y * tilesize.y);

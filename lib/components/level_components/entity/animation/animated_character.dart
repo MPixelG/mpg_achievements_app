@@ -3,9 +3,9 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/cupertino.dart' hide Image;
-import 'package:mpg_achievements_app/core/iso_component.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
 
-class AnimatedCharacter<T> extends IsoPositionComponent with HasPaint{
+class AnimatedCharacter<T> extends GameCharacter with HasPaint{
   /// Key with the current playing animation
   T? _current;
 

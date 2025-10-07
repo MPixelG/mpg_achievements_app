@@ -7,7 +7,6 @@ import 'package:flame/extensions.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
 import 'package:mpg_achievements_app/core/physics/isometric_hitbox.dart';
-import 'package:mpg_achievements_app/core/physics/isometric_movement.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'collision_block.dart';
@@ -18,8 +17,7 @@ mixin IsometricCollisions
 on
     GameCharacter,
     CollisionCallbacks,
-    HasGameReference<PixelAdventure>,
-    IsometricMovement {
+    HasGameReference<PixelAdventure>{
 
   ShapeHitbox? getHitbox();
 
@@ -38,8 +36,6 @@ on
   ShapeHitbox? hitbox;
   @override
   FutureOr<void> onLoad() {
-    assert(viewSide == ViewSide.isometric);
-
     hitbox = IsometricHitbox(Vector2.all(1), Vector3.zero());
     //local positioning needs to be adjusted
     hitbox!.position = Vector2(0, 16);
@@ -102,7 +98,6 @@ on
         !(other.isLadder && isTryingToGetDownLadder)) {
       position.y -= distanceUp;
 
-      isOnGround = true;
       velocity.y = 0;
     } //make sure you're falling (for platforms), then update the position, set the player on the ground and reset the velocity. if the block is a platform, then only move the player if the distance isn't too high, otherwise if half of the player falls through  a platform, he gets teleported up
     else if (smallestDistance == distanceDown && other.hasCollisionDown) {
@@ -124,10 +119,6 @@ on
   Vector2 lastSafePosition = Vector2.zero();
   @override
   void update(double dt) {
-    if (viewSide != ViewSide.isometric || _debugNoClipMode) {
-      return super.update(dt);
-    }
-
     if (!game.gameWorld.checkCollisionAt(gridPos.clone()..floor())) {
       lastSafePosition = gridPos;
     } else {}

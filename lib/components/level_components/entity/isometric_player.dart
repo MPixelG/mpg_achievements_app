@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
+import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 
 import '../../../core/level/isometric/isometric_renderable.dart';
 import '../../../core/level/isometric/isometric_tiled_component.dart';
@@ -25,24 +26,41 @@ class IsometricPlayer extends Player with IsometricRenderable {
       owner: this,
     ); //removable when positioning is correct
     shadow.anchor = Anchor.center;
+    _findGroundBeneath();
+
+
     return super.onLoad();
   }
 
-  @override
-  void render(Canvas canvas){
-    //save the current state of the canvas
-    canvas.save();
 
-    //only move drawing position not ground position
-    canvas.translate(0, zPosition);
+  //find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
+  void _findGroundBeneath() {
+    // the highest ground block beneath the player
+    final blocks = game.gameWorld.children.whereType<CollisionBlock>();
+    //print("number of blocks: ${blocks.length}");
+    double highestZ = 0.0; //default floor
+    //the players foot rectangle which mesn easier collision detection with the block
+    final playerFootRectangle = Rect.fromCenter(
+      center: absolutePositionOfAnchor(Anchor.bottomCenter).toOffset(),
+      width: size.x, //maybe adjust necessary for debugging
+      height: 4.0, //thin slice is sufficient
+    );
 
-    //call original renderer
-    super.render(canvas);
-
-    //restore canvas, important because of other components rendering. If you do not
-    //restore other components will incorrectly be offset
-    canvas.restore();
+    for (final block in blocks) {
+      //make a rectangle from the block position and size
+      final blockGroundRectangle = block.toRect();
+      if (playerFootRectangle.overlaps(blockGroundRectangle)) {
+        //what is it ground and what is the zHeight of the block;
+        final blockCeiling = block.zPosition! + block.zHeight!;
+        if (blockCeiling > highestZ) {
+          highestZ = blockCeiling.toDouble();
+          //print('blockceiling:$blockCeiling');
+        }
+      }
+    }
+    zGround = highestZ;
   }
+
 
   Vector2 worldToTileIsometric(Vector2 worldPos) {
     final tileX =

@@ -11,7 +11,6 @@ import '../entity/player.dart';
 
 class Checkpoint extends AnimatedCharacter
     with
-        HasGameReference<PixelAdventure>,
         CollisionCallbacks,
         AnimationManager,
         RiverpodComponentMixin {

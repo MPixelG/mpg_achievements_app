@@ -6,7 +6,6 @@ import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 class IsoPositionComponent extends PositionComponent {
   Vector3 isoPosition = Vector3.zero();
-  Vector3 velocity = Vector3.zero();
 
 
   IsoPositionComponent({
@@ -33,15 +32,9 @@ class IsoPositionComponent extends PositionComponent {
     super.position = value;
   }
 
-
-  static const double movementSpeed = 0.3;
   @override
   void update(double dt) {
     super.update(dt);
-    velocity *= pow(0.05, dt).toDouble();
-
-    isoPosition += velocity * dt * movementSpeed;
-
     transform.position = isoToScreen(isoPosition) + Vector2((scale.x < 0) ? size.x : 0, 0);
   }
 }

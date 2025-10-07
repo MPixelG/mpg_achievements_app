@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
-import 'package:mpg_achievements_app/core/physics/movement.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 mixin AnimationManager
@@ -147,7 +146,7 @@ enum AnimatedComponentGroup {
   effect, //for later use, indicates if the object changes in some vals or not.
 }
 
-mixin HasMovementAnimations on AnimationManager, BasicMovement {
+mixin HasMovementAnimations on AnimationManager {
   List<AnimationLoadOptions> get movementAnimationDefaultOptions => [
     AnimationLoadOptions(
       "idle",

@@ -1,18 +1,17 @@
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import '../../../../components/level_components/entity/animation/animation_manager.dart';
 import '../isometric_tiled_component.dart';
 import 'highlighted_tile.dart';
 
-class ExplosionEffect extends AnimatedCharacter
-    with HasGameReference<PixelAdventure>, AnimationManager {
-  final Vector3 gridPos;
+class ExplosionEffect extends AnimatedCharacter with AnimationManager {
   TileHighlightRenderable tileHighlight;
   int? currentZIndex;
 
-  ExplosionEffect(this.tileHighlight, this.gridPos);
+  ExplosionEffect(this.tileHighlight, Vector3 gridPos) : super(position: toGridPos(gridPos.xy) - Vector2(0, gridPos.z * tilesize.z));
 
   @override
   Future<void> onLoad() async {

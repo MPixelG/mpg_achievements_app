@@ -6,16 +6,11 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
-import 'package:mpg_achievements_app/core/physics/collision_block.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
-import 'package:mpg_achievements_app/core/physics/isometric_movement.dart';
 
 
-import '../../../core/level/isometric/isometric_world.dart';
-import '../../../core/physics/movement.dart';
 import '../../../state_management/providers/player_state_provider.dart';
-import '../../controllers/controllable_mixins.dart';
 import '../saw.dart';
 import 'animation/animation_manager.dart';
 import 'enemy/enemy.dart';
@@ -25,15 +20,13 @@ import 'isometric_character_shadow.dart';
 //using SpriteAnimationGroupComponent is better for a lot of animations
 //with is used to additional classes here our game class
 //import/reference to Keyboard handler
-class Player extends GameCharacter
+class Player extends AnimatedCharacter
     with
         RiverpodComponentMixin,
         KeyboardHandler,
         CollisionCallbacks,
-        BasicMovement,
-        IsometricMovement,
+        AnimationManager,
         HasMovementAnimations,
-        JoystickControllableMovement,
         HasCollisions {
 
   bool debugNoClipMode = false;
@@ -56,16 +49,6 @@ class Player extends GameCharacter
   @override
   Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.
-    if (game.gameWorld is IsometricWorld) {
-      setMovementType(ViewSide.isometric);
-      if (zPosition == zGround) {
-        isOnGround = true;
-        _findGroundBeneath();
-      }
-    } else {
-      setMovementType(ViewSide.side); // Default
-    }
-
     startingPosition = Vector2(position.x, position.y);
 
 
@@ -76,22 +59,6 @@ class Player extends GameCharacter
   @override
   void update(double dt) {
     super.update(dt);
-    if (updateMovement) {
-      switch (viewSide) {
-        case ViewSide.side:
-          updateSideMovement(dt);
-
-        case ViewSide.isometric:
-        //updateIsometricMovement(dt);
-          _findGroundBeneath();
-
-        case ViewSide.topDown:
-        // TODO: Handle this case.
-          throw UnimplementedError();
-
-      }
-    }
-
     //Provider logic follow
     //the ref.watch here makes sure that the player component rebuilds and PlayerData changes its values when the player state changes
     final playerState = ref.watch(playerProvider);
@@ -178,7 +145,6 @@ class Player extends GameCharacter
   void _respawn() async {
     updateMovement = false;
     velocity = Vector3.zero(); //reset velocity
-    setGravityEnabled(false); //temporarily disable gravity for this player
 
     await Future.delayed(
       Duration(milliseconds: 250),
@@ -209,11 +175,6 @@ class Player extends GameCharacter
     await Future.delayed(Duration(milliseconds: 300));
 
     //wait for the animation to finish
-    //todo renaming necessary
-    setGravityEnabled(true);
-    if (kDebugMode) {
-      print("re-enabled gravity");
-    } //re-enable gravity
     updateMovement = true;
     updatePlayerstate(); //update the players feet to the ground
     position += Vector2.all(
@@ -224,39 +185,9 @@ class Player extends GameCharacter
     _isRespawningAnimationPlaying = false;
   }
 
-  //find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
-  void _findGroundBeneath() {
-    // the highest ground block beneath the player
-    final blocks = game.gameWorld.children.whereType<CollisionBlock>();
-    //print("number of blocks: ${blocks.length}");
-    double highestZ = 0.0; //default floor
-    //the players foot rectangle which mesn easier collision detection with the block
-    final playerFootRectangle = Rect.fromCenter(
-      center: absolutePositionOfAnchor(Anchor.bottomCenter).toOffset(),
-      width: size.x, //maybe adjust necessary for debugging
-      height: 4.0, //thin slice is sufficient
-    );
 
-    for (final block in blocks) {
-      //make a rectangle from the block position and size
-      final blockGroundRectangle = block.toRect();
-      if (playerFootRectangle.overlaps(blockGroundRectangle)) {
-        //what is it ground and what is the zHeight of the block;
-        final blockCeiling = block.zPosition! + block.zHeight!;
-        if (blockCeiling > highestZ) {
-          highestZ = blockCeiling.toDouble();
-          //print('blockceiling:$blockCeiling');
-        }
-      }
-    }
-    zGround = highestZ;
-  }
 
   //Getters
-
-  @override
-  double getzPosition() => zPosition;
-
   double getzGround() => zGround;
 
   @override
@@ -278,7 +209,7 @@ class Player extends GameCharacter
   bool get isClimbing => climbing;
 
   @override
-  bool get isTryingToGetDownLadder => isShifting;
+  bool get isTryingToGetDownLadder => true;
 
   @override
   List<AnimationLoadOptions> get animationOptions => [

@@ -2,14 +2,9 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
 import 'package:mpg_achievements_app/components/level_components/saw.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
-import 'package:mpg_achievements_app/core/physics/movement.dart';
-
-import '../../../../core/level/isometric/isometric_world.dart';
-import '../../../particles/particles.dart';
 import '../animation/animation_manager.dart';
 import 'ai/goals/follow_player_goal.dart';
 import 'ai/goals/goal_manager.dart';
@@ -27,12 +22,12 @@ enum EnemyState {
   disappearing,
 }
 
-class Enemy extends GameCharacter
+class Enemy extends AnimatedCharacter
     with
         KeyboardHandler,
         CollisionCallbacks,
-        BasicMovement,
         HasCollisions,
+        AnimationManager,
         HasMovementAnimations {
   bool gotHit = false;
   bool isRespawning = false;
@@ -57,11 +52,6 @@ class Enemy extends GameCharacter
   FutureOr<void> onLoad() {
     startingPosition = Vector2(position.x, position.y);
     // The player inspects its environment (the level) and configures itself.
-    if (game.gameWorld is IsometricWorld) {
-      setMovementType(ViewSide.isometric);
-    } else {
-      setMovementType(ViewSide.side); // Default
-    }
     manager = GoalManager();
     add(manager);
 
@@ -80,58 +70,11 @@ class Enemy extends GameCharacter
     if (other is Saw && !debugImmortalMode) _respawn();
     super.onCollision(intersectionPoints, other);
   }
-
-  @override
-  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    horizontalMovement = 0;
-    verticalMovement = 0;
-
-    //movement keys
-    final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyJ);
-    final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyL);
-
-    //debug key bindings
-    if (keysPressed.contains(LogicalKeyboardKey.keyF)) {
-      position = game.gameWorld.player.position.clone();
-    }
-    if (keysPressed.contains(LogicalKeyboardKey.keyG)) {
-      debugFlyMode = !debugFlyMode;
-    }
-
-    //ternary statement if leftKey pressed then add -1 to horizontal movement if not add 0 = not moving
-    if (isLeftKeyPressed) horizontalMovement = -1;
-    if (isRightKeyPressed) horizontalMovement = 1;
-
-    //if the key is pressed than the enemy jumps / flies
-    if (keysPressed.contains(LogicalKeyboardKey.altRight) ||
-        keysPressed.contains(LogicalKeyboardKey.keyI)) {
-      //right alt is more handy
-      if (debugFlyMode) {
-        verticalMovement = -1; //when in debug mode move the enemy upwards
-      } else {
-        hasJumped = true; //else jump
-      }
-    }
-
-    if (keysPressed.contains(LogicalKeyboardKey.keyK) && debugFlyMode) {
-      //when in fly mode and shift is pressed, the enemy gets moved down
-      verticalMovement = 1;
-    }
-
-    if (keysPressed.contains(LogicalKeyboardKey.comma)) {
-      //press comma to get a surprise! (can also be used to generate lag XD )
-      parent?.add(generateConfetti(position));
-    }
-
-    return super.onKeyEvent(event, keysPressed);
-  }
-
   void _respawn() async {
     if (gotHit) return; //if the enemy is already being respawned, stop
     gotHit = true; //indicate, that the enemy is being respawned
     playAnimation("hit");
     velocity = Vector3.zero(); //reset velocity
-    setGravityEnabled(false); //temporarily disable gravity for this enemy
 
     await Future.delayed(
       Duration(milliseconds: 250),
@@ -166,7 +109,6 @@ class Enemy extends GameCharacter
     position += Vector2.all(
       32,
     ); //reposition the enemy, because it had a bit of displacement because of the respawn animation
-    setGravityEnabled(true); //re-enable gravity
   }
 
   @override
@@ -188,7 +130,7 @@ class Enemy extends GameCharacter
 
   @override
   bool get isTryingToGetDownLadder {
-    return isShifting;
+    return true;
   }
 
   @override
