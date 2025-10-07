@@ -217,6 +217,7 @@ class AnimatedCharacter<T> extends IsoPositionComponent with HasPaint{
         (animationTicker?.done() ?? false)) {
       removeFromParent();
     }
+    super.update(dt);
   }
 
   /// Updates the size to current animation sprite's srcSize if

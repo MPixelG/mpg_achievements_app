@@ -6,11 +6,12 @@ import 'animation/animation_manager.dart';
 
 abstract class GameCharacter extends AnimatedCharacter
     with HasGameReference<PixelAdventure>, AnimationManager {
+
   GameCharacter({super.position, super.anchor});
   Vector2 get gridPos =>
-      Vector2(position.x / tilesize.x, position.y / tilesize.y);
+      Vector2(isoPosition.x / tilesize.x, isoPosition.y / tilesize.y);
 
   set gridPos(Vector2 newGridPos) {
-    position = Vector2(newGridPos.x * tilesize.x, newGridPos.y * tilesize.y);
+    isoPosition.xy = newGridPos * tilesize.x;
   }
 }

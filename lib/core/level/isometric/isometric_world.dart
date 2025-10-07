@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
+import 'package:mpg_achievements_app/components/level_components/entity/player_test.dart';
 
 import '../../../components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
 import '../../../components/level_components/entity/isometric_player.dart';
@@ -32,7 +33,7 @@ class IsometricWorld extends GameWorld {
   @override
   Future<void> onLoad() async {
     // Initialize the player as an IsometricPlayer
-    player = IsometricPlayer(playerCharacter: 'Pink Man');
+    player = TestPlayer(playerCharacter: 'Pink Man');
 
     await super.onLoad();
 

@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
@@ -32,7 +33,6 @@ class Player extends GameCharacter
         CollisionCallbacks,
         BasicMovement,
         IsometricMovement,
-        KeyboardControllableMovement,
         HasMovementAnimations,
         JoystickControllableMovement,
         HasCollisions {
@@ -54,11 +54,8 @@ class Player extends GameCharacter
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position});
-
-  KeyboardCharacterController controller = KeyboardCharacterController();
   @override
   Future<void> onLoad() async {
-    add(controller);
     // The player inspects its environment (the world) and configures itself.
     if (game.gameWorld is IsometricWorld) {
       setMovementType(ViewSide.isometric);
@@ -86,11 +83,11 @@ class Player extends GameCharacter
           updateSideMovement(dt);
 
         case ViewSide.isometric:
-          updateIsometricMovement(dt);
+        //updateIsometricMovement(dt);
           _findGroundBeneath();
 
         case ViewSide.topDown:
-          // TODO: Handle this case.
+        // TODO: Handle this case.
           throw UnimplementedError();
 
       }
@@ -181,7 +178,7 @@ class Player extends GameCharacter
 
   void _respawn() async {
     updateMovement = false;
-    velocity = Vector2.zero(); //reset velocity
+    velocity = Vector3.zero(); //reset velocity
     setGravityEnabled(false); //temporarily disable gravity for this player
 
     await Future.delayed(
@@ -192,7 +189,7 @@ class Player extends GameCharacter
       32,
     ); //center the player so that the animation displays correctly (its 96*96 and the player is 32*32)
     scale.x =
-        1; //flip the player to the right side and a third of the size because the animation is triple of the size
+    1; //flip the player to the right side and a third of the size because the animation is triple of the size
     await playAnimation("disappearing"); //display a disappear animation
     await Future.delayed(Duration(milliseconds: 320));
     //wait for the animation to finish
@@ -272,8 +269,6 @@ class Player extends GameCharacter
   @override
   Vector2 getScale() => scale;
 
-  @override
-  Vector2 getVelocity() => velocity;
 
   bool climbing = false;
 

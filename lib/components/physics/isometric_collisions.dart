@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/enemy/enemy.dart';
 import 'package:mpg_achievements_app/components/physics/collisions.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/components/physics/isometric_movement.dart';
@@ -26,9 +25,7 @@ on
 
   Vector2 getScale();
 
-  Vector2 getVelocity();
-
-  Vector2 getPosition();
+  Vector3 getPosition();
 
   void setClimbing(bool val);
 
@@ -54,22 +51,18 @@ on
 
     if (_debugNoClipMode) {
 
-      gridPos += velocity * dt;
+      gridPos += velocity.xy * dt;
     }
 
     //predict next position
-    final nextPos = gridPos + velocity * dt;
+    final nextPos = gridPos + velocity.xy * dt;
 
     //todo collision logic
 
 
   }
 
-
-
-
-
-    //main collision physics//todo update with z or rewrite
+  //main collision physics//todo update with z or rewrite
   void checkCollision(PositionComponent other) {
     if (other is! CollisionBlock) {
       return; //physics only work on the collision blocks (including the platforms)
@@ -77,22 +70,13 @@ on
 
     ShapeHitbox? hitbox = getHitbox();
     Vector2 scale = getScale();
-    Vector2 velocity = getVelocity();
-    Vector2 position = getPosition();
-    double zPosition = getzPosition();
-    final double playerHeight = game.gameWorld.player.size.x;
-    double playerBottomZ = zPosition;
-    double playerTopZ = zPosition + playerHeight;
-    double? blockBottomZ = (other.zPosition ?? 0.0) as double?;
-    double? blockTopZ = blockBottomZ! + (other.zHeight ?? 16.0);
 
-    //check z axis collision
-    if(playerTopZ <= blockBottomZ || playerBottomZ >= blockTopZ){
-      return; //no collision on the z-Axis
-    }
+    Vector3 position = getPosition();
 
-    Vector2 posDiff = hitbox!.absolutePosition -
-            other.absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
+    Vector2 posDiff =
+        hitbox!.absolutePosition -
+            other
+                .absolutePosition; //the difference of the position of the player hitbox and the obstacle hitbox. this allows you to see how much they are overlapping on the different axis.
 
     //if the player faces in the other direction, we want to measure the distances from the other side of the hitbox. so we just add the width of it to the value.
     if (scale.x < 0) {
@@ -135,22 +119,7 @@ on
       velocity.x = 0;
     }
     if (other.climbable && distanceUp > 5) setClimbing(true);
-
-    if(zVelocity < 0 && playerTopZ > blockBottomZ && playerTopZ > blockTopZ - 8)
-      {
-        zPosition = blockBottomZ - playerHeight;
-        zVelocity = 0;
-      }
-
-    else if(zVelocity >0 && playerBottomZ < blockTopZ && playerTopZ < blockTopZ+8) {
-      zPosition = blockTopZ;
-      zVelocity = 0;
-      isOnGround = true;
-    }
-
- }
-
-
+  }
 
   Vector2 lastSafePosition = Vector2.zero();
   @override

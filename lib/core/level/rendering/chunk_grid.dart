@@ -71,7 +71,6 @@ class ChunkGrid {
       Vector2 viewportSize,[
         Offset offset = Offset.zero,
       ]) async {
-    print("components: ${components.length}");
 
     if(currentlyRebuilding) return;
     currentlyRebuilding = true;

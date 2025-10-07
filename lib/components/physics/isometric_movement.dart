@@ -21,7 +21,7 @@ mixin IsometricMovement on BasicMovement {
       _performIsometricGravity(dt);
     }
     //Apply 2D velocity to logical ground position
-    gridPos += velocity * dt;
+    gridPos += velocity.xy * dt;
   }
 
   void _performIsometricGravity(double dt) {

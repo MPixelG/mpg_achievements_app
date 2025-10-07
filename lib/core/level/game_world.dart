@@ -158,7 +158,7 @@ abstract class GameWorld extends World
   @override
   void onPointerMove(PointerMoveEvent event) {
     _mouseCoords = event.localPosition..round();
-    player.mouseCoords = _mouseCoords;
+    //player.mouseCoords = _mouseCoords;
   }
 
   @override

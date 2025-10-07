@@ -130,7 +130,7 @@ class Enemy extends GameCharacter
     if (gotHit) return; //if the enemy is already being respawned, stop
     gotHit = true; //indicate, that the enemy is being respawned
     playAnimation("hit");
-    velocity = Vector2.zero(); //reset velocity
+    velocity = Vector3.zero(); //reset velocity
     setGravityEnabled(false); //temporarily disable gravity for this enemy
 
     await Future.delayed(
@@ -177,9 +177,6 @@ class Enemy extends GameCharacter
 
   @override
   Vector2 getScale() => scale;
-
-  @override
-  Vector2 getVelocity() => velocity;
 
   bool climbing = false;
 

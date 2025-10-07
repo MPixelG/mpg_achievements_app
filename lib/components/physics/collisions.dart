@@ -25,8 +25,6 @@ mixin HasCollisions
 
   Vector2 getScale();
 
-  Vector2 getVelocity();
-
   Vector2 getPosition();
 
   void setClimbing(bool val);
@@ -56,7 +54,7 @@ mixin HasCollisions
     if (viewSide != ViewSide.side &&
         other is CollisionBlock &&
         !_debugNoClipMode) {
-      velocity = Vector2.zero();
+      velocity = Vector3.zero();
       gridPos = lastSafePosition;
       return;
     }
@@ -94,7 +92,6 @@ mixin HasCollisions
 
     ShapeHitbox? hitbox = getHitbox();
     Vector2 scale = getScale();
-    Vector2 velocity = getVelocity();
 
     Vector2 position = getPosition();
 

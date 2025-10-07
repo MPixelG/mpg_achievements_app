@@ -18,16 +18,13 @@ jobs:
           echo "GITHUB_BEFORE: ${{ github.event.before }}" >&2
           echo "GITHUB_AFTER: ${{ github.event.after }}" >&2
 
-          # Nutze GitHub's before/after commits
           BEFORE="${{ github.event.before }}"
           AFTER="${{ github.event.after }}"
 
-          # Bei einem neuen Branch ist 'before' oft 0000000...
           if [[ "$BEFORE" =~ ^0+$ ]]; then
             echo "Neuer Branch erkannt, nutze nur HEAD" >&2
             range=$(git rev-parse HEAD)
           else
-            # Hole alle Commits zwischen before und after
             range=$(git log --format=%H $BEFORE..$AFTER 2>/dev/null)
             if [ -z "$range" ]; then
               echo "Keine Commits gefunden, nutze HEAD" >&2
@@ -39,7 +36,6 @@ jobs:
           echo "$range" >&2
           echo "=== Count: $(echo "$range" | wc -l) ===" >&2
 
-          # Prüfe auf Merge-Commits
           for sha in $range; do
             parent_count=$(git rev-list --count --parents -n1 $sha | awk '{print NF-1}')
             if [ "$parent_count" -gt 1 ]; then
