@@ -186,7 +186,7 @@ mixin HasMovementAnimations on AnimationManager, BasicMovement {
     super.update(dt);
   }
 
-  //todo renameing necessary
+  //todo renaming necessary
   void updatePlayerstate() {
     if (isInRespawnFrames || isInHitFrames) {
       return; //if we are in respawn or hit frames we dont want to change the animation
@@ -202,7 +202,7 @@ mixin HasMovementAnimations on AnimationManager, BasicMovement {
       flipHorizontallyAroundCenter();
     }
     //Check if moving
-    if (velocity.x > 1 || velocity.x < -1) {
+    if (velocity.x > 3 || velocity.x < -3) {
       animation = getAnimation("running");
     }
 

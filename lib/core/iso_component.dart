@@ -39,7 +39,6 @@ class IsoPositionComponent extends PositionComponent {
   void update(double dt) {
     super.update(dt);
     velocity *= pow(0.05, dt).toDouble();
-    print("velocity: $velocity");
 
     isoPosition += velocity * dt * movementSpeed;
 

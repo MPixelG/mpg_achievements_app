@@ -44,14 +44,6 @@ class IsometricPlayer extends Player with IsometricRenderable {
     canvas.restore();
   }
 
-  @override
-  Vector2 get gridPos => worldToTileIsometric(absoluteCenter);
-
-  @override
-  set gridPos(Vector2 newGridPos) {
-    position = (position - absoluteCenter) + toWorldPos2D(newGridPos, 0);
-  }
-
   Vector2 worldToTileIsometric(Vector2 worldPos) {
     final tileX =
         (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.z / 2)) / 2;

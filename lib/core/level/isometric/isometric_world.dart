@@ -7,7 +7,6 @@ import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:mpg_achievements_app/components/level_components/entity/player_test.dart';
 
 import '../../../components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
-import '../../../components/level_components/entity/isometric_player.dart';
 import '../../../mpg_pixel_adventure.dart';
 import '../../../util/isometric_utils.dart';
 import '../game_world.dart';
