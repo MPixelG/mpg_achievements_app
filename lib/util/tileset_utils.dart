@@ -6,7 +6,7 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 
-import '../../../mpg_pixel_adventure.dart';
+import '../mpg_pixel_adventure.dart';
 
 Map<int, Tileset> _tilesetCache = {};
 Tileset findTileset(int gid, Iterable<Tileset> tilesets) {

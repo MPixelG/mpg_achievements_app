@@ -73,12 +73,7 @@ class IsometricPlayer extends Player with IsometricRenderable {
 
   @override
   Vector3 get gridFeetPos {
-    Vector2 xYGridPos;
-    if (hitbox != null) {
-      xYGridPos = toGridPos(absoluteCenter);
-    } else {
-      xYGridPos = toGridPos(absoluteCenter);
-    }
+    Vector2 xYGridPos = toGridPos(absoluteCenter);
     return Vector3(xYGridPos.x, xYGridPos.y, 1);
   }
 

@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Level_8.tmx",
+    "activeFile": "Level_10.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -36,6 +36,14 @@
             "viewCenter": {
                 "x": 320.5,
                 "y": 184.25
+            }
+        },
+        "Level_10.tmx": {
+            "scale": 3,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 289.16666666666663,
+                "y": 86.33333333333334
             }
         },
         "Level_2.tmx": {
@@ -110,10 +118,18 @@
         },
         "Level_8.tmx": {
             "scale": 1,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 1180.5,
+                "y": 405
+            }
+        },
+        "Level_9.tmx": {
+            "scale": 1.2782589285714285,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 935.5,
-                "y": 386
+                "x": 559.745747913247,
+                "y": 280.06845248489503
             }
         },
         "Lever_3.tmx": {
@@ -133,6 +149,9 @@
             "dynamicWrapping": false,
             "scaleInDock": 1.4,
             "scaleInEditor": 1
+        },
+        "Tileset_Isometrisch_2.tsx": {
+            "scaleInDock": 1
         },
         "backgrounds.tsx": {
             "dynamicWrapping": true,
@@ -221,12 +240,12 @@
     "last.externalTilesetPath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/tiles",
     "last.imagePath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/images/Pixel_ArtTop_Down",
     "map.fixedSize": true,
-    "map.height": 64,
+    "map.height": 16,
     "map.lastUsedFormat": "tmx",
     "map.orientation": "2",
     "map.tileHeight": 16,
     "map.tileWidth": 32,
-    "map.width": 64,
+    "map.width": 16,
     "mapScene.enableWorlds": false,
     "openFiles": [
         "MPG_pixel_adventure.tsx",
@@ -239,7 +258,7 @@
         "industrial_tiles_bg_2.tsx",
         "Level_7.tmx",
         "Level_8.tmx",
-        "Level_7..tmj"
+        "Level_10.tmx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
     "property.type": "int",
@@ -253,9 +272,9 @@
         "Level_6.tmx",
         "industrial_tiles_bg_2.tsx",
         "Level_7.tmx",
-        "Level_7..tmj",
         "Level_8.tmx",
-        "isometric.tsx"
+        "Level_10.tmx",
+        "Level_9.tmx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",

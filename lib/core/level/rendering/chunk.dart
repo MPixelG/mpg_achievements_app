@@ -2,17 +2,15 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 
-import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:mpg_achievements_app/core/level/rendering/tileset_utils.dart';
 
 import '../../../mpg_pixel_adventure.dart';
 import '../../../util/isometric_utils.dart';
 import '../isometric/isometric_renderable.dart';
-import '../isometric/isometric_tiled_component.dart';
-import 'game_sprite.dart';
+import 'chunk_tile.dart';
 import 'game_tile_map.dart';
+import 'neighbor_chunk_cluster.dart';
 
 class Chunk {
   final int x;
@@ -210,7 +208,7 @@ class Chunk {
 
     albedoWorldTopLeft = Vector2(minX, minY - padTop);
     albedoWidth = math.max(1, width);
-    albedoHeight = math.max(1, height);
+    albedoHeight = math.max(1, height + tilesize.z.toInt());
   }
 
   bool startedBuildingMaps = false;
@@ -236,6 +234,8 @@ class Chunk {
   }
 
   void renderMaps(Canvas albedoCanvas, Canvas normalCanvas, List<IsometricRenderable> additionals){
+    if(albedoWorldTopLeft == null) return;
+
     albedoCanvas.save();
     normalCanvas.save();
     albedoCanvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
@@ -332,170 +332,10 @@ class Chunk {
     });
     if (newComponents.isNotEmpty) {
       currentAdditionalComponents = newComponents;
-      prepareBuildImageMaps();
       renderMaps(canvas, normalCanvas, newComponents);
     } else if (albedoMap != null && normalAndDepthMap != null) {
       normalCanvas.drawImage(normalAndDepthMap!, offset, Paint());
       canvas.drawImage(albedoMap!, offset, Paint());
     }
-  }
-}
-
-class ChunkTile with IsometricRenderable {
-  final int gid;
-  final int localX;
-  final int localY;
-  final int worldX;
-  final int worldY;
-  final int z;
-  int zAdjustPos;
-
-  Vector3 get posWorld => Vector3(worldX.toDouble(), worldY.toDouble(), z.toDouble());
-  Vector3 get posLocal => Vector3(localX.toDouble(), localY.toDouble(), z.toDouble());
-
-  ChunkTile(
-    this.gid,
-    this.localX,
-    this.localY,
-    this.worldX,
-    this.worldY,
-    this.z,
-    this.zAdjustPos,
-  ){
-    Future.microtask(() {
-      loadTextureOfGid(gid);
-    });
-  }
-
-  GameSprite get cachedSprite => textures[gid]!;
-
-  bool loadingSprite = false;
-
-  @override
-  Vector3 get gridFeetPos => posWorld;
-
-  @override
-  Vector3 get gridHeadPos => gridFeetPos;
-
-  @override
-  RenderCategory get renderCategory => RenderCategory.tile;
-
-  @override
-  void Function(Canvas canvas) get renderAlbedo {
-    return (Canvas canvas) async {
-      Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, 0);
-      cachedSprite.albedo.render(canvas, position: position);
-    };
-  }
-
-  @override
-  void Function(Canvas canvas, Paint? overridePaint)? get renderNormal {
-    return (Canvas canvas, Paint? overridePaint) async {
-      Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, 0);
-      cachedSprite.normalAndDepth?.render(
-        canvas,
-        position: position,
-        overridePaint: overridePaint,
-      );
-    };
-  }
-}
-
-Map<int, GameSprite> textures = {};
-List<int> currentOperations = [];
-void loadTextureOfGid(int gid) async {
-  if(textures.containsKey(gid) || currentOperations.contains(gid)){
-    return;
-  }
-  currentOperations.add(gid);
-
-  Tileset tileset = findTileset(gid, Chunk.knownTilesets);
-  Image tilesetImage = (await getImageFromTileset(tileset))!;
-  Image normalMapImg = (await getNormalImageFromTileset(tileset))!;
-
-  final raw = gid & 0x1FFFFFFF;
-  //calculate the local index of the tile within its tileset
-  final localIndex = raw - tileset.firstGid!;
-
-  final cols = tileset.columns!; //amount of columns in the tileset image
-  final row =
-      localIndex ~/
-      cols; //calculate the row and column of the tile in the tileset image
-  final col = localIndex % cols; //same for column
-  final srcSize = tilesize.xy; //the size of the tile in the tileset image
-
-  final sprite = Sprite(
-    //get the sprite for the tile
-    tilesetImage, //the tileset
-    srcPosition: Vector2(
-      col * tilesize.x,
-      row * tilesize.y,
-    ), //the position of the tile in the tileset image
-    srcSize: srcSize, //and its size
-  );
-  final normalSprite = Sprite(
-    //get the sprite for the tile
-    normalMapImg, //the tileset
-    srcPosition: Vector2(
-      col * tilesize.x,
-      row * tilesize.y,
-    ), //the position of the tile in the tileset image
-    srcSize: srcSize, //and its size
-  );
-
-  textures[gid] = GameSprite(sprite, normalSprite);
-}
-
-extension VectorComparing on Vector3 {
-  int compareTo(Vector3 gridPos) {
-    return (distanceTo(
-      Vector3.zero(),
-    ).compareTo(gridPos.distanceTo(Vector3.zero())));
-  }
-}
-
-class NeighborChunkCluster {
-  Chunk? top;
-  Chunk? right;
-  Chunk? left;
-  Chunk? bottom;
-  Chunk? topRight;
-  Chunk? topLeft;
-  Chunk? bottomRight;
-  Chunk? bottomLeft;
-  NeighborChunkCluster({
-    this.top,
-    this.right,
-    this.left,
-    this.bottom,
-    this.topLeft,
-    this.topRight,
-    this.bottomLeft,
-    this.bottomRight,
-  });
-
-  List<Chunk> getWhereContained(IsometricRenderable renderable) {
-    List<Chunk> out = [];
-
-    if (top != null && top!.containsRenderable(renderable)) out.add(top!);
-    if (right != null && right!.containsRenderable(renderable)) out.add(right!);
-    if (left != null && left!.containsRenderable(renderable)) out.add(left!);
-    if (bottom != null && bottom!.containsRenderable(renderable)) {
-      out.add(bottom!);
-    }
-    if (topRight != null && topRight!.containsRenderable(renderable)) {
-      out.add(topRight!);
-    }
-    if (topLeft != null && topLeft!.containsRenderable(renderable)) {
-      out.add(topLeft!);
-    }
-    if (bottomRight != null && bottomRight!.containsRenderable(renderable)) {
-      out.add(bottomRight!);
-    }
-    if (bottomLeft != null && bottomLeft!.containsRenderable(renderable)) {
-      out.add(bottomLeft!);
-    }
-
-    return out;
   }
 }

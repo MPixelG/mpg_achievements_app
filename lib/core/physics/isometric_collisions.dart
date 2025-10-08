@@ -5,7 +5,6 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
-import 'package:mpg_achievements_app/core/physics/collisions.dart';
 import 'package:mpg_achievements_app/core/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
@@ -27,11 +26,9 @@ on
 
   void setClimbing(bool val);
 
-  void setDebugNoClipMode(bool val) => _debugNoClipMode = val;
 
   bool get isTryingToGetDownLadder;
 
-  bool _debugNoClipMode = false;
 
   ShapeHitbox? hitbox;
   @override
@@ -42,22 +39,6 @@ on
     add(hitbox!);
     return super.onLoad();
   }
-
-  void isometricCollisions(double dt){
-
-    if (_debugNoClipMode) {
-
-      gridPos += velocity.xy * dt;
-    }
-
-    //predict next position
-    final nextPos = gridPos + velocity.xy * dt;
-
-    //todo collision logic
-
-
-  }
-
   //main collision physics//todo update with z or rewrite
   void checkCollision(PositionComponent other) {
     if (other is! CollisionBlock) {

@@ -2,6 +2,8 @@ import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart' show ObjectGroup, TiledObjectHelpers;
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/util/isometric_utils.dart';
+import 'package:mpg_achievements_app/util/utils.dart';
 
 import '../../components/level_components/checkpoint/checkpoint.dart';
 import '../../components/level_components/collectables.dart';
@@ -24,7 +26,10 @@ void generateSpawningObjectsForLevel(GameWorld gameWorld) {
       switch (spawnPoint.class_) {
         case 'Player':
           //player spawning
-          gameWorld.player.position = Vector2(spawnPoint.x, spawnPoint.y);
+
+          Vector2 twoDimIsoPos = toGridPos(spawnPoint.position, 0);
+          print("grid pos: $twoDimIsoPos, spawn point: ${spawnPoint.position}");
+          gameWorld.player.isoPosition = Vector3(twoDimIsoPos.x, twoDimIsoPos.y, 1);
           gameWorld.player.priority = 1;
           break;
         case 'Collectable':

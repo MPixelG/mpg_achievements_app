@@ -126,9 +126,6 @@ class Enemy extends AnimatedCharacter
   void setClimbing(bool val) => climbing = val;
 
   @override
-  bool get isClimbing => climbing;
-
-  @override
   bool get isTryingToGetDownLadder {
     return true;
   }

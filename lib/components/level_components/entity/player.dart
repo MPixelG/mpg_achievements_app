@@ -206,9 +206,6 @@ class Player extends AnimatedCharacter
   void setClimbing(bool val) => climbing = val;
 
   @override
-  bool get isClimbing => climbing;
-
-  @override
   bool get isTryingToGetDownLadder => true;
 
   @override

@@ -11,6 +11,7 @@ import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/components/camera/advanced_camera.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox_system.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 
 import 'components/level_components/entity/enemy/enemy.dart';
@@ -42,6 +43,8 @@ class PixelAdventure extends FlameGame
   late JoystickComponent joystick;
   late String currentLevel = "Level_8";
 
+  HitboxGrid hitboxGrid = HitboxGrid();
+
   //variable for normal N E S W Movement and isometric Movement
   //a normal hot reload to change the movement isn't enough, you have to do a hot restart!
   static bool isometricMovement = true;
@@ -59,6 +62,7 @@ class PixelAdventure extends FlameGame
   FutureOr<void> onLoad() async {
     //all images for the game are loaded into cache when the game start -> could take long at a later stage, but here it is fine for moment being
     await images.loadAllImages();
+    add(hitboxGrid);
 
     //world is loaded after initialising all images
     Vector2 tileSize = await getTilesizeOfLevel(currentLevel);

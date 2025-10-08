@@ -1,11 +1,16 @@
-import 'dart:math';
-
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 class IsoPositionComponent extends PositionComponent {
   Vector3 isoPosition = Vector3.zero();
+
+  Vector3 get isoPositionAbsolute {
+    if(parent is IsoPositionComponent){
+      return isoPosition + (parent as IsoPositionComponent).isoPositionAbsolute;
+    }
+    return isoPosition;
+  }
 
 
   IsoPositionComponent({

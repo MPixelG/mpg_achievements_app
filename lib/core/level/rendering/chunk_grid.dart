@@ -7,6 +7,7 @@ import '../../../mpg_pixel_adventure.dart';
 import '../isometric/isometric_renderable.dart';
 import 'chunk.dart';
 import 'game_tile_map.dart';
+import 'neighbor_chunk_cluster.dart';
 
 class ChunkGrid {
   static const double chunkSpacing = 0;
