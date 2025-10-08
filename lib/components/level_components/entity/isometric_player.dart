@@ -34,7 +34,7 @@ class IsometricPlayer extends Player with IsometricRenderable {
     canvas.save();
 
     //only move drawing position not ground position
-    canvas.translate(0, zPosition);
+    canvas.translate(0, isoPosition.z);
 
     //call original renderer
     super.render(canvas);
@@ -55,13 +55,7 @@ class IsometricPlayer extends Player with IsometricRenderable {
 
   @override
   Vector3 get gridFeetPos {
-    Vector2 xYGridPos;
-    if (hitbox != null) {
-      xYGridPos = toGridPos(absoluteCenter);
-    } else {
-      xYGridPos = toGridPos(absoluteCenter);
-    }
-    return Vector3(xYGridPos.x, xYGridPos.y, 1);
+    return isoPosition;
   }
 
   @override
@@ -69,7 +63,7 @@ class IsometricPlayer extends Player with IsometricRenderable {
 
   @override
   Vector3 get gridHeadPos {
-    return gridFeetPos + Vector3(0.8, 0.8, 1);
+    return isoPosition - Vector3(0,0, height);
   }
 
   @override
@@ -86,7 +80,7 @@ class IsometricPlayer extends Player with IsometricRenderable {
   @override
   void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
       (Canvas canvas, Paint? overridePaint) {
-        normalSprite.render(canvas, position: position - Vector2(((scale.x < 0) ? 32 : 0), 0));
+        normalSprite.render(canvas, position: isoPosition.xy - Vector2(((scale.x < 0) ? 32 : 0), 0));
         // canvas.drawCircle(toWorldPos(gridFeetPos).toOffset(), 3, Paint()..color = Colors.blue);
         // canvas.drawCircle(toWorldPos(gridHeadPos).toOffset(), 3, Paint()..color = Colors.blue);
       };

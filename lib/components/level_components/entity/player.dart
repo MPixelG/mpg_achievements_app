@@ -58,7 +58,7 @@ class Player extends GameCharacter
     // The player inspects its environment (the world) and configures itself.
     if (game.gameWorld is IsometricWorld) {
       setMovementType(ViewSide.isometric);
-      if (zPosition == zGround) {
+      if (isoPosition.z == zGround) {
         isOnGround = true;
         _findGroundBeneath();
       }
@@ -66,7 +66,7 @@ class Player extends GameCharacter
       setMovementType(ViewSide.side); // Default
     }
 
-    startingPosition = Vector2(position.x, position.y);
+    startingPosition = Vector2(isoPosition.x, isoPosition.y);
 
 
 
@@ -255,7 +255,7 @@ class Player extends GameCharacter
   //Getters
 
   @override
-  double getzPosition() => zPosition;
+  double getzPosition() => isoPosition.z;
 
   double getzGround() => zGround;
 

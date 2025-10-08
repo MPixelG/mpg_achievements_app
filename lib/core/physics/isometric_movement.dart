@@ -1,28 +1,26 @@
 import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
+import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/core/physics/movement.dart';
 
-//todo Vector3 transfer
-mixin IsometricMovement on BasicMovement {
+mixin IsometricMovement on BasicMovement, IsoPositionComponent {
   final double _isometricJumpForce = 190;
   final double _isometricGravity = 350;
-  double zVelocity = 0.0;
-  double zPosition = 0.0;
-  final double _friction = 0.75;
-  final double _terminalVelocity = 350;
+  final double _terminalVelocity = 500;
   //character's height off the ground plan
 
   void updateIsometricMovement(double dt) {
+    //velocity to x/y
+_performIsometricMovement(dt);
+
     if (hasJumped) {
       _jump();
       hasJumped = false;
     }
-    _performIsometricMovement(dt);
+
     if (gravityEnabled) {
       _performIsometricGravity(dt);
     }
-    //Apply 2D velocity to logical ground position
-    gridPos += velocity.xy * dt;
-  }
+    }
 
   void _performIsometricGravity(double dt) {
     //access the player's ground level
@@ -30,13 +28,13 @@ mixin IsometricMovement on BasicMovement {
     final currentZGround = player.zGround;
 
     if (!debugFlyMode && !isClimbing) {
-      if (!isOnGround || zVelocity < 0) {
-        zVelocity += _isometricGravity * dt;
+      if (!isOnGround || velocity.z < 0) {
+       velocity.z += _isometricGravity * dt;
       } //fall
       //limit falls speed
-      zVelocity = zVelocity.clamp(-_isometricJumpForce, _terminalVelocity);
+      velocity.z = velocity.z.clamp(-_isometricJumpForce, _terminalVelocity);
       // Apply Z velocity to Z position
-      zPosition += zVelocity * dt;
+      isoPosition.z += velocity.z * dt;
     }
     //only print when counter is below 10
     /* if(DateTime.now().millisecondsSinceEpoch % 100 < 10){
@@ -45,9 +43,9 @@ mixin IsometricMovement on BasicMovement {
       print('zV:$zVelocity');
       print('zM:$zMovement');}*/
     // Only apply gravity if not on the ground
-    if (zPosition >= currentZGround && zVelocity >= 0) {
-      zPosition = currentZGround;
-      zVelocity = 0;
+    if ( isoPosition.z >= currentZGround && velocity.z > 0) {
+      isoPosition.z = currentZGround;
+      velocity.z = 0;
       isOnGround = true;
       //print('Player landed at:$zPosition');
     } else {
@@ -55,25 +53,25 @@ mixin IsometricMovement on BasicMovement {
     }
 
     if (debugFlyMode) {
-      zPosition += zMovement * moveSpeed * dt * 10;
-      zVelocity = 0;
-      isOnGround = (zPosition >= currentZGround);
+      isoPosition.z += zMovement * moveSpeed * dt * 10;
+      velocity.z = 0;
+      isOnGround = (isoPosition.z <= currentZGround);
     }
   }
 
   void _jump() {
     if(!isOnGround) return;
-    zVelocity = -_isometricJumpForce;
+    velocity.z = -_isometricJumpForce;
     isOnGround = false;
     hasJumped = false;
   }
 
   void _performIsometricMovement(double dt) {
+    //friction is handled in IsoComponent
     velocity.x += horizontalMovement * moveSpeed;
-    velocity.x *= _friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
     velocity.y += verticalMovement * moveSpeed;
-    velocity.y *= _friction * (dt + 1); //slowly decrease the velocity every frame so that the player stops after a time. decrease the value to increase the friction
+
 
   }
-  double getzPosition() => zPosition;
+  double getzPosition() => isoPosition.z;
 }
