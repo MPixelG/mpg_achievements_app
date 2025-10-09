@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/extensions.dart';
+import 'package:mpg_achievements_app/util/type_utils.dart';
 
 import '../../../mpg_pixel_adventure.dart';
 import '../isometric/isometric_renderable.dart';
@@ -83,6 +84,7 @@ class ChunkGrid {
     Canvas albedoCanvas = Canvas(albedoRecorder);
 
     Vector2 posTL = -camPos + (viewportSize/2);
+    posTL = Vector2(posTL.x.floorToDouble(), posTL.y.floorToDouble());
     albedoCanvas.translate(posTL.x, posTL.y);
     normalCanvas.translate(posTL.x, posTL.y);
     albedoCanvas.save();
@@ -170,9 +172,7 @@ class ChunkGrid {
     List<IsometricRenderable> components,
     Vector2 camPos,
     Vector2 viewportSize, [
-    Offset offset = Offset.zero,
-      ]) {
-
+    Offset offset = Offset.zero]) {
     if (_needsUpdate && _currentBuildTask == null) {
       _currentBuildTask = buildMaps(components, camPos, viewportSize)
           .then((_) {
@@ -189,19 +189,21 @@ class ChunkGrid {
     // mousePos.y /= viewportSize.y;
     //print(mousePos);
 
-    double time = DateTime.now().millisecondsSinceEpoch / 10000;
-    double lightX = cos(time) * 600;
-    double lightY = sin(time) * 600;
+    double time = DateTime.now().millisecondsSinceDay.toDouble() / 10000;
+    double lightX = cos(time / 60) * 600;
+    double lightY = sin(time / 60) * 600;
 
     shader!.setFloatUniforms((val) {
       val.setFloats([
         viewportSize.x, viewportSize.y,
-        lightX, lightY, 15,
+        lightX, lightY, 150, 0.5,
+        time,
+        0.2 //saturation
       ]);
     });
 
     shaderPaint.shader = shader;
-    Vector2 posTL = camPos - (viewportSize/2);
+    Vector2 posTL = camPos - (viewportSize/2) - camPos % Vector2.all(1);
     canvas.save();
     canvas.translate(posTL.x, posTL.y);
     canvas.drawRect(viewportSize.toRect(), shaderPaint);

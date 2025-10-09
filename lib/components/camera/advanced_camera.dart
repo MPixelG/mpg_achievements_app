@@ -83,7 +83,7 @@ class AdvancedCamera extends CameraComponent {
     initialPos = pos.clone();
 
     // convert incoming time (ms in original API) to seconds for dt consistency
-    timeLeft = time > 0 ? time / 300.0 : 0.0; //seconds
+    timeLeft = time > 0 ? time / 100.0 : 0.0; //seconds
     initialGivenTime = timeLeft;
 
     this.animationStyle = animationStyle;

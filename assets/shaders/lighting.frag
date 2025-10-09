@@ -6,7 +6,8 @@ uniform sampler2D depthMap;
 uniform vec2 screenSize;
 uniform vec3 lightPos;
 uniform float heightScale;
-uniform float testUniform;
+uniform float time;
+uniform float saturation;
 
 out vec4 fragColor;
 
@@ -68,6 +69,19 @@ float calculateShadow(vec3 fragPos, vec3 dirToLight, float heightScale){
     }
     return shadow;
 }
+
+vec3 adjustSaturation(vec3 color, float value) {
+    // https://www.w3.org/TR/WCAG21/#dfn-relative-luminance
+    const vec3 luminosityFactor = vec3(0.2126, 0.7152, 0.0722);
+    vec3 grayscale = vec3(dot(color, luminosityFactor));
+
+    return mix(grayscale, color, 1.0 + value);
+}
+
+vec3 adjustExposure(vec3 color, float value) {
+    return (1.0 + value) * color;
+}
+
 void main() {
     vec3 adjustedLightPos = lightPos;
     vec2 uv = (FlutterFragCoord().xy) / screenSize;
@@ -84,6 +98,9 @@ void main() {
 
     vec3 diffuse = calculateBasicLighting(adjustedLightPos);
     vec3 color = albedoPixel.rgb * (vec3(0.11, 0.1, 0.1)*2 + diffuse);
+
+   // color = adjustExposure(color, 0.2);
+    color = adjustSaturation(color, saturation);
 
     fragColor = vec4(color, albedoPixel.a);
 }

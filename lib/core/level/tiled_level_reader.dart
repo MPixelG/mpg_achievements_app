@@ -27,7 +27,7 @@ void generateSpawningObjectsForLevel(GameWorld gameWorld) {
         case 'Player':
           //player spawning
 
-          Vector2 twoDimIsoPos = toGridPos(spawnPoint.position, 0);
+          Vector2 twoDimIsoPos = toGridPos(spawnPoint.position);
           print("grid pos: $twoDimIsoPos, spawn point: ${spawnPoint.position}");
           gameWorld.player.isoPosition = Vector3(twoDimIsoPos.x, twoDimIsoPos.y, 1);
           gameWorld.player.priority = 1;

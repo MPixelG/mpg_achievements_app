@@ -40,6 +40,6 @@ class IsoPositionComponent extends PositionComponent {
   @override
   void update(double dt) {
     super.update(dt);
-    transform.position = isoToScreen(isoPosition) + Vector2((scale.x < 0) ? size.x : 0, 0);
+    transform.position = toWorldPos(isoPositionAbsolute) + Vector2((scale.x < 0) ? size.x : 0, 0);
   }
 }

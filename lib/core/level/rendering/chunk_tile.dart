@@ -29,12 +29,13 @@ class ChunkTile with IsometricRenderable {
       this.worldX,
       this.worldY,
       this.z,
-      this.zAdjustPos,
-      ){
-    Future.microtask(() {
-      loadTextureOfGid(gid);
+      this.zAdjustPos){
+    loadTextureOfGid(gid).then((value) {
+      doneLoading = true;
     });
   }
+
+  bool doneLoading = false;
 
   GameSprite get cachedSprite => textures[gid]!;
 
@@ -44,7 +45,7 @@ class ChunkTile with IsometricRenderable {
   Vector3 get gridFeetPos => posWorld;
 
   @override
-  Vector3 get gridHeadPos => gridFeetPos;
+  Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 1);
 
   @override
   RenderCategory get renderCategory => RenderCategory.tile;

@@ -10,7 +10,7 @@ import '../mpg_pixel_adventure.dart';
 
 Map<int, GameSprite> textures = {};
 List<int> currentOperations = [];
-void loadTextureOfGid(int gid) async {
+Future<void> loadTextureOfGid(int gid) async {
   if(textures.containsKey(gid) || currentOperations.contains(gid)){
     return;
   }
@@ -50,5 +50,6 @@ void loadTextureOfGid(int gid) async {
     srcSize: srcSize, //and its size
   );
 
+  currentOperations.remove(gid);
   textures[gid] = GameSprite(sprite, normalSprite);
 }

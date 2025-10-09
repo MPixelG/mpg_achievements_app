@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="isometric" renderorder="right-down" width="16" height="16" tilewidth="32" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="58">
+<map version="1.10" tiledversion="1.11.2" orientation="isometric" renderorder="right-down" width="16" height="16" tilewidth="32" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="59">
  <properties>
   <property name="isometric" type="bool" value="true"/>
  </properties>
  <tileset firstgid="1" source="isometric.tsx"/>
- <layer id="1" name="Tile Layer 1" width="16" height="16">
+ <layer id="1" name="Ground" width="16" height="16">
+  <properties>
+   <property name="isometric" type="bool" value="true"/>
+   <property name="zHeight" type="int" value="0"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,81,53,81,53,81,53,81,53,0,0,0,0,
 0,0,0,81,53,81,53,81,53,81,53,81,53,0,0,0,
@@ -24,21 +28,22 @@
 0,0,0,0,53,81,53,81,53,81,53,81,0,0,0,0
 </data>
  </layer>
- <objectgroup id="3" name="Collisions">
-  <object id="2" x="64" y="0" width="128" height="256"/>
-  <object id="4" x="192" y="16" width="16" height="224"/>
-  <object id="8" x="208" y="32" width="16" height="192"/>
-  <object id="11" x="224" y="48" width="16" height="160"/>
-  <object id="14" x="240" y="64" width="16" height="128"/>
-  <object id="15" x="316.833" y="199.833"/>
-  <object id="16" x="48" y="16" width="16" height="224"/>
-  <object id="30" x="32" y="32" width="16" height="192"/>
-  <object id="32" x="16" y="48" width="16" height="160"/>
-  <object id="34" x="0" y="64" width="16" height="128"/>
-  <object id="36" x="-16" y="80" width="16" height="96"/>
-  <object id="37" x="4.45455" y="90.0909"/>
+ <objectgroup id="5" name="Spawnpoints">
+  <object id="58" name="Player" type="Player" x="128" y="128" width="16" height="16"/>
  </objectgroup>
- <layer id="2" name="Tile Layer 2" width="16" height="16">
+ <objectgroup id="4" name="Collisions">
+  <object id="38" x="192" y="80" width="16" height="48"/>
+  <object id="40" x="160" y="16" width="16" height="16"/>
+  <object id="42" x="128" y="96" width="16" height="16"/>
+  <object id="44" x="96" y="64" width="16" height="16"/>
+  <object id="46" x="96" y="96" width="16" height="16"/>
+  <object id="48" x="96" y="128" width="16" height="16"/>
+  <object id="50" x="64" y="96" width="16" height="16"/>
+  <object id="52" x="64" y="192" width="48" height="16"/>
+  <object id="54" x="96" y="208" width="16" height="16"/>
+  <object id="56" x="0" y="64" width="16" height="16"/>
+ </objectgroup>
+ <layer id="2" name="Tile Layer 1" width="16" height="16">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,89,0,0,0,0,0,
@@ -58,16 +63,4 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="4" name="Collisions 2">
-  <object id="38" x="192" y="80" width="16" height="48"/>
-  <object id="40" x="160" y="16" width="16" height="16"/>
-  <object id="42" x="128" y="96" width="16" height="16"/>
-  <object id="44" x="96" y="64" width="16" height="16"/>
-  <object id="46" x="96" y="96" width="16" height="16"/>
-  <object id="48" x="96" y="128" width="16" height="16"/>
-  <object id="50" x="64" y="96" width="16" height="16"/>
-  <object id="52" x="64" y="192" width="48" height="16"/>
-  <object id="54" x="96" y="208" width="16" height="16"/>
-  <object id="56" x="0" y="64" width="16" height="16"/>
- </objectgroup>
 </map>

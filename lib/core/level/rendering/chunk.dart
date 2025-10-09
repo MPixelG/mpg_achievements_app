@@ -40,6 +40,8 @@ class Chunk {
 
   Chunk(this.x, this.y, this.z, [this.neighborChunkCluster]);
 
+  final List<Future<void>> tilesLoadedFutures = [];
+
   Chunk.fromGameTileMap(
     GameTileMap gameTileMap,
     this.x,
@@ -72,7 +74,8 @@ class Chunk {
           highestZTileInWorld = z;
         }
 
-        tiles.add(ChunkTile(gid, localX, localY, x, y, z, 0));
+        ChunkTile chunkTile = ChunkTile(gid, localX, localY, x, y, z, 0);
+        tiles.add(chunkTile);
       }
     }
 
@@ -122,8 +125,18 @@ class Chunk {
       element.zAdjustPos = zHeightUsedPixels;
     }
 
-    reSortTiles([]);
-    Future.delayed(Duration(seconds: 1), () => rebuildMaps([]));
+    Future.delayed(Duration(milliseconds: 3), () {
+      Future.doWhile(() async {
+        if (tiles.where((element) => !element.doneLoading).isNotEmpty) {
+          await Future.delayed(Duration(milliseconds: 20));
+          return true;
+        }
+
+        reSortTiles([]);
+        rebuildMaps([]);
+        return false;
+      });
+    });
   }
 
   static Vector2 worldSize = Vector2.zero();
@@ -180,9 +193,9 @@ class Chunk {
     for (final r in tiles) {
       minGridX = math.min(minGridX, r.gridFeetPos.x.toInt());
       minGridY = math.min(minGridY, r.gridFeetPos.y.toInt());
-      maxGridX = math.max(maxGridX, r.gridHeadPos.x.toInt());
-      maxGridY = math.max(maxGridY, r.gridHeadPos.y.toInt());
-      maxZ = math.max(maxZ, r.gridHeadPos.z.toInt());
+      maxGridX = math.max(maxGridX, r.gridFeetPos.x.toInt());
+      maxGridY = math.max(maxGridY, r.gridFeetPos.y.toInt());
+      maxZ = math.max(maxZ, r.gridFeetPos.z.toInt());
     }
 
     final corners = [
