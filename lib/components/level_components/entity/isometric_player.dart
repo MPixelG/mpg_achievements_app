@@ -2,7 +2,6 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
-import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 
 import '../../../core/level/isometric/isometric_renderable.dart';
 import '../../../core/level/isometric/isometric_tiled_component.dart';
@@ -32,6 +31,10 @@ class IsometricPlayer extends Player with IsometricRenderable {
     return super.onLoad();
   }
 
+  @override
+  void render(Canvas canvas){
+    //save the current state of the canvas
+    canvas.save();
 
   //find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
   void _findGroundBeneath() {
@@ -61,7 +64,6 @@ class IsometricPlayer extends Player with IsometricRenderable {
     zGround = highestZ;
   }
 
-
   Vector2 worldToTileIsometric(Vector2 worldPos) {
     final tileX =
         (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.z / 2)) / 2;
@@ -82,7 +84,7 @@ class IsometricPlayer extends Player with IsometricRenderable {
 
   @override
   Vector3 get gridHeadPos {
-    return gridFeetPos + Vector3(0.8, 0.8, 1);
+    return isoPosition - Vector3(0,0, height);
   }
 
   @override
@@ -99,7 +101,7 @@ class IsometricPlayer extends Player with IsometricRenderable {
   @override
   void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
       (Canvas canvas, Paint? overridePaint) {
-        normalSprite.render(canvas, position: position - Vector2(((scale.x < 0) ? 32 : 0), 0));
+        normalSprite.render(canvas, position: isoPosition.xy - Vector2(((scale.x < 0) ? 32 : 0), 0));
         // canvas.drawCircle(toWorldPos(gridFeetPos).toOffset(), 3, Paint()..color = Colors.blue);
         // canvas.drawCircle(toWorldPos(gridHeadPos).toOffset(), 3, Paint()..color = Colors.blue);
       };
