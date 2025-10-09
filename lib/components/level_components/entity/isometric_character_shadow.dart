@@ -2,27 +2,47 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../../core/level/isometric/isometric_renderable.dart';
 import '../../../core/level/isometric/isometric_tiled_component.dart';
 import 'isometric_player.dart';
 
-class ShadowComponent extends IsoPositionComponent with IsometricRenderable {
-  IsometricPlayer get owner => parent as IsometricPlayer;
+class ShadowComponent extends PositionComponent with IsometricRenderable {
+  late Vector3 gridPos;
+  final IsometricPlayer owner;
 
-  ShadowComponent();
+  ShadowComponent({required this.owner});
 
   @override
   FutureOr<void> onLoad() {
-    isoPosition = Vector3(0, 0, 0);
-
+    gridPos = owner.gridFeetPos;
+    position.setFrom(owner.absolutePosition.xy);
     return super.onLoad();
   }
 
   @override
+  void update(double dt) {
+    super.update(dt);
+    // Continuously update the shadow's grid position to match the owner's.
+    // This ensures correct render sorting as the player moves.
+    gridPos = owner.gridFeetPos;
+    if (owner.isFlippedHorizontally) {
+      position.setFrom(
+        owner.shadowAnchor.absolutePosition +
+            Vector2(-owner.size.x / 2, owner.size.y),
+      );
+    } else {
+      position.setFrom(
+        owner.shadowAnchor.absolutePosition +
+            Vector2(owner.size.x / 2, owner.size.y),
+      );
+    }
+  }
+
+  @override
   void render(Canvas canvas) {
+    super.render(canvas);
     // Convert the selected tile's grid coordinates into its center position in the isometric world.
     final tileW = tilesize.x;
     final tileH = tilesize.y;
@@ -44,14 +64,13 @@ class ShadowComponent extends IsoPositionComponent with IsometricRenderable {
 
     // Draw the oval inside the rectangle
     canvas.drawOval(rect, highlightPaint);
-    super.render(canvas);
   }
 
   @override
   RenderCategory get renderCategory => RenderCategory.characterEffect;
 
   @override
-  Vector3 get gridFeetPos => owner.gridFeetPos - Vector3(0.5, 0.5, -0.2);
+  Vector3 get gridFeetPos => owner.gridFeetPos - Vector3(0.5, 0.5, 1);
 
   @override
   Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 1);

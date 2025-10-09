@@ -57,8 +57,8 @@ class LayeredImageBackground extends Background
 
         final cameraOffset =
             (startPositions[i] +
-            (camera.viewfinder.position.clone()
-              ..multiply(Vector2.all(1) - parralaxFactor)));
+            ((camera.viewfinder.position.clone()
+              ..multiply(Vector2.all(1) - parralaxFactor))));
 
         canvas.drawImage(loadedImage, cameraOffset.toOffset(), _paint);
         canvas.drawImage(

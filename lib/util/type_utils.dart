@@ -20,7 +20,3 @@ extension IterableAddition<T> on Iterable<T> {
     return followedBy(other);
   }
 }
-
-extension MillisecondsSinceDay on DateTime {
-  int get millisecondsSinceDay => ((((day*24)+hour)*60+minute)*60+second)*1000+millisecond;
-}

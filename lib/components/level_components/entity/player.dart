@@ -39,6 +39,8 @@ class Player extends AnimatedCharacter
 
   //Player name
   String playerCharacter;
+  //Shadow of player
+  late ShadowComponent shadow;
   //Find the ground of player position
   late double zGround = 0.0;
 
