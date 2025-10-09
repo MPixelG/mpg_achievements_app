@@ -7,7 +7,6 @@ import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import '../../../core/level/isometric/isometric_renderable.dart';
 import '../../../core/level/isometric/isometric_tiled_component.dart';
 import '../../../mpg_pixel_adventure.dart';
-import '../../../util/isometric_utils.dart';
 import 'isometric_character_shadow.dart';
 
 class IsometricPlayer extends Player with IsometricRenderable {

@@ -40,7 +40,6 @@ jobs:
             parent_count=$(git rev-list --count --parents -n1 $sha | awk '{print NF-1}')
             if [ "$parent_count" -gt 1 ]; then
               echo "Merge-Commit erkannt ($sha), Workflow wird übersprungen."
-              exit 0
             fi
           done
 
