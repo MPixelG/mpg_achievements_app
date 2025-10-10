@@ -5,12 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jenny/jenny.dart';
+import 'package:mpg_achievements_app/state_management/providers/player_state_provider.dart';
 
 import '../../state_management/providers/task_state_provider.dart';
 
 class DialogueYarnCreator extends Component with DialogueView {
-  final WidgetRef ref;
-  DialogueYarnCreator(this.ref);
+
+  DialogueYarnCreator();
 
   late YarnProject project;
   late String yarnFilePath;
@@ -27,11 +28,11 @@ class DialogueYarnCreator extends Component with DialogueView {
   Future<YarnProject> loadYarnFile(String yarnfile) async {
     script = await rootBundle.loadString(yarnfile);
     project = YarnProject()
-      ..commands.addCommand2<String, int>('createTask', createTask)
+      //..commands.addCommand2<String, int>('createTask', createTask)
       ..commands.addCommand0('playeryes', playerYes as FutureOr<void> Function())
       ..commands.addCommand0('playerno', playerNo as FutureOr<void> Function() )
-      ..commands.addCommand1<String>('progressStart', progressStart)
-      ..commands.addCommand2<String, int>('progressUpdate', progressUpdate)
+      //..commands.addCommand1<String>('progressStart', taskProvider.notifier.read(node))
+      //..commands.addCommand2<String, int>('progressUpdate', progressUpdate) //add providers and methods
       ..parse(script);
     return project;
   }
@@ -48,15 +49,5 @@ class DialogueYarnCreator extends Component with DialogueView {
     }
   }
 
-  void progressStart(String taskDesc) {
-    ref.read(taskProvider.notifier).startTaskByDescription(taskDesc);
-  }
-
-  void progressUpdate(String taskId, int amount) {
-    ref.read(taskProvider.notifier).updateProgressByDescription(taskId, amount);
-  }
-  void createTask(String description, int goal) {
-    ref.read(taskProvider.notifier).addTask(description, goal: goal);
-  }
-}
+ }
 

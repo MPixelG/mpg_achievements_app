@@ -19,7 +19,7 @@ import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_yarn_cre
 // to the Jenny `DialogueRunner`, allowing it to respond to dialogue events
 // like `onLineStart`, `onChoiceStart`, and `onDialogueFinish`.
 
-class DialogueScreenState extends State<DialogueScreen> with DialogueView {
+class DialogueScreenState extends ConsumerState<DialogueScreen> with DialogueView {
   // General layout and positioning constants
   static const EdgeInsets _dialogueCardPadding = EdgeInsets.all(16.0);
   static const double _dialogueCardOpacity = 0.85;
@@ -69,8 +69,6 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
   // When `true`, a "Close" button is shown instead of a "Next" button.
   bool _isDialogueFinished = false;
 
-  late WidgetRef board;
-
   // region Widget Lifecycle
 
   @override
@@ -84,7 +82,7 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
   /// initializes the [DialogueRunner].
   Future<void> _initializeDialogue() async {
     // Helper class to load and parse the .yarn file.
-    final yarnCreator = DialogueYarnCreator(board);
+    final yarnCreator = DialogueYarnCreator();
     await yarnCreator.loadYarnFile('assets/yarn/test.yarn');
 
     // Store the compiled project and the raw script text.
@@ -268,6 +266,22 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
 
   // region UI Actions and Helpers
   // Methods called in response to user interaction (button presses).
+  /* Integrazion later
+  *  void progressStart(String taskDesc) {
+    .read(taskProvider.notifier).startTaskByDescription(taskDesc);
+  }
+
+  void progressUpdate(String taskId, int amount) {
+    ref.read(taskProvider.notifier).updateProgressByDescription(taskId, amount);
+  }
+  void createTask(String description, int goal) {
+    ref.read(taskProvider.notifier).addTask(description, goal: goal);
+  }
+  *
+  * */
+
+
+
 
   // Hides the entire dialogue UI and resets its visible state.
   void _closeDialogue() {

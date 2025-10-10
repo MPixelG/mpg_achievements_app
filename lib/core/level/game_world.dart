@@ -158,6 +158,12 @@ abstract class GameWorld extends World
 
     }
 
+    // Debug test for Dialogue
+    if (keysPressed.contains(LogicalKeyboardKey.keyQ)) {
+      // A method to toggle the speech bubble
+      game.overlays.add('DialogueScreen');
+
+    }
     return super.onKeyEvent(event, keysPressed);
   }
 

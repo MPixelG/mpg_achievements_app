@@ -14,17 +14,31 @@ class TaskData {
   final String id;
   final String description;
   TaskState state;
-
   int progress;
   final int goal;
 
   TaskData({
-    required this.id,
+    String? id,
     required this.description,
     this.state = TaskState.available,
     this.progress = 0,
     this.goal = 1,
-  });
+  }): id = id ?? uuid.v4();
+
+
+  TaskData copyWith({
+    String? id,
+    String? description,
+    int? goal,
+    int? progress,
+    TaskState? status,}){
+
+    return TaskData(id: id ?? this.id,
+        description: description ?? this.description,
+    goal: goal ?? this.goal,
+    progress: progress ?? this.progress,
+    state: state);
+  }
 
   void start() {
     if (state == TaskState.available) {
