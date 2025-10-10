@@ -179,8 +179,8 @@ class GameScreen extends StatelessWidget {
           return SpeechBubble(
             game: game,
             characterName: game.gameWorld.player.playerCharacter,
-            targetPosition: game.gameWorld.player.position.toOffset(),
-            currentPosition: game.gameWorld.player.position.toOffset(),
+            targetPosition: game.gameWorld.player.isoPosition.xy.toOffset(),
+            currentPosition: game.gameWorld.player.isoPosition.xy.toOffset(),
             onComplete: () {
               game.overlays.remove('SpeechBubble');
             },

@@ -150,6 +150,14 @@ abstract class GameWorld extends World
       AppRouter.router.pushNamed("widgetBuilder");
     } //press H to toggle the GUI editor overlay
 
+
+    // Debug test for SpeechBubble
+    if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
+      // A method to toggle the speech bubble
+      game.overlays.add('SpeechBubble');
+
+    }
+
     return super.onKeyEvent(event, keysPressed);
   }
 

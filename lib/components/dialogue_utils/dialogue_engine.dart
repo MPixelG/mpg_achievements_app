@@ -20,7 +20,7 @@ import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_yarn_cre
 // like `onLineStart`, `onChoiceStart`, and `onDialogueFinish`.
 
 class DialogueScreenState extends State<DialogueScreen> with DialogueView {
-  // General layout and positioning constants.
+  // General layout and positioning constants
   static const EdgeInsets _dialogueCardPadding = EdgeInsets.all(16.0);
   static const double _dialogueCardOpacity = 0.85;
   static final BorderRadius _dialogueBorderRadius = BorderRadius.circular(16.0);
@@ -70,7 +70,6 @@ class DialogueScreenState extends State<DialogueScreen> with DialogueView {
   bool _isDialogueFinished = false;
 
   late WidgetRef board;
-
 
   // region Widget Lifecycle
 

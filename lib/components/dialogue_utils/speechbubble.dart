@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble_state.dart';
-
 import '../../mpg_pixel_adventure.dart';
 
 class SpeechBubble extends StatefulWidget {
