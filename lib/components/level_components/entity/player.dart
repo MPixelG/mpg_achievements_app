@@ -1,13 +1,22 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/controllers/character_controller.dart';
+import 'package:mpg_achievements_app/components/controllers/control_action_bundle.dart';
+import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
+import 'package:mpg_achievements_app/core/level/isometric/isometric_renderable.dart';
+import 'package:mpg_achievements_app/core/level/isometric/isometric_tiled_component.dart';
+import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 
 import '../../../state_management/providers/player_state_provider.dart';
@@ -27,7 +36,12 @@ class Player extends AnimatedCharacter
         CollisionCallbacks,
         AnimationManager,
         HasMovementAnimations,
-        HasCollisions {
+        HasCollisions,
+        IsometricRenderable
+{
+
+  late KeyboardCharacterController<Player> controller;
+  late ShadowComponent shadow;
 
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
@@ -35,7 +49,7 @@ class Player extends AnimatedCharacter
   bool _isHitAnimationPlaying = false;
   bool _isRespawningAnimationPlaying = false;
   //starting position
-  Vector2 startingPosition = Vector2.zero();
+  Vector3 startingPosition = Vector3.zero();
 
   //Player name
   String playerCharacter;
@@ -43,17 +57,48 @@ class Player extends AnimatedCharacter
   late double zGround = 0.0;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
-  Player({required this.playerCharacter, super.position});
+  Player({required this.playerCharacter, super.position,}){
+        controller = KeyboardCharacterController(buildControlBundle());}
+
   @override
   Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.
-    startingPosition = Vector2(isoPosition.x, isoPosition.y);
-
-
+    startingPosition = Vector3(0,0,0);
+    shadow = ShadowComponent(owner: this);
+    add(controller);
+    _findGroundBeneath();
+    return super.onLoad();
 
     return super.onLoad();
   }
 
+  //find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
+  void _findGroundBeneath() {
+    // the highest ground block beneath the player
+    final blocks = game.gameWorld.children.whereType<CollisionBlock>();
+    //print("number of blocks: ${blocks.length}");
+    double highestZ = 0.0; //default floor
+    //the players foot rectangle which mesn easier collision detection with the block
+    final playerFootRectangle = Rect.fromCenter(
+      center: absolutePositionOfAnchor(Anchor.bottomCenter).toOffset(),
+      width: size.x, //maybe adjust necessary for debugging
+      height: 4.0, //thin slice is sufficient
+    );
+
+    for (final block in blocks) {
+      //make a rectangle from the block position and size
+      final blockGroundRectangle = block.toRect();
+      if (playerFootRectangle.overlaps(blockGroundRectangle)) {
+        //what is it ground and what is the zHeight of the block;
+        final blockCeiling = block.zPosition! + block.zHeight!;
+        if (blockCeiling > highestZ) {
+          highestZ = blockCeiling.toDouble();
+          //print('blockceiling:$blockCeiling');
+        }
+      }
+    }
+    zGround = highestZ;
+  }
   @override
   void update(double dt) {
     super.update(dt);
@@ -148,7 +193,7 @@ class Player extends AnimatedCharacter
       Duration(milliseconds: 250),
     ); //wait a quarter of a second for the animation to finish
 
-    position -= Vector2.all(
+    isoPosition -= Vector3.all(
       32,
     ); //center the player so that the animation displays correctly (its 96*96 and the player is 32*32)
     scale.x =
@@ -160,7 +205,7 @@ class Player extends AnimatedCharacter
     //Positioning the player after respawn
     final respawnPoint = ref.read(playerProvider).lastCheckpoint;
 
-    position = (respawnPoint?.position ?? startingPosition) - Vector2(40, 32);
+    isoPosition = respawnPoint?.isoPosition ?? startingPosition;
 
     //position the player at the spawn point and also add the displacement of the animation
     scale = Vector2.all(0); //hide the player
@@ -175,7 +220,7 @@ class Player extends AnimatedCharacter
     //wait for the animation to finish
     updateMovement = true;
     updatePlayerstate(); //update the players feet to the ground
-    position += Vector2.all(
+    isoPosition += Vector3.all(
       32,
     ); //reposition the player, because it had a bit of displacement because of the respawn animation
 
@@ -183,7 +228,16 @@ class Player extends AnimatedCharacter
     _isRespawningAnimationPlaying = false;
   }
 
-
+  ControlActionBundle<Player> buildControlBundle(){
+    return ControlActionBundle<Player>({
+      ControlAction("moveUp", key: "W", run: (parent) => parent.velocity.y--),
+      ControlAction("moveLeft", key: "A", run: (parent) => parent.velocity.x--),
+      ControlAction("moveDown", key: "S", run: (parent) => parent.velocity.z++),
+      ControlAction("moveRight", key: "D", run: (parent) {
+        parent.velocity.x++;
+      }),
+    });
+  }
 
   //Getters
   double getzGround() => zGround;
@@ -191,8 +245,9 @@ class Player extends AnimatedCharacter
   @override
   ShapeHitbox? getHitbox() => hitbox;
 
+
   @override
-  Vector2 getPosition() => position;
+  Vector2 getPosition() => isoPosition.xy;
 
   @override
   Vector2 getScale() => scale;
@@ -241,6 +296,46 @@ class Player extends AnimatedCharacter
   bool get isInHitFrames => _isHitAnimationPlaying;
   @override
   bool get isInRespawnFrames => _isRespawningAnimationPlaying;
-  //get player shadow
-  Component get shadow => game.gameWorld.player.shadow;
+
+  @override
+  Vector3 get gridFeetPos {
+    Vector3 actualPos = isoPosition;
+    return Vector3(
+      actualPos.x + 0.8,
+      actualPos.y + 0.8,
+      1,
+    ); //todo align correctly
+  }
+
+  @override
+  RenderCategory get renderCategory => RenderCategory.entity;
+
+  @override
+  Vector3 get gridHeadPos {
+    return isoPosition - Vector3(0, 0, height);
+  }
+
+  @override
+  void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {
+    renderTree(canvas);
+    //canvas.drawCircle(toWorldPos(gridHeadPos).toOffset(), 4, Paint()..color = Colors.red);
+    //canvas.drawCircle(toWorldPos(gridFeetPos).toOffset(), 2, Paint()..color = Colors.yellow);
+  };
+  Sprite normalSprite = Sprite(
+    Flame.images.fromCache("playerNormal.png"),
+    srcSize: tilesize.xy,
+    srcPosition: Vector2.zero(),
+  );
+  @override
+  void Function(Canvas canvas, Paint? overridePaint)
+  get renderNormal => (Canvas canvas, Paint? overridePaint) {
+    normalSprite.render(
+      canvas,
+      position: isoPosition.xy - Vector2(((scale.x < 0) ? 32 : 0), 0),
+    );
+    // canvas.drawCircle(toWorldPos(gridFeetPos).toOffset(), 3, Paint()..color = Colors.blue);
+    // canvas.drawCircle(toWorldPos(gridHeadPos).toOffset(), 3, Paint()..color = Colors.blue);
+  };
+
+
 }

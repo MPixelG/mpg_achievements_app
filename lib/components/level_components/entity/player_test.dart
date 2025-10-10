@@ -6,8 +6,9 @@ import 'package:mpg_achievements_app/components/controllers/control_action_bundl
 import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/isometric_player.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
-
+/*
 class TestPlayer extends IsometricPlayer{
+
   late KeyboardCharacterController<TestPlayer> controller;
 
   TestPlayer({required super.playerCharacter}){
@@ -21,6 +22,7 @@ class TestPlayer extends IsometricPlayer{
   }
 
 
+  @override
   ControlActionBundle<TestPlayer> buildControlBundle(){
     return ControlActionBundle<TestPlayer>({
       ControlAction("moveUp", key: "W", run: (parent) => parent.velocity.y--),
@@ -31,4 +33,4 @@ class TestPlayer extends IsometricPlayer{
       }),
     });
   }
-}
+}*/

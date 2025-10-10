@@ -11,7 +11,7 @@ import '../../../mpg_pixel_adventure.dart';
 import '../../../util/isometric_utils.dart';
 import 'isometric_character_shadow.dart';
 
-class IsometricPlayer extends Player with IsometricRenderable {
+class IsometricPlayer extends Player {
 
   @override
   late ShadowComponent shadow;
@@ -63,16 +63,7 @@ class IsometricPlayer extends Player with IsometricRenderable {
     zGround = highestZ;
   }
 
-  Vector2 worldToTileIsometric(Vector2 worldPos) {
-    final tileX =
-        (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.z / 2)) / 2;
-    final tileY =
-        (worldPos.y / (tilesize.z / 2) - worldPos.x / (tilesize.x / 2)) / 2;
-
-    return Vector2(tileX, tileY);
-  }
-
-  @override
+@override
   Vector3 get gridFeetPos {
     Vector3 actualPos = isoPosition;
     return Vector3(
