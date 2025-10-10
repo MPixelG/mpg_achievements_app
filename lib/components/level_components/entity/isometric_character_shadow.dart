@@ -10,14 +10,14 @@ import '../../../core/level/isometric/isometric_tiled_component.dart';
 import 'isometric_player.dart';
 
 class ShadowComponent extends IsoPositionComponent with IsometricRenderable {
-  IsometricPlayer get owner => parent as IsometricPlayer;
 
-  ShadowComponent();
+  IsometricPlayer owner;
+
+  ShadowComponent({required this.owner});
 
   @override
   FutureOr<void> onLoad() {
-    isoPosition = Vector3(0, 0, 0);
-
+    isoPosition = owner.gridFeetPos;
     return super.onLoad();
   }
 

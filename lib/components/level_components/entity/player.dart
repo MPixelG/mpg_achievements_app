@@ -47,7 +47,7 @@ class Player extends AnimatedCharacter
   @override
   Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.
-    startingPosition = Vector2(position.x, position.y);
+    startingPosition = Vector2(isoPosition.x, isoPosition.y);
 
 
 
@@ -241,4 +241,6 @@ class Player extends AnimatedCharacter
   bool get isInHitFrames => _isHitAnimationPlaying;
   @override
   bool get isInRespawnFrames => _isRespawningAnimationPlaying;
+  //get player shadow
+  Component get shadow => game.gameWorld.player.shadow;
 }

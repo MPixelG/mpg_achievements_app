@@ -2,6 +2,8 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
+import 'package:mpg_achievements_app/core/iso_component.dart';
+import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 
 import '../../../core/level/isometric/isometric_renderable.dart';
 import '../../../core/level/isometric/isometric_tiled_component.dart';
@@ -10,7 +12,8 @@ import '../../../util/isometric_utils.dart';
 import 'isometric_character_shadow.dart';
 
 class IsometricPlayer extends Player with IsometricRenderable {
-  late PositionComponent shadowAnchor;
+
+  @override
   late ShadowComponent shadow;
 
   IsometricPlayer({required super.playerCharacter}) {
@@ -20,21 +23,17 @@ class IsometricPlayer extends Player with IsometricRenderable {
 
   @override
   Future<void> onLoad() async {
-    shadowAnchor = PositionComponent(position: Vector2(0, height / 2));
-    add(shadowAnchor);
-    shadow = ShadowComponent(); //removable when positioning is correct
-    shadow.anchor = Anchor.center;
-    add(shadow);
+    shadow = ShadowComponent(owner: this);
     _findGroundBeneath();
-
-
     return super.onLoad();
   }
 
   @override
-  void render(Canvas canvas){
+  void render(Canvas canvas) {
+    super.render(canvas);
     //save the current state of the canvas
     canvas.save();
+  }
 
   //find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
   void _findGroundBeneath() {
@@ -76,7 +75,11 @@ class IsometricPlayer extends Player with IsometricRenderable {
   @override
   Vector3 get gridFeetPos {
     Vector3 actualPos = isoPosition;
-    return Vector3(actualPos.x + 0.8, actualPos.y + 0.8, 1); //todo align correctly
+    return Vector3(
+      actualPos.x + 0.8,
+      actualPos.y + 0.8,
+      1,
+    ); //todo align correctly
   }
 
   @override
@@ -84,7 +87,7 @@ class IsometricPlayer extends Player with IsometricRenderable {
 
   @override
   Vector3 get gridHeadPos {
-    return isoPosition - Vector3(0,0, height);
+    return isoPosition - Vector3(0, 0, height);
   }
 
   @override
@@ -99,10 +102,13 @@ class IsometricPlayer extends Player with IsometricRenderable {
     srcPosition: Vector2.zero(),
   );
   @override
-  void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
-      (Canvas canvas, Paint? overridePaint) {
-        normalSprite.render(canvas, position: isoPosition.xy - Vector2(((scale.x < 0) ? 32 : 0), 0));
-        // canvas.drawCircle(toWorldPos(gridFeetPos).toOffset(), 3, Paint()..color = Colors.blue);
-        // canvas.drawCircle(toWorldPos(gridHeadPos).toOffset(), 3, Paint()..color = Colors.blue);
-      };
+  void Function(Canvas canvas, Paint? overridePaint)
+  get renderNormal => (Canvas canvas, Paint? overridePaint) {
+    normalSprite.render(
+      canvas,
+      position: isoPosition.xy - Vector2(((scale.x < 0) ? 32 : 0), 0),
+    );
+    // canvas.drawCircle(toWorldPos(gridFeetPos).toOffset(), 3, Paint()..color = Colors.blue);
+    // canvas.drawCircle(toWorldPos(gridHeadPos).toOffset(), 3, Paint()..color = Colors.blue);
+  };
 }
