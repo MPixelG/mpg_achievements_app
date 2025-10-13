@@ -7,16 +7,12 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:mpg_achievements_app/util/tileset_utils.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import '../../../util/utils.dart';
-import '../isometric/isometric_tiled_component.dart';
 import 'game_sprite.dart';
 
 class GameTileMap {
   late final Map<Vector3, int> _gids = {};
 
   int? getGidAt(Vector3 pos) => _gids[pos.clone()..floor()];
-
-  final List<RenderInstance> renderableTiles = [];
 
   final Map<int, GameSprite> textures = {};
 
@@ -159,10 +155,10 @@ class GameTileMap {
     Image normalMapImg = (await getNormalImageFromTileset(tileset))!;
 
     final cols = tileset.columns!; //amount of columns in the tileset image
-    final row =
-        localIndex ~/
-        cols; //calculate the row and column of the tile in the tileset image
+
+    final row = localIndex ~/ cols; //calculate the row and column of the tile in the tileset image
     final col = localIndex % cols; //same for column
+
     final srcSize = Vector2(
       tileW * 2,
       tileW * 2,
@@ -187,28 +183,9 @@ class GameTileMap {
       srcSize: srcSize, //and its size
     );
 
-    // Convert the tile's orthogonal grid coordinates to isometric world coordinates.
-    final worldPos =
-        orthogonalToIsometric(
-          Vector2(tileX * tilesize.z, tileY * tilesize.z),
-        ) //transform orthogonal to screen position
-        +
-        Vector2(
-          map.width * tileW,
-          0,
-        ); //shift the map to the center of the screen to be all positive
     // Add the RenderInstance to our cache.
 
     textures[gid] = GameSprite(sprite, normalSprite);
-    renderableTiles.add(
-      RenderInstance(
-        sprite.render,
-        worldPos,
-        Vector3(tileX.toDouble(), tileY.toDouble(), tileZ.toDouble()),
-        RenderCategory.tile,
-        renderNormal: normalSprite.render,
-      ),
-    );
   }
 
   final _spriteImageCache = <Sprite, Image>{};

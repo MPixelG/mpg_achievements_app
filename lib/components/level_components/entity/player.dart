@@ -5,12 +5,15 @@ import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/controllers/character_controller.dart';
+import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
 
 
 import '../../../state_management/providers/player_state_provider.dart';
+import '../../controllers/control_action_bundle.dart';
 import '../saw.dart';
 import 'animation/animation_manager.dart';
 import 'enemy/enemy.dart';
@@ -35,12 +38,10 @@ class Player extends AnimatedCharacter
   bool _isHitAnimationPlaying = false;
   bool _isRespawningAnimationPlaying = false;
   //starting position
-  Vector2 startingPosition = Vector2.zero();
+  Vector2 startingPosition = Vector2.zero(); //todo convert to 3d
 
   //Player name
   String playerCharacter;
-  //Shadow of player
-  late ShadowComponent shadow;
   //Find the ground of player position
   late double zGround = 0.0;
 
@@ -49,7 +50,10 @@ class Player extends AnimatedCharacter
   @override
   Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.
-    startingPosition = Vector2(position.x, position.y);
+    startingPosition = Vector2(position2D.x, position2D.y);
+
+    controller = KeyboardCharacterController<Player>(buildControlBundle());
+    add(controller);
 
     return super.onLoad();
   }
@@ -175,7 +179,7 @@ class Player extends AnimatedCharacter
     //wait for the animation to finish
     updateMovement = true;
     updatePlayerstate(); //update the players feet to the ground
-    position += Vector2.all(
+    isoPosition += Vector3.all(
       32,
     ); //reposition the player, because it had a bit of displacement because of the respawn animation
 
@@ -184,6 +188,16 @@ class Player extends AnimatedCharacter
   }
 
 
+  late KeyboardCharacterController<Player> controller;
+
+  ControlActionBundle<Player> buildControlBundle(){
+    return ControlActionBundle<Player>({
+      ControlAction("moveUp", key: "W", run: (parent) => parent.velocity.y--),
+      ControlAction("moveLeft", key: "A", run: (parent) => parent.velocity.x--),
+      ControlAction("moveDown", key: "S", run: (parent) => parent.velocity.y++),
+      ControlAction("moveRight", key: "D", run: (parent) => parent.velocity.x++),
+    });
+  }
 
   //Getters
   double getzGround() => zGround;

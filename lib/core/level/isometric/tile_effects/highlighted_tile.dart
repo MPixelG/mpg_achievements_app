@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../isometric_renderable.dart';
-import '../isometric_tiled_component.dart';
 import 'explosion_effect.dart';
 
 class TileHighlightRenderable extends PositionComponent
@@ -72,9 +71,6 @@ class TileHighlightRenderable extends PositionComponent
 
   @override
   Vector3 get gridFeetPos => gridPos;
-
-  @override
-  RenderCategory get renderCategory => RenderCategory.tileHighlight;
 
   @override
   Vector3 get gridHeadPos => gridFeetPos + Vector3(0.1, 0.1, 1);

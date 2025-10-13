@@ -3,7 +3,6 @@ import 'package:flame_tiled/flame_tiled.dart' show ObjectGroup, TiledObjectHelpe
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
-import 'package:mpg_achievements_app/util/utils.dart';
 
 import '../../components/level_components/checkpoint/checkpoint.dart';
 import '../../components/level_components/collectables.dart';
@@ -77,14 +76,14 @@ void generateSpawningObjectsForLevel(GameWorld gameWorld) {
           // if checkpoint is already activated in tiled, the original spawnpoint is overridden
           if (isActivated == true) {
             //todo state management implement necessary level.player.lastCheckpoint = checkpoint;
-            gameWorld.player.position = checkpoint.position;
+            gameWorld.player.isoPosition = checkpoint.isoPosition;
           }
           gameWorld.add(checkpoint);
           break;
         case "Enemy":
           //enemy spawning
           gameWorld.enemy = Enemy(enemyCharacter: "Virtual Guy");
-          gameWorld.enemy.position = Vector2(spawnPoint.x, spawnPoint.y);
+          gameWorld.enemy.position2D = Vector2(spawnPoint.x, spawnPoint.y);
           gameWorld.add(gameWorld.enemy);
 
         default:

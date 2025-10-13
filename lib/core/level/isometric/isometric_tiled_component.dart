@@ -5,26 +5,7 @@ import '../rendering/chunk_grid.dart';
 import '../rendering/game_tile_map.dart';
 import 'isometric_renderable.dart';
 
-// An enumeration to categorize renderable objects.
-enum RenderCategory { tile, tileHighlight, characterEffect, entity, effect }
-
 // A data class designed to hold all the necessary information for rendering a single object,
-class RenderInstance {
-  // A function reference that knows how to draw the object.
-  final void Function(Canvas, {Vector2 position, Vector2 size}) render;
-  final void Function(Canvas, {Vector2 position, Vector2 size})? renderNormal;
-  final Vector2 screenPos;
-  final Vector3 gridPos;
-  // The layer index from the Tiled map. This serves as the primary sorting key
-  final RenderCategory category;
-  RenderInstance(
-    this.render,
-    this.screenPos,
-    this.gridPos,
-    this.category, {
-    this.renderNormal,
-  });
-}
 
 // Instead of letting Flame render layer by layer, this component deconstructs the map
 // into a list of individual `RenderInstance` objects
@@ -43,8 +24,6 @@ class IsometricTiledComponent extends TiledComponent {
     // Pre-build the tile cache for efficient rendering later reading data from the Tiled map (every layer every tile)
   }
 
-  List<RenderInstance>? lastRenderables;
-  List<IsometricRenderable>? lastComponents;
   void renderComponentsInTree(
     Canvas canvas,
     List<IsometricRenderable> components,

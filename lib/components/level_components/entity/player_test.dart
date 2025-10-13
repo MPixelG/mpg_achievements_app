@@ -1,11 +1,3 @@
-import 'dart:async';
-
-import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/controllers/character_controller.dart';
-import 'package:mpg_achievements_app/components/controllers/control_action_bundle.dart';
-import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/isometric_player.dart';
-import 'package:mpg_achievements_app/util/isometric_utils.dart';
 /*
 class TestPlayer extends IsometricPlayer{
 

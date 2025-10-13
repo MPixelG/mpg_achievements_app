@@ -5,16 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import '../../../core/level/isometric/isometric_renderable.dart';
-import '../../../core/level/isometric/isometric_tiled_component.dart';
 import 'isometric_player.dart';
 
-class ShadowComponent extends IsoPositionComponent with IsometricRenderable {
+class ShadowComponent extends IsoPositionComponent {
   IsometricPlayer get owner => parent as IsometricPlayer;
 
   ShadowComponent([int priority = -1]){
     this.priority = priority;
     isoPosition = Vector3.zero();
+  }
+
+  @override
+  FutureOr<void> onLoad() {
+    assert(parent is IsometricPlayer, 'ShadowComponent must be added to an IsometricPlayer');
+    return super.onLoad();
   }
 
   @override
@@ -49,9 +53,6 @@ class ShadowComponent extends IsoPositionComponent with IsometricRenderable {
     super.render(canvas);
 
   }
-
-  @override
-  RenderCategory get renderCategory => RenderCategory.characterEffect;
 
   @override
   Vector3 get gridFeetPos => owner.gridFeetPos - Vector3(0.5, 0.5, owner.gridFeetPos.z - owner.zGround);

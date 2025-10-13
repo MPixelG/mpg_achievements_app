@@ -35,6 +35,7 @@ abstract class GameCharacter extends IsoPositionComponent
   void update(double dt){
     if(updateMovement) {
       velocity *= pow(0.05, dt).toDouble();
+      velocity.xy.normalized();
       isoPosition += velocity * dt * movementSpeed;
     }
     super.update(dt);

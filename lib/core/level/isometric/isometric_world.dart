@@ -6,7 +6,6 @@ import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:mpg_achievements_app/components/level_components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/isometric_player.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/player_test.dart';
 
 import '../../../components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
 import '../../../mpg_pixel_adventure.dart';
@@ -37,10 +36,6 @@ class IsometricWorld extends GameWorld {
     player = IsometricPlayer(playerCharacter: 'Pink Man');
     //need to be added here and should not be a child of player because of separate movement when jumping
     await super.onLoad();
-    add(player.shadow);
-
-    add(game.gameWorld.player.shadow);
-    game.gameWorld.player.shadow.parent = game.gameWorld;
     //find the collision layer
     final collisionLayer = level.tileMap.getLayer<ObjectGroup>('Collisions');
     tileGrid = IsometricTileGrid(

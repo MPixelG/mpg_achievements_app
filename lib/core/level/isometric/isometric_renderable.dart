@@ -3,14 +3,11 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 
-import 'isometric_tiled_component.dart';
-
 /// A mixin for components that can be rendered in an isometric view.
 mixin IsometricRenderable {
   Vector3 get gridFeetPos;
   Vector3 get gridHeadPos;
 
-  RenderCategory get renderCategory;
   bool _dirty = true;
   bool updatesNextFrame = false;
 
@@ -24,7 +21,7 @@ mixin IsometricRenderable {
   bool get dirty => _dirty;
 
   @override
-  int get hashCode => Object.hashAll([gridFeetPos, renderCategory]);
+  int get hashCode => Object.hashAll([gridFeetPos]);
 }
 
 double depth(IsometricRenderable? renderable){

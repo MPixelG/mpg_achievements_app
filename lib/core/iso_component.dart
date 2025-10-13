@@ -2,10 +2,11 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:mpg_achievements_app/core/level/isometric/isometric_renderable.dart';
 import 'package:mpg_achievements_app/core/level/rendering/chunk.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
-class IsoPositionComponent extends PositionComponent {
+abstract class IsoPositionComponent extends PositionComponent with IsometricRenderable{
   Vector3 isoPosition = Vector3.zero();
 
   Vector3 get isoPositionAbsolute {
@@ -29,12 +30,18 @@ class IsoPositionComponent extends PositionComponent {
 
 
 
-  @Deprecated('please use isoPosition')
+  @Deprecated('please use isoPosition. if you really need it, use position2D')
   @override
   NotifyingVector2 get position => super.position;
 
 
-  @Deprecated('please use isoPosition')
+  NotifyingVector2 get position2D => super.position;
+  set position2D(Vector2 value) {
+    super.position = value;
+  }
+
+
+  @Deprecated('please use isoPosition. if you really need it, use position2D')
   @override
   set position(Vector2 value) {
     super.position = value;
@@ -76,4 +83,15 @@ class IsoPositionComponent extends PositionComponent {
     }, canvas);
   }
 
+  @override
+  Vector3 get gridFeetPos => isoPosition;
+
+  @override
+  Vector3 get gridHeadPos => isoPosition + Vector3(1, 1, 1);
+
+  @override
+  void Function(Canvas canvas) get renderAlbedo => renderTree;
+
+  @override
+  void Function(Canvas canvas, Paint? overridePaint)? get renderNormal => null;
 }

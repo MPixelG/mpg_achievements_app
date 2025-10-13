@@ -2,7 +2,6 @@
 import 'dart:ui';
 
 import 'package:mpg_achievements_app/core/level/isometric/isometric_renderable.dart';
-import 'package:mpg_achievements_app/core/level/isometric/isometric_tiled_component.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 import 'package:mpg_achievements_app/util/texture_utils.dart';
@@ -45,9 +44,6 @@ class ChunkTile with IsometricRenderable {
 
   @override
   Vector3 get gridHeadPos => gridFeetPos;
-
-  @override
-  RenderCategory get renderCategory => RenderCategory.tile;
 
   @override
   void Function(Canvas canvas) get renderAlbedo {
