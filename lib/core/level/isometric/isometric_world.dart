@@ -39,6 +39,8 @@ class IsometricWorld extends GameWorld {
     await super.onLoad();
     add(player.shadow);
 
+    add(game.gameWorld.player.shadow);
+    game.gameWorld.player.shadow.parent = game.gameWorld;
     //find the collision layer
     final collisionLayer = level.tileMap.getLayer<ObjectGroup>('Collisions');
     tileGrid = IsometricTileGrid(

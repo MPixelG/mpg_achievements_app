@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
@@ -11,15 +10,17 @@ import '../../../core/level/isometric/isometric_tiled_component.dart';
 import 'isometric_player.dart';
 
 class ShadowComponent extends IsoPositionComponent with IsometricRenderable {
+  IsometricPlayer get owner => parent as IsometricPlayer;
 
-  Player owner;
-
-  ShadowComponent({required this.owner});
+  ShadowComponent([int priority = -1]){
+    this.priority = priority;
+    isoPosition = Vector3.zero();
+  }
 
   @override
-  FutureOr<void> onLoad() {
-    isoPosition = owner.gridFeetPos;
-    return super.onLoad();
+  void update(double dt){
+    anchor = Anchor(0, owner.isoPosition.z - owner.zGround + owner.size.y - 3);
+    super.update(dt);
   }
 
   @override
@@ -46,16 +47,17 @@ class ShadowComponent extends IsoPositionComponent with IsometricRenderable {
     // Draw the oval inside the rectangle
     canvas.drawOval(rect, highlightPaint);
     super.render(canvas);
+
   }
 
   @override
   RenderCategory get renderCategory => RenderCategory.characterEffect;
 
   @override
-  Vector3 get gridFeetPos => owner.gridFeetPos - Vector3(0.5, 0.5, -0.2);
+  Vector3 get gridFeetPos => owner.gridFeetPos - Vector3(0.5, 0.5, owner.gridFeetPos.z - owner.zGround);
 
   @override
-  Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 1);
+  Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 0);
 
   @override
   void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {
