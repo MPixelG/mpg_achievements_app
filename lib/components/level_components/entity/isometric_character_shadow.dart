@@ -12,13 +12,15 @@ import 'isometric_player.dart';
 class ShadowComponent extends IsoPositionComponent with IsometricRenderable {
   IsometricPlayer get owner => parent as IsometricPlayer;
 
-  ShadowComponent();
+  ShadowComponent([int priority = -1]){
+    this.priority = -10000;
+    isoPosition = Vector3.zero();
+  }
 
   @override
-  FutureOr<void> onLoad() {
-    isoPosition = Vector3(0, 0, 0);
-
-    return super.onLoad();
+  void update(double dt){
+    anchor = Anchor(0, owner.isoPosition.z - owner.zGround + owner.size.y - 3);
+    super.update(dt);
   }
 
   @override
@@ -45,16 +47,17 @@ class ShadowComponent extends IsoPositionComponent with IsometricRenderable {
     // Draw the oval inside the rectangle
     canvas.drawOval(rect, highlightPaint);
     super.render(canvas);
+
   }
 
   @override
   RenderCategory get renderCategory => RenderCategory.characterEffect;
 
   @override
-  Vector3 get gridFeetPos => owner.gridFeetPos - Vector3(0.5, 0.5, -0.2);
+  Vector3 get gridFeetPos => owner.gridFeetPos - Vector3(0.5, 0.5, owner.gridFeetPos.z - owner.zGround);
 
   @override
-  Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 1);
+  Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 0);
 
   @override
   void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {

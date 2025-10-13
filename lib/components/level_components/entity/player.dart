@@ -14,7 +14,6 @@ import '../../../state_management/providers/player_state_provider.dart';
 import '../saw.dart';
 import 'animation/animation_manager.dart';
 import 'enemy/enemy.dart';
-import 'isometric_character_shadow.dart';
 
 //todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations
@@ -48,8 +47,6 @@ class Player extends AnimatedCharacter
   Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.
     startingPosition = Vector2(position.x, position.y);
-
-
 
     return super.onLoad();
   }

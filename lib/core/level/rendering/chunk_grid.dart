@@ -87,8 +87,6 @@ class ChunkGrid {
     posTL = Vector2(posTL.x.floorToDouble(), posTL.y.floorToDouble());
     albedoCanvas.translate(posTL.x, posTL.y);
     normalCanvas.translate(posTL.x, posTL.y);
-    albedoCanvas.save();
-    normalCanvas.save();
 
     for (var value in chunks.entries) {
       Chunk chunk = value.value;

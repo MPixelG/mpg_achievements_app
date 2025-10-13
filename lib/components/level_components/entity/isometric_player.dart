@@ -7,12 +7,9 @@ import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import '../../../core/level/isometric/isometric_renderable.dart';
 import '../../../core/level/isometric/isometric_tiled_component.dart';
 import '../../../mpg_pixel_adventure.dart';
-import '../../../util/isometric_utils.dart';
 import 'isometric_character_shadow.dart';
 
 class IsometricPlayer extends Player with IsometricRenderable {
-  late PositionComponent shadowAnchor;
-  late ShadowComponent shadow;
 
   IsometricPlayer({required super.playerCharacter}) {
     setCustomAnimationName("falling", "running");
@@ -21,13 +18,8 @@ class IsometricPlayer extends Player with IsometricRenderable {
 
   @override
   Future<void> onLoad() async {
-    shadowAnchor = PositionComponent(position: Vector2(0, height / 2));
-    add(shadowAnchor);
-    shadow = ShadowComponent(); //removable when positioning is correct
-    shadow.anchor = Anchor.center;
-    add(shadow);
+    add(ShadowComponent());
     _findGroundBeneath();
-
 
     return super.onLoad();
   }
