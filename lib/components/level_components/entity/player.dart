@@ -14,6 +14,7 @@ import '../../../state_management/providers/player_state_provider.dart';
 import '../saw.dart';
 import 'animation/animation_manager.dart';
 import 'enemy/enemy.dart';
+import 'isometric_character_shadow.dart';
 
 //todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations

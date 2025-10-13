@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:mpg_achievements_app/core/level/rendering/chunk.dart';
