@@ -4,6 +4,8 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
+import 'package:mpg_achievements_app/components/level_components/entity/isometric_character_shadow.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/isometric_player.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/player_test.dart';
 
 import '../../../components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
@@ -22,9 +24,9 @@ class TileSelectionResult {
 }
 
 class IsometricWorld extends GameWorld {
-  Vector2? selectedTile;
-
+  Vector3? selectedTile;
   TileHighlightRenderable? highlightedTile;
+  late ShadowComponent? shadow;
 
   // Example isometric tile size (width, height)
   IsometricWorld({required super.levelName, required super.calculatedTileSize});
@@ -32,9 +34,10 @@ class IsometricWorld extends GameWorld {
   @override
   Future<void> onLoad() async {
     // Initialize the player as an IsometricPlayer
-    player = TestPlayer(playerCharacter: 'Pink Man');
-
+    player = IsometricPlayer(playerCharacter: 'Pink Man');
+    //need to be added here and should not be a child of player because of separate movement when jumping
     await super.onLoad();
+    add(player.shadow);
 
     add(game.gameWorld.player.shadow);
     game.gameWorld.player.shadow.parent = game.gameWorld;

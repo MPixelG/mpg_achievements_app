@@ -3,6 +3,7 @@ import 'dart:async' as async;
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble.dart';
+import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 class SpeechBubbleState extends State<SpeechBubble>
     with TickerProviderStateMixin {
@@ -13,7 +14,7 @@ class SpeechBubbleState extends State<SpeechBubble>
   late double _playerWidth;
 
   //offset from character(i.e. y/x position from head
-  late final double _bubbleOffset = 30;
+  late final double _bubbleOffset = 10;
 
   ///State variables
   //currently displayed text
@@ -144,13 +145,13 @@ class SpeechBubbleState extends State<SpeechBubble>
     _playerHeight = widget.game.gameWorld.player.height;
     _playerWidth = widget.game.gameWorld.player.width;
     // Adjust the position based on the camera's local to global conversion
-    _playerPosition = widget.game.cam.localToGlobal(
-      widget.game.gameWorld.player.position,
+    _playerPosition = widget.game.cam.localToGlobal(toWorldPos(
+      widget.game.gameWorld.player.isoPosition)
     );
 
     return AnimatedPositioned(
       // The position is now directly derived from the character's state vector
-      left: _playerPosition.x - _playerWidth,
+      left: _playerPosition.x,
       // Center the bubble horizontally
       top: _playerPosition.y - _playerHeight - _bubbleOffset,
       // Position above the character

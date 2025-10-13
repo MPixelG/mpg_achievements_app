@@ -150,6 +150,20 @@ abstract class GameWorld extends World
       AppRouter.router.pushNamed("widgetBuilder");
     } //press H to toggle the GUI editor overlay
 
+
+    // Debug test for SpeechBubble
+    if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
+      // A method to toggle the speech bubble
+      game.overlays.add('SpeechBubble');
+
+    }
+
+    // Debug test for Dialogue
+    if (keysPressed.contains(LogicalKeyboardKey.keyQ)) {
+      // A method to toggle the speech bubble
+      game.overlays.add('DialogueScreen');
+
+    }
     return super.onKeyEvent(event, keysPressed);
   }
 
@@ -204,7 +218,7 @@ abstract class GameWorld extends World
   void update(double dt) {
     if (debugOverlays.scale == Vector2.zero()) return;
 
-    Vector2 roundedPlayerPos = player.position.clone()..round();
+    Vector2 roundedPlayerPos = player.isoPosition.xy.clone()..round();
 
     String playerCoords = roundedPlayerPos.toString();
     debugOverlays.text =

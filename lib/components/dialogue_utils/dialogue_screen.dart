@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'dialogue_engine.dart';
 
-class DialogueScreen extends StatefulWidget {
+class DialogueScreen extends ConsumerStatefulWidget {
   final VoidCallback onDialogueFinished;
   final PixelAdventure game;
 
@@ -14,5 +15,5 @@ class DialogueScreen extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => DialogueScreenState();
+  ConsumerState<DialogueScreen> createState() => DialogueScreenState();
 }

@@ -10,9 +10,7 @@ class TaskNotifier extends Notifier<List<TaskData>> {
 
   @override
   List<TaskData> build() {
-    // TODO: implement build
-    //used to initialise tasklist for level or game in general
-    throw UnimplementedError();
+    return [];
   }
 
 
@@ -43,7 +41,7 @@ class TaskNotifier extends Notifier<List<TaskData>> {
   }
 
 
-  /// Fortschritt updaten
+  // Fortschritt updaten
   void updateProgress(String id, int amount) {
     state = [
       for (final task in state)
