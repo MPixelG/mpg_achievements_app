@@ -1,9 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../models/task_data.dart';
 
 
-// Provider global definieren
+// Provider global definieren //todo Logik mit Liste?
 final taskProvider =  NotifierProvider<TaskNotifier, List<TaskData>> (TaskNotifier.new);
 
 class TaskNotifier extends Notifier<List<TaskData>> {
