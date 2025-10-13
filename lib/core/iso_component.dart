@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:mpg_achievements_app/core/level/rendering/chunk.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 class IsoPositionComponent extends PositionComponent {
@@ -11,7 +12,6 @@ class IsoPositionComponent extends PositionComponent {
     }
     return isoPosition;
   }
-
 
   IsoPositionComponent({
     super.position,
@@ -27,19 +27,51 @@ class IsoPositionComponent extends PositionComponent {
 
 
 
-  @Deprecated('please use the isoPosition to avoid problems')
+  @Deprecated('please use isoPosition')
   @override
   NotifyingVector2 get position => super.position;
 
-  @Deprecated('please use the isoPosition to avoid problems')
+
+  @Deprecated('please use isoPosition')
   @override
   set position(Vector2 value) {
     super.position = value;
   }
 
+  Vector2 get parentSize {
+    if(parent is PositionComponent){
+      return (parent as PositionComponent).size;
+    } else {
+      return Chunk.worldSize;
+    }
+  }
+
   @override
   void update(double dt) {
-    super.update(dt);
-    transform.position = isoToScreen(isoPosition) + Vector2((scale.x < 0) ? size.x : 0, 0);
+    transform.position = anchor.toVector2() + toWorldPos(isoPosition,parentSize.x) + Vector2(isFlippedHorizontally ? size.x : 0, 0);
   }
+
+
+  @override
+  void renderTree(Canvas canvas){
+    decorator.applyChain((p0) {
+
+      List<Component> allComponents = [];
+
+      allComponents.addAll([
+        this, ...children
+      ]);
+
+      allComponents.sort((a, b) => a.priority.compareTo(b.priority)); //todo sort via depth
+
+      for (var element in allComponents) {
+        if (element == this) {
+          element.render(canvas);
+        } else {
+          element.renderTree(canvas);
+        }
+      }
+    }, canvas);
+  }
+
 }

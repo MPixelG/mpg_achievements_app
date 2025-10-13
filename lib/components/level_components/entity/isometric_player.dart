@@ -10,7 +10,6 @@ import '../../../mpg_pixel_adventure.dart';
 import 'isometric_character_shadow.dart';
 
 class IsometricPlayer extends Player with IsometricRenderable {
-  late PositionComponent shadowAnchor;
 
   IsometricPlayer({required super.playerCharacter}) {
     setCustomAnimationName("falling", "running");
@@ -19,14 +18,8 @@ class IsometricPlayer extends Player with IsometricRenderable {
 
   @override
   Future<void> onLoad() async {
-    shadowAnchor = PositionComponent(position: Vector2(0, height / 2));
-    add(shadowAnchor);
-    shadow = ShadowComponent(
-      owner: this,
-    ); //removable when positioning is correct
-    shadow.anchor = Anchor.center;
+    add(ShadowComponent());
     _findGroundBeneath();
-
 
     return super.onLoad();
   }
@@ -72,8 +65,8 @@ class IsometricPlayer extends Player with IsometricRenderable {
 
   @override
   Vector3 get gridFeetPos {
-    Vector2 xYGridPos = toGridPos(absoluteCenter);
-    return Vector3(xYGridPos.x, xYGridPos.y, 1);
+    Vector3 actualPos = isoPosition;
+    return Vector3(actualPos.x + 0.8, actualPos.y + 0.8, 1); //todo align correctly
   }
 
   @override

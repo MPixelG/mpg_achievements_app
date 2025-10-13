@@ -85,8 +85,6 @@ class ChunkGrid {
     Vector2 posTL = -camPos + (viewportSize/2);
     albedoCanvas.translate(posTL.x, posTL.y);
     normalCanvas.translate(posTL.x, posTL.y);
-    albedoCanvas.save();
-    normalCanvas.save();
 
     for (var value in chunks.entries) {
       Chunk chunk = value.value;
