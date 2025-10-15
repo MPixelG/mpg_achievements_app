@@ -46,22 +46,15 @@ class ChunkTile with IsometricRenderable {
   Vector3 get gridHeadPos => gridFeetPos;
 
   @override
-  void Function(Canvas canvas) get renderAlbedo {
-    return (Canvas canvas) async {
-      Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, 0);
-      cachedSprite.albedo.render(canvas, position: position);
-    };
-  }
-
-  @override
-  void Function(Canvas canvas, Paint? overridePaint)? get renderNormal {
-    return (Canvas canvas, Paint? overridePaint) async {
-      Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, 0);
+  void renderTree(Canvas albedoCanvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
+    Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, 0);
+    if(normalCanvas != null) {
       cachedSprite.normalAndDepth?.render(
-        canvas,
+        normalCanvas,
         position: position,
-        overridePaint: overridePaint,
+        overridePaint: getNormalPaint!(),
       );
-    };
+    }
+    cachedSprite.albedo.render(albedoCanvas, position: position);
   }
 }

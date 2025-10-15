@@ -11,8 +11,8 @@ import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/background/background.dart';
 import 'package:mpg_achievements_app/components/background/layered_image_background.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
-import 'package:mpg_achievements_app/components/router/router.dart';
 import 'package:mpg_achievements_app/core/level/tiled_level_reader.dart';
+import 'package:mpg_achievements_app/core/router/router.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../components/background/scrolling_background.dart';
@@ -150,19 +150,20 @@ abstract class GameWorld extends World
       AppRouter.router.pushNamed("widgetBuilder");
     } //press H to toggle the GUI editor overlay
 
+    if (keysPressed.contains(LogicalKeyboardKey.f3)) {//toggle debug mode
+      setDebugMode(!debugMode);
+    }
 
     // Debug test for SpeechBubble
     if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
       // A method to toggle the speech bubble
       game.overlays.add('SpeechBubble');
-
     }
 
     // Debug test for Dialogue
     if (keysPressed.contains(LogicalKeyboardKey.keyQ)) {
       // A method to toggle the speech bubble
       game.overlays.add('DialogueScreen');
-
     }
     return super.onKeyEvent(event, keysPressed);
   }

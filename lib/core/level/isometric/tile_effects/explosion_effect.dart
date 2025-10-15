@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -44,4 +46,7 @@ class ExplosionEffect extends AnimatedCharacter with AnimationManager {
       stepTime: 0.1,
     ),
   ];
+
+  @override
+  Vector3 get isoSize => Vector3(3, 3, 6);
 }

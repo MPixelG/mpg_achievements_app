@@ -241,7 +241,6 @@ class Chunk {
     albedoCanvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
     normalCanvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
 
-    Paint overridePaint = Paint();
     double currentPaintZPos = double.infinity;
 
     int ti = 0, ei = 0;
@@ -279,28 +278,32 @@ class Chunk {
         currentRenderable = additionals[ei++];
       }
 
-      currentRenderable.renderAlbedo(albedoCanvas);
-      if(currentRenderable.renderNormal == null) continue;
-
       if(currentRenderable.gridFeetPos.z != currentPaintZPos) {
-        final double startVal =
-            ((currentRenderable.gridFeetPos.z - 1) / highestZTileInWorld) * 256;
-        final double endVal = (currentRenderable.gridFeetPos.z / highestZTileInWorld);
 
-        overridePaint.colorFilter = ColorFilter.matrix([
-          1, 0, 0, 0,
-          0, 0, 1, 0,
-          0, 0, 0, 0,
-          endVal, 0, startVal, 0,
-          0, 0, 1, 0,
-        ]);
       }
 
-      currentRenderable.renderNormal!(normalCanvas, overridePaint);
+      currentRenderable.renderTree(albedoCanvas, normalCanvas, () => calculateNormalPaint(currentRenderable!));
     }
     albedoCanvas.restore();
     normalCanvas.restore();
   }
+  Paint overridePaint = Paint();
+
+  Paint calculateNormalPaint(IsometricRenderable renderable) {
+    final double startVal =
+        ((renderable.gridFeetPos.z - 1) / highestZTileInWorld) * 256;
+    final double endVal = (renderable.gridFeetPos.z / highestZTileInWorld);
+
+    overridePaint.colorFilter = ColorFilter.matrix([
+      1, 0, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 0,
+      endVal, 0, startVal, 0,
+      0, 0, 1, 0,
+    ]);
+    return overridePaint;
+  }
+
   bool containsRenderable(IsometricRenderable r) {
     double fx = r.gridFeetPos.x;
     double fy = r.gridFeetPos.y;

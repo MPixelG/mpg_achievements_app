@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -17,7 +18,6 @@ import '../../controllers/control_action_bundle.dart';
 import '../saw.dart';
 import 'animation/animation_manager.dart';
 import 'enemy/enemy.dart';
-import 'isometric_character_shadow.dart';
 
 //todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations
@@ -255,4 +255,7 @@ class Player extends AnimatedCharacter
   bool get isInHitFrames => _isHitAnimationPlaying;
   @override
   bool get isInRespawnFrames => _isRespawningAnimationPlaying;
+
+  @override
+  Vector3 get isoSize => Vector3(1, 1, 1);
 }

@@ -28,7 +28,7 @@ class ShadowComponent extends IsoPositionComponent {
   }
 
   @override
-  void render(Canvas canvas) {
+  void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
     // Convert the selected tile's grid coordinates into its center position in the isometric world.
     final tileW = tilesize.x;
     final tileH = tilesize.y;
@@ -68,4 +68,10 @@ class ShadowComponent extends IsoPositionComponent {
   @override
   void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
       (Canvas canvas, Paint? overridePaint) {};
+
+
+  static final Vector3 defaultSize = Vector3(1, 1, 0.1);
+
+  @override
+  Vector3 get isoSize => defaultSize;
 }

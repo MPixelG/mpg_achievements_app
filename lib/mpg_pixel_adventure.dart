@@ -51,7 +51,7 @@ class PixelAdventure extends FlameGame
 
   //bools for game logic
   //needs to go into the overlay_controller later
-  bool showDialogue = true;
+  bool showDialogue = false;
 
   //can be added for touch support
   late String platform;

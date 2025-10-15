@@ -5,7 +5,7 @@ import 'package:flame/sprite.dart';
 import 'package:flutter/cupertino.dart' hide Image;
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
 
-class AnimatedCharacter<T> extends GameCharacter with HasPaint{
+abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
   /// Key with the current playing animation
   T? _current;
 
@@ -198,7 +198,7 @@ class AnimatedCharacter<T> extends GameCharacter with HasPaint{
 
   @mustCallSuper
   @override
-  void render(Canvas canvas) {
+  void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
     animationTicker?.getSprite().render(
       canvas,
       size: size,

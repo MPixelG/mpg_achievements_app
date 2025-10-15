@@ -26,7 +26,10 @@ abstract class IsoPositionComponent extends PositionComponent with IsometricRend
     super.children,
     super.priority,
     super.key,
-  }) : super();
+    Vector3? isoPosition
+  }) : super(){
+    this.isoPosition = isoPosition ?? Vector3.zero();
+  }
 
 
 
@@ -60,11 +63,14 @@ abstract class IsoPositionComponent extends PositionComponent with IsometricRend
     transform.position = anchor.toVector2() + toWorldPos(isoPosition,parentSize.x) + Vector2(isFlippedHorizontally ? size.x : 0, 0);
   }
 
+  @override
+  void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
+    super.render(canvas);
+  }
 
   @override
-  void renderTree(Canvas canvas){
+  void renderTree(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
     decorator.applyChain((p0) {
-
       List<Component> allComponents = [];
 
       allComponents.addAll([
@@ -74,10 +80,13 @@ abstract class IsoPositionComponent extends PositionComponent with IsometricRend
       allComponents.sort((a, b) => a.priority.compareTo(b.priority)); //todo sort via depth
 
       for (var element in allComponents) {
-        if (element == this) {
-          element.render(canvas);
-        } else {
-          element.renderTree(canvas);
+        if (element == this && element is IsoPositionComponent) {
+          element.render(canvas, normalCanvas, getNormalPaint);
+          if (debugMode) {
+            renderDebugMode(canvas);
+          }
+        } else if(element is IsoPositionComponent){
+          element.renderTree(canvas, normalCanvas, getNormalPaint);
         }
       }
     }, canvas);
@@ -87,11 +96,7 @@ abstract class IsoPositionComponent extends PositionComponent with IsometricRend
   Vector3 get gridFeetPos => isoPosition;
 
   @override
-  Vector3 get gridHeadPos => isoPosition + Vector3(1, 1, 1);
+  Vector3 get gridHeadPos => isoPosition + isoSize;
 
-  @override
-  void Function(Canvas canvas) get renderAlbedo => renderTree;
-
-  @override
-  void Function(Canvas canvas, Paint? overridePaint)? get renderNormal => null;
+  Vector3 get isoSize;
 }

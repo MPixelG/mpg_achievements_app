@@ -165,4 +165,8 @@ class Enemy extends AnimatedCharacter
 
   @override
   bool get isInRespawnFrames => isRespawning;
+
+
+  @override
+  Vector3 get isoSize => Vector3(1, 1, 1);
 }

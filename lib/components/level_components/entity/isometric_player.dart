@@ -61,17 +61,6 @@ class IsometricPlayer extends Player {
   }
 
   @override
-  Vector3 get gridFeetPos {
-    Vector3 actualPos = isoPosition;
-    return Vector3(actualPos.x + 0.8, actualPos.y + 0.8, 1); //todo align correctly
-  }
-
-  @override
-  Vector3 get gridHeadPos {
-    return gridFeetPos + Vector3(0.8, 0.8, 1);
-  }
-
-  @override
   void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {
     renderTree(canvas);
     //canvas.drawCircle(toWorldPos(gridHeadPos).toOffset(), 4, Paint()..color = Colors.red);
@@ -82,9 +71,16 @@ class IsometricPlayer extends Player {
     srcSize: tilesize.xy,
     srcPosition: Vector2.zero(),
   );
+
   @override
   void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
       (Canvas canvas, Paint? overridePaint) {
         normalSprite.render(canvas, position: position2D - Vector2(((scale.x < 0) ? 32 : 0), 0));
       };
+
+  @override
+  void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]){
+    super.render(canvas);
+    normalSprite.render(normalCanvas!, position: position2D - Vector2(((scale.x < 0) ? 32 : 0), 0), overridePaint: getNormalPaint!());
+  }
 }

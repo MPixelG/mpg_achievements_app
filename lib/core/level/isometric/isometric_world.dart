@@ -81,7 +81,7 @@ class IsometricWorld extends GameWorld {
 
       // Create the highlight with both grid position and layer index.
       final highlightedTile = TileHighlightRenderable(
-        selectionResult.gridPosition,
+        isoPosition: selectionResult.gridPosition,
       );
 
       // Position the highlight using the layer-aware toWorldPos.

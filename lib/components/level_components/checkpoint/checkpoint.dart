@@ -92,4 +92,7 @@ class Checkpoint extends AnimatedCharacter
       loop: false,
     ),
   ];
+
+  @override
+  Vector3 get isoSize => Vector3(1, 1, 1);
 }

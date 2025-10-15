@@ -4,22 +4,19 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import '../isometric_renderable.dart';
 import 'explosion_effect.dart';
 
-class TileHighlightRenderable extends PositionComponent
+class TileHighlightRenderable extends IsoPositionComponent
     with
         RiverpodComponentMixin,
-        IsometricRenderable,
         CollisionCallbacks,
         HasGameReference<PixelAdventure> {
-  final Vector3 gridPos;
-
   bool done = false;
 
-  TileHighlightRenderable(this.gridPos);
+  TileHighlightRenderable({super.isoPosition});
 
   late final Vector2 tileSize;
 
@@ -28,7 +25,7 @@ class TileHighlightRenderable extends PositionComponent
   void onLoad() {
     // Position the highlight based on the grid position and tile size.
     tileSize = game.gameWorld.tileGrid.tileSize;
-    explosionEffect = ExplosionEffect(this, gridPos);
+    explosionEffect = ExplosionEffect(this, isoPosition);
     add(explosionEffect!);
   }
 
@@ -40,7 +37,7 @@ class TileHighlightRenderable extends PositionComponent
   }
 
   @override
-  void render(Canvas canvas) {
+  void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
     super.render(canvas);
     // Convert the selected tile's grid coordinates into its center position in the isometric world.
     final tileW = tilesize.x;
@@ -70,16 +67,6 @@ class TileHighlightRenderable extends PositionComponent
   }
 
   @override
-  Vector3 get gridFeetPos => gridPos;
+  Vector3 get isoSize => Vector3(1, 1, 0);
 
-  @override
-  Vector3 get gridHeadPos => gridFeetPos + Vector3(0.1, 0.1, 1);
-
-  @override
-  void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {
-    renderTree(canvas);
-  };
-  @override
-  void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
-          (Canvas canvas, Paint? overridePaint) {};
 }
