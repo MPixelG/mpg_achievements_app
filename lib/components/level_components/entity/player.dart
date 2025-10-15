@@ -6,6 +6,7 @@ import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/components/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
@@ -192,6 +193,7 @@ class Player extends AnimatedCharacter
 
   ControlActionBundle<Player> buildControlBundle(){
     return ControlActionBundle<Player>({
+      //setting physics variables/velocity for game_character movement
       ControlAction("moveUp", key: "W", run: (parent) => parent.velocity.y--),
       ControlAction("moveLeft", key: "A", run: (parent) => parent.velocity.x--),
       ControlAction("moveDown", key: "S", run: (parent) => parent.velocity.y++),

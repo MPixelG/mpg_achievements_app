@@ -8,7 +8,8 @@ abstract class CharacterController<T extends Component> extends Component{
 
   @override
   void update(double dt) {
-
+//the characterController loops through all active actions and runs them, it takes the name of the action and runs it with GameCharacter passed on as parent
+  // this way the ControlAction in the player sets the velocity in GameCharacter and lets the player move by adding velocity to its isoPosition
     for (var element in currentlyActiveActions) {
       element.run(parent as T);
     }
@@ -17,7 +18,7 @@ abstract class CharacterController<T extends Component> extends Component{
   }
 
 }
-
+//controlaction scaffolding for controlling the player
 class ControlAction<T extends Component>{
   String name;
   String key;
