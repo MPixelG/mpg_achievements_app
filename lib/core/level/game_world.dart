@@ -232,6 +232,7 @@ abstract class GameWorld extends World
 
   //sets the visibility of all of the hitboxes of all of the components in the level (except for background tiles)
   void setDebugMode(bool val) {
+    debugMode = val;
     for (var value in descendants()) {
       if (value is BackgroundTile) continue;
 

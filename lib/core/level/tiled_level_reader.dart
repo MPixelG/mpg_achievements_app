@@ -1,8 +1,12 @@
+import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart' show ObjectGroup, TiledObjectHelpers;
+import 'package:mpg_achievements_app/core/level/tiled_level.dart';
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
+import 'package:xml/xml.dart';
 
 import '../../components/level_components/checkpoint/checkpoint.dart';
 import '../../components/level_components/collectables.dart';
@@ -156,4 +160,15 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
       }
     }
   }
+}
+
+Future<void> parse(String filename) async{
+  String fileContent = await Flame.assets.readFile(filename);
+
+  XmlDocument document = XmlDocument.parse(fileContent);
+
+  TiledLevel level = TiledLevel.fromXml(document);
+  print('Level width: ${level.width}, height: ${level.height}');
+  print('Number of layers: ${level.layers.length}');
+  print("first layer: ${level.layers[0].name} with width ${level.layers[0].width} and height ${level.layers[0].height}. Data: ${level.layers[0].data}");
 }

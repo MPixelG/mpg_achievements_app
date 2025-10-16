@@ -11,6 +11,7 @@ import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/components/camera/advanced_camera.dart';
+import 'package:mpg_achievements_app/core/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox_system.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 
@@ -63,6 +64,8 @@ class PixelAdventure extends FlameGame
     //all images for the game are loaded into cache when the game start -> could take long at a later stage, but here it is fine for moment being
     await images.loadAllImages();
     add(hitboxGrid);
+
+    //parse("tiles/$currentLevel.tmx");
 
     //world is loaded after initialising all images
     Vector2 tileSize = await getTilesizeOfLevel(currentLevel);
