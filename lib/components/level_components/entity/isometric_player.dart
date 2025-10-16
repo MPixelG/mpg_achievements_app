@@ -59,24 +59,11 @@ class IsometricPlayer extends Player {
 
     return Vector2(tileX, tileY);
   }
-
-  @override
-  void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {
-    renderTree(canvas);
-    //canvas.drawCircle(toWorldPos(gridHeadPos).toOffset(), 4, Paint()..color = Colors.red);
-    //canvas.drawCircle(toWorldPos(gridFeetPos).toOffset(), 2, Paint()..color = Colors.yellow);
-  };
   Sprite normalSprite = Sprite(
     Flame.images.fromCache("playerNormal.png"),
     srcSize: tilesize.xy,
     srcPosition: Vector2.zero(),
   );
-
-  @override
-  void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
-      (Canvas canvas, Paint? overridePaint) {
-        normalSprite.render(canvas, position: position2D - Vector2(((scale.x < 0) ? 32 : 0), 0));
-      };
 
   @override
   void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]){

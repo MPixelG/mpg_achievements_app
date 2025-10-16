@@ -115,9 +115,6 @@ class Enemy extends AnimatedCharacter
   ShapeHitbox? getHitbox() => hitbox;
 
   @override
-  Vector2 getPosition() => position;
-
-  @override
   Vector2 getScale() => scale;
 
   bool climbing = false;

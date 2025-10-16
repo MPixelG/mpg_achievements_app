@@ -23,8 +23,6 @@ mixin HasCollisions
 
   Vector2 getScale();
 
-  Vector2 getPosition();
-
   void setClimbing(bool val);
 
   void setDebugNoClipMode(bool val) => _debugNoClipMode = val;
@@ -65,8 +63,6 @@ mixin HasCollisions
 
     ShapeHitbox? hitbox = getHitbox();
     Vector2 scale = getScale();
-
-    Vector2 position = getPosition();
 
     Vector2 posDiff =
         hitbox!.absolutePosition -

@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/components/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
 import 'package:mpg_achievements_app/components/level_components/collectables.dart';
@@ -39,7 +37,7 @@ class Player extends AnimatedCharacter
   bool _isHitAnimationPlaying = false;
   bool _isRespawningAnimationPlaying = false;
   //starting position
-  Vector2 startingPosition = Vector2.zero(); //todo convert to 3d
+  Vector3 startingPosition = Vector3.zero();
 
   //Player name
   String playerCharacter;
@@ -51,7 +49,7 @@ class Player extends AnimatedCharacter
   @override
   Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.
-    startingPosition = Vector2(position2D.x, position2D.y);
+    startingPosition = isoPosition.clone();
 
     controller = KeyboardCharacterController<Player>(buildControlBundle());
     add(controller);
@@ -156,8 +154,7 @@ class Player extends AnimatedCharacter
     position -= Vector2.all(
       32,
     ); //center the player so that the animation displays correctly (its 96*96 and the player is 32*32)
-    scale.x =
-    1; //flip the player to the right side and a third of the size because the animation is triple of the size
+    scale.x = 1; //flip the player to the right side and a third of the size because the animation is triple of the size
     await playAnimation("disappearing"); //display a disappear animation
     await Future.delayed(Duration(milliseconds: 320));
     //wait for the animation to finish
@@ -165,7 +162,7 @@ class Player extends AnimatedCharacter
     //Positioning the player after respawn
     final respawnPoint = ref.read(playerProvider).lastCheckpoint;
 
-    position = (respawnPoint?.position ?? startingPosition) - Vector2(40, 32);
+    isoPosition = (respawnPoint?.isoPosition ?? startingPosition) - Vector3.all(1);
 
     //position the player at the spawn point and also add the displacement of the animation
     scale = Vector2.all(0); //hide the player
@@ -206,9 +203,6 @@ class Player extends AnimatedCharacter
 
   @override
   ShapeHitbox? getHitbox() => hitbox;
-
-  @override
-  Vector2 getPosition() => position;
 
   @override
   Vector2 getScale() => scale;

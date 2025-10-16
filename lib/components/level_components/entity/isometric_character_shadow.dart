@@ -60,15 +60,6 @@ class ShadowComponent extends IsoPositionComponent {
   @override
   Vector3 get gridHeadPos => gridFeetPos + Vector3(1, 1, 0);
 
-  @override
-  void Function(Canvas canvas) get renderAlbedo => (Canvas canvas) {
-    renderTree(canvas);
-  };
-
-  @override
-  void Function(Canvas canvas, Paint? overridePaint) get renderNormal =>
-      (Canvas canvas, Paint? overridePaint) {};
-
 
   static final Vector3 defaultSize = Vector3(1, 1, 0.1);
 
