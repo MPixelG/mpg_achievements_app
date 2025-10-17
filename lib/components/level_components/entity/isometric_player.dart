@@ -3,12 +3,11 @@ import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
-
+import 'package:mpg_achievements_app/util/isometric_utils.dart';
 import '../../../mpg_pixel_adventure.dart';
 import 'isometric_character_shadow.dart';
 
 class IsometricPlayer extends Player {
-
   IsometricPlayer({required super.playerCharacter}) {
     setCustomAnimationName("falling", "running");
     setCustomAnimationName("jumping", "running");
@@ -22,6 +21,11 @@ class IsometricPlayer extends Player {
     return super.onLoad();
   }
 
+  @override
+  void update(dt){
+    super.update(dt);
+    _findGroundBeneath();
+    }
 
   //find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
   void _findGroundBeneath() {
@@ -30,16 +34,17 @@ class IsometricPlayer extends Player {
     //print("number of blocks: ${blocks.length}");
     double highestZ = 0.0; //default floor
     //the players foot rectangle which mesn easier collision detection with the block
-    final playerFootRectangle = Rect.fromCenter(
-      center: absolutePositionOfAnchor(Anchor.bottomCenter).toOffset(),
-      width: size.x, //maybe adjust necessary for debugging
-      height: 4.0, //thin slice is sufficient
+    final playerFootRectangle = Rect.fromLTWH(
+      isoPosition.x,
+      isoPosition.y + size.y - 5,
+      size.x + 2,
+      4.0,
     );
 
     for (final block in blocks) {
       //make a rectangle from the block position and size
       final blockGroundRectangle = block.toRect();
-      if (playerFootRectangle.overlaps(blockGroundRectangle)) {
+     if (playerFootRectangle.overlaps(blockGroundRectangle)) {
         //what is it ground and what is the zHeight of the block;
         final blockCeiling = block.zPosition! + block.zHeight!;
         if (blockCeiling > highestZ) {
@@ -50,7 +55,6 @@ class IsometricPlayer extends Player {
     zGround = highestZ;
   }
 
-
   Vector2 worldToTileIsometric(Vector2 worldPos) {
     final tileX =
         (worldPos.x / (tilesize.x / 2) + worldPos.y / (tilesize.z / 2)) / 2;
@@ -59,6 +63,7 @@ class IsometricPlayer extends Player {
 
     return Vector2(tileX, tileY);
   }
+
   Sprite normalSprite = Sprite(
     Flame.images.fromCache("playerNormal.png"),
     srcSize: tilesize.xy,
@@ -66,8 +71,29 @@ class IsometricPlayer extends Player {
   );
 
   @override
-  void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]){
+  void render(
+    Canvas canvas, [
+    Canvas? normalCanvas,
+    Paint Function()? getNormalPaint,
+  ]) {
+    if (debugImmortalMode) {
+      final playerFootRectangle = Rect.fromLTWH(
+        isoPosition.x,
+        isoPosition.y + size.y - 5,
+        size.x + 2,
+        4.0,
+      );
+      final debugPaint = Paint()
+        ..color = Colors.yellow
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0;
+      canvas.drawRect(playerFootRectangle, debugPaint);
+    }
     super.render(canvas);
-    normalSprite.render(normalCanvas!, position: position2D - Vector2(((scale.x < 0) ? 32 : 0), 0), overridePaint: getNormalPaint!());
+    normalSprite.render(
+      normalCanvas!,
+      position: position2D - Vector2(((scale.x < 0) ? 32 : 0), 0),
+      overridePaint: getNormalPaint!(),
+    );
   }
 }

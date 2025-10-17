@@ -15,8 +15,8 @@ class CollisionBlock extends PositionComponent
   bool hasCollisionDown;
   bool hasHorizontalCollision;
   bool climbable;
-  int? zPosition;
-  int? zHeight;
+  double? zPosition;
+  double? zHeight;
 
   bool? isIsometric;
   CollisionBlock({

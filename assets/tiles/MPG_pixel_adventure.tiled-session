@@ -48,14 +48,14 @@
         },
         "Level_11.tmx": {
             "expandedObjectLayers": [
-                6,
-                8
+                8,
+                6
             ],
             "scale": 1,
-            "selectedLayer": 0,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 868,
-                "y": 562
+                "x": 450.5,
+                "y": 415.5
             }
         },
         "Level_2.tmx": {
@@ -122,10 +122,10 @@
                 4
             ],
             "scale": 2,
-            "selectedLayer": 0,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 256,
-                "y": 127.5
+                "x": 256.25,
+                "y": 127.25
             }
         },
         "Level_8.tmx": {
@@ -272,7 +272,7 @@
         "Level_11.tmx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
-    "property.type": "int",
+    "property.type": "float",
     "recentFiles": [
         "Level_8.tmx",
         "Level_11.tmx",

@@ -123,8 +123,8 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
         pos = collision.position;
       }
       // get z and zHeight from properties, if not set default to 0 and 16
-      final int z = collision.properties.getValue('z') ?? 0;
-      final int zHeight = collision.properties.getValue('zHeight') ?? 0;
+      final double z = collision.properties.getValue('zPosition') ?? 0;
+      final double zHeight = collision.properties.getValue('zHeight') ?? 0;
 
       switch (collision.class_) {
         case 'Platform':

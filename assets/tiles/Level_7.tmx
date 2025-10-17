@@ -83,8 +83,8 @@
   <object id="24" x="80" y="16" width="16" height="48"/>
   <object id="25" name="Collidable" x="0" y="48" width="16" height="48">
    <properties>
-    <property name="zHeight" type="int" value="100"/>
-    <property name="zPosition" type="int" value="0"/>
+    <property name="zHeight" type="float" value="100"/>
+    <property name="zPosition" type="float" value="0"/>
    </properties>
   </object>
   <object id="26" x="96" y="208" width="96" height="16"/>

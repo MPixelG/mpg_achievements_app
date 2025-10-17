@@ -151,7 +151,7 @@ class Player extends AnimatedCharacter
       Duration(milliseconds: 250),
     ); //wait a quarter of a second for the animation to finish
 
-    position -= Vector2.all(
+    position2D -= Vector2.all(
       32,
     ); //center the player so that the animation displays correctly (its 96*96 and the player is 32*32)
     scale.x = 1; //flip the player to the right side and a third of the size because the animation is triple of the size
@@ -195,6 +195,7 @@ class Player extends AnimatedCharacter
       ControlAction("moveLeft", key: "A", run: (parent) => parent.velocity.x--),
       ControlAction("moveDown", key: "S", run: (parent) => parent.velocity.y++),
       ControlAction("moveRight", key: "D", run: (parent) => parent.velocity.x++),
+      ControlAction("jump", key: "space", run: (parent) => parent.velocity.z++),
     });
   }
 

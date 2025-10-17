@@ -223,7 +223,7 @@ abstract class GameWorld extends World
 
     String playerCoords = roundedPlayerPos.toString();
     debugOverlays.text =
-        "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${toGridPos(_mouseCoords)..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tilesize.x).floor()}, ${(mousePos.y / tilesize.y).floor()}\nCurrentZ ground:${player.zGround}\n";
+        "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${toGridPos(_mouseCoords)..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tilesize.x).floor()}, ${(mousePos.y / tilesize.y).floor()}\nCurrentZ ground:${player.zGround}\nCurrent IsoPositionZ:${player.isoPosition.z}\nCurrent velocity:${player.velocity}";
     debugOverlays.position =
         game.cam.pos - game.cam.visibleWorldRect.size.toVector2() / 2;
 
