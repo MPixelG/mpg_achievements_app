@@ -11,7 +11,6 @@ import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/components/camera/advanced_camera.dart';
-import 'package:mpg_achievements_app/core/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox_system.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 
@@ -42,7 +41,7 @@ class PixelAdventure extends FlameGame
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
-  late String currentLevel = "Level_11";
+  late String currentLevel = "Level_9";
 
   HitboxGrid hitboxGrid = HitboxGrid();
 
@@ -150,7 +149,7 @@ class _FollowCameraComponent extends Component
     super.onMount();
     // Now that the world is mounted, we know its player exists.
     game.cam.player = game.gameWorld.player;
-    game.cam.setFollowPlayer(true, player: game.gameWorld.player, accuracy: 50);
+    game.cam.setFollowPlayer(false, player: game.gameWorld.player, accuracy: 50);
     // This component's only job is to run once, so we remove it immediately.
     removeFromParent();
   }

@@ -10,20 +10,18 @@ abstract class GameCharacter extends IsoPositionComponent
 
   GameCharacter({
     super.position,
-    super.size,
+    required super.size,
     super.scale,
-    super.angle,
-    super.nativeAngle,
     super.anchor,
     super.children,
     super.priority,
     super.key,
   });
   Vector2 get gridPos =>
-      Vector2(isoPosition.x / tilesize.x, isoPosition.y / tilesize.y);
+      Vector2(position.x / tilesize.x, position.y / tilesize.y);
 
   set gridPos(Vector2 newGridPos) {
-    isoPosition.xy = newGridPos * tilesize.x;
+    position.xy = newGridPos * tilesize.x;
   }
 
   Vector3 velocity = Vector3.zero();
@@ -37,9 +35,8 @@ abstract class GameCharacter extends IsoPositionComponent
     if(updateMovement) {
       velocity *= pow(0.05, dt).toDouble();
       velocity.xy.normalized();
-      isoPosition += velocity * dt * movementSpeed;
+      position += velocity * dt * movementSpeed;
     }
     super.update(dt);
   }
-
 }

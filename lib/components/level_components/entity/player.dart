@@ -45,11 +45,11 @@ class Player extends AnimatedCharacter
   late double zGround = 0.0;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
-  Player({required this.playerCharacter, super.position});
+  Player({required this.playerCharacter, super.position}) : super(size: Vector3(1, 1, 1));
   @override
   Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.
-    startingPosition = isoPosition.clone();
+    startingPosition = position.clone();
 
     controller = KeyboardCharacterController<Player>(buildControlBundle());
     add(controller);
@@ -151,7 +151,7 @@ class Player extends AnimatedCharacter
       Duration(milliseconds: 250),
     ); //wait a quarter of a second for the animation to finish
 
-    position -= Vector2.all(
+    position -= Vector3.all(
       32,
     ); //center the player so that the animation displays correctly (its 96*96 and the player is 32*32)
     scale.x = 1; //flip the player to the right side and a third of the size because the animation is triple of the size
@@ -162,14 +162,14 @@ class Player extends AnimatedCharacter
     //Positioning the player after respawn
     final respawnPoint = ref.read(playerProvider).lastCheckpoint;
 
-    isoPosition = (respawnPoint?.isoPosition ?? startingPosition) - Vector3.all(1);
+    position = (respawnPoint?.position ?? startingPosition) - Vector3.all(1);
 
     //position the player at the spawn point and also add the displacement of the animation
-    scale = Vector2.all(0); //hide the player
+    scale = Vector3.all(0); //hide the player
     await Future.delayed(
       Duration(milliseconds: 800),
     ); //wait a bit for the camera to position and increase the annoyance of the player XD
-    scale = Vector2.all(1); //show the player
+    scale = Vector3.all(1); //show the player
     await playAnimation("appearing"); //display an appear animation
 
     await Future.delayed(Duration(milliseconds: 300));
@@ -177,7 +177,7 @@ class Player extends AnimatedCharacter
     //wait for the animation to finish
     updateMovement = true;
     updatePlayerstate(); //update the players feet to the ground
-    isoPosition += Vector3.all(
+    position += Vector3.all(
       32,
     ); //reposition the player, because it had a bit of displacement because of the respawn animation
 
@@ -203,9 +203,6 @@ class Player extends AnimatedCharacter
 
   @override
   ShapeHitbox? getHitbox() => hitbox;
-
-  @override
-  Vector2 getScale() => scale;
 
 
   bool climbing = false;
@@ -251,7 +248,4 @@ class Player extends AnimatedCharacter
   bool get isInHitFrames => _isHitAnimationPlaying;
   @override
   bool get isInRespawnFrames => _isRespawningAnimationPlaying;
-
-  @override
-  Vector3 get isoSize => Vector3(1, 1, 1);
 }

@@ -4,6 +4,8 @@ import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/cupertino.dart' hide Image;
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
+import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
   /// Key with the current playing animation
@@ -45,21 +47,15 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
     this.autoResetTicker = true,
     Paint? paint,
     super.position,
-    super.size,
+    required super.size,
     super.scale,
-    super.angle,
-    super.nativeAngle,
     super.anchor,
     super.children,
     super.priority,
     super.key,
-  }) : assert(
-  (size == null) == (autoResize ?? size == null),
-  '''If size is set, autoResize should be false or size should be null when autoResize is true.''',
-  ),
-        _current = current,
+  }) :  _current = current,
         _animations = animations,
-        _autoResize = autoResize ?? size == null,
+        _autoResize = autoResize ?? true,
         _animationTickers = animations != null
             ? Map.fromEntries(
           animations.entries
@@ -92,12 +88,12 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
         Map<T, bool> removeOnFinish = const {},
         bool autoResetTicker = true,
         Paint? paint,
-        Vector2? position,
-        Vector2? size,
-        Vector2? scale,
+        Vector3? position,
+        required Vector3 size,
+        Vector3? scale,
         double? angle,
         double nativeAngle = 0,
-        Anchor? anchor,
+        Anchor3D? anchor,
         int? priority,
         ComponentKey? key,
       }) : this(
@@ -119,9 +115,7 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
     position: position,
     size: size,
     scale: scale,
-    angle: angle,
     anchor: anchor,
-    nativeAngle: nativeAngle,
     priority: priority,
     key: key,
   );
@@ -201,7 +195,7 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
   void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
     animationTicker?.getSprite().render(
       canvas,
-      size: size,
+      size: tilesize.xy,
       overridePaint: paint,
     );
   }
@@ -231,7 +225,7 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
 
       // Modify only if changed.
       if (size.x != newX || size.y != newY) {
-        size.setValues(newX, newY);
+        size.setValues(newX, newY, 32); //todo check z
       }
 
       _isAutoResizing = false;

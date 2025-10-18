@@ -48,14 +48,14 @@
         },
         "Level_11.tmx": {
             "expandedObjectLayers": [
-                6,
-                8
+                8,
+                6
             ],
-            "scale": 1,
-            "selectedLayer": 0,
+            "scale": 1.5,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 868,
-                "y": 562
+                "x": 931.6666666666665,
+                "y": 370.6666666666667
             }
         },
         "Level_2.tmx": {

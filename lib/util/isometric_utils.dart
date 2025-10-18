@@ -3,10 +3,10 @@ import 'package:vector_math/vector_math.dart';
 import '../../core/level/rendering/chunk.dart';
 import '../../mpg_pixel_adventure.dart';
 
-Vector2 toWorldPos(Vector3 gridPos, [double? levelWidth]) {
+Vector2 toWorldPos(Vector3 gridPos, [double? levelWidth, Vector3? tileSizeOverride]) {
   final localPoint = Vector2(
-    (gridPos.x - gridPos.y) * (tilesize.x / 2),
-    (gridPos.x + gridPos.y) * (tilesize.z / 2),
+    (gridPos.x - gridPos.y) * ((tileSizeOverride ?? tilesize).x / 2),
+    (gridPos.x + gridPos.y) * ((tileSizeOverride ?? tilesize).z / 2),
   );
   // Convert local point to global world position, Add the maps's visual origin offset back to the local point
   // to get the correct world position
@@ -51,7 +51,7 @@ Vector2 worldToTileIsometric(Vector2 worldPos) {
 
 Vector2 isoToScreen(Vector3 iso) {
   return Vector2(
-    (iso.x - iso.y) * tilesize.x / 2,
-    (iso.x + iso.y) * tilesize.z / 2,
+    (iso.x - iso.y) / 2,
+    (iso.x + iso.y) / 4,
   );
 }

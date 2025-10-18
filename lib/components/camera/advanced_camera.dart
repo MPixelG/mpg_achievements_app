@@ -2,12 +2,14 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import '../level_components/entity/animation/animation_style.dart';
 import '../level_components/entity/player.dart';
 
 
-class AdvancedCamera extends CameraComponent {
+class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo completely, currently a mix of old code and new isometric camera code
   AdvancedCamera({
     required World super.world,
     super.width = 640,
@@ -87,6 +89,23 @@ class AdvancedCamera extends CameraComponent {
     initialGivenTime = timeLeft;
 
     this.animationStyle = animationStyle;
+  }
+
+  @override
+  void moveBy(
+      Vector2 offset, {
+        AnimationStyle animationStyle = AnimationStyle.easeOut,
+        double speed = double.infinity,
+        double time = 100,
+        double? zoom,
+      }) {
+    moveTo(
+      pos + offset,
+      animationStyle: animationStyle,
+      speed: speed,
+      time: time,
+      zoom: zoom,
+    );
   }
 
   @override
@@ -213,10 +232,10 @@ class AdvancedCamera extends CameraComponent {
     if (followPlayer) {
       //if the camera is in follow mode we check if we need to reposition the camera to the player
       if (player != null &&
-          viewfinder.position.distanceTo(player!.position) > followAccuracy) {
+          viewfinder.position.distanceTo(toWorldPos(player!.position)) > followAccuracy) {
         // use a short smooth move instead of instant set to avoid small jumps
         moveTo(
-          player!.absoluteCenter,
+          toWorldPos(player!.position),
           time: 250,
           animationStyle: AnimationStyle.easeOut,
         );
@@ -262,4 +281,30 @@ class AdvancedCamera extends CameraComponent {
 
     super.update(dt);
   }
+
+  @override
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+
+    if(keysPressed.contains(LogicalKeyboardKey.f1)){
+      //toggle follow player
+      followPlayer = !followPlayer;
+      return true;
+    }
+    if(keysPressed.contains(LogicalKeyboardKey.arrowUp)){
+      moveBy(Vector2(0, -50));
+    }
+    if(keysPressed.contains(LogicalKeyboardKey.arrowLeft)){
+      moveBy(Vector2(-50, 0));
+    }
+    if(keysPressed.contains(LogicalKeyboardKey.arrowRight)){
+      moveBy(Vector2(50, 0));
+    }
+    if(keysPressed.contains(LogicalKeyboardKey.arrowDown)){
+      moveBy(Vector2(0, 50));
+    }
+
+    return super.onKeyEvent(event, keysPressed);
+  }
+
+
 }

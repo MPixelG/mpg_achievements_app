@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
+import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'isometric_player.dart';
@@ -10,9 +11,9 @@ import 'isometric_player.dart';
 class ShadowComponent extends IsoPositionComponent {
   IsometricPlayer get owner => parent as IsometricPlayer;
 
-  ShadowComponent([int priority = -1]){
+  ShadowComponent([int priority = -1]) : super(size: Vector3(1, 1, 0.1)){
     this.priority = priority;
-    isoPosition = Vector3.zero();
+    position = Vector3.zero();
   }
 
   @override
@@ -23,7 +24,7 @@ class ShadowComponent extends IsoPositionComponent {
 
   @override
   void update(double dt){
-    anchor = Anchor(0, owner.isoPosition.z - owner.zGround + owner.size.y - 3);
+    anchor = Anchor3D(0, owner.position.z - owner.zGround, 0);
     super.update(dt);
   }
 
@@ -62,7 +63,4 @@ class ShadowComponent extends IsoPositionComponent {
 
 
   static final Vector3 defaultSize = Vector3(1, 1, 0.1);
-
-  @override
-  Vector3 get isoSize => defaultSize;
 }

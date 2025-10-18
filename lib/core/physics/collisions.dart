@@ -5,7 +5,6 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
-import 'package:mpg_achievements_app/core/physics/isometric_hitbox.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'collision_block.dart';
@@ -21,7 +20,6 @@ mixin HasCollisions
         HasGameReference<PixelAdventure>{
   ShapeHitbox? getHitbox();
 
-  Vector2 getScale();
 
   void setClimbing(bool val);
 
@@ -34,10 +32,10 @@ mixin HasCollisions
   ShapeHitbox? hitbox;
   @override
   FutureOr<void> onLoad() {
-    hitbox = IsometricHitbox(Vector2.all(1), Vector3.zero());
-    hitbox!.position = Vector2(0, 16);
-
-    add(hitbox!);
+    // hitbox = IsometricHitbox(Vector2.all(1), Vector3.zero());
+    // hitbox!.position = Vector2(0, 16);
+    //
+    // add(hitbox!);
     return super.onLoad();
   }
 
@@ -62,7 +60,6 @@ mixin HasCollisions
     }
 
     ShapeHitbox? hitbox = getHitbox();
-    Vector2 scale = getScale();
 
     Vector2 posDiff =
         hitbox!.absolutePosition -

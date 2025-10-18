@@ -1,4 +1,3 @@
-import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart' show ObjectGroup, TiledObjectHelpers;
@@ -6,6 +5,7 @@ import 'package:mpg_achievements_app/core/level/tiled_level.dart';
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
+import 'package:mpg_achievements_app/util/utils.dart';
 import 'package:xml/xml.dart';
 
 import '../../components/level_components/checkpoint/checkpoint.dart';
@@ -26,13 +26,16 @@ void generateSpawningObjectsForLevel(GameWorld gameWorld) {
     //then we go through the list and check for the class Player, which was also defined as an object in the Óbjectlayer
     //When we find that class we create our player and add it to the level in the defined spawnpoint - ! just says that it can be null
     for (final spawnPoint in spawnPointsLayer.objects) {
+
+      print("spawning object of class: ${spawnPoint.class_} at ${spawnPoint.position}");
+
       switch (spawnPoint.class_) {
         case 'Player':
           //player spawning
 
-          Vector2 twoDimIsoPos = toGridPos(spawnPoint.position, 0);
+          Vector2 twoDimIsoPos = orthogonalToIsometric(spawnPoint.position);
           print("grid pos: $twoDimIsoPos, spawn point: ${spawnPoint.position}");
-          gameWorld.player.isoPosition = Vector3(twoDimIsoPos.x, twoDimIsoPos.y, 1);
+          gameWorld.player.position = Vector3(0, 0, 1);
           gameWorld.player.priority = 1;
           break;
         case 'Collectable':
@@ -75,19 +78,19 @@ void generateSpawningObjectsForLevel(GameWorld gameWorld) {
           final checkpoint = Checkpoint(
             id: id,
             isActivated: isActivated,
-            position: Vector2(spawnPoint.x, spawnPoint.y),
+            position: Vector3.array([...toGridPos(spawnPoint.position).storage, spawnPointsLayer.id?.toDouble() ?? 0.0]),
           );
           // if checkpoint is already activated in tiled, the original spawnpoint is overridden
           if (isActivated == true) {
             //todo state management implement necessary level.player.lastCheckpoint = checkpoint;
-            gameWorld.player.isoPosition = checkpoint.isoPosition;
+            gameWorld.player.position = checkpoint.position;
           }
           gameWorld.add(checkpoint);
           break;
         case "Enemy":
           //enemy spawning
           gameWorld.enemy = Enemy(enemyCharacter: "Virtual Guy");
-          gameWorld.enemy.position2D = Vector2(spawnPoint.x, spawnPoint.y);
+          gameWorld.enemy.position = Vector3(spawnPoint.x, spawnPoint.y, 0); //todo correct reading of z pos
           gameWorld.add(gameWorld.enemy);
 
         default:

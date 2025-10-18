@@ -6,7 +6,7 @@ class SpeechBubble extends StatefulWidget {
   //text to display and position
   final String characterName;
   final Offset targetPosition;
-  final Offset currentPosition;
+  final Offset currentPosition; //todo convert to 3d coords
   final PixelAdventure game;
 
   //callback

@@ -194,9 +194,9 @@ mixin HasMovementAnimations on AnimationManager {
     //if we are going to the right and facing left flip us and the other way round
     //if the velocity is less than 2 we don't animate bc the movement is too slow and not noticeable
     if (velocity.x < -1 && scale.x > 0) {
-      flipHorizontallyAroundCenter();
+      scale.x = -scale.x;
     } else if (velocity.x > 1 && scale.x < 0) {
-      flipHorizontallyAroundCenter();
+      scale.x = -scale.x;
     }
     //Check if moving
     if (velocity.x > 4 || velocity.x < -4) {

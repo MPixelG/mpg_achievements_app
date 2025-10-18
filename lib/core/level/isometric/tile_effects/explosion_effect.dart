@@ -1,7 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import 'package:mpg_achievements_app/util/isometric_utils.dart';
+import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
 
 import '../../../../components/level_components/entity/animation/animation_manager.dart';
 import '../isometric_tiled_component.dart';
@@ -10,12 +9,12 @@ import 'highlighted_tile.dart';
 class ExplosionEffect extends AnimatedCharacter with AnimationManager {
   TileHighlightRenderable tileHighlight;
 
-  ExplosionEffect(this.tileHighlight, Vector3 gridPos) : super(position: toGridPos(gridPos.xy) - Vector2(0, gridPos.z * tilesize.z));
+  ExplosionEffect(this.tileHighlight, Vector3 gridPos) : super(position: gridPos, size: Vector3(3, 3, 6));
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    anchor = Anchor.bottomCenter;
+    anchor = Anchor3D.bottomCenterCenter;
     // The explosion's visual center should align with its position.
     // Play the animation once, and when it's complete, remove this component.
     playAnimation('explosion_1');
@@ -43,7 +42,4 @@ class ExplosionEffect extends AnimatedCharacter with AnimationManager {
       stepTime: 0.1,
     ),
   ];
-
-  @override
-  Vector3 get isoSize => Vector3(3, 3, 6);
 }

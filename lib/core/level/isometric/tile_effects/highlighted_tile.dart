@@ -16,7 +16,7 @@ class TileHighlightRenderable extends IsoPositionComponent
         HasGameReference<PixelAdventure> {
   bool done = false;
 
-  TileHighlightRenderable({super.isoPosition});
+  TileHighlightRenderable({super.position}) : super(size: Vector3.all(1));
 
   late final Vector2 tileSize;
 
@@ -25,7 +25,7 @@ class TileHighlightRenderable extends IsoPositionComponent
   void onLoad() {
     // Position the highlight based on the grid position and tile size.
     tileSize = game.gameWorld.tileGrid.tileSize;
-    explosionEffect = ExplosionEffect(this, isoPosition);
+    explosionEffect = ExplosionEffect(this, position);
     add(explosionEffect!);
   }
 
@@ -65,8 +65,4 @@ class TileHighlightRenderable extends IsoPositionComponent
       highlightPaint,
     );
   }
-
-  @override
-  Vector3 get isoSize => Vector3(1, 1, 0);
-
 }

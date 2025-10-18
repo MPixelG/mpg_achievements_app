@@ -16,7 +16,7 @@ class Hitbox3D extends Component with CollisionCallbacks{
   late Vector3 size;
 
   Vector3 get parentPosition {
-    if(parent is IsoPositionComponent) return (parent as IsoPositionComponent).isoPosition;
+    if(parent is IsoPositionComponent) return (parent as IsoPositionComponent).position;
     return Vector3.zero();
   }
 

@@ -219,7 +219,7 @@ abstract class GameWorld extends World
   void update(double dt) {
     if (debugOverlays.scale == Vector2.zero()) return;
 
-    Vector2 roundedPlayerPos = player.isoPosition.xy.clone()..round();
+    Vector2 roundedPlayerPos = player.position.xz.clone()..round();
 
     String playerCoords = roundedPlayerPos.toString();
     debugOverlays.text =

@@ -2,7 +2,9 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
+import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
+import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import '../../../mpg_pixel_adventure.dart';
 import 'isometric_character_shadow.dart';
@@ -31,7 +33,7 @@ class IsometricPlayer extends Player {
     double highestZ = 0.0; //default floor
     //the players foot rectangle which mesn easier collision detection with the block
     final playerFootRectangle = Rect.fromCenter(
-      center: absolutePositionOfAnchor(Anchor.bottomCenter).toOffset(),
+      center: toWorldPos(absolutePositionOfAnchor(Anchor3D.bottomCenterCenter)).toOffset(),
       width: size.x, //maybe adjust necessary for debugging
       height: 4.0, //thin slice is sufficient
     );
@@ -67,7 +69,7 @@ class IsometricPlayer extends Player {
 
   @override
   void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]){
+    normalSprite.render(normalCanvas!, overridePaint: getNormalPaint!());
     super.render(canvas);
-    normalSprite.render(normalCanvas!, position: position2D - Vector2(((scale.x < 0) ? 32 : 0), 0), overridePaint: getNormalPaint!());
   }
 }

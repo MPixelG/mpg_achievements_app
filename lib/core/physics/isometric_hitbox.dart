@@ -7,10 +7,10 @@ class IsometricHitbox extends PolygonHitbox {
   IsometricHitbox(Vector2 size, Vector3 offset)
     : super(
         [
-          isoToScreen(offset),
-          isoToScreen(Vector3(size.x, 0, 0) + offset),
-          isoToScreen(Vector3(size.x, size.y, 0) + offset),
-          isoToScreen(Vector3(0, size.y, 0) + offset),
+          toWorldPos(offset, 0),
+          toWorldPos(Vector3(size.x, 0, 0) + offset, 0),
+          toWorldPos(Vector3(size.x, size.y, 0) + offset, 0),
+          toWorldPos(Vector3(0, size.y, 0) + offset, 0),
         ],
         anchor: Anchor.topLeft,
         isSolid: true,

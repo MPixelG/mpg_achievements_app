@@ -4,6 +4,7 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
 
 import '../../../core/level/game_world.dart';
+import '../../../core/math/iso_anchor.dart';
 import '../../../state_management/providers/player_state_provider.dart';
 import '../entity/animation/animation_manager.dart';
 import '../entity/player.dart';
@@ -16,7 +17,7 @@ class Checkpoint extends AnimatedCharacter
   final int id;
   bool isActivated;
 
-  Checkpoint({required this.id, this.isActivated = false, super.position});
+  Checkpoint({required this.id, this.isActivated = false, super.position}) : super(size: Vector3.all(1));
 
   @override
   Future<void> onLoad() async {
@@ -28,7 +29,7 @@ class Checkpoint extends AnimatedCharacter
       ),
     );
     playAnimation("noFlag");
-    anchor = Anchor.center;
+    anchor = Anchor3D.center;
 
     return super.onLoad();
   }
@@ -92,7 +93,4 @@ class Checkpoint extends AnimatedCharacter
       loop: false,
     ),
   ];
-
-  @override
-  Vector3 get isoSize => Vector3(1, 1, 1);
 }
