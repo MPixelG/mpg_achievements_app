@@ -149,7 +149,7 @@ class _FollowCameraComponent extends Component
     super.onMount();
     // Now that the world is mounted, we know its player exists.
     game.cam.player = game.gameWorld.player;
-    game.cam.setFollowPlayer(false, player: game.gameWorld.player, accuracy: 50);
+    game.cam.setFollowPlayer(true, player: game.gameWorld.player, accuracy: 50);
     // This component's only job is to run once, so we remove it immediately.
     removeFromParent();
   }

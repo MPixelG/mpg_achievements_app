@@ -11,6 +11,7 @@ class SpeechBubbleState extends State<SpeechBubble>
 
   late Vector2 _playerPosition;
   late double _playerHeight;
+  // ignore: unused_field
   late double _playerWidth;
 
   //offset from character(i.e. y/x position from head

@@ -22,7 +22,7 @@ class Anchor3D {
   static const Anchor3D topLeftCenter = Anchor3D(0.0, 1.0, 0.5);
   static const Anchor3D topLeftRight = Anchor3D(0.0, 1.0, 1.0);
   static const Anchor3D topCenterLeft = Anchor3D(0.5, 1.0, 0.0);
-  static const Anchor3D topCenterCenter = Anchor3D(0.5, 1.0, 0.5);
+  static const Anchor3D topCenter = Anchor3D(0.5, 1.0, 0.5);
   static const Anchor3D topCenterRight = Anchor3D(0.5, 1.0, 1.0);
   static const Anchor3D topRightLeft = Anchor3D(1.0, 1.0, 0.0);
   static const Anchor3D topRightCenter = Anchor3D(1.0, 1.0, 0.5);
@@ -39,7 +39,7 @@ class Anchor3D {
   static const Anchor3D bottomLeftCenter = Anchor3D(0.0, 0.0, 0.5);
   static const Anchor3D bottomCenterLeft = Anchor3D(0.5, 0.0, 0.0);
   static const Anchor3D bottomCenterRight = Anchor3D(0.5, 0.0, 1.0);
-  static const Anchor3D bottomCenterCenter = Anchor3D(0.5, 0.0, 0.5);
+  static const Anchor3D bottomCenter = Anchor3D(0.5, 0.0, 0.5);
   static const Anchor3D bottomRightLeft = Anchor3D(1.0, 0.0, 0.0);
   static const Anchor3D bottomRightRight = Anchor3D(1.0, 0.0, 1.0);
   static const Anchor3D bottomRightCenter = Anchor3D(1.0, 0.0, 0.5);
@@ -103,7 +103,7 @@ class Anchor3D {
     topLeftCenter :"topLeftCenter",
     topLeftRight :"topLeftRight",
     topCenterLeft :"topCenterLeft",
-    topCenterCenter :"topCenterCenter",
+    topCenter :"topCenter",
     topCenterRight :"topCenterRight",
     topRightLeft :"topRightLeft",
     topRightCenter :"topRightCenter",
@@ -120,7 +120,7 @@ class Anchor3D {
     bottomLeftCenter :"bottomLeftCenter",
     bottomCenterLeft :"bottomCenterLeft",
     bottomCenterRight :"bottomCenterRight",
-    bottomCenterCenter :"bottomCenterCenter",
+    bottomCenter :"bottomCenter",
     bottomRightLeft :"bottomRightLeft",
     bottomRightRight :"bottomRightRight",
   };

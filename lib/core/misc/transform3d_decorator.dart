@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flame/extensions.dart';
 import 'package:flame/rendering.dart';
-import 'package:mpg_achievements_app/core/level/rendering/chunk.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import '../math/transform3d.dart';

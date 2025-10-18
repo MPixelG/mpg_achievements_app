@@ -193,11 +193,14 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
   @mustCallSuper
   @override
   void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
+    canvas.save();
+    canvas.translate(-size.x / 2, 0);
     animationTicker?.getSprite().render(
       canvas,
       size: tilesize.xy,
       overridePaint: paint,
     );
+    canvas.restore();
   }
 
   @mustCallSuper

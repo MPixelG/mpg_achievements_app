@@ -106,7 +106,7 @@ abstract class GameWorld extends World
     add(debugOverlays);
     debugOverlays.scale = Vector2.zero(); // Start hidden/scaled down
     debugOverlays.priority =
-        2; // Ensure overlays draw above the rest of the game
+        20; // Ensure overlays draw above the rest of the game
 
     // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
     //game.cam.setMoveBounds(Vector2.zero(), level.size);
@@ -219,11 +219,15 @@ abstract class GameWorld extends World
   void update(double dt) {
     if (debugOverlays.scale == Vector2.zero()) return;
 
-    Vector2 roundedPlayerPos = player.position.xz.clone()..round();
+    Vector3 roundedPlayerPos = player.position.clone()..round();
 
     String playerCoords = roundedPlayerPos.toString();
     debugOverlays.text =
-        "Player: $playerCoords\nMouse: $_mouseCoords\nGrid Mouse Coords isometric: ${toGridPos(_mouseCoords)..floor()} \nGrid Mouse coords Orthogonal: ${(mousePos.x / tilesize.x).floor()}, ${(mousePos.y / tilesize.y).floor()}\nCurrentZ ground:${player.zGround}\n";
+        "Player: $playerCoords\n"
+            "Mouse: $_mouseCoords\n"
+            "Grid Mouse Coords isometric: ${toGridPos(_mouseCoords)..floor()} \n"
+            "Grid Mouse coords Orthogonal: ${(mousePos.x / tilesize.x).floor()}, ${(mousePos.y / tilesize.y).floor()}\n"
+            "CurrentZ ground:${player.zGround}\n";
     debugOverlays.position =
         game.cam.pos - game.cam.visibleWorldRect.size.toVector2() / 2;
 

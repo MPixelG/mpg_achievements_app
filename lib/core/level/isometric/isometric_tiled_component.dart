@@ -9,7 +9,7 @@ import 'isometric_renderable.dart';
 
 // Instead of letting Flame render layer by layer, this component deconstructs the map
 // into a list of individual `RenderInstance` objects
-class IsometricTiledComponent extends TiledComponent {
+class IsometricTiledComponent extends TiledComponent { //todo improve rendering as soon as we only have IsometricTiledComponent in the game
   IsometricTiledComponent(super.map);
 
   late GameTileMap gameTileMap;

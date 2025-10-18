@@ -1,6 +1,5 @@
 import 'package:flame/geometry.dart' as geometry;
 import 'package:flutter/cupertino.dart' hide Matrix4;
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:vector_math/vector_math.dart';
 
 import 'notifying_vector_3.dart';

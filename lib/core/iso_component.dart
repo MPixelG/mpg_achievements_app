@@ -29,7 +29,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
     Anchor3D? anchor,
   }) :
       transform = Transform3D(),
-      _anchor = anchor ?? Anchor3D.bottomLeftRight,
+      _anchor = anchor ?? Anchor3D.bottomLeftLeft,
       super() {
     decorator = IsometricDecorator(transform);
 
@@ -65,7 +65,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
         this, ...children
       ]);
 
-      allComponents.sort((a, b) => a.priority.compareTo(b.priority)); //todo sort via depth
+      allComponents.sort((a, b) => a.priority.compareTo(b.priority)); //todo sort via depth and override childrenFactory to auto sort children
 
       for (var element in allComponents) {
         if (element == this && element is IsoPositionComponent) {
@@ -84,7 +84,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
   Vector3 get gridFeetPos => position;
 
   @override
-  Vector3 get gridHeadPos => position + size;
+  Vector3 get gridHeadPos => position + Vector3(1, 1, 0);
 
   @override
   Anchor3D get anchor => _anchor;

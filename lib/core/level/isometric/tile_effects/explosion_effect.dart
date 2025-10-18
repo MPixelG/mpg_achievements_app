@@ -14,7 +14,7 @@ class ExplosionEffect extends AnimatedCharacter with AnimationManager {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    anchor = Anchor3D.bottomCenterCenter;
+    anchor = Anchor3D.bottomCenter;
     // The explosion's visual center should align with its position.
     // Play the animation once, and when it's complete, remove this component.
     playAnimation('explosion_1');

@@ -54,7 +54,7 @@ class IsometricWorld extends GameWorld {
     Vector2 destTileSize,
   ) async {
     return IsometricTiledComponent(
-      (await TiledComponent.load(filename, destTileSize)).tileMap,
+      (await TiledComponent.load(filename, destTileSize)).tileMap
     );
   }
 
