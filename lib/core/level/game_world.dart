@@ -220,14 +220,23 @@ abstract class GameWorld extends World
     if (debugOverlays.scale == Vector2.zero()) return;
 
     Vector3 roundedPlayerPos = player.position.clone()..round();
+    Vector3 roundedPlayerHeadPos = player.gridHeadPos.clone()..round();
+    Vector3 roundedPlayerSize = player.size.clone()..round();
+    Vector3 roundedPlayerSizeScaled = player.size.clone()..multiply(tilesize)..round();
 
     String playerCoords = roundedPlayerPos.toString();
+    String playerHeadCoords = roundedPlayerHeadPos.toString();
+    String playerSize = roundedPlayerSize.toString();
+    String playerSizeScaled = roundedPlayerSizeScaled.toString();
     debugOverlays.text =
         "Player: $playerCoords\n"
-            "Mouse: $_mouseCoords\n"
-            "Grid Mouse Coords isometric: ${toGridPos(_mouseCoords)..floor()} \n"
-            "Grid Mouse coords Orthogonal: ${(mousePos.x / tilesize.x).floor()}, ${(mousePos.y / tilesize.y).floor()}\n"
-            "CurrentZ ground:${player.zGround}\n";
+        "Player Head: $playerHeadCoords\n"
+        "Player size (unscaled): $playerSize\n"
+        "Player size (scaled): $playerSizeScaled\n"
+        "Mouse: $_mouseCoords\n"
+        "Grid Mouse Coords isometric: ${toGridPos(_mouseCoords)..floor()} \n"
+        "Grid Mouse coords Orthogonal: ${(mousePos.x / tilesize.x).floor()}, ${(mousePos.y / tilesize.y).floor()}\n"
+        "CurrentZ ground:${player.zGround}\n";
     debugOverlays.position =
         game.cam.pos - game.cam.visibleWorldRect.size.toVector2() / 2;
 

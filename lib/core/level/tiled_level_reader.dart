@@ -33,9 +33,9 @@ void generateSpawningObjectsForLevel(GameWorld gameWorld) {
         case 'Player':
           //player spawning
 
-          Vector2 twoDimIsoPos = orthogonalToIsometric(spawnPoint.position);
+          Vector2 twoDimIsoPos = orthogonalToIsometric(spawnPoint.position); //todo fix for level offset.
           print("grid pos: $twoDimIsoPos, spawn point: ${spawnPoint.position}");
-          gameWorld.player.position = Vector3(0, 0, 1);
+          gameWorld.player.position = Vector3(7, 7, 1);
           gameWorld.player.priority = 1;
           break;
         case 'Collectable':

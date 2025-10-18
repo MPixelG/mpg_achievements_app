@@ -55,3 +55,11 @@ Vector2 isoToScreen(Vector3 iso) {
     (iso.x + iso.y) / 4,
   );
 }
+
+@pragma('vm:prefer-inline')
+Vector2 quickConvertSize3dTo2d(Vector3 size) {
+  return Vector2(
+      (size.x + size.z) * 0.866025403784*0.5,
+      size.y + (size.x + size.z) * 0.25
+  );
+}

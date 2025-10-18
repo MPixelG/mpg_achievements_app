@@ -1,9 +1,11 @@
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
+import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/isometric_player.dart';
 
@@ -116,6 +118,14 @@ class IsometricWorld extends GameWorld {
       CameraComponent.currentCamera!.viewfinder.position,
       CameraComponent.currentCamera!.viewport.size,
     );
+
+    if(debugMode) {
+      Vector2 size = (player as IsometricPlayer).size2D;
+      canvas.drawRect(size.toRect().shift(
+          toWorldPos(player.position).toOffset() -
+              Offset(player.size2D.x / 2, 0)), Paint()
+        ..color = Colors.blue.withAlpha(50));
+    }
   }
 
   @override

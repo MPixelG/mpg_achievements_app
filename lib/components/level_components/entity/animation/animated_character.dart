@@ -193,11 +193,13 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
   @mustCallSuper
   @override
   void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
+    super.render(canvas, normalCanvas, getNormalPaint);
+    if(animationTicker == null) return;
+
     canvas.save();
-    canvas.translate(-size.x / 2, 0);
-    animationTicker?.getSprite().render(
+    canvas.translate(-animationTicker!.getSprite().srcSize.x / 2, 0);
+    animationTicker!.getSprite().render(
       canvas,
-      size: tilesize.xy,
       overridePaint: paint,
     );
     canvas.restore();
@@ -223,13 +225,13 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
     if (_autoResize) {
       _isAutoResizing = true;
 
-      final newX = animationTicker?.getSprite().srcSize.x ?? 0;
-      final newY = animationTicker?.getSprite().srcSize.y ?? 0;
-
-      // Modify only if changed.
-      if (size.x != newX || size.y != newY) {
-        size.setValues(newX, newY, 32); //todo check z
-      }
+      // final newX = animationTicker?.getSprite().srcSize.x ?? 0;
+      // final newY = animationTicker?.getSprite().srcSize.y ?? 0;
+      //
+      // // Modify only if changed.
+      // if (size.x != newX || size.y != newY) {
+      //   size.setValues(newX / tilesize.x, newY / tilesize.y, 1); //todo check z
+      // }
 
       _isAutoResizing = false;
     }

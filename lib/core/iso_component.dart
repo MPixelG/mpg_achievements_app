@@ -7,6 +7,7 @@ import 'package:flutter/material.dart' hide Matrix4;
 import 'package:mpg_achievements_app/core/level/isometric/isometric_renderable.dart';
 import 'package:mpg_achievements_app/core/level/rendering/chunk.dart';
 import 'package:mpg_achievements_app/core/misc/transform3d_decorator.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import 'math/iso_anchor.dart';
@@ -52,6 +53,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
   Matrix4 get transformMatrix => transform.transformMatrix;
 
   @override
+  @mustCallSuper
   void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
     super.render(canvas);
   }
@@ -84,7 +86,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
   Vector3 get gridFeetPos => position;
 
   @override
-  Vector3 get gridHeadPos => position + Vector3(1, 1, 0);
+  Vector3 get gridHeadPos => position + size;
 
   @override
   Anchor3D get anchor => _anchor;
@@ -95,7 +97,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
     _onModifiedSizeOrAnchor();
   }
 
-  final NotifyingVector3 _size = NotifyingVector3.all(16);
+  final NotifyingVector3 _size = NotifyingVector3.all(1);
 
   @override
   NotifyingVector3 get size => _size;
@@ -103,13 +105,16 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
   @override
   set size(Vector3 newSize) {
     _size.setFrom(newSize);
+    _onModifiedSizeOrAnchor();
   }
 
   double get width => _size.x;
   double get height => _size.y;
   double get depth => _size.z;
 
-  Vector2 get size2D => isoToScreen(_size);
+  late Vector2 _size2D;
+
+  Vector2 get size2D => _size2D;
 
   @override
   Vector3 get scale => transform.scale;
@@ -212,6 +217,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
 
   void _onModifiedSizeOrAnchor() {
     transform.offset = Vector3(-_anchor.x * _size.x, -_anchor.y * _size.y, -_anchor.z * _size.z);
+    _size2D = quickConvertSize3dTo2d(size.clone()..multiply(tilesize));
   }
 }
 
