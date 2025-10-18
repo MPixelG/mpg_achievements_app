@@ -307,9 +307,11 @@ class Chunk {
   bool containsRenderable(IsometricRenderable r) {
     double fx = r.gridFeetPos.x;
     double fy = r.gridFeetPos.y;
-    return fx >= x * chunkSize &&
+    double hx = r.gridHeadPos.x;
+    double hy = r.gridHeadPos.y;
+    return hx >= x * chunkSize &&
         fx < (x + 1) * chunkSize &&
-        fy >= y * chunkSize &&
+        hy >= y * chunkSize &&
         fy < (y + 1) * chunkSize;
   }
 

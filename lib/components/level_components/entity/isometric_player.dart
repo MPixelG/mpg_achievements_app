@@ -31,7 +31,7 @@ class IsometricPlayer extends Player {
     final blocks = game.gameWorld.children.whereType<CollisionBlock>();
     //print("number of blocks: ${blocks.length}");
     double highestZ = 0.0; //default floor
-    //the players foot rectangle which mesn easier collision detection with the block
+    //the players foot rectangle which means easier collision detection with the block
     final playerFootRectangle = Rect.fromCenter(
       center: toWorldPos(absolutePositionOfAnchor(Anchor3D.bottomLeftLeft)).toOffset(),
       width: size.x, //maybe adjust necessary for debugging

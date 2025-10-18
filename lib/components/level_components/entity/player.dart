@@ -45,7 +45,7 @@ class Player extends AnimatedCharacter
   late double zGround = 0.0;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
-  Player({required this.playerCharacter, super.position}) : super(size: Vector3(0.7, 0.7, 0));
+  Player({required this.playerCharacter, super.position}) : super(size: Vector3(0.5, 0.5, 0));
   @override
   Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.
