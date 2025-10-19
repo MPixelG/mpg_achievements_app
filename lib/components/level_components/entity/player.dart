@@ -202,6 +202,7 @@ class Player extends AnimatedCharacter
       ControlAction("moveLeft", key: "A", run: (parent) => parent.velocity.x--),
       ControlAction("moveDown", key: "S", run: (parent) => parent.velocity.y++),
       ControlAction("moveRight", key: "D", run: (parent) => parent.velocity.x++),
+      ControlAction("jump", key: "space", run: (parent) => parent.velocity.z++),
     });
   }
 

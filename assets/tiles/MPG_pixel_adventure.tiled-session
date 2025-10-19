@@ -122,10 +122,10 @@
                 4
             ],
             "scale": 2,
-            "selectedLayer": 0,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 256,
-                "y": 127.5
+                "x": 256.25,
+                "y": 127.25
             }
         },
         "Level_8.tmx": {
