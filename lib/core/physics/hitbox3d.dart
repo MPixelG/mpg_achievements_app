@@ -9,10 +9,10 @@ import 'package:mpg_achievements_app/util/render_utils.dart';
 import 'package:vector_math/vector_math.dart' show Vector3;
 
 class Hitbox3D extends Component with CollisionCallbacks{
-  Vector3 get position => parentPosition + relativePosition;
+  Vector3 get position => parentPosition + offset;
   Vector3 get secondPosition => position + size;
 
-  Vector3 relativePosition;
+  Vector3 offset;
   late Vector3 size;
 
   Vector3 get parentPosition {
@@ -20,7 +20,7 @@ class Hitbox3D extends Component with CollisionCallbacks{
     return Vector3.zero();
   }
 
-  Hitbox3D(this.relativePosition, this.size);
+  Hitbox3D({Vector3? relativePosition, Vector3? size}) : offset = relativePosition ?? Vector3.zero(), size = size ?? Vector3.all(1);
 
   @override
   FutureOr<void> onLoad() {
@@ -39,7 +39,7 @@ class Hitbox3D extends Component with CollisionCallbacks{
 
   @override
   void render(Canvas canvas) {
-    renderIsoBox(canvas: canvas, start: relativePosition, end: relativePosition + size, originOffset: Offset(size.x / 2, 0));
+    renderIsoBox(canvas: canvas, start: offset, end: offset + size, originOffset: Offset(size.x / 2, 0));
   }
 
   @override

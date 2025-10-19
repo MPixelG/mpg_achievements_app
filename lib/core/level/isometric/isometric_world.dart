@@ -7,7 +7,7 @@ import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/isometric_character_shadow.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/isometric_player.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
 
 import '../../../components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
 import '../../../mpg_pixel_adventure.dart';
@@ -35,7 +35,7 @@ class IsometricWorld extends GameWorld {
   @override
   Future<void> onLoad() async {
     // Initialize the player as an IsometricPlayer
-    player = IsometricPlayer(playerCharacter: 'Pink Man');
+    player = Player(playerCharacter: 'Pink Man');
     //need to be added here and should not be a child of player because of separate movement when jumping
     await super.onLoad();
     //find the collision layer
@@ -47,16 +47,6 @@ class IsometricWorld extends GameWorld {
           .xy, //setting the tile size to match the isometric tile dimensions
       collisionLayer,
       this,
-    );
-  }
-
-  @override
-  Future<TiledComponent> createTiledLevel(
-    String filename,
-    Vector2 destTileSize,
-  ) async {
-    return IsometricTiledComponent(
-      (await TiledComponent.load(filename, destTileSize)).tileMap
     );
   }
 
@@ -120,10 +110,10 @@ class IsometricWorld extends GameWorld {
     );
 
     if(debugMode) {
-      Vector2 size = (player as IsometricPlayer).size2D;
+      Vector2 size = player.size2D;
       canvas.drawRect(size.toRect().shift(
           toWorldPos(player.position).toOffset() -
-              Offset(player.size2D.x / 2, 0)), Paint()
+              Offset(size.x / 2, 0)), Paint()
         ..color = Colors.blue.withAlpha(50));
     }
   }

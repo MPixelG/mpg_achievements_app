@@ -34,7 +34,7 @@ mixin AnimationManager
   ///takes a animation you want to play (for example "idle") and gives you the used animation name for that. this way you can change animations.
   String getAnimation(String name) {
     if (!initialized) {
-      //if we havent loaded the animations yet, we load them in the background and return "idle" for that frame
+      //if we haven't loaded the animations yet, we load them in the background and return "idle" for that frame
       _loadAnimations();
       return "idle";
     }

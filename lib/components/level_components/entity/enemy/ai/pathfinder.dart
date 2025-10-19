@@ -325,8 +325,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
         toWorldPos(otherPos),
       ), //multiply by the tilesize because the current positions are grid positions
       hitboxFilter: (candidate) =>
-          candidate.parent is CollisionBlock &&
-          !(candidate.parent as CollisionBlock).isLadder,
+          candidate.parent is CollisionBlock
     );
 
     return result == null; //if the result is null, theres no collision

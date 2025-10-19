@@ -106,56 +106,26 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
   //convert orthogonal to isometric coordinates
   Vector2 orthogonalToIsometric(Vector2 orthoPos) {
     return Vector2(
-      ((orthoPos.x - orthoPos.y) * 1.0),
+      ((orthoPos.x - orthoPos.y)),
       (orthoPos.x + orthoPos.y) * 0.5,
     );
   }
 
-  bool isIsometric = gameWorld is IsometricWorld;
-
   if (collisionsLayer != null) {
     for (final collision in collisionsLayer.objects) {
-      Vector2 pos;
-
-      if (gameWorld is IsometricWorld) {
-        pos =
-            orthogonalToIsometric(collision.position) +
-            Vector2(Chunk.worldSize.x / 2, 0);
-        pos += orthogonalToIsometric(Vector2(tilesize.x / 2, tilesize.y / 2));
-      } else {
-        pos = collision.position;
-      }
+      Vector2 pos =
+          orthogonalToIsometric(collision.position) +
+          Vector2(Chunk.worldSize.x / 2, 0);
+      pos += orthogonalToIsometric(Vector2(tilesize.x / 2, tilesize.y / 2));
       // get z and zHeight from properties, if not set default to 0 and 16
       final int z = collision.properties.getValue('z') ?? 0;
       final int zHeight = collision.properties.getValue('zHeight') ?? 0;
 
       switch (collision.class_) {
-        case 'Platform':
-          final platform = CollisionBlock(
-            position: pos,
-            size: Vector2(collision.width, collision.height),
-            hasCollisionDown: false,
-            hasHorizontalCollision: false,
-            isIsometric: isIsometric,
-          );
-          gameWorld.add(platform);
-        case 'Ladder':
-          final ladder = CollisionBlock(
-            position: pos,
-            size: Vector2(collision.width - 10, collision.height),
-            climbable: true,
-            hasCollisionDown: false,
-            hasCollisionUp: true,
-            hasHorizontalCollision: false,
-            isLadder: true,
-            isIsometric: isIsometric,
-          );
-          gameWorld.add(ladder);
         default:
           final block = CollisionBlock(
             position: pos,
             size: Vector2(collision.width, collision.height),
-            isIsometric: isIsometric,
             zPosition: z,
             zHeight: zHeight,
           );

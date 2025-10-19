@@ -13,21 +13,10 @@ import 'ai/goals/move_goal.dart';
 import 'ai/goals/pathtracing_goal.dart';
 import 'ai/goals/player_locating_goal.dart';
 
-enum EnemyState {
-  idle,
-  running,
-  jumping,
-  falling,
-  hit,
-  appearing,
-  disappearing,
-}
-
 class Enemy extends AnimatedCharacter
     with
         KeyboardHandler,
         CollisionCallbacks,
-        HasCollisions,
         AnimationManager,
         HasMovementAnimations {
   bool gotHit = false;
@@ -106,20 +95,6 @@ class Enemy extends AnimatedCharacter
     position += Vector3.all(
       32,
     ); //reposition the enemy, because it had a bit of displacement because of the respawn animation
-  }
-
-  @override
-  ShapeHitbox? getHitbox() => hitbox;
-
-
-  bool climbing = false;
-
-  @override
-  void setClimbing(bool val) => climbing = val;
-
-  @override
-  bool get isTryingToGetDownLadder {
-    return true;
   }
 
   @override

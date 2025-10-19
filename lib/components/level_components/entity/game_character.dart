@@ -2,11 +2,14 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 
 abstract class GameCharacter extends IsoPositionComponent
     with HasGameReference<PixelAdventure> {
+
+  Hitbox3D hitbox;
 
   GameCharacter({
     super.position,
@@ -16,7 +19,15 @@ abstract class GameCharacter extends IsoPositionComponent
     super.children,
     super.priority,
     super.key,
-  });
+  }) : hitbox = Hitbox3D(
+          size: Vector3(
+            size.x * 0.5,
+            size.y * 0.5,
+            size.z,
+          ),
+        ) {
+    add(hitbox);
+  }
   Vector2 get gridPos =>
       Vector2(position.x / tilesize.x, position.y / tilesize.y);
 

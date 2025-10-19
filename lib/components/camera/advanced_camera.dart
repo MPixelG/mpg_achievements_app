@@ -30,11 +30,9 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
   double? givenZoom; //the zoom the camera has to reach
 
   double timeLeft = 0; //the time left to get to the given position (seconds)
-  double initialGivenTime =
-      0; //the initial given time for getting to the position (seconds)
+  double initialGivenTime = 0; //the initial given time for getting to the position (seconds)
 
-  AnimationStyle animationStyle = AnimationStyle
-      .linear; // the animation style of the camera. for example 'easeOut' means
+  AnimationStyle animationStyle = AnimationStyle.linear; // the animation style of the camera. for example 'easeOut' means
 
   Vector2 dir =
       Vector2.zero(); //the direction the camera is currently going into
@@ -181,9 +179,7 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
       //if theres an active task with time left
       timeLeft -= dt; //dt is seconds in Flame
 
-      double timeProgress =
-          1 -
-          (timeLeft / initialGivenTime); //progress of the time between 0 and 1
+      double timeProgress = 1 - (timeLeft / initialGivenTime); //progress of the time between 0 and 1
 
       timeProgress = timeProgress.clamp(
         0,
@@ -305,6 +301,4 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
 
     return super.onKeyEvent(event, keysPressed);
   }
-
-
 }

@@ -128,7 +128,7 @@
 39,39,39,39,39,39,39,39,39,39,39,61,61,61,61,61,61,61,61,61,39,39,39,39,39,39,39,39,39,39,39,39,72,72,72,72,72,72,83,83
 </data>
  </layer>
- <objectgroup id="11" name="Spawnpoints" visible="0">
+ <objectgroup id="11" name="Spawnpoints">
   <object id="214" name="Player" type="Player" x="144" y="112" width="16" height="16"/>
  </objectgroup>
  <layer id="2" name="Layer1" width="40" height="30">
@@ -205,7 +205,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="4" name="Layer3" width="40" height="30" visible="0">
+ <layer id="4" name="Layer3" width="40" height="30">
   <properties>
    <property name="zHeight" type="int" value="300"/>
   </properties>
@@ -242,7 +242,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="5" name="Layer4" width="40" height="30" visible="0">
+ <layer id="5" name="Layer4" width="40" height="30">
   <properties>
    <property name="zHeight" type="int" value="400"/>
   </properties>
@@ -279,7 +279,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="6" name="Layer5" width="40" height="30" visible="0">
+ <layer id="6" name="Layer5" width="40" height="30">
   <properties>
    <property name="zHeight" type="int" value="500"/>
   </properties>
@@ -316,7 +316,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="7" name="Layer6" width="40" height="30" visible="0">
+ <layer id="7" name="Layer6" width="40" height="30">
   <properties>
    <property name="zHeight" type="int" value="600"/>
   </properties>
@@ -353,7 +353,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="8" name="Layer7" width="40" height="30" visible="0">
+ <layer id="8" name="Layer7" width="40" height="30">
   <properties>
    <property name="zHeight" type="int" value="700"/>
   </properties>

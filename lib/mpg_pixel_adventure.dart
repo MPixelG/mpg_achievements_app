@@ -17,7 +17,6 @@ import 'package:mpg_achievements_app/util/utils.dart';
 import 'components/level_components/entity/enemy/enemy.dart';
 import 'core/level/game_world.dart';
 import 'core/level/isometric/isometric_world.dart';
-import 'core/level/orthogonal/orthogonal_world.dart';
 
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame
@@ -45,10 +44,6 @@ class PixelAdventure extends FlameGame
 
   HitboxGrid hitboxGrid = HitboxGrid();
 
-  //variable for normal N E S W Movement and isometric Movement
-  //a normal hot reload to change the movement isn't enough, you have to do a hot restart!
-  static bool isometricMovement = true;
-
   //bools for game logic
   //needs to go into the overlay_controller later
   bool showDialogue = false;
@@ -68,23 +63,12 @@ class PixelAdventure extends FlameGame
 
     //world is loaded after initialising all images
     Vector2 tileSize = await getTilesizeOfLevel(currentLevel);
-    String orientationOfLevel = await getOrientationOfLevel(currentLevel);
 
-    if (orientationOfLevel == "orthogonal") {
-      gameWorld = OrthogonalWorld(
-        levelName: currentLevel,
-        calculatedTileSize: tileSize.xyy,
-      );
-    } else if (orientationOfLevel == "isometric") {
-      gameWorld = IsometricWorld(
-        levelName: currentLevel,
-        calculatedTileSize: tileSize.xxy,
-      ); //on the horizontal axis, the tile is rectangular. on the side its half the size (z-axis)
-    } else {
-      throw UnimplementedError(
-        "an orientation of $orientationOfLevel isn't implemented! please use either orthogonal or isometric!",
-      );
-    }
+    gameWorld = IsometricWorld(
+      levelName: currentLevel,
+      calculatedTileSize: tileSize.xxy,
+    ); //on the horizontal axis, the tile is rectangular. on the side its half the size (z-axis)
+
 
     cam = AdvancedCamera(world: gameWorld);
     cam.viewfinder.anchor = Anchor.center;

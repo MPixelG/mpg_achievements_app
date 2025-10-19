@@ -1,22 +1,26 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
-import 'package:mpg_achievements_app/components/level_components/collectables.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
+import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
+import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 
 import '../../../state_management/providers/player_state_provider.dart';
 import '../../controllers/control_action_bundle.dart';
-import '../saw.dart';
 import 'animation/animation_manager.dart';
-import 'enemy/enemy.dart';
+import 'isometric_character_shadow.dart';
 
 //todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations
@@ -44,6 +48,9 @@ class Player extends AnimatedCharacter
   //Find the ground of player position
   late double zGround = 0.0;
 
+
+  late KeyboardCharacterController<Player> controller;
+
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position}) : super(size: Vector3(0.5, 0.5, 0));
   @override
@@ -53,6 +60,12 @@ class Player extends AnimatedCharacter
 
     controller = KeyboardCharacterController<Player>(buildControlBundle());
     add(controller);
+
+    add(ShadowComponent());
+    _findGroundBeneath();
+
+    setCustomAnimationName("falling", "running");
+    setCustomAnimationName("jumping", "running");
 
     return super.onLoad();
   }
@@ -111,38 +124,6 @@ class Player extends AnimatedCharacter
     return super.onKeyEvent(event, keysPressed);
   }
 
-  //checking collisions with an inbuilt method that checks if player is colliding
-  @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    //here the player checks if the hitbox that it is colliding with is a Collectable or saw, if so it calls the collidedWithPlayer method of class Collectable
-    if (other is Collectable) {
-      other.collidedWithPlayer();
-    }
-
-    if (other is Saw && !debugImmortalMode) {
-      //todo separation into PlayerState logic
-      Future(() {
-        // Wrap the provider modification in a future
-        ref.read(playerProvider.notifier).takeHit();
-      });
-    }
-
-    if (other is Enemy && !debugImmortalMode) {
-      Future(() {
-        // Wrap the provider modification in a future
-        ref.read(playerProvider.notifier).takeHit();
-      });
-    }
-
-    if (other is Collectable && other.interactiveTask) {
-      //todo state management for tasks
-      game.showDialogue = true;
-      game.overlays.add('DialogueScreen');
-      game.overlays.add('SpeechBubble');
-    }
-    super.onCollision(intersectionPoints, other);
-  }
-
   void _respawn() async {
     updateMovement = false;
     velocity = Vector3.zero(); //reset velocity
@@ -185,8 +166,32 @@ class Player extends AnimatedCharacter
     _isRespawningAnimationPlaying = false;
   }
 
+  //find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
+  void _findGroundBeneath() {
+    // the highest ground block beneath the player
+    final blocks = game.gameWorld.children.whereType<CollisionBlock>();
+    //print("number of blocks: ${blocks.length}");
+    double highestZ = 0.0; //default floor
+    //the players foot rectangle which means easier collision detection with the block
+    final playerFootRectangle = Rect.fromCenter(
+      center: toWorldPos(absolutePositionOfAnchor(Anchor3D.bottomLeftLeft)).toOffset(),
+      width: size.x, //maybe adjust necessary for debugging
+      height: 4.0, //thin slice is sufficient
+    );
 
-  late KeyboardCharacterController<Player> controller;
+    for (final block in blocks) {
+      //make a rectangle from the block position and size
+      final blockGroundRectangle = block.toRect();
+      if (playerFootRectangle.overlaps(blockGroundRectangle)) {
+        //what is it ground and what is the zHeight of the block;
+        final blockCeiling = block.zPosition! + block.zHeight!;
+        if (blockCeiling > highestZ) {
+          highestZ = blockCeiling.toDouble();
+        }
+      }
+    }
+    zGround = highestZ;
+  }
 
   ControlActionBundle<Player> buildControlBundle(){
     return ControlActionBundle<Player>({
@@ -200,18 +205,6 @@ class Player extends AnimatedCharacter
 
   //Getters
   double getzGround() => zGround;
-
-  @override
-  ShapeHitbox? getHitbox() => hitbox;
-
-
-  bool climbing = false;
-
-  @override
-  void setClimbing(bool val) => climbing = val;
-
-  @override
-  bool get isTryingToGetDownLadder => true;
 
   @override
   List<AnimationLoadOptions> get animationOptions => [
@@ -236,6 +229,17 @@ class Player extends AnimatedCharacter
 
     ...movementAnimationDefaultOptions,
   ];
+
+  Sprite normalSprite = Sprite(
+    Flame.images.fromCache("playerNormal.png"),
+    srcSize: tilesize.xy,
+    srcPosition: Vector2.zero(),
+  );
+  @override
+  void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]){
+    normalSprite.render(normalCanvas!, overridePaint: getNormalPaint!());
+    super.render(canvas);
+  }
 
   @override
   String get componentSpriteLocation => "Main Characters/Ninja Frog";

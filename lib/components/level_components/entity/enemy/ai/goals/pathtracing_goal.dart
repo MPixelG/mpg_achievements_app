@@ -3,20 +3,18 @@ import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
-import 'package:mpg_achievements_app/core/physics/collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../../player.dart';
 import 'goal.dart';
 
-
+//todo fix in isometric
 class PathtracingGoal extends Goal {
   PixelAdventure get game =>
       (parent!.parent as HasGameReference<PixelAdventure>).game;
   Vector2 get center => (parent!.parent as PositionComponent).center;
   Vector2 get absolutePosition =>
       (parent!.parent as PositionComponent).absolutePosition;
-  ShapeHitbox? get hitbox => (parent!.parent as HasCollisions).hitbox;
 
   double time = 0;
   double timeSinceLastUpdate = 1;
@@ -56,13 +54,8 @@ class PathtracingGoal extends Goal {
       numberOfRays: timeSinceLastUpdate < 1 ? numberOfRays * 3 : numberOfRays,
       rays: rays,
       out: results,
-      ignoreHitboxes: [?hitbox],
-      hitboxFilter: (candidate) {
-        if (candidate.parent is CollisionBlock) {
-          return !(candidate.parent as CollisionBlock).isLadder;
-        }
-        return candidate.parent is Player;
-      },
+      //ignoreHitboxes: [?hitbox],
+      hitboxFilter: (candidate) => candidate.parent is CollisionBlock || candidate.parent is Player,
     );
 
     if (checkIntersectionChange(results, lastResults)) {

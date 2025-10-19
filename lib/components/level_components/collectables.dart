@@ -8,7 +8,8 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../core/level/game_world.dart';
 import 'entity/player.dart';
-
+//todo convert to 3d or remove
+@Deprecated("not yet converted to 3d")
 class Collectable extends SpriteAnimationComponent
     with HasGameReference<PixelAdventure>, CollisionCallbacks {
   static int totalAmountOfCollectables = 0;

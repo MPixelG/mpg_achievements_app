@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-import 'isometric_player.dart';
-
 class ShadowComponent extends IsoPositionComponent {
-  IsometricPlayer get owner => parent as IsometricPlayer;
+  Player get owner => parent as Player;
 
   ShadowComponent([int priority = -1]) : super(size: Vector3(1, 1, 0.1)){
     this.priority = priority;
@@ -18,7 +17,7 @@ class ShadowComponent extends IsoPositionComponent {
 
   @override
   FutureOr<void> onLoad() {
-    assert(parent is IsometricPlayer, 'ShadowComponent must be added to an IsometricPlayer');
+    assert(parent is Player, 'ShadowComponent must be added to an Player');
     return super.onLoad();
   }
 

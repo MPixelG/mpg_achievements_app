@@ -74,9 +74,7 @@ class ScrollingBackground extends Background with HasGameReference {
           Vector2(64, 64) - cameraPos + size / 2; //move the tiles back
     }
 
-    time %=
-        double.maxFinite -
-        1000; //if the time is close to the double limit, then reset it
+    time %= double.maxFinite - 1000; //if the time is close to the double limit, then reset it
   }
 
   Vector2 calculateAbsoluteTilePosition(

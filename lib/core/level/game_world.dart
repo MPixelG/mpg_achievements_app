@@ -34,7 +34,6 @@ abstract class GameWorld extends World
         RiverpodComponentMixin {
   final String levelName;
   late TiledComponent level;
-  late final bool isometricLevel;
   late Player player;
   late Enemy enemy;
   int totalCollectables = 0;
@@ -66,17 +65,10 @@ abstract class GameWorld extends World
     //otherwise the rest of the programme would stop
     // Load the Tiled map for the current level.
     // Determine if the level is isometric based on the game world's type.
-    isometricLevel = (game.gameWorld is IsometricWorld) ? true : false;
-    if (isometricLevel) {
-      level = IsometricTiledComponent(
-        (await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap,
-      );
-      level.position = Vector2.zero();
-    } else {
-      level = TiledComponent(
-        (await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap,
-      );
-    }
+    level = IsometricTiledComponent(
+      (await TiledComponent.load('$levelName.tmx', tilesize.xz)).tileMap,
+    );
+    level.position = Vector2.zero();
 
     //add player
     await add(game.gameWorld.player);
@@ -84,13 +76,7 @@ abstract class GameWorld extends World
     // Add the level to the game world so it gets rendered.
     await add(level);
 
-    // If level not Parallax, load level with  scrolling background, property is added in Tiled
-    if (level.tileMap.getLayer('Level')?.properties.getValue('Parallax') ??
-        false) {
-      _loadParallaxBackground();
-    } else {
-      _loadScrollingBackground();
-    }
+    _loadScrollingBackground();
 
     generator = POIGenerator(
       this,
@@ -105,21 +91,13 @@ abstract class GameWorld extends World
     // Debug mode off by default
     add(debugOverlays);
     debugOverlays.scale = Vector2.zero(); // Start hidden/scaled down
-    debugOverlays.priority =
-        20; // Ensure overlays draw above the rest of the game
+    debugOverlays.priority = 2; // Ensure overlays draw above the rest of the game
 
     // Set dynamic movement bounds for the camera, allowing smooth tracking of the player.
     //game.cam.setMoveBounds(Vector2.zero(), level.size);
 
     //runs all the other onLoad-events the method is referring to, now not important
     await super.onLoad();
-  }
-
-  Future<TiledComponent> createTiledLevel(
-    String filename,
-    Vector2 destTileSize,
-  ) async {
-    return TiledComponent.load(filename, destTileSize);
   }
 
   //creating a background dynamically
@@ -180,8 +158,7 @@ abstract class GameWorld extends World
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
     //_highlightedTile?.removeFromParent();
-    final Vector2 screenPositionTap =
-        event.localPosition; //screen position of the tap
+    final Vector2 screenPositionTap = event.localPosition; //screen position of the tap
     final Vector2 worldPositionTap = level.toLocal(screenPositionTap);
     //selectedTile = toGridPos(worldPositionTap)..floor();
     //final Vector2 calculatedGridPos = toGridPos(worldPositionTap);
@@ -210,7 +187,10 @@ abstract class GameWorld extends World
 
     //clickGridPos.clamp(Vector2.zero(), Vector2(level.width / tileSize.x - 1, level.height / tileSize.y - 1));
 
-    if (this is IsometricWorld) {
+    if (clickGridPos.x > 0 &&
+        clickGridPos.y > 0 &&
+        clickGridPos.x < (level.tileMap.map.width) &&
+        clickGridPos.y < (level.tileMap.map.height)) {
       inspectTile(clickGridPos.x.toInt(), clickGridPos.y.toInt());
     }
   }
@@ -255,12 +235,6 @@ abstract class GameWorld extends World
 
   //gets mouse position Vector2
   Vector2 get mousePos => _mouseCoords;
-
-  //if parallax effect, this method is called
-  void _loadParallaxBackground() {
-    background = LayeredImageBackground.ofLevel(this, game.cam);
-    add(background);
-  }
 
   void _loadScrollingBackground() {
     final Layer? backgroundLayer = level.tileMap.getLayer('Level');

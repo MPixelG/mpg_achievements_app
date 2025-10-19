@@ -9,12 +9,6 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 class CollisionBlock extends PositionComponent
     with CollisionCallbacks, HasGameReference<PixelAdventure> {
   //position and size is given and passed in to the PositionComponent with super
-  bool isPlatform;
-  bool isLadder;
-  bool hasCollisionUp;
-  bool hasCollisionDown;
-  bool hasHorizontalCollision;
-  bool climbable;
   int? zPosition;
   int? zHeight;
 
@@ -22,13 +16,6 @@ class CollisionBlock extends PositionComponent
   CollisionBlock({
     super.position,
     super.size,
-    this.isPlatform = false,
-    this.hasCollisionUp = true,
-    this.hasCollisionDown = true,
-    this.hasHorizontalCollision = true,
-    this.climbable = false,
-    this.isLadder = false,
-    this.isIsometric,
     this.zPosition = 0,
     this.zHeight = 0,
   });

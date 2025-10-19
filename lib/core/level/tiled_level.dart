@@ -48,7 +48,7 @@ class TiledLevel {
       final data = <List<int>>[];
       for (final row in rows) {
         final gids = (row.trim().split(',')..removeWhere((element) => element.isEmpty)).map((gid) {
-          print("gid: '${gid}'");
+          print("gid: '$gid'");
           return int.parse(gid.trim());
         }).toList();
         if (gids.length != layerWidth) {

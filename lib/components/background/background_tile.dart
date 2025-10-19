@@ -7,7 +7,7 @@ class BackgroundTile extends SpriteComponent with HasGameReference {
   //Background color is set in Tiled builder for each level in the property backgroundColor
   final String color;
 
-  //sets how fast the backlground scrolls
+  //sets how fast the background scrolls
   final double scrollSpeed = 0.4;
 
   Vector2 backgroundPos = Vector2.zero();

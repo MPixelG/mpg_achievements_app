@@ -28,8 +28,7 @@ bool checkCollision(Player player, CollisionBlock block) {
 
   /* Convert the player's hitbox to its absolute rectangular bounds in the game world.
   `toAbsoluteRect()` takes into account the component's position and anchor.*/
-  final playerRect = playerHitbox!.toAbsoluteRect();
-
+  final Rect playerRect = playerHitbox!.position.xy.toPositionedRect(playerHitbox.size.xy);
   /* The block is also a PositionComponent, so we can get its absolute bounding box.
   Convert the block (also a PositionComponent) to its absolute rectangle.
   This accounts for its size, position, and any parent transformations.
@@ -141,24 +140,6 @@ num max<T extends num>(List<T> vals) {
   }
 
   return smallestVal ?? 0;
-}
-
-Future<String> getOrientationOfLevel(String levelName) async {
-  String content = await rootBundle.loadString('assets/tiles/$levelName.tmx');
-  List<String> lines = content.split('\n');
-
-  int indexOfOrientationDeclaration =
-      lines[1].indexOf("orientation=\"") +
-      13; //include the length of 'orientation="'
-  int indexOfNextSemicolon = lines[1].indexOf(
-    "\"",
-    indexOfOrientationDeclaration,
-  );
-
-  return lines[1].substring(
-    indexOfOrientationDeclaration,
-    indexOfNextSemicolon,
-  );
 }
 
 Vector2 orthogonalToIsometric(Vector2 ortho) {

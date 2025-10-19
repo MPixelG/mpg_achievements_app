@@ -214,9 +214,7 @@ class MoveGoal extends Goal {
       //multiply by the tilesize because the current positions are grid positions
       hitboxFilter: (candidate) =>
           candidate.parent
-              is CollisionBlock && //we only want to check for collision blocks
-          !(candidate.parent as CollisionBlock)
-              .isLadder, //and ignore ladders, because these are walkthrough
+              is CollisionBlock //we only want to check for collision blocks
     );
 
     return result == null; //if the result is null, theres no collision

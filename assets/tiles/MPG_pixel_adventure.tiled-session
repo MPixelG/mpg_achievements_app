@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Level_11.tmx",
+    "activeFile": "Level_9.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -137,11 +137,11 @@
             }
         },
         "Level_9.tmx": {
-            "scale": 1.2782589285714285,
-            "selectedLayer": 0,
+            "scale": 2,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 559.745747913247,
-                "y": 280.06845248489503
+                "x": 560.25,
+                "y": 150
             }
         },
         "Lever_3.tmx": {
@@ -269,13 +269,15 @@
     "mapScene.enableWorlds": false,
     "openFiles": [
         "Level_8.tmx",
-        "Level_11.tmx"
+        "Level_11.tmx",
+        "Level_9.tmx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
     "property.type": "int",
     "recentFiles": [
         "Level_8.tmx",
         "Level_11.tmx",
+        "Level_9.tmx",
         "mpg_first_tiledMap.tmx",
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",
@@ -284,8 +286,7 @@
         "Level_5.tmx",
         "grass_concrete.tsx",
         "Level_6.tmx",
-        "industrial_tiles_bg_2.tsx",
-        "Level_7.tmx"
+        "industrial_tiles_bg_2.tsx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",
