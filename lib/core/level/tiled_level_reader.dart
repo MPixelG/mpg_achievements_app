@@ -13,7 +13,6 @@ import '../../components/level_components/collectables.dart';
 import '../../components/level_components/entity/enemy/enemy.dart';
 import '../../components/level_components/saw.dart';
 import 'game_world.dart';
-import 'isometric/isometric_world.dart';
 import 'rendering/chunk.dart';
 
 void generateSpawningObjectsForLevel(GameWorld gameWorld) {

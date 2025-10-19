@@ -33,7 +33,7 @@ void renderIsoBox({
   required Canvas canvas,
   required Vector3 start,
   required Vector3 end,
-  required Offset originOffset,
+  Offset originOffset = Offset.zero,
   Color edgeColor = const Color(0xFF000000),
   double edgeWidth = 1.0,
   Color topColor = const Color(0xFFCCCCCC),

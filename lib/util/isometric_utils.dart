@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:vector_math/vector_math.dart';
 
 import '../../core/level/rendering/chunk.dart';
@@ -62,4 +64,31 @@ Vector2 quickConvertSize3dTo2d(Vector3 size) {
       (size.x + size.z) * 0.866025403784*0.5,
       size.y + (size.x + size.z) * 0.25
   );
+}
+
+Vector2 project(Vector3 p, double scaleX, double scaleY, double zScale) {
+  double sx = (p.x - p.y) * scaleX;
+  double sy = (p.x + p.y) * scaleY - p.z * zScale;
+  return Vector2(sx, sy);
+}
+
+Vector2 projectedBounds(Vector3 size, double scaleX, double scaleY, double zScale) {
+  List<Vector3> corners = [
+    Vector3(-size.x/2, -size.y/2, 0),
+    Vector3(size.x/2, -size.y/2, 0),
+    Vector3(-size.x/2, size.y/2, 0),
+    Vector3(size.x/2, size.y/2, 0),
+    Vector3(-size.x/2, -size.y/2, size.z),
+    Vector3(size.x/2, -size.y/2, size.z),
+    Vector3(-size.x/2, size.y/2, size.z),
+    Vector3(size.x/2, size.y/2, size.z),
+  ];
+  double minX = double.infinity, minY = double.infinity;
+  double maxX = double.negativeInfinity, maxY = double.negativeInfinity;
+  for (var c in corners) {
+    var s = project(c, scaleX, scaleY, zScale);
+    minX = min(minX, s.x); minY = min(minY, s.y);
+    maxX = max(maxX, s.x); maxY = max(maxY, s.y);
+  }
+  return Vector2(maxX - minX, maxY - minY);
 }

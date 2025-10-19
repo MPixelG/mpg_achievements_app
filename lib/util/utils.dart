@@ -28,7 +28,7 @@ bool checkCollision(Player player, CollisionBlock block) {
 
   /* Convert the player's hitbox to its absolute rectangular bounds in the game world.
   `toAbsoluteRect()` takes into account the component's position and anchor.*/
-  final Rect playerRect = playerHitbox!.position.xy.toPositionedRect(playerHitbox.size.xy);
+  final Rect playerRect = playerHitbox.position.xy.toPositionedRect(playerHitbox.size.xy);
   /* The block is also a PositionComponent, so we can get its absolute bounding box.
   Convert the block (also a PositionComponent) to its absolute rectangle.
   This accounts for its size, position, and any parent transformations.
@@ -101,7 +101,7 @@ Future<Vector2> getTilesizeOfLevel(String levelName) async {
 
   int indexOfTilesizeWidthDeclaration =
       lines[1].indexOf("tilewidth=\"") +
-      11; //include the length of 'tilewidh="'
+      11; //include the length of 'tilewidth="'
   int indexOfTilesizeHeightDeclaration =
       lines[1].indexOf("tileheight=\"") +
       12; //include the length of 'tileheight="'

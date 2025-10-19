@@ -48,9 +48,6 @@ class PixelAdventure extends FlameGame
   //needs to go into the overlay_controller later
   bool showDialogue = false;
 
-  //can be added for touch support
-  late String platform;
-
   //Future is a value that is returned even thought a value of the method is not computed immediately, but later
   //FutureOr works same here either returns a Future or <void>
   @override

@@ -214,9 +214,9 @@ class Transform3D extends ChangeNotifier {
   /// creating a new Vector3 object in this method.
   Vector3 localToGlobal(Vector3 point, {Vector3? output}) {
     final m = transformMatrix.storage;
-    final x = m[0] * point.x + m[4] * point.y + m[12];
-    final y = m[1] * point.x + m[5] * point.y + m[13];
-    final z = m[2] * point.x + m[6] * point.y + m[14];
+    final x = m[0] * point.x + m[4] * point.y + m[8] * point.z + m[12];
+    final y = m[1] * point.x + m[5] * point.y + m[9] * point.z + m[13];
+    final z = m[2] * point.x + m[6] * point.y + m[10] * point.z + m[14];
     return (output?..setValues(x, y, z)) ?? Vector3(x, y, z);
   }
 

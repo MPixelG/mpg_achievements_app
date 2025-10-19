@@ -217,7 +217,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
 
   void _onModifiedSizeOrAnchor() {
     transform.offset = Vector3(-_anchor.x * _size.x, -_anchor.y * _size.y, -_anchor.z * _size.z);
-    _size2D = quickConvertSize3dTo2d(size.clone()..multiply(tilesize));
+    _size2D = projectedBounds(size.clone(), tilesize.x, tilesize.y, tilesize.z);
   }
 }
 

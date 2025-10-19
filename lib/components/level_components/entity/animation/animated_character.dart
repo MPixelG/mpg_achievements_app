@@ -5,7 +5,6 @@ import 'package:flame/sprite.dart';
 import 'package:flutter/cupertino.dart' hide Image;
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
 import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
   /// Key with the current playing animation

@@ -8,6 +8,9 @@ import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
+import 'package:mpg_achievements_app/core/level/rendering/chunk.dart';
+import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
+import 'package:mpg_achievements_app/util/render_utils.dart';
 
 import '../../../components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
 import '../../../mpg_pixel_adventure.dart';
@@ -110,11 +113,16 @@ class IsometricWorld extends GameWorld {
     );
 
     if(debugMode) {
-      Vector2 size = player.size2D;
-      canvas.drawRect(size.toRect().shift(
-          toWorldPos(player.position).toOffset() -
-              Offset(size.x / 2, 0)), Paint()
-        ..color = Colors.blue.withAlpha(50));
+
+      Vector3 scaledPlayerPos = player.position.xyz;
+      Vector3 start = scaledPlayerPos;
+      Vector3 end = player.size.clone()..multiply(tilesize);
+
+      renderIsoBox(canvas: canvas, start: Vector3.zero(), end: end.xzy, fillSides: false, originOffset: toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftLeft)).toOffset());
+      canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftLeft).xzy).toOffset(), 1, Paint()..color = Colors.red);
+      canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomRightRight).xzy).toOffset(), 1, Paint()..color = Colors.green);
+      canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomRightLeft).xzy).toOffset(), 1, Paint()..color = Colors.blue);
+      canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftRight).xzy).toOffset(), 1, Paint()..color = Colors.cyan);
     }
   }
 

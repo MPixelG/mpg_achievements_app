@@ -6,6 +6,7 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
@@ -15,6 +16,7 @@ import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
+import 'package:mpg_achievements_app/util/render_utils.dart';
 
 
 import '../../../state_management/providers/player_state_provider.dart';
@@ -52,7 +54,7 @@ class Player extends AnimatedCharacter
   late KeyboardCharacterController<Player> controller;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
-  Player({required this.playerCharacter, super.position}) : super(size: Vector3(0.5, 0.5, 0));
+  Player({required this.playerCharacter, super.position}) : super(size: Vector3(0.5, 0.5, 1));
   @override
   Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.

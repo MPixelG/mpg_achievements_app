@@ -9,7 +9,6 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/background/background.dart';
-import 'package:mpg_achievements_app/components/background/layered_image_background.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/core/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/core/router/router.dart';

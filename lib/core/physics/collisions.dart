@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'collision_block.dart';
