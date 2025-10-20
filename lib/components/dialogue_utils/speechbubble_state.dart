@@ -15,7 +15,7 @@ class SpeechBubbleState extends State<SpeechBubble>
   late double _playerWidth;
 
   //offset from character(i.e. y/x position from head
-  late final double _bubbleOffset = 10;
+  late final double _bubbleOffset = 40;
 
   ///State variables
   //currently displayed text

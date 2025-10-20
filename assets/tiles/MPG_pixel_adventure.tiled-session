@@ -54,8 +54,8 @@
             "scale": 1.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 931.6666666666665,
-                "y": 370.6666666666667
+                "x": 1024,
+                "y": 512.3333333333333
             }
         },
         "Level_2.tmx": {
@@ -133,15 +133,15 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 1024.5,
-                "y": 511.5
+                "y": 355.5
             }
         },
         "Level_9.tmx": {
-            "scale": 2,
+            "scale": 1,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 560.25,
-                "y": 150
+                "x": 386.5,
+                "y": 177.5
             }
         },
         "Lever_3.tmx": {
@@ -224,11 +224,11 @@
             "scaleInEditor": 1
         },
         "mpg_first_tiledMap.tmx": {
-            "scale": 0.75,
+            "scale": 0.33,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 2418.666666666667,
-                "y": 809.3333333333334
+                "x": 2440.909090909091,
+                "y": 798.4848484848485
             }
         },
         "parralax_city_0.tsx": {
@@ -275,10 +275,10 @@
     "project": "MPG_pixel_adventure.tiled-project",
     "property.type": "int",
     "recentFiles": [
+        "mpg_first_tiledMap.tmx",
         "Level_8.tmx",
         "Level_11.tmx",
         "Level_9.tmx",
-        "mpg_first_tiledMap.tmx",
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",
         "Level_1.tmx",

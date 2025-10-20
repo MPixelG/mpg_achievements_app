@@ -82,15 +82,18 @@ class DialogueScreenState extends ConsumerState<DialogueScreen> with DialogueVie
   /// initializes the [DialogueRunner].
   Future<void> _initializeDialogue() async {
     // Helper class to load and parse the .yarn file.
-    final yarnCreator = DialogueYarnCreator();
-    await yarnCreator.loadYarnFile('assets/yarn/test.yarn');
+    final yarnCreator = DialogueYarnCreator(
+      widget.yarnFilePath, // Use the path from the widget
+      commands: widget.commands,         // Use the commands from the widget
+    );
+    await yarnCreator.loadYarnFile();
 
     // Store the compiled project and the raw script text.
     _project = yarnCreator.project;
     _rawYarnScript = yarnCreator.script;
 
     // Create the DialogueRunner, providing it with the project and a
-    // list of views. `[this]` means this class will handle UI events.
+    // list of views. `[this]` means this class will handle UI events. properties passed into the widget are used for yarnCreation
     _dialogueRunner = DialogueRunner(
       yarnProject: _project,
       dialogueViews: [this],

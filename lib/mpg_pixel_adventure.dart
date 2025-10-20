@@ -40,7 +40,7 @@ class PixelAdventure extends FlameGame
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
-  late String currentLevel = "Level_9";
+  late String currentLevel = "Level_7";
 
   HitboxGrid hitboxGrid = HitboxGrid();
 

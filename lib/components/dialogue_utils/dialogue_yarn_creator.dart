@@ -1,49 +1,46 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:jenny/jenny.dart';
 
 class DialogueYarnCreator extends Component with DialogueView {
+  DialogueYarnCreator(this.yarnFilePath, {this.commands = const {}});
 
-  DialogueYarnCreator();
-
+  final String yarnFilePath;
   late YarnProject project;
-  late String yarnFilePath;
   late String script;
+  final Map<String, Function> commands;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    await loadYarnFile('assets/yarn/test.yarn');
+    await loadYarnFile();
   }
 
-
   // Parse the Yarn script into a YarnProject
-  Future<YarnProject> loadYarnFile(String yarnfile) async {
-    script = await rootBundle.loadString(yarnfile);
-    project = YarnProject()
-      //..commands.addCommand2<String, int>('createTask', createTask)
-      ..commands.addCommand0('playeryes', playerYes as FutureOr<void> Function())
-      ..commands.addCommand0('playerno', playerNo as FutureOr<void> Function() )
-      //..commands.addCommand1<String>('progressStart', taskProvider.notifier.read(node))
-      //..commands.addCommand2<String, int>('progressUpdate', progressUpdate) //add providers and methods
-      ..parse(script);
+  Future<YarnProject> loadYarnFile() async {
+    script = await rootBundle.loadString(yarnFilePath);
+    project = YarnProject();
+    _registerCommands();
+    project.parse(script);
     return project;
   }
 
-  void playerYes() {
-    if (kDebugMode) {
-      print('Yes');
+void _registerCommands() {
+    for (final entry in commands.entries) {
+      final name = entry.key;
+      final command = entry.value;
+      if (command is FutureOr<void> Function()) {
+        project.commands.addCommand0(name, command);
+      } else if (command is FutureOr<void> Function(String)) {
+        project.commands.addCommand1<String>(name, command);
+      } else if (command is FutureOr<void> Function(String, String)) {
+        project.commands.addCommand2<String, String>(name, command);
+      } else if (command is FutureOr<void> Function(int)) {
+        project.commands.addCommand1<int>(name, command);
+      }
+      //more adding possible if necessary
     }
   }
-
-  void playerNo() {
-    if (kDebugMode) {
-      print('no');
-    }
-  }
-
- }
-
+}

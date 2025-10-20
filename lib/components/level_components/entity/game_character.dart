@@ -38,6 +38,7 @@ abstract class GameCharacter extends IsoPositionComponent
   Vector3 velocity = Vector3.zero();
   bool updateMovement = true;
   static const double movementSpeed = 0.3;
+  static const double jumpSpeed = 3;
 
 
   @override
@@ -45,7 +46,7 @@ abstract class GameCharacter extends IsoPositionComponent
     //position is updated here and character(Player) moves in the direction assigned by the variables in the player at the moment
     if(updateMovement) {
       velocity *= pow(0.05, dt).toDouble();
-      velocity.xy.normalized();
+      velocity.xyz.normalized();
       position += velocity * dt * movementSpeed;
     }
     super.update(dt);
