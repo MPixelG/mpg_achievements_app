@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Level_9.tmx",
+    "activeFile": "Level_11.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -51,11 +51,11 @@
                 8,
                 6
             ],
-            "scale": 1.5,
+            "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1024,
-                "y": 512.3333333333333
+                "x": 659.75,
+                "y": 331.25
             }
         },
         "Level_2.tmx": {
@@ -275,10 +275,10 @@
     "project": "MPG_pixel_adventure.tiled-project",
     "property.type": "int",
     "recentFiles": [
-        "mpg_first_tiledMap.tmx",
         "Level_8.tmx",
-        "Level_11.tmx",
         "Level_9.tmx",
+        "Level_11.tmx",
+        "mpg_first_tiledMap.tmx",
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",
         "Level_1.tmx",

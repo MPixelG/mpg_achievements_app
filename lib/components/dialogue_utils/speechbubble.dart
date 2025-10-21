@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble_state.dart';
 import '../../mpg_pixel_adventure.dart';
 
-class SpeechBubble extends StatefulWidget {
+class SpeechBubble extends ConsumerStatefulWidget {
   //text to display and position
   final String characterName;
   final Offset targetPosition;
@@ -24,5 +25,5 @@ class SpeechBubble extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => SpeechBubbleState();
+  ConsumerState<SpeechBubble> createState() => SpeechBubbleState();
 }

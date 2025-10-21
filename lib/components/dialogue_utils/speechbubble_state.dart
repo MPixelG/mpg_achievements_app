@@ -2,10 +2,11 @@ import 'dart:async' as async;
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
-class SpeechBubbleState extends State<SpeechBubble>
+class SpeechBubbleState extends ConsumerState<SpeechBubble>
     with TickerProviderStateMixin {
   ///Position reference
 
@@ -146,9 +147,8 @@ class SpeechBubbleState extends State<SpeechBubble>
     _playerHeight = widget.game.gameWorld.player.height;
     _playerWidth = widget.game.gameWorld.player.width;
     // Adjust the position based on the camera's local to global conversion
-    _playerPosition = widget.game.cam.localToGlobal(toWorldPos(
-      widget.game.gameWorld.player.position)
-    );
+    _playerPosition = widget.game.cam.localToGlobal(toWorldPos(widget.game.gameWorld.player.position));
+
 
     return AnimatedPositioned(
       // The position is now directly derived from the character's state vector
