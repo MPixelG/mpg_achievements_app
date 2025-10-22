@@ -138,7 +138,6 @@ class ChunkGrid {
 
       currentlyRebuilding = false;
 
-      //canvas.drawLine((chunkPos - Vector2(0, chunk.zHeightUsedPixels.toDouble())).toOffset(), chunkPos.toOffset(), Paint()..color = Colors.green);
     }
 
     await Future.wait([
@@ -149,7 +148,6 @@ class ChunkGrid {
       fullNormal?.dispose();
       fullAlbedo = lastAlbedo;
       fullNormal = lastNormal;
-      //print("frame on ${DateTime.now().millisecond}");
     });
   }
 
@@ -181,11 +179,6 @@ class ChunkGrid {
 
     shader!.setImageSampler(0, fullAlbedo!);
     shader!.setImageSampler(1, fullNormal!);
-
-    //Vector2 mousePos = PixelAdventure.currentInstance.gameWorld.mousePos - camPos;
-    // mousePos.x /= viewportSize.x;
-    // mousePos.y /= viewportSize.y;
-    //print(mousePos);
 
     double time = DateTime.now().millisecondsSinceEpoch / 10000;
     double lightX = cos(time) * 600;

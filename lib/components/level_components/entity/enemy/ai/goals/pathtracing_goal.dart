@@ -47,7 +47,7 @@ class PathtracingGoal extends Goal {
         .toList(); //update the last results and make sure not to create a reference
     results.clear(); //clear all the values
 
-    game.collisionDetection.raycastAll(
+/*    game.collisionDetection.raycastAll(
       //raycast rays in all different directions and deposit the results in the results Set
       startAngle: -90,
       rayOriginPoint,
@@ -56,7 +56,7 @@ class PathtracingGoal extends Goal {
       out: results,
       //ignoreHitboxes: [?hitbox],
       hitboxFilter: (candidate) => candidate.parent is CollisionBlock || candidate.parent is Player,
-    );
+    );*/ //todo fix in 3d
 
     if (checkIntersectionChange(results, lastResults)) {
       //if sth changed, we reset the timer since the last intersection with sth movable

@@ -45,6 +45,7 @@ class ChunkTile with IsometricRenderable {
   @override
   Vector3 get gridHeadPos => gridFeetPos;
 
+  final Paint renderPaint = Paint()..isAntiAlias = false..filterQuality = FilterQuality.none;
   @override
   void renderTree(Canvas albedoCanvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
     Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, 0);
@@ -55,6 +56,6 @@ class ChunkTile with IsometricRenderable {
         overridePaint: getNormalPaint!(),
       );
     }
-    cachedSprite.albedo.render(albedoCanvas, position: position);
+    cachedSprite.albedo.render(albedoCanvas, position: position, overridePaint: renderPaint);
   }
 }

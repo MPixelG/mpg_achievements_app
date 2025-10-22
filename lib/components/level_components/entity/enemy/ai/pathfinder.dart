@@ -9,10 +9,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/enemy/ai/tile_grid.dart';
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/raycasting_3d.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../../../../core/level/game_world.dart';
 import '../../../../../core/level/isometric/isometric_world.dart';
+import '../../../../../core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
 import 'isometric_tile_grid.dart';
 
 enum PathfindingAction { walk, jump, fall, climbUp, climbDown }
@@ -318,7 +320,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
       direction: direction,
     ); //calculate the ray
 
-    RaycastResult<ShapeHitbox>? result = game.collisionDetection.raycast(
+    RaycastResult3D<ShapeHitbox3D>? result/* = game.collisionDetection.raycast(
       //and use it to raycast
       ray,
       maxDistance: firstPos.distanceTo(
@@ -326,7 +328,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
       ), //multiply by the tilesize because the current positions are grid positions
       hitboxFilter: (candidate) =>
           candidate.parent is CollisionBlock
-    );
+    )*/; //todo fix in 3d
 
     return result == null; //if the result is null, theres no collision
   }

@@ -16,7 +16,6 @@ import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
-import 'package:mpg_achievements_app/util/render_utils.dart';
 
 
 import '../../../state_management/providers/player_state_provider.dart';
@@ -54,7 +53,7 @@ class Player extends AnimatedCharacter
   late KeyboardCharacterController<Player> controller;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
-  Player({required this.playerCharacter, super.position}) : super(size: Vector3(0.5, 0.5, 1));
+  Player({required this.playerCharacter, super.position}) : super(size: Vector3(0.8, 0.8, 0.8));
   @override
   Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.
@@ -240,8 +239,8 @@ class Player extends AnimatedCharacter
   );
   @override
   void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]){
-    normalSprite.render(normalCanvas!, overridePaint: getNormalPaint!());
     super.render(canvas);
+    //normalSprite.render(normalCanvas!, overridePaint: getNormalPaint!(), position: toWorldPos(position) - Vector2(animationTicker!.getSprite().srcSize.x / 2, 0));
   }
 
   @override

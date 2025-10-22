@@ -208,7 +208,7 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
       );
 
       if (givenZoom != null) {
-        //if there was a zoom given, it has to be calculated aswell
+        //if there was a zoom given, it has to be calculated as well
         double zoom = initialZoom! + (givenZoom! - initialZoom!) * progressVal;
         viewfinder.zoom = zoom;
       }

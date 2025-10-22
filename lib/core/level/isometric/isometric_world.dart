@@ -8,8 +8,8 @@ import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
-import 'package:mpg_achievements_app/core/level/rendering/chunk.dart';
 import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
+import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/util/render_utils.dart';
 
 import '../../../components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
@@ -65,6 +65,8 @@ class IsometricWorld extends GameWorld {
     Vector2? selectedTile = toGridPos(worldPositionTap)..floor();
 
     log("pos: $selectedTile");
+
+    //add(CollisionBlock(position: selectedTile));
 
     // Use the function to find the top-most tile.
     final selectionResult = getTopmostTileAtGridPos(selectedTile);

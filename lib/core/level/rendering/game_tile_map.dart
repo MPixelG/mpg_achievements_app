@@ -22,14 +22,12 @@ class GameTileMap {
 
   late int totalZLayers;
 
-  GameTileMap(this.tiledMap);
-
-  Future<void> init() async {
+  GameTileMap(this.tiledMap){
     totalZLayers = tiledMap.layers.whereType<TileLayer>().length;
-    return await _buildTileCache(tiledMap);
+    _buildTileCache(tiledMap);
   }
 
-  Future<void> _buildTileCache(TiledMap map) async {
+  void _buildTileCache(TiledMap map) {
     // For a standard diamond isometric map, the visual width of a tile is half its source image width. Aspect ratio is 2:1.
     final tileW = map.tileWidth.toDouble() / 2;
     final tileH = map.tileHeight.toDouble();

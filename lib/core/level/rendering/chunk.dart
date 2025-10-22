@@ -287,7 +287,7 @@ class Chunk {
     albedoCanvas.restore();
     normalCanvas.restore();
   }
-  Paint overridePaint = Paint();
+  Paint overridePaint = Paint()..isAntiAlias = false..filterQuality = FilterQuality.none;
 
   Paint calculateNormalPaint(IsometricRenderable renderable) {
     final double startVal =

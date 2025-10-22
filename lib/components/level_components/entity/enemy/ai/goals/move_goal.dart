@@ -206,7 +206,7 @@ class MoveGoal extends Goal {
       origin: toWorldPos(firstPos), //convert the grid pos to the world pos
       direction: direction,
     ); //calculate the ray
-
+/*
     RaycastResult<ShapeHitbox>? result = game.collisionDetection.raycast(
       //and use it to raycast
       ray,
@@ -217,7 +217,9 @@ class MoveGoal extends Goal {
               is CollisionBlock //we only want to check for collision blocks
     );
 
-    return result == null; //if the result is null, theres no collision
+    return result == null; //if the result is null, theres no collision*/ //todo fix in 3d
+
+    return false;
   }
 
   int accuracy =

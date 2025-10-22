@@ -13,32 +13,6 @@ import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 
 import '../components/level_components/entity/player.dart';
 
-
-/* Checks whether a player's hitbox is colliding with a given collision block.
-This function uses Flame's built-in methods to convert both the player's hitbox
-and the block into absolute rectangles (Rect), and checks if those rectangles overlap.
-Returns `true` if a collision is detected, otherwise `false`.*/
-
-bool checkCollision(Player player, CollisionBlock block) {
-  /* Instead of manual calculations, we use the hitbox's absolute bounding box.
-  // This is a more robust method provided by the Flame engine.
-  // Get the player's hitbox component.
-  This is typically a ShapeHitbox (e.g., RectangleHitbox) added to the player.*/
-  final playerHitbox = player.hitbox;
-
-  /* Convert the player's hitbox to its absolute rectangular bounds in the game world.
-  `toAbsoluteRect()` takes into account the component's position and anchor.*/
-  final Rect playerRect = playerHitbox.position.xy.toPositionedRect(playerHitbox.size.xy);
-  /* The block is also a PositionComponent, so we can get its absolute bounding box.
-  Convert the block (also a PositionComponent) to its absolute rectangle.
-  This accounts for its size, position, and any parent transformations.
-   */
-  final blockRect = block.toAbsoluteRect();
-
-  // The 'overlaps' method reliably checks for any intersection between the two rectangles.
-  return playerRect.overlaps(blockRect);
-}
-
 //A simple utility function that returns the absolute (positive) value of a number.
 double abs(double val) => val < 0 ? -val : val;
 

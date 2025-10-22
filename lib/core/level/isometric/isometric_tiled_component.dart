@@ -19,7 +19,6 @@ class IsometricTiledComponent extends TiledComponent { //todo improve rendering 
   Future<void> onLoad() async {
     await super.onLoad();
     gameTileMap = GameTileMap(tileMap.map);
-    gameTileMap.init();
     chunks = ChunkGrid(gameTileMap);
     // Pre-build the tile cache for efficient rendering later reading data from the Tiled map (every layer every tile)
   }

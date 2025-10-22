@@ -24,6 +24,11 @@ class NotifyingVector3 extends Vector3 with ChangeNotifier {
   factory NotifyingVector3.copy(Vector3 v) =>
       NotifyingVector3.zero()..setFrom(v);
 
+  /// Constructs Vector3 with a [storage] that views given [buffer] starting at
+  /// [offset]. [offset] has to be multiple of [Float32List.bytesPerElement].
+  factory NotifyingVector3.fromBuffer(ByteBuffer buffer, int offset) => NotifyingVector3.copy(Vector3.fromBuffer(buffer, offset));
+
+
   @override
   void setValues(double x, double y, double z) {
     super.setValues(x, y, z);

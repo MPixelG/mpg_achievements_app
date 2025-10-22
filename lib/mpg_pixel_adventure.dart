@@ -11,7 +11,9 @@ import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/components/camera/advanced_camera.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox_system.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detection.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/isoCollisionCallbacks.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 
 import 'components/level_components/entity/enemy/enemy.dart';
@@ -23,9 +25,9 @@ class PixelAdventure extends FlameGame
     with
         HasKeyboardHandlerComponents,
         DragCallbacks,
-        HasCollisionDetection,
+        HasCollisionDetection3D,
         ScrollDetector,
-        CollisionCallbacks,
+        IsoCollisionCallbacks,
         RiverpodGameMixin {
   static PixelAdventure? _currentInstance;
 
@@ -40,10 +42,7 @@ class PixelAdventure extends FlameGame
   late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
-  late String currentLevel = "Level_7";
-
-  HitboxGrid hitboxGrid = HitboxGrid();
-
+  late String currentLevel = "Level_9";
   //bools for game logic
   //needs to go into the overlay_controller later
   bool showDialogue = false;
@@ -54,7 +53,6 @@ class PixelAdventure extends FlameGame
   FutureOr<void> onLoad() async {
     //all images for the game are loaded into cache when the game start -> could take long at a later stage, but here it is fine for moment being
     await images.loadAllImages();
-    add(hitboxGrid);
 
     //parse("tiles/$currentLevel.tmx");
 
@@ -65,7 +63,6 @@ class PixelAdventure extends FlameGame
       levelName: currentLevel,
       calculatedTileSize: tileSize.xxy,
     ); //on the horizontal axis, the tile is rectangular. on the side its half the size (z-axis)
-
 
     cam = AdvancedCamera(world: gameWorld);
     cam.viewfinder.anchor = Anchor.center;
