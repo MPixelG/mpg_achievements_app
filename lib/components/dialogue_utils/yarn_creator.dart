@@ -4,8 +4,8 @@ import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:jenny/jenny.dart';
 
-class DialogueYarnCreator extends Component with DialogueView {
-  DialogueYarnCreator(this.yarnFilePath, {this.commands = const {}});
+class YarnCreator extends Component with DialogueView {
+  YarnCreator(this.yarnFilePath, {this.commands = const {}});
 
   final String yarnFilePath;
   late YarnProject project;

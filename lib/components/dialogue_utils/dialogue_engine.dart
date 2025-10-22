@@ -1,11 +1,10 @@
 import 'dart:async'; // Required for async operations and the Completer class.
-
 import 'package:flutter/material.dart'; // Flutter's material design widget library.
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jenny/jenny.dart'; // The core Jenny dialogue engine library.
 // The following are project-specific imports and may vary.
 import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.dart';
-import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_yarn_creator.dart';
+import 'package:mpg_achievements_app/components/dialogue_utils/yarn_creator.dart';
 
 // Manages the state for the [DialogueScreen] widget.
 //
@@ -82,7 +81,7 @@ class DialogueScreenState extends ConsumerState<DialogueScreen> with DialogueVie
   /// initializes the [DialogueRunner].
   Future<void> _initializeDialogue() async {
     // Helper class to load and parse the .yarn file.
-    final yarnCreator = DialogueYarnCreator(
+    final yarnCreator = YarnCreator(
       widget.yarnFilePath, // Use the path from the widget
       commands: widget.commands,         // Use the commands from the widget
     );
@@ -153,7 +152,7 @@ class DialogueScreenState extends ConsumerState<DialogueScreen> with DialogueVie
     );
   }
 
-  /// Builds the main card that displays the character name and dialogue text.
+  // Builds the main card that displays the character name and dialogue text.
   Widget _buildDialogueCard(DialogueLine line) {
     return Positioned(
       left: _outerPadding,

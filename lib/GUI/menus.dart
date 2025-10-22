@@ -177,8 +177,10 @@ class GameScreen extends StatelessWidget {
         },
         'SpeechBubble': (BuildContext context, PixelAdventure game) {
           return SpeechBubble(
+            yarnFilePath: 'assets/yarn/test.yarn',
+            commands: {},
             game: game,
-            characterName: game.gameWorld.player.playerCharacter,
+            player: game.gameWorld.player,
             targetPosition: game.gameWorld.player.position.xy.toOffset(),
             currentPosition: game.gameWorld.player.position.xy.toOffset(), //todo convert to 3d
             onComplete: () {
