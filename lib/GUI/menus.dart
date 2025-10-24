@@ -172,7 +172,7 @@ class GameScreen extends StatelessWidget {
             //when Dialogue is finishes screen is removed form map
             onDialogueFinished: () {
               game.overlays.remove('DialogueScreen');
-            }, yarnFilePath: 'assets/yarn/test.yarn',//todo connect to statemanagement and trigger method
+            }, yarnFilePath: 'assets/yarn/test.yarn',//todo connect to state management and trigger method
           );
         },
         'SpeechBubble': (BuildContext context, PixelAdventure game) {

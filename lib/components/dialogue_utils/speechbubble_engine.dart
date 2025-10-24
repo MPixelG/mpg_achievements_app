@@ -128,7 +128,8 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       begin: 1.0,
       end: 0.0,
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.linear));
-
+    //init typingtimer
+    _typingTimer = async.Timer(const Duration(seconds: 5), _dismissSpeechBubble);
     //start the animation if autostart is true
     if (autoStart) {
       //Use WidgetsBinding to ensure the widget is fully built before starting the animation
