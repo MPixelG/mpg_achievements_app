@@ -7,9 +7,8 @@ import '../isometric_tiled_component.dart';
 import 'highlighted_tile.dart';
 
 class ExplosionEffect extends AnimatedCharacter with AnimationManager {
-  TileHighlightRenderable tileHighlight;
 
-  ExplosionEffect(this.tileHighlight, Vector3 gridPos) : super(position: gridPos, size: Vector3(3, 3, 6));
+  ExplosionEffect(Vector3 gridPos) : super(position: gridPos, size: Vector3(3, 3, 6));
 
   @override
   Future<void> onLoad() async {

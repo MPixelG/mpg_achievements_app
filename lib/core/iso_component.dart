@@ -41,15 +41,6 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
     _onModifiedSizeOrAnchor();
   }
 
-
-  Vector2 get parentSize {
-    if(parent is SizeProvider){
-      return (parent as SizeProvider).size;
-    } else {
-      return Chunk.worldSize;
-    }
-  }
-
   Matrix4 get transformMatrix => transform.transformMatrix;
 
   @override

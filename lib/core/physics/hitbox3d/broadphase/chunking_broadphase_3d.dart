@@ -76,16 +76,18 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
   @override
   void onAabbChange(T hitbox) {
     updateHitbox(hitbox);
+    if(hitbox.id != 1) print("updated hitbox ${hitbox.id} to ${hitbox.aabb.min}!");
   }
 
   @override
   Iterable<CollisionProspect<T>> query() {
+
     _potentials.clear();
     for (final item in _hitboxes.values) {
-      if (item.collisionType != CollisionType.active) {
-        continue;
-      }
       final itemChunks = _getChunksOfHitbox(item);
+
+      //print("${item.id} is currently at ${item.aabb.min} - ${item.aabb.max}");
+
       for (final chunk in itemChunks) {
         final hitboxIdsInChunk = _chunks[chunk]!;
 
@@ -95,14 +97,14 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
 
             if (item.id < hitboxId){
               _potentials.add(CollisionProspect(item, hitbox));
-            }else {
-              _potentials.add(CollisionProspect(hitbox, item));
             }
-
           }
         }
       }
     }
+    _potentials.forEach((element) {
+      //print("potential: ${element.a} - ${element.b}");
+    });
     return _potentials;
   }
 

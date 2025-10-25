@@ -25,10 +25,10 @@ abstract class GameCharacter extends IsoPositionComponent
     add(hitbox);
   }
   Vector2 get gridPos =>
-      Vector2(position.x / tilesize.x, position.y / tilesize.y);
+      Vector2(position.x / tilesize.x, position.z / tilesize.z);
 
   set gridPos(Vector2 newGridPos) {
-    position.xy = newGridPos * tilesize.x;
+    position.xz = newGridPos * tilesize.x;
   }
 
   Vector3 velocity = Vector3.zero();
@@ -42,7 +42,6 @@ abstract class GameCharacter extends IsoPositionComponent
     //position is updated here and character(Player) moves in the direction assigned by the variables in the player at the moment
     if(updateMovement) {
       velocity *= pow(0.05, dt).toDouble();
-      velocity.xyz.normalized();
       position += velocity * dt * movementSpeed;
     }
     super.update(dt);

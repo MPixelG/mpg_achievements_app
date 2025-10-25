@@ -199,14 +199,14 @@ mixin HasMovementAnimations on AnimationManager {
       scale.x = -scale.x;
     }
     //Check if moving
-    if (velocity.x > 4 || velocity.x < -4) {
+    if (velocity.x > 4 || velocity.x < -4 || velocity.z > 4 || velocity.z < -4) {
       animation = getAnimation("running");
     }
 
     // update state to falling if velocity is greater than 0
-    if (velocity.y > 4) animation = getAnimation("falling");
+    if (velocity.y > 4) animation = getAnimation("jumping");
 
-    if (velocity.y < -4) animation = getAnimation("jumping");
+    if (velocity.y < -4) animation = getAnimation("falling");
 
     //here the animation ist set after checking all of the conditions above
     playAnimation(animation);

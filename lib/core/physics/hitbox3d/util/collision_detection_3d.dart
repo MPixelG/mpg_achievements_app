@@ -51,6 +51,7 @@ T extends Hitbox3D<T>, B extends Broadphase3D<T>> {
             handleCollisionStart(intersectionPoints, itemA, itemB);
           }
           handleCollision(intersectionPoints, itemA, itemB);
+          print("! handling collision! intersections: ${intersectionPoints}, a: $itemA, b: $itemB");
         } else if (itemA.collidingWith(itemB)) {
           handleCollisionEnd(itemA, itemB);
         }
@@ -58,6 +59,8 @@ T extends Hitbox3D<T>, B extends Broadphase3D<T>> {
         handleCollisionEnd(itemA, itemB);
       }
     }
+
+    //print("potentials: $potentials");
 
     // Handles callbacks for an ended collision that the broadphase didn't
     // report as a potential collision anymore.

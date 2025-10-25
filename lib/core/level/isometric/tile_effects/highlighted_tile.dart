@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/isoCollisionCallbacks.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'explosion_effect.dart';
@@ -12,7 +13,6 @@ import 'explosion_effect.dart';
 class TileHighlightRenderable extends IsoPositionComponent
     with
         RiverpodComponentMixin,
-        CollisionCallbacks,
         HasGameReference<PixelAdventure> {
   bool done = false;
 
@@ -25,7 +25,7 @@ class TileHighlightRenderable extends IsoPositionComponent
   void onLoad() {
     // Position the highlight based on the grid position and tile size.
     tileSize = game.gameWorld.tileGrid.tileSize;
-    explosionEffect = ExplosionEffect(this, position);
+    explosionEffect = ExplosionEffect(position);
     add(explosionEffect!);
   }
 
