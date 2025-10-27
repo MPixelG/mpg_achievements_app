@@ -25,8 +25,8 @@ class Chunk {
   int albedoWidth = 0;
   int albedoHeight = 0;
 
-  int zHeightUsedPixels = 0;
-  static int highestZTileInWorld = 0;
+  int yHeightUsedPixels = 0;
+  static int highestYTileInWorld = 0;
 
   final List<ChunkTile> tiles = [];
 
@@ -54,25 +54,25 @@ class Chunk {
     );
     final map = gameTileMap.tiledMap;
     void registerTile(int gid, int x, int y, int z) {
-      x += z;
-      y += z;
+      x += y;
+      z += y;
 
       final chunkX = x ~/ chunkSize;
-      final chunkY = y ~/ chunkSize;
+      final chunkZ = z ~/ chunkSize;
 
-      if (chunkX == this.x && chunkY == this.y) {
+      if (chunkX == this.x && chunkZ == this.z) {
         final localX = x - chunkX * chunkSize;
-        final localY = y - chunkY * chunkSize;
+        final localZ = z - chunkZ * chunkSize;
 
-        int topPos = ((z) * tilesize.z).toInt();
-        if (gid != 0 && topPos > zHeightUsedPixels) {
-          zHeightUsedPixels = topPos;
+        int topPos = (y * tilesize.z).toInt();
+        if (gid != 0 && topPos > yHeightUsedPixels) {
+          yHeightUsedPixels = topPos;
         }
-        if (z > highestZTileInWorld) {
-          highestZTileInWorld = z;
+        if (y > highestYTileInWorld) {
+          highestYTileInWorld = y;
         }
 
-        tiles.add(ChunkTile(gid, localX, localY, x, y, z, 0));
+        tiles.add(ChunkTile(gid, localX, localZ, x, z, y, 0));
       }
     }
 
@@ -85,16 +85,16 @@ class Chunk {
             final chunkData = chunk.data;
             final chunkWidth = chunk.width;
             final offsetX = chunk.x;
-            final offsetY = chunk.y;
+            final offsetZ = chunk.y;
             for (int i = 0; i < chunkData.length; i++) {
               //all the chunk tiles
               final gid = chunkData[i]; //get the gid
               if (gid == 0) continue; //if its 0, it means its empty
-              final x =
-                  (i % chunkWidth) +
-                  offsetX; //calculate the x and y position of the tile in the map
-              final y = (i ~/ chunkWidth) + offsetY;
-              registerTile(gid, x, y, layerIndex);
+
+              final x = (i % chunkWidth) + offsetX; //calculate the x and y position of the tile in the map
+              final z = (i ~/ chunkWidth) + offsetZ;
+
+              registerTile(gid, x, layerIndex, z);
             }
           }
         } else {
@@ -105,11 +105,9 @@ class Chunk {
             //iterate through all tiles
             final gid = data[i]; //get the gid
             if (gid == 0) continue; //if its 0, it means its empty
-            final x =
-                i %
-                width; //calculate the x and y position of the tile in the map
-            final y = i ~/ width;
-            registerTile(gid, x, y, layerIndex);
+            final x = i % width; //calculate the x and y position of the tile in the map
+            final z = i ~/ width;
+            registerTile(gid, x, layerIndex, z);
           }
         }
 
@@ -119,7 +117,7 @@ class Chunk {
     totalZLayers = layerIndex;
 
     for (var element in tiles) {
-      element.zAdjustPos = zHeightUsedPixels;
+      element.yAdjustPos = yHeightUsedPixels;
     }
 
     reSortTiles([]);
@@ -174,39 +172,39 @@ class Chunk {
   void prepareBuildImageMaps() {
     if (tiles.isEmpty) return;
 
-    int minGridX = 1 << 30, minGridY = 1 << 30;
-    int maxGridX = -1 << 30, maxGridY = -1 << 30;
-    int maxZ = 0;
+    int minGridX = 1 << 30, minGridZ = 1 << 30;
+    int maxGridX = -1 << 30, maxGridZ = -1 << 30;
+    int maxY = 0;
     for (final r in tiles) {
       minGridX = math.min(minGridX, r.gridFeetPos.x.toInt());
-      minGridY = math.min(minGridY, r.gridFeetPos.y.toInt());
+      minGridZ = math.min(minGridZ, r.gridFeetPos.z.toInt());
       maxGridX = math.max(maxGridX, r.gridHeadPos.x.toInt());
-      maxGridY = math.max(maxGridY, r.gridHeadPos.y.toInt());
-      maxZ = math.max(maxZ, r.gridHeadPos.z.toInt());
+      maxGridZ = math.max(maxGridZ, r.gridHeadPos.z.toInt());
+      maxY = math.max(maxY, r.gridHeadPos.y.toInt());
     }
 
     final corners = [
-      toWorldPos(Vector3(minGridX.toDouble(), minGridY.toDouble(), 0)) -
+      toWorldPos(Vector3(minGridX.toDouble(), 0, minGridZ.toDouble())) -
           Vector2(tilesize.x / 2, 0),
-      toWorldPos(Vector3(minGridX.toDouble(), maxGridY.toDouble(), 0)) -
+      toWorldPos(Vector3(minGridX.toDouble(), 0, maxGridZ.toDouble())) -
           Vector2(tilesize.x / 2, 0),
-      toWorldPos(Vector3(maxGridX.toDouble(), minGridY.toDouble(), 0)) -
+      toWorldPos(Vector3(maxGridX.toDouble(), 0, minGridZ.toDouble())) -
           Vector2(tilesize.x / 2, 0),
-      toWorldPos(Vector3(maxGridX.toDouble(), maxGridY.toDouble(), 0)) -
+      toWorldPos(Vector3(maxGridX.toDouble(), 0, maxGridZ.toDouble())) -
           Vector2(tilesize.x / 2, 0),
     ];
     double minX = corners.map((c) => c.x).reduce(math.min);
-    double minY = corners.map((c) => c.y).reduce(math.min);
+    double minZ = corners.map((c) => c.y).reduce(math.min);
     double maxX = corners.map((c) => c.x).reduce(math.max);
-    double maxY = corners.map((c) => c.y).reduce(math.max);
+    double maxZ = corners.map((c) => c.y).reduce(math.max);
 
-    double padTop = zHeightUsedPixels.toDouble();
-    double padBottom = (maxZ.toDouble() * tilesize.z) + tilesize.z.toDouble();
+    double padTop = yHeightUsedPixels.toDouble();
+    double padBottom = (maxY.toDouble() * tilesize.z) + tilesize.z.toDouble();
 
     final width = (maxX - minX + tilesize.x).ceil();
-    final height = (maxY - minY + padTop + padBottom).ceil();
+    final height = (maxZ- minZ + padTop + padBottom).ceil();
 
-    albedoWorldTopLeft = Vector2(minX, minY - padTop);
+    albedoWorldTopLeft = Vector2(minX, minZ - padTop);
     albedoWidth = math.max(1, width);
     albedoHeight = math.max(1, height + tilesize.z.toInt());
   }
@@ -241,7 +239,7 @@ class Chunk {
     albedoCanvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
     normalCanvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
 
-    double currentPaintZPos = double.infinity;
+    double currentPaintYPos = double.infinity;
 
     int ti = 0, ei = 0;
     double tileDepth;
@@ -278,7 +276,7 @@ class Chunk {
         currentRenderable = additionals[ei++];
       }
 
-      if(currentRenderable.gridFeetPos.z != currentPaintZPos) {
+      if(currentRenderable.gridFeetPos.y != currentPaintYPos) {
 
       }
 
@@ -291,8 +289,8 @@ class Chunk {
 
   Paint calculateNormalPaint(IsometricRenderable renderable) {
     final double startVal =
-        ((renderable.gridFeetPos.z - 1) / highestZTileInWorld) * 256;
-    final double endVal = (renderable.gridFeetPos.z / highestZTileInWorld);
+        ((renderable.gridFeetPos.y - 1) / highestYTileInWorld) * 256;
+    final double endVal = (renderable.gridFeetPos.y / highestYTileInWorld);
 
     overridePaint.colorFilter = ColorFilter.matrix([
       1, 0, 0, 0,
@@ -306,13 +304,13 @@ class Chunk {
 
   bool containsRenderable(IsometricRenderable r) {
     double fx = r.gridFeetPos.x;
-    double fy = r.gridFeetPos.y;
+    double fz = r.gridFeetPos.z;
     double hx = r.gridHeadPos.x;
-    double hy = r.gridHeadPos.y;
+    double hz = r.gridHeadPos.z;
     return hx >= x * chunkSize &&
         fx < (x + 1) * chunkSize &&
-        hy >= y * chunkSize &&
-        fy < (y + 1) * chunkSize;
+        hz >= z * chunkSize &&
+        fz < (z + 1) * chunkSize;
   }
 
 
@@ -339,6 +337,7 @@ class Chunk {
       currentAdditionalComponents = newComponents;
       renderMaps(canvas, normalCanvas, newComponents);
     } else if (albedoMap != null && normalAndDepthMap != null) {
+      //print("drawing image maps");
       normalCanvas.drawImage(normalAndDepthMap!, offset, Paint());
       canvas.drawImage(albedoMap!, offset, Paint());
     }

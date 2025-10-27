@@ -34,7 +34,7 @@ void generateSpawningObjectsForLevel(GameWorld gameWorld) {
 
           Vector2 twoDimIsoPos = orthogonalToIsometric(spawnPoint.position); //todo fix for level offset.
           print("grid pos: $twoDimIsoPos, spawn point: ${spawnPoint.position}");
-          gameWorld.player.position = Vector3(7, 7, 1);
+          gameWorld.player.position = Vector3(7, 1, 7);
           gameWorld.player.priority = 1;
           break;
         case 'Collectable':
@@ -112,23 +112,20 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
 
   if (collisionsLayer != null) {
     for (final collision in collisionsLayer.objects) {
-      Vector2 pos =
-          orthogonalToIsometric(collision.position) +
-          Vector2(Chunk.worldSize.x / 2, 0);
-      pos += orthogonalToIsometric(Vector2(tilesize.x / 2, tilesize.y / 2));
+      Vector2 pos = orthogonalToIsometric(collision.position) + Vector2(Chunk.worldSize.x / 2, 0);
       // get z and zHeight from properties, if not set default to 0 and 16
-      final double z = collision.properties.getValue('zPosition') ?? 0;
-      final double zHeight = collision.properties.getValue('zHeight') ?? 0;
+      final double yPos = collision.properties.getValue('zPosition') ?? 0;
+
+      final Vector2 scaledSize = collision.size.clone()..divide(tilesize.xy);
+      final Vector2 scaledPos = collision.position;
 
       switch (collision.class_) {
         default:
-          final block = CollisionBlock(
-            position: pos,
-            size: Vector2(collision.width, collision.height),
-            zPosition: z,
-            zHeight: zHeight,
-          );
-          gameWorld.add(block);
+          /*final block = CollisionBlock(
+            position: Vector3(pos.x, yPos, pos.y),
+            size: Vector3(collision.width / tilesize.x, 1, collision.height / tilesize.y),
+          );*/
+          //gameWorld.add(block);
       }
     }
   }

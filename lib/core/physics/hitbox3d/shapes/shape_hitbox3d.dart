@@ -120,7 +120,7 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
       onAabbChanged.call();
     };
     final positionComponents = ancestors(
-      includeSelf: true,
+      includeSelf: false,
     ).whereType<IsoPositionComponent>();
     for (final ancestor in positionComponents) {
       _transformAncestors.add(ancestor.transform);
@@ -142,7 +142,10 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
     if (parent is HasCollisionDetection3D) {
       _collisionDetection = parent.collisionDetection;
       _collisionDetection?.add(this);
+      if(_collisionDetection != null) print("added hitbox!");
     }
+
+    onAabbChanged();
   }
 
 
@@ -182,8 +185,6 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
     other is RectangleShapeComponent,
     'The intersection can only be performed between rect shapes',  //todo add support for more shapes
     );
-
-
     return intersection_system.intersections(this as RectangleShapeComponent, other as RectangleShapeComponent);
   }
 
@@ -215,13 +216,8 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
 
 
   Aabb3 _recalculateAabb() {
-    _halfExtents.setValues(
-      size.x / 2 + _extentEpsilon,
-      size.y / 2 + _extentEpsilon,
-      size.z / 2 + _extentEpsilon,
-    );
-    _validAabb = true;
-    return _aabb..setCenterAndHalfExtents(absoluteCenter, _halfExtents);
+
+    return _aabb;
   }
 
 

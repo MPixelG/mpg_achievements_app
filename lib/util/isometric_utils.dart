@@ -7,14 +7,14 @@ import '../../mpg_pixel_adventure.dart';
 
 Vector2 toWorldPos(Vector3 gridPos, [double? levelWidth, Vector3? tileSizeOverride]) {
   final localPoint = Vector2(
-    (gridPos.x - gridPos.y) * ((tileSizeOverride ?? tilesize).x / 2),
-    (gridPos.x + gridPos.y) * ((tileSizeOverride ?? tilesize).z / 2),
+    (gridPos.x - gridPos.z) * ((tileSizeOverride ?? tilesize).x / 2),
+    (gridPos.x + gridPos.z) * ((tileSizeOverride ?? tilesize).z / 2),
   );
   // Convert local point to global world position, Add the maps's visual origin offset back to the local point
   // to get the correct world position
   final offset = Vector2(
     (levelWidth ?? Chunk.worldSize.x) / 2, //map origin
-    -gridPos.z * (tilesize.z), //height offset
+    -gridPos.y * (tilesize.z), //height offset
   );
   //apply vertical movement for different layers according to z-index
   return localPoint + offset;
@@ -53,35 +53,35 @@ Vector2 worldToTileIsometric(Vector2 worldPos) {
 
 Vector2 isoToScreen(Vector3 iso) {
   return Vector2(
-    (iso.x - iso.y) / 2,
-    (iso.x + iso.y) / 4,
+    (iso.x - iso.z) / 2,
+    (iso.x + iso.z) / 4 - iso.y,
   );
 }
 
 @pragma('vm:prefer-inline')
 Vector2 quickConvertSize3dTo2d(Vector3 size) {
   return Vector2(
-      (size.x + size.z) * 0.866025403784*0.5,
-      size.y + (size.x + size.z) * 0.25
+      (size.x + size.y) * 0.866025403784*0.5,
+      size.z + (size.x + size.y) * 0.25
   );
 }
 
 Vector2 project(Vector3 p, double scaleX, double scaleY, double zScale) {
-  double sx = (p.x - p.y) * scaleX;
-  double sy = (p.x + p.y) * scaleY - p.z * zScale;
+  double sx = (p.x - p.z) * scaleX;
+  double sy = (p.x + p.z) * scaleY - p.y * zScale;
   return Vector2(sx, sy);
 }
 
 Vector2 projectedBounds(Vector3 size, double scaleX, double scaleY, double zScale) {
   List<Vector3> corners = [
-    Vector3(-size.x/2, -size.y/2, 0),
-    Vector3(size.x/2, -size.y/2, 0),
-    Vector3(-size.x/2, size.y/2, 0),
-    Vector3(size.x/2, size.y/2, 0),
-    Vector3(-size.x/2, -size.y/2, size.z),
-    Vector3(size.x/2, -size.y/2, size.z),
-    Vector3(-size.x/2, size.y/2, size.z),
-    Vector3(size.x/2, size.y/2, size.z),
+    Vector3(-size.x/2, -size.z/2, 0),
+    Vector3(size.x/2, -size.z/2, 0),
+    Vector3(-size.x/2, size.z/2, 0),
+    Vector3(size.x/2, size.z/2, 0),
+    Vector3(-size.x/2, -size.z/2, size.y),
+    Vector3(size.x/2, -size.z/2, size.y),
+    Vector3(-size.x/2, size.z/2, size.y),
+    Vector3(size.x/2, size.z/2, size.y),
   ];
   double minX = double.infinity, minY = double.infinity;
   double maxX = double.negativeInfinity, maxY = double.negativeInfinity;

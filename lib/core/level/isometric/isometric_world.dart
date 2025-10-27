@@ -66,7 +66,7 @@ class IsometricWorld extends GameWorld {
 
     log("pos: $selectedTile");
 
-    //add(CollisionBlock(position: selectedTile));
+    add(CollisionBlock(position: Vector3(selectedTile.x, 1, selectedTile.y), size: Vector3.all(2)));
 
     // Use the function to find the top-most tile.
     final selectionResult = getTopmostTileAtGridPos(selectedTile);
@@ -85,7 +85,7 @@ class IsometricWorld extends GameWorld {
       highlightedTile.position = selectionResult.gridPosition;
       log("Highlight position set to: ${highlightedTile.position}");
 
-      add(highlightedTile);
+      //add(highlightedTile); //todo clicking on a tile lower on the screen than the player, the player gets drawn on top of everything
     } else {
       // No tile was found at this position (clicked on empty space).
       highlightedTile = null;

@@ -12,23 +12,23 @@ import 'game_sprite.dart';
 class ChunkTile with IsometricRenderable {
   final int gid;
   final int localX;
-  final int localY;
+  final int localZ;
   final int worldX;
-  final int worldY;
-  final int z;
-  int zAdjustPos;
+  final int worldZ;
+  final int y;
+  int yAdjustPos;
 
-  Vector3 get posWorld => Vector3(worldX.toDouble(), worldY.toDouble(), z.toDouble());
-  Vector3 get posLocal => Vector3(localX.toDouble(), localY.toDouble(), z.toDouble());
+  Vector3 get posWorld => Vector3(worldX.toDouble(), y.toDouble(), worldZ.toDouble());
+  Vector3 get posLocal => Vector3(localX.toDouble(), y.toDouble(), localZ.toDouble());
 
   ChunkTile(
       this.gid,
       this.localX,
-      this.localY,
+      this.localZ,
       this.worldX,
-      this.worldY,
-      this.z,
-      this.zAdjustPos,
+      this.worldZ,
+      this.y,
+      this.yAdjustPos,
       ){
     Future.microtask(() {
       loadTextureOfGid(gid);
@@ -36,8 +36,8 @@ class ChunkTile with IsometricRenderable {
   }
 
   GameSprite get cachedSprite => textures[gid]!;
-
   bool loadingSprite = false;
+
 
   @override
   Vector3 get gridFeetPos => posWorld;

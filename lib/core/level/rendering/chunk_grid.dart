@@ -32,27 +32,27 @@ class ChunkGrid {
   void generateChunks() {
     final map = gameTileMap.tiledMap;
     final chunkCountX = (map.width / Chunk.chunkSize).ceil();
-    final chunkCountY = (map.height / Chunk.chunkSize).ceil();
+    final chunkCountZ = (map.height / Chunk.chunkSize).ceil();
 
     for (int x = 0; x < chunkCountX; x++) {
-      for (int y = 0; y < chunkCountY; y++) {
-        final chunk = Chunk.fromGameTileMap(gameTileMap, x, y, 0);
-        chunks[Vector2(x.toDouble(), y.toDouble())] = chunk;
+      for (int z = 0; z < chunkCountZ; z++) {
+        final chunk = Chunk.fromGameTileMap(gameTileMap, x, 0, z);
+        chunks[Vector2(x.toDouble(), z.toDouble())] = chunk;
       }
     }
   }
 
   NeighborChunkCluster getNeighborChunkCluster(Chunk chunk) {
     final cx = chunk.x;
-    final cy = chunk.y;
-    Chunk? tl = chunks[Vector2((cx - 1).toDouble(), (cy - 1).toDouble())];
-    Chunk? t = chunks[Vector2(cx.toDouble(), (cy - 1).toDouble())];
-    Chunk? tr = chunks[Vector2((cx + 1).toDouble(), (cy - 1).toDouble())];
-    Chunk? r = chunks[Vector2((cx + 1).toDouble(), cy.toDouble())];
-    Chunk? br = chunks[Vector2((cx + 1).toDouble(), (cy + 1).toDouble())];
-    Chunk? b = chunks[Vector2(cx.toDouble(), (cy + 1).toDouble())];
-    Chunk? bl = chunks[Vector2((cx - 1).toDouble(), (cy + 1).toDouble())];
-    Chunk? l = chunks[Vector2((cx - 1).toDouble(), cy.toDouble())];
+    final cz = chunk.z;
+    Chunk? tl = chunks[Vector2((cx - 1).toDouble(), (cz - 1).toDouble())];
+    Chunk? t = chunks[Vector2(cx.toDouble(), (cz - 1).toDouble())];
+    Chunk? tr = chunks[Vector2((cx + 1).toDouble(), (cz - 1).toDouble())];
+    Chunk? r = chunks[Vector2((cx + 1).toDouble(), cz.toDouble())];
+    Chunk? br = chunks[Vector2((cx + 1).toDouble(), (cz + 1).toDouble())];
+    Chunk? b = chunks[Vector2(cx.toDouble(), (cz + 1).toDouble())];
+    Chunk? bl = chunks[Vector2((cx - 1).toDouble(), (cz + 1).toDouble())];
+    Chunk? l = chunks[Vector2((cx - 1).toDouble(), cz.toDouble())];
     return NeighborChunkCluster(
       topLeft: tl,
       top: t,
@@ -90,13 +90,13 @@ class ChunkGrid {
       Chunk chunk = value.value;
 
       Vector2 chunkPos = Vector2(
-        ((chunk.x - chunk.y) * (Chunk.chunkSize + chunkSpacing)) *
+        ((chunk.x - chunk.z) * (Chunk.chunkSize + chunkSpacing)) *
             tilesize.x / 2,
-        (chunk.x + chunk.y) * (Chunk.chunkSize + chunkSpacing) * tilesize.z / 2,
+        (chunk.x + chunk.z) * (Chunk.chunkSize + chunkSpacing) * tilesize.z / 2,
       );
       chunkPos.x += Chunk.worldSize.x / 3;
       chunkPos += offset.toVector2();
-      chunkPos.y -= chunk.zHeightUsedPixels;
+      chunkPos.y -= chunk.yHeightUsedPixels;
       Vector2 unPositionedChunkPos = chunkPos - camPos + (viewportSize / 2);
 
       if (unPositionedChunkPos.x < 0) {
@@ -182,12 +182,12 @@ class ChunkGrid {
 
     double time = DateTime.now().millisecondsSinceEpoch / 10000;
     double lightX = cos(time) * 600;
-    double lightY = sin(time) * 600;
+    double lightZ = sin(time) * 600;
 
     shader!.setFloatUniforms((val) {
       val.setFloats([
         viewportSize.x, viewportSize.y,
-        lightX, lightY, 15,
+        lightX, lightZ, 15,
       ]);
     });
 

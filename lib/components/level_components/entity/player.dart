@@ -65,9 +65,6 @@ class Player extends AnimatedCharacter
     add(ShadowComponent());
     _findGroundBeneath();
 
-    setCustomAnimationName("falling", "running");
-    setCustomAnimationName("jumping", "running");
-
     return super.onLoad();
   }
 
@@ -169,7 +166,10 @@ class Player extends AnimatedCharacter
 
   //find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
   void _findGroundBeneath() {
-    // the highest ground block beneath the player
+
+    //todo use 3d position for that
+
+/*    // the highest ground block beneath the player
     final blocks = game.gameWorld.children.whereType<CollisionBlock>();
     //print("number of blocks: ${blocks.length}");
     double highestZ = 0.0; //default floor
@@ -191,17 +191,17 @@ class Player extends AnimatedCharacter
         }
       }
     }
-    zGround = highestZ;
+    zGround = highestZ;*/
   }
 
   ControlActionBundle<Player> buildControlBundle(){
     return ControlActionBundle<Player>({
       //setting physics variables/velocity for game_character movement
-      ControlAction("moveUp", key: "W", run: (parent) => parent.velocity.y--),
+      ControlAction("moveUp", key: "W", run: (parent) => parent.velocity.z--),
       ControlAction("moveLeft", key: "A", run: (parent) => parent.velocity.x--),
-      ControlAction("moveDown", key: "S", run: (parent) => parent.velocity.y++),
+      ControlAction("moveDown", key: "S", run: (parent) => parent.velocity.z++),
       ControlAction("moveRight", key: "D", run: (parent) => parent.velocity.x++),
-      ControlAction("jump", key: "space", run: (parent) => parent.velocity.z++),
+      ControlAction("jump", key: "Space", run: (parent) => parent.velocity.y++),
     });
   }
 
