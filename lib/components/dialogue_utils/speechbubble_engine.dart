@@ -8,15 +8,16 @@ import 'package:jenny/jenny.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/yarn_creator.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
+import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 class SpeechBubbleState extends ConsumerState<SpeechBubble>
-    with TickerProviderStateMixin, DialogueView {
+    with TickerProviderStateMixin {
 
   //Position reference
-  late Vector2 _playerPosition;
-  late double _playerHeight;
-  late double _playerWidth;
+  late Vector2 _componentPosition;
+  late double _componentHeight;
+  late double _componentWidth;
 
   //offset from character(i.e. y/x position from head
   late final double _bubbleOffset = 40;
@@ -29,7 +30,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   int _currentIndex = 0;
   bool _isTypingComplete = false;
   bool _isSpeechBubbleVisible = false;
-  late final Player player = widget.game.gameWorld.player;
+  late final IsoPositionComponent component;
 
   //Timers
   late async.Timer? _typingTimer;
@@ -73,37 +74,11 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   //scale for exit
   late Animation<double> _fadeAnimation;
 
-  //variables for YarnEngine
-  // The compiled Yarn project containing all nodes, lines, and commands.
-  late final YarnProject _project;
-
-  // The raw string content of the loaded .yarn file, used for the script viewer.
-  late final String _rawYarnScript;
-
-  // The Jenny engine instance that executes the dialogue logic.
-  late DialogueRunner? _dialogueRunner;
-
-  //A completer that pauses the [DialogueRunner].
-  //
-  // When `onLineStart` is called, a new completer is created. The runner
-  // waits until `completer.complete()` is called, which happens when the user
-  // clicks the "Next" button.
-
-  Completer<bool>? _lineCompleter;
-
-  // The current [DialogueLine] being displayed to the user.
-  // If `null`, the dialogue UI is hidden.
-  DialogueLine? _currentLine;
-  DialogueChoice? _currentChoice;
-  Completer<int>? _choiceCompleter;
-
-  // A flag indicating whether the entire dialogue sequence has finished.
-  // When `true`close conversation
-  bool _isConversationFinished = false;
 
   @override
   void initState() {
     super.initState();
+
     // Initialize the scale controller for entrance animation
     _scaleController = AnimationController(
       //Provided by the TickerProviderStateMixin
@@ -131,14 +106,13 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     //init typingtimer
     _typingTimer = async.Timer(const Duration(seconds: 5), _dismissSpeechBubble);
     //start the animation if autostart is true
-    if (autoStart) {
-      //Use WidgetsBinding to ensure the widget is fully built before starting the animation
+          //Use WidgetsBinding to ensure the widget is fully built before starting the animation
       WidgetsBinding.instance.addPostFrameCallback((_) {
         // Start the speech bubble animation
         _initializeSpeechBubble();
       });
     }
-  }
+
 
   @override
   void dispose() {
@@ -159,17 +133,17 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     }
 
     // Initialize the player position and height
-    _playerHeight = player.height;
-    _playerWidth = player.width;
+    _componentHeight = component.height;
+    _componentWidth = component.width;
     // Adjust the position based on the camera's local to global conversion
-    _playerPosition = widget.game.cam.localToGlobal(toWorldPos(player.position));
+    _componentPosition = widget.game.cam.localToGlobal(toWorldPos(component.position));
 
 
     return AnimatedPositioned(
       // The position is now directly derived from the character's state vector
-      left: _playerPosition.x,
+      left: _componentPosition.x,
       // Center the bubble horizontally
-      top: _playerPosition.y - _playerHeight - _bubbleOffset,
+      top: _componentPosition.y - _componentHeight - _bubbleOffset,
       // Position above the character
       // Position above the character
       // Use the bubbleOffset to adjust the position if needed
