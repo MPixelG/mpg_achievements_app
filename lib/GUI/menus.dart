@@ -44,9 +44,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       // Add a small delay to ensure the widget tree is fully built
       await Future.delayed(const Duration(milliseconds: 100));
 
-      final widget = await WidgetJsonUtils.importScreen(
-        "test",
-      );
+      final widget = await WidgetJsonUtils.importScreen("test");
 
       setState(() {
         loadedWidget = widget;
@@ -172,17 +170,18 @@ class GameScreen extends StatelessWidget {
             //when Dialogue is finishes screen is removed form map
             onDialogueFinished: () {
               game.overlays.remove('DialogueScreen');
-            }, yarnFilePath: 'assets/yarn/test.yarn',//todo connect to state management and trigger method
+            },
+            yarnFilePath:
+                'assets/yarn/test.yarn', //todo connect to state management and trigger method
           );
         },
         'SpeechBubble': (BuildContext context, PixelAdventure game) {
           return SpeechBubble(
-            yarnFilePath: 'assets/yarn/test.yarn',
-            commands: {},
+            text: 'Test',
             game: game,
-            player: game.gameWorld.player,
-            targetPosition: game.gameWorld.player.position.xy.toOffset(),
-            currentPosition: game.gameWorld.player.position.xy.toOffset(), //todo convert to 3d
+            component: game.gameWorld.player,
+            // targetPosition: game.gameWorld.player.position.xy.toOffset(),
+            // currentPosition: game.gameWorld.player.position.xy.toOffset(), //todo convert to 3d
             onComplete: () {
               game.overlays.remove('SpeechBubble');
             },
@@ -195,6 +194,7 @@ class GameScreen extends StatelessWidget {
     );
   }
 }
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -262,9 +262,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildContent(BuildContext context, Size screenSize) {
     if (isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (errorMessage != null) {
@@ -290,4 +288,3 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 }
-

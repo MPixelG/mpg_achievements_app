@@ -7,9 +7,7 @@ import '../../mpg_pixel_adventure.dart';
 
 class SpeechBubble extends ConsumerStatefulWidget {
   //text to display and position
-  final IsoPositionComponent component;//more generic
-  final Offset targetPosition;
-  final Offset currentPosition; //todo convert to 3d coords
+  final IsoPositionComponent component; //more generic
   final String text;
   final PixelAdventure game;
   final DialogueChoice? choices;
@@ -26,10 +24,8 @@ class SpeechBubble extends ConsumerStatefulWidget {
     this.choices,
     this.onComplete,
     this.onDismiss,
-    required this.targetPosition,
     required this.game,
-    required this.currentPosition,
-    this.onChoiceSelected
+    this.onChoiceSelected,
   });
 
   @override

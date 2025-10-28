@@ -13,9 +13,8 @@ import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 class SpeechBubbleState extends ConsumerState<SpeechBubble>
     with TickerProviderStateMixin {
-
   //Position reference
-  late Vector2 _componentPosition;
+  late Vector2 _bubblePosition;
   late double _componentHeight;
   late double _componentWidth;
 
@@ -52,7 +51,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late final EdgeInsets padding = const EdgeInsets.all(8.0);
   late final BorderRadius borderRadius = BorderRadius.circular(8.0);
   late final bool showTail = true;
-  late final double _buttonSpacing = 10;
 
   //styling for the tail of the speech bubble
   // Define the tail's dimensions. You can adjust these.
@@ -74,6 +72,8 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   //scale for exit
   late Animation<double> _fadeAnimation;
 
+  //choices?
+  bool get _isChoiceBubble => widget.choices != null;
 
   @override
   void initState() {
@@ -104,15 +104,46 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       end: 0.0,
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.linear));
     //init typingtimer
-    _typingTimer = async.Timer(const Duration(seconds: 5), _dismissSpeechBubble);
+    _typingTimer = async.Timer(
+      const Duration(seconds: 5),
+      _dismissSpeechBubble,
+    );
     //start the animation if autostart is true
-          //Use WidgetsBinding to ensure the widget is fully built before starting the animation
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        // Start the speech bubble animation
-        _initializeSpeechBubble();
-      });
-    }
+    //Use WidgetsBinding to ensure the widget is fully built before starting the animation
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Start the speech bubble animation
+      _initializeSpeechBubble();
+    });
+  }
 
+  //Animation and Typing Logic
+
+  Future<void> _initializeSpeechBubble() async {
+    if (!mounted) return;
+
+    //Visibility true
+    setState(() {
+      _isSpeechBubbleVisible = true;
+      _displayedText = ''; // Clear the displayed text
+      _currentIndex = 0; // Reset the current index for typing
+      _isTypingComplete = false; // Reset typing completion state
+    });
+    //fade animation controller reset because it was used for exit animation of the speech bubble
+    _fadeController.reset();
+    //scaleController reset because it was used for entrance animation of the speech bubble
+    _scaleController.reset();
+
+    _scaleController.forward().then((_) {
+      if (_isSpeechBubbleVisible && mounted) {
+        if (_isChoiceBubble || widget.text.isEmpty) {
+          _onTypingComplete();
+        } else {
+          // After the scale animation completes, start the typing text
+          _startTypingText();
+        }
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -133,17 +164,18 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     }
 
     // Initialize the player position and height
-    _componentHeight = component.height;
-    _componentWidth = component.width;
+    _componentHeight = widget.component.height;
+    _componentWidth = widget.component.width;
     // Adjust the position based on the camera's local to global conversion
-    _componentPosition = widget.game.cam.localToGlobal(toWorldPos(component.position));
-
+    _bubblePosition = widget.game.cam.localToGlobal(
+      toWorldPos(component.position),
+    );
 
     return AnimatedPositioned(
       // The position is now directly derived from the character's state vector
-      left: _componentPosition.x,
+      left: _bubblePosition.x,
       // Center the bubble horizontally
-      top: _componentPosition.y - _componentHeight - _bubbleOffset,
+      top: _bubblePosition.y - _componentHeight - _bubbleOffset,
       // Position above the character
       // Position above the character
       // Use the bubbleOffset to adjust the position if needed
@@ -177,32 +209,34 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                Text(
-                  _displayedText,
-                  style: const TextStyle(color: Colors.black, fontSize: 14),
+                  children: [
+                    Text(
+                      _displayedText,
+                      style: const TextStyle(color: Colors.black, fontSize: 14),
+                    ),
+                    if (_isChoiceBubble) ...[
+                      const SizedBox(height: 12.0),
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 4.0,
+                        children: widget.choices!.options.map((option) {
+                          final optionIndex = widget.choices!.options.indexOf(
+                            option,
+                          );
+                          return ElevatedButton(
+                            onPressed: option.isAvailable
+                                ? () =>
+                                      widget.onChoiceSelected?.call(optionIndex)
+                                : null,
+                            child: Text(option.text),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ],
                 ),
-              if (_currentChoice != null)...[const SizedBox(height: 12.0),
-              Wrap(
-              spacing: 8.0,
-              runSpacing: 4.0,
-              children: _currentChoice!.options.map((option){
-                final optionIndex =
-    _currentChoice!.options.indexOf(option);
-                return ElevatedButton(
-    onPressed: option.isAvailable ? () {
-      _choiceCompleter?.complete(optionIndex);
-      setState((){_currentChoice = null;});
-    }
-    :null,//disable button of option is not available
-    child: Text(option.text),
-        );
-    }).toList(),
-    ),
-              ],
-  ],
-          ),
-        ),
+              ),
+
               Positioned(
                 left: 15,
                 bottom: -tailHeight,
@@ -223,58 +257,8 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     );
   }
 
-  //Animation and Typing Logic
-
-  Future<void> _initializeSpeechBubble() async {
-
-    // Helper class to load and parse the .yarn file.
-    final yarnCreator = YarnCreator(
-      widget.yarnFilePath, // Use the path from the widget
-      commands: widget.commands,         // Use the commands from the widget
-    );
-    await yarnCreator.loadYarnFile();
-
-    // Store the compiled project and the raw script text.
-    _project = yarnCreator.project;
-    _rawYarnScript = yarnCreator.script;
-
-    // Create the DialogueRunner, providing it with the project and a
-    // list of views. `[this]` means this class will handle UI events. properties passed into the widget are used for yarnCreation
-    _dialogueRunner = DialogueRunner(
-      yarnProject: _project,
-      dialogueViews: [this],
-    );
-
-    // Start the dialogue from the node named 'Start'.
-    _dialogueRunner?.startDialogue('Start');
-
-
-    //Visibility true
-    setState(() {
-      _isSpeechBubbleVisible = true;
-      _displayedText = ''; // Clear the displayed text
-      _currentIndex = 0; // Reset the current index for typing
-      _isTypingComplete = false; // Reset typing completion state
-    });
-    //fade animation controller reset because it was used for exit animation of the speech bubble
-    _fadeController.reset();
-    //scaleController reset because it was used for entrance animation of the speech bubble
-    _scaleController.reset();
-
-    _scaleController.forward().then((_) {
-      if (_isSpeechBubbleVisible) {
-        // After the scale animation completes, start the typing text
-        _startTypingText();
-        // After the scale animation completes, start typing the text
-        _startTypingText();
-      }
-    });
-  }
-
   void _startTypingText() {
     _typingTimer?.cancel();
-    _currentIndex = 0; //todo state management
-    _displayedText ='';
     _isTypingComplete = false;
 
     if (text.isEmpty) {
@@ -284,10 +268,10 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
     _typingTimer = async.Timer.periodic(typingSpeed, (timer) {
       //check if there is still text to display
-      if (_currentIndex < text.length) {
+      if (_currentIndex < widget.text.length) {
         setState(() {
           // Append the next character to the displayed text
-          _displayedText = text.substring(0, _currentIndex + 1);
+          _displayedText = widget.text.substring(0, _currentIndex + 1);
 
           _currentIndex++;
         });
@@ -302,103 +286,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     });
   }
 
-  @override
-  Future<bool> onLineStart(DialogueLine line) async {
-    // Create a new completer. The DialogueRunner will `await` this completer's future.
-    final completer = Completer<bool>();
-
-    // Update the state to display the new line and store the completer.
-    // `setState` triggers a rebuild, showing the new text and the "Next" button.
-    setState(() {
-      _currentLine = line;
-      text = line.text;
-      _isConversationFinished =
-      false; // A new line means the dialogue is not finished.
-      _isSpeechBubbleVisible = true;
-      _lineCompleter = completer;
-    });
-
-    _fadeController.reset();
-    _scaleController.reset();
-    await _scaleController.forward();
-
-    _startTypingText();
-
-    // Return the future. The runner is now paused.
-    return completer.future;
-  }
-
-  @override
-  Future<int?> onChoiceStart(DialogueChoice choice) {
-   final choiceCompleter = Completer<int>();
-
-    //stop autodismiss if choice in bubble
-   _dismissTimer?.cancel();
-
-   setState(() {
-     _currentChoice = choice;
-   });
-    
-
-    return choiceCompleter.future;
-  }
-
-  @override
-  void onDialogueFinish() {
-    // The DialogueRunner has finished all nodes in the conversation.
-
-    setState(() {
-      // Mark the dialogue as finished
-      _isConversationFinished = true;
-    });
-    _dismissSpeechBubble();
-  }
-
-  // Shows a debug dialog displaying the raw content of the Yarn script.
-  Future<void> _showScript() async {
-    // Ensure the widget is still in the tree before showing a dialog.
-    if (!mounted) return;
-
-    //pause game
-    widget.game.pauseEngine();
-
-    await showDialog<void>(
-      context: context,
-      // The builder provides a `dialogContext` which is crucial for closing.
-      builder: (dialogContext) => SimpleDialog(
-        title: const Text('Script Content'),
-        contentPadding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-        children: [
-          Container(
-            constraints: const BoxConstraints(maxHeight: 400, maxWidth: 300),
-            child: SingleChildScrollView(
-              child: Text(
-                _rawYarnScript,
-                style: const TextStyle(fontFamily: 'gameFont'),
-              ),
-            ),
-          ),
-          SizedBox(height: _buttonSpacing),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              // Using `dialogContext` ensures we only pop the dialog itself,
-              // not the entire dialogue screen or game view.
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Close'),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (mounted) {
-      // Resume the game engine after the dialog is closed.
-      widget.game.resumeEngine();
-    }
-  }
-
-
   void _onTypingComplete() {
     if (!mounted) {
       return; // Check if the widget is still mounted before updating state
@@ -407,7 +294,8 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       _isTypingComplete = true;
     });
 
-    widget.onComplete!(); // Call the callback if provided to notify that typing is complete
+    widget
+        .onComplete!(); // Call the callback if provided to notify that typing is complete
 
     // If autoDismiss is false, the speech bubble will remain visible until manually dismissed
     if (!autoDismiss) {
@@ -416,7 +304,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       print("Speech bubble typing complete, waiting for manual dismissal.");
     }
 
-    if (autoDismiss && _currentChoice == null) {
+    if (autoDismiss) {
       // If autoDismiss is true, start the dismiss timer
       _dismissTimer = async.Timer(dismissDuration, () {
         _dismissSpeechBubble();
@@ -427,14 +315,15 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   void _dismissSpeechBubble() {
     // Start the fade animation
     _fadeController.forward().then((_) {
-      if(mounted){
-      // After the fade animation completes, set visibility to false
-      setState(() {
-        _isSpeechBubbleVisible = false;
-        _displayedText = ''; // Clear the displayed text
-        _currentIndex = 0; // Reset the current index for next use
-        widget.onDismiss!();
-      });}
+      if (mounted) {
+        // After the fade animation completes, set visibility to false
+        setState(() {
+          _isSpeechBubbleVisible = false;
+          _displayedText = ''; // Clear the displayed text
+          _currentIndex = 0; // Reset the current index for next use
+          widget.onDismiss!();
+        });
+      }
     });
   }
 
@@ -458,7 +347,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     // Restart the animation
     _initializeSpeechBubble();
   }
-
 }
 
 //Tail Widget for Speech Bubble
