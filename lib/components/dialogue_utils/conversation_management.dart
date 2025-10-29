@@ -26,7 +26,7 @@ class ConversationManager with DialogueView {
   // A flag indicating whether the entire dialogue sequence has finished.
   // When `true`close conversation
   final bool _isConversationFinished = false;
-  late bool _showScript = false;
+  late bool _showingScript = false;
   // Tracks the currently active speech bubble overlay key for each character.
   // This allows us to remove the correct bubble when a character speaks again.
   final Map<String, String> _activeSpeechBubbles = {};
@@ -147,9 +147,9 @@ class ConversationManager with DialogueView {
   Future<void> _showScript() async {
     late final double buttonSpacing = 10;
     // Ensure the widget is still in the tree before showing a dialog.
-    if (!_showScript) return;
+    if (!_showingScript) return;
 
-    _showScript = true;
+    _showingScript = true;
 
     //pause game
     game.pauseEngine();
