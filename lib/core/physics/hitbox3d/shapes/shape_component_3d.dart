@@ -37,4 +37,3 @@ abstract class ShapeComponent3D extends IsoPositionComponent with HasPaint {
   /// [Paint.style] for that.
   bool isSolid = false;
 }
-

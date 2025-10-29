@@ -1,8 +1,8 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/hitbox3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -11,7 +11,7 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 abstract class GameCharacter extends IsoPositionComponent
     with HasGameReference<PixelAdventure> {
 
-  ShapeHitbox3D hitbox;
+  late ShapeHitbox3D hitbox;
 
   GameCharacter({
     super.position,
@@ -21,9 +21,7 @@ abstract class GameCharacter extends IsoPositionComponent
     super.children,
     super.priority,
     super.key,
-  }) : hitbox = RectangleHitbox3D(size: size){
-    add(hitbox);
-  }
+  });
   Vector2 get gridPos =>
       Vector2(position.x / tilesize.x, position.z / tilesize.z);
 
@@ -36,6 +34,12 @@ abstract class GameCharacter extends IsoPositionComponent
   static const double movementSpeed = 0.3;
   static const double jumpSpeed = 3;
 
+  @override
+  FutureOr<void> onLoad() {
+    hitbox = RectangleHitbox3D(size: size);
+    add(hitbox);
+    return super.onLoad();
+  }
 
   @override
   void update(double dt){

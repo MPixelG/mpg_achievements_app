@@ -18,15 +18,12 @@ class TileHighlightRenderable extends IsoPositionComponent
 
   TileHighlightRenderable({super.position}) : super(size: Vector3.all(1));
 
-  late final Vector2 tileSize;
-
   ExplosionEffect? explosionEffect;
   @override
   void onLoad() {
     // Position the highlight based on the grid position and tile size.
-    tileSize = game.gameWorld.tileGrid.tileSize;
-    explosionEffect = ExplosionEffect(position);
-    add(explosionEffect!);
+    // explosionEffect = ExplosionEffect(position);
+    // add(explosionEffect!);
   }
 
   @override

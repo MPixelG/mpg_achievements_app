@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:vector_math/vector_math.dart';
 
@@ -118,4 +119,91 @@ class _Face {
   final Color color;
   final double depth;
   _Face({required this.indices, required this.color, required this.depth});
+}
+
+void drawIsometricBox(
+    Canvas canvas,
+    Vector3 aabbMin,
+    Vector3 aabbMax, {
+      double scale = 16.0,
+      Offset offset = Offset.zero,
+      Paint? topPaint,
+      Paint? leftPaint,
+      Paint? rightPaint,
+      Paint? edgePaint,
+      double strokeWidthForEdges = 1.5,
+    }) {
+  topPaint ??= Paint()..style = PaintingStyle.fill..color = const Color(0x80CCCCCC);
+  leftPaint ??= Paint()..style = PaintingStyle.fill..color = const Color(0x60999999);
+  rightPaint ??= Paint()..style = PaintingStyle.fill..color = const Color(0x60999999);
+  edgePaint ??= Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = strokeWidthForEdges
+    ..strokeCap = StrokeCap.round
+    ..isAntiAlias = true
+    ..color = const Color(0xFF000000);
+
+  final double sin30 = 0.5;
+  final double cos30 = math.sqrt(3) / 2.0;
+
+  Offset projectIso(Vector3 p) {
+    final dx = (p.x - p.z) * cos30 * scale;
+    final dy = -p.y * scale + (p.x + p.z) * sin30 * scale;
+    return Offset(dx, dy) + offset;
+  }
+
+  List<Vector3> corners = List<Vector3>.generate(8, (i) {
+    final double x = (i & 1) == 0 ? aabbMin.x : aabbMax.x;
+    final double y = (i & 2) == 0 ? aabbMin.y : aabbMax.y;
+    final double z = (i & 4) == 0 ? aabbMin.z : aabbMax.z;
+    return Vector3(x, y, z);
+  });
+
+  final List<List<int>> edges = [
+    [0, 1], [2, 3], [4, 5], [6, 7],
+    [0, 2], [1, 3], [4, 6], [5, 7],
+    [0, 4], [1, 5], [2, 6], [3, 7],
+  ];
+
+  final List<int> topFace = [5, 7, 3, 1];
+  final List<int> leftFace = [0, 2, 6, 4];
+  final List<int> rightFace = [1, 3, 7, 5];
+
+  double faceDepthAverage(List<int> face) {
+    double s = 0.0;
+    for (var idx in face) {
+      s += corners[idx].x + corners[idx].z;
+    }
+    return s / face.length;
+  }
+
+  final faces = <Map<String, dynamic>>[
+    {'indices': topFace, 'paint': topPaint},
+    {'indices': leftFace, 'paint': leftPaint},
+    {'indices': rightFace, 'paint': rightPaint},
+  ];
+
+  faces.sort((a, b) => faceDepthAverage(a['indices']).compareTo(faceDepthAverage(b['indices'])));
+
+  for (final face in faces) {
+    final List<int> indexes = List<int>.from(face['indices']);
+    final Paint p = face['paint'] as Paint;
+    final Path poly = Path();
+    for (int i = 0; i < indexes.length; i++) {
+      final off = projectIso(corners[indexes[i]]);
+      if (i == 0) {
+        poly.moveTo(off.dx, off.dy);
+      } else {
+        poly.lineTo(off.dx, off.dy);
+      }
+    }
+    poly.close();
+    canvas.drawPath(poly, p);
+  }
+
+  for (final e in edges) {
+    final p0 = projectIso(corners[e[0]]);
+    final p1 = projectIso(corners[e[1]]);
+    canvas.drawLine(p0, p1, edgePaint);
+  }
 }

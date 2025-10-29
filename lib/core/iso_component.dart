@@ -1,11 +1,9 @@
-import 'dart:ui';
+import 'dart:async';
 
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flame/rendering.dart';
-import 'package:flutter/material.dart' hide Matrix4;
+import 'package:flutter/material.dart' hide Matrix4, TextStyle;
 import 'package:mpg_achievements_app/core/level/isometric/isometric_renderable.dart';
-import 'package:mpg_achievements_app/core/level/rendering/chunk.dart';
 import 'package:mpg_achievements_app/core/misc/transform3d_decorator.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
@@ -28,17 +26,20 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
     required Vector3 size,
     Vector3? scale,
     Anchor3D? anchor,
-  }) :
-      transform = Transform3D(),
-      _anchor = anchor ?? Anchor3D.bottomLeftLeft,
-      super() {
-    decorator = IsometricDecorator(transform);
-
+  }) : transform = Transform3D(),
+      _anchor = anchor ?? Anchor3D.bottomLeftLeft, super() {
     this.position = position ?? Vector3.zero();
     this.size = size;
 
     _size.addListener(_onModifiedSizeOrAnchor);
     _onModifiedSizeOrAnchor();
+  }
+
+  @override
+  @mustCallSuper
+  FutureOr<void> onLoad(){
+    super.onLoad();
+    decorator = IsometricDecorator(transform);
   }
 
   Matrix4 get transformMatrix => transform.transformMatrix;
@@ -51,7 +52,14 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
 
   @override
   void renderTree(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
+
+    canvas.drawCircle(toWorldPos(position).toOffset(), 3, Paint()..color = Colors.pinkAccent);
+    // canvas.drawParagraph((ParagraphBuilder(ParagraphStyle())..addText(runtimeType.toString())..pushStyle(TextStyle(fontSize: 11, foreground: Paint()..colorFilter))).build()..layout(ParagraphConstraints(width: 60)), toWorldPos(position).toOffset());
+
     decorator.applyChain((p0) {
+
+      canvas.drawCircle(Offset.zero, 3, Paint()..color = Colors.red);
+
       List<Component> allComponents = [];
 
       allComponents.addAll([
@@ -68,16 +76,18 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
           }
         } else if(element is IsoPositionComponent){
           element.renderTree(canvas, normalCanvas, getNormalPaint);
+        } else {
+          element.renderTree(canvas);
         }
       }
     }, canvas);
   }
 
   @override
-  Vector3 get gridFeetPos => position;
+  Vector3 get gridFeetPos => positionOfAnchor(Anchor3D.bottomLeftLeft);
 
   @override
-  Vector3 get gridHeadPos => position + size;
+  Vector3 get gridHeadPos => positionOfAnchor(Anchor3D.topRightRight);
 
   @override
   Anchor3D get anchor => _anchor;
@@ -92,6 +102,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
 
   @override
   NotifyingVector3 get size => _size;
+  Vector3 get scaledSize => Vector3.copy(size)..multiply(scale);
 
   @override
   set size(Vector3 newSize) {
@@ -118,6 +129,8 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
   @override
   Vector3 get position => transform.position;
 
+  Vector2 get screenPos => toWorldPos(position);
+
   double get x => position.x;
   set x(double newX) => position = Vector3(newX, position.y, position.z);
 
@@ -141,10 +154,10 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
   /// Similar to [positionOf()], but applies to any anchor point within
   /// the component.
   Vector3 positionOfAnchor(Anchor3D anchor) {
-    if (anchor == _anchor) {
+    if (anchor == _anchor && scale == Vector3.all(1)) {
       return position;
     }
-    return positionOf(Vector3(anchor.x * size.x, anchor.y * size.y, anchor.z * size.z));
+    return positionOf(Vector3(anchor.x * scaledSize.x, anchor.y * scaledSize.y, anchor.z * scaledSize.z));
   }
 
   /// Convert local coordinates of a point [point] inside the component
@@ -164,7 +177,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
   /// Similar to [absolutePositionOf()], but applies to any anchor
   /// point within the component.
   Vector3 absolutePositionOfAnchor(Anchor3D anchor) =>
-      absolutePositionOf(Vector3(anchor.x * size.x, anchor.y * size.y, anchor.z * size.z));
+      absolutePositionOf(Vector3(anchor.x * scaledSize.x, anchor.y * scaledSize.y, anchor.z * scaledSize.z));
 
   /// Transform [point] from the parent's coordinate space into the local
   /// coordinates. This function is the inverse of [positionOf()].
@@ -207,8 +220,9 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
 
 
   void _onModifiedSizeOrAnchor() {
-    transform.offset = Vector3(-_anchor.x * _size.x, -_anchor.y * _size.y, -_anchor.z * _size.z);
-    _size2D = projectedBounds(size.clone(), tilesize.x, tilesize.y, tilesize.z);
+    Vector3 scaledSize = this.scaledSize;
+    transform.offset = -Vector3(_anchor.x * scaledSize.x, _anchor.y * scaledSize.y, _anchor.z * scaledSize.z);
+    _size2D = projectedBounds(scaledSize.clone(), tilesize.x, tilesize.y, tilesize.z);
   }
 }
 

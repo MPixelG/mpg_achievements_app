@@ -307,10 +307,14 @@ class Chunk {
     double fz = r.gridFeetPos.z;
     double hx = r.gridHeadPos.x;
     double hz = r.gridHeadPos.z;
-    return hx >= x * chunkSize &&
-        fx < (x + 1) * chunkSize &&
-        hz >= z * chunkSize &&
-        fz < (z + 1) * chunkSize;
+
+
+    bool smallerX = fx < (x+1)*chunkSize;
+    bool smallerZ = fz < (z+1)*chunkSize;
+    bool greaterX = hx >= x*chunkSize;
+    bool greaterZ = hz >= z*chunkSize;
+
+    return smallerX && smallerZ && greaterX && greaterZ;
   }
 
 

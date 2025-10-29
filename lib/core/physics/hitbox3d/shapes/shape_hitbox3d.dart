@@ -216,8 +216,14 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
 
 
   Aabb3 _recalculateAabb() {
+    _halfExtents.setValues(
+      size.x / 2 + _extentEpsilon,
+      size.y / 2 + _extentEpsilon,
+      size.z / 2 + _extentEpsilon,
+    );
 
-    return _aabb;
+    _validAabb = true;
+    return _aabb..setCenterAndHalfExtents(absoluteCenter, _halfExtents);
   }
 
 

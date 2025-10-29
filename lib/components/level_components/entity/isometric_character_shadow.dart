@@ -23,7 +23,7 @@ class ShadowComponent extends IsoPositionComponent {
 
   @override
   void update(double dt){
-    anchor = Anchor3D(0, owner.position.z - owner.zGround, 0);
+    //anchor = Anchor3D(0, owner.position.z - owner.zGround, 0);
     super.update(dt);
   }
 

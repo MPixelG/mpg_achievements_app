@@ -16,14 +16,14 @@ class ChunkGrid {
 
   GameTileMap gameTileMap;
 
-
   bool _needsUpdate = true;
   Future<void>? _currentBuildTask;
 
   void markForUpdate() => _needsUpdate = true;
+
   ChunkGrid(this.gameTileMap) {
     generateChunks();
-    if(!shaderInitialized && !shaderBeingInitialized){
+    if (!shaderInitialized && !shaderBeingInitialized) {
       shaderBeingInitialized = true;
       initShader();
     }
@@ -66,14 +66,14 @@ class ChunkGrid {
   }
 
   bool currentlyRebuilding = false;
-  Future<void> buildMaps(
-      List<IsometricRenderable> components,
-      Vector2 camPos,
-      Vector2 viewportSize,[
-        Offset offset = Offset.zero,
-      ]) async {
 
-    if(currentlyRebuilding) return;
+  Future<void> buildMaps(
+    List<IsometricRenderable> components,
+    Vector2 camPos,
+    Vector2 viewportSize, [
+    Offset offset = Offset.zero,
+  ]) async {
+    if (currentlyRebuilding) return;
     currentlyRebuilding = true;
 
     PictureRecorder albedoRecorder = PictureRecorder();
@@ -82,7 +82,7 @@ class ChunkGrid {
     Canvas normalCanvas = Canvas(normalRecorder);
     Canvas albedoCanvas = Canvas(albedoRecorder);
 
-    Vector2 posTL = -camPos + (viewportSize/2);
+    Vector2 posTL = -camPos + (viewportSize / 2);
     albedoCanvas.translate(posTL.x, posTL.y);
     normalCanvas.translate(posTL.x, posTL.y);
 
@@ -94,23 +94,16 @@ class ChunkGrid {
             tilesize.x / 2,
         (chunk.x + chunk.z) * (Chunk.chunkSize + chunkSpacing) * tilesize.z / 2,
       );
-      chunkPos.x += Chunk.worldSize.x / 3;
       chunkPos += offset.toVector2();
       chunkPos.y -= chunk.yHeightUsedPixels;
       Vector2 unPositionedChunkPos = chunkPos - camPos + (viewportSize / 2);
 
-      if (unPositionedChunkPos.x < 0) {
-        double chunkPosR = unPositionedChunkPos.x + Chunk.chunkSize*tilesize.x;
-        if (chunkPosR < 0) {
-          continue;
-        }
-      }
-      if (unPositionedChunkPos.y < 0) {
-        double chunkPosB = unPositionedChunkPos.y + Chunk.chunkSize*tilesize.z;
-        if (chunkPosB < 0) {
-          continue;
-        }
-      }
+      // if (unPositionedChunkPos.x < 0) {
+      //   continue;
+      // }
+      // if (unPositionedChunkPos.y < 0) {
+      //   continue;
+      // }
       if (unPositionedChunkPos.x > viewportSize.x) {
         continue;
       }
@@ -137,12 +130,17 @@ class ChunkGrid {
       normalCanvas.restore();
 
       currentlyRebuilding = false;
-
     }
 
     await Future.wait([
-      normalRecorder.endRecording().toImage(viewportSize.x.toInt(), viewportSize.y.toInt()).then((value) => lastNormal = value),
-      albedoRecorder.endRecording().toImage(viewportSize.x.toInt(), viewportSize.y.toInt()).then((value) => lastAlbedo = value)
+      normalRecorder
+          .endRecording()
+          .toImage(viewportSize.x.toInt(), viewportSize.y.toInt())
+          .then((value) => lastNormal = value),
+      albedoRecorder
+          .endRecording()
+          .toImage(viewportSize.x.toInt(), viewportSize.y.toInt())
+          .then((value) => lastAlbedo = value),
     ]).then((value) {
       fullAlbedo?.dispose();
       fullNormal?.dispose();
@@ -167,15 +165,17 @@ class ChunkGrid {
     Vector2 camPos,
     Vector2 viewportSize, [
     Offset offset = Offset.zero,
-      ]) {
+  ]) {
+    if (components.length > 1) {
+      components.sort((a, b) => depth(a).compareTo(depth(b)));
+    }
 
     if (_needsUpdate && _currentBuildTask == null) {
-      _currentBuildTask = buildMaps(components, camPos, viewportSize)
-          .then((_) {
+      _currentBuildTask = buildMaps(components, camPos, viewportSize).then((_) {
         _currentBuildTask = null;
       });
     }
-    if(fullAlbedo == null || fullNormal == null || shader == null) return;
+    if (fullAlbedo == null || fullNormal == null || shader == null) return;
 
     shader!.setImageSampler(0, fullAlbedo!);
     shader!.setImageSampler(1, fullNormal!);
@@ -185,14 +185,11 @@ class ChunkGrid {
     double lightZ = sin(time) * 600;
 
     shader!.setFloatUniforms((val) {
-      val.setFloats([
-        viewportSize.x, viewportSize.y,
-        lightX, lightZ, 15,
-      ]);
+      val.setFloats([viewportSize.x, viewportSize.y, lightX, lightZ, 15]);
     });
 
     shaderPaint.shader = shader;
-    Vector2 posTL = camPos - (viewportSize/2);
+    Vector2 posTL = camPos - (viewportSize / 2);
     canvas.save();
     canvas.translate(posTL.x, posTL.y);
     canvas.drawRect(viewportSize.toRect(), shaderPaint);
@@ -209,10 +206,12 @@ class ChunkGrid {
     }
   }
 
-
   FragmentShader? shader;
-  void initShader() async{
-    FragmentProgram program = await FragmentProgram.fromAsset("assets/shaders/lighting.frag");
+
+  void initShader() async {
+    FragmentProgram program = await FragmentProgram.fromAsset(
+      "assets/shaders/lighting.frag",
+    );
     shader = program.fragmentShader();
   }
 }

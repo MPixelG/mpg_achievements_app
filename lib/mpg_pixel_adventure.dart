@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
@@ -13,7 +12,6 @@ import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/components/camera/advanced_camera.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detection.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/isoCollisionCallbacks.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 
 import 'components/level_components/entity/enemy/enemy.dart';

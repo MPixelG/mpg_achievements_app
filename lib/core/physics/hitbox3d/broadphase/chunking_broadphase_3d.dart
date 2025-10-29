@@ -75,8 +75,7 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
 
   @override
   void onAabbChange(T hitbox) {
-    updateHitbox(hitbox);
-    if(hitbox.id != 1) print("updated hitbox ${hitbox.id} to ${hitbox.aabb.min}!");
+    updateHitbox(hitbox); //todo this gets called every frame for animatedGameCharacters. fix.
   }
 
   @override
@@ -86,7 +85,7 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
     for (final item in _hitboxes.values) {
       final itemChunks = _getChunksOfHitbox(item);
 
-      //print("${item.id} is currently at ${item.aabb.min} - ${item.aabb.max}");
+      // print("${item.id} is currently at ${item.aabb.min} - ${item.aabb.max}");
 
       for (final chunk in itemChunks) {
         final hitboxIdsInChunk = _chunks[chunk]!;
@@ -102,9 +101,6 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
         }
       }
     }
-    _potentials.forEach((element) {
-      //print("potential: ${element.a} - ${element.b}");
-    });
     return _potentials;
   }
 

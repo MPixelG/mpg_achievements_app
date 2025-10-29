@@ -60,5 +60,4 @@ class RectangleShapeComponent extends ShapeComponent3D {
 
     return intersectionPoints;
   }
-
 }

@@ -1,21 +1,21 @@
 import 'dart:developer';
-import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
+import 'package:mpg_achievements_app/core/level/game_world.dart';
 import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/util/isometric_utils.dart';
 import 'package:mpg_achievements_app/util/render_utils.dart';
 
-import '../../../components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
-import '../../../mpg_pixel_adventure.dart';
-import '../../../util/isometric_utils.dart';
-import '../game_world.dart';
+
 import 'isometric_renderable.dart';
 import 'isometric_tiled_component.dart';
 import 'tile_effects/highlighted_tile.dart';
@@ -46,8 +46,7 @@ class IsometricWorld extends GameWorld {
     tileGrid = IsometricTileGrid(
       level.tileMap.map.width,
       level.tileMap.map.height,
-      tilesize
-          .xy, //setting the tile size to match the isometric tile dimensions
+      tilesize.xy, //setting the tile size to match the isometric tile dimensions
       collisionLayer,
       this,
     );
@@ -66,7 +65,6 @@ class IsometricWorld extends GameWorld {
 
     log("pos: $selectedTile");
 
-    add(CollisionBlock(position: Vector3(selectedTile.x, 1, selectedTile.y), size: Vector3.all(2)));
 
     // Use the function to find the top-most tile.
     final selectionResult = getTopmostTileAtGridPos(selectedTile);
@@ -85,7 +83,10 @@ class IsometricWorld extends GameWorld {
       highlightedTile.position = selectionResult.gridPosition;
       log("Highlight position set to: ${highlightedTile.position}");
 
-      //add(highlightedTile); //todo clicking on a tile lower on the screen than the player, the player gets drawn on top of everything
+      add(CollisionBlock(position: selectionResult.gridPosition, size: Vector3.all(1)));
+
+
+      add(highlightedTile); //todo clicking on a tile lower on the screen than the player, the player gets drawn on top of everything
     } else {
       // No tile was found at this position (clicked on empty space).
       highlightedTile = null;
@@ -120,11 +121,11 @@ class IsometricWorld extends GameWorld {
       Vector3 start = scaledPlayerPos;
       Vector3 end = player.size.clone()..multiply(tilesize);
 
-      renderIsoBox(canvas: canvas, start: Vector3.zero(), end: end.xzy, fillSides: false, originOffset: toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftLeft)).toOffset());
-      canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftLeft).xzy).toOffset(), 1, Paint()..color = Colors.red);
-      canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomRightRight).xzy).toOffset(), 1, Paint()..color = Colors.green);
-      canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomRightLeft).xzy).toOffset(), 1, Paint()..color = Colors.blue);
-      canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftRight).xzy).toOffset(), 1, Paint()..color = Colors.cyan);
+      // renderIsoBox(canvas: canvas, start: Vector3.zero(), end: end.xzy, fillSides: false, originOffset: toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftLeft)).toOffset());
+      // canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftLeft).xzy).toOffset(), 1, Paint()..color = Colors.red);
+      // canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomRightRight).xzy).toOffset(), 1, Paint()..color = Colors.green);
+      // canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomRightLeft).xzy).toOffset(), 1, Paint()..color = Colors.blue);
+      // canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftRight).xzy).toOffset(), 1, Paint()..color = Colors.cyan);
     }
   }
 
@@ -177,7 +178,7 @@ class IsometricWorld extends GameWorld {
           if (gid.tile != 0) {
             // Success! Return all the info about the tile we found.
             return TileSelectionResult(
-              Vector3(gridPos.x, gridPos.y, i.toDouble()),
+              Vector3(gridPos.x, i.toDouble(), gridPos.y),
               gid,
             );
           }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -11,12 +10,8 @@ import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/components/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
-import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
-import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import 'package:mpg_achievements_app/util/isometric_utils.dart';
-
 
 import '../../../state_management/providers/player_state_provider.dart';
 import '../../controllers/control_action_bundle.dart';
@@ -35,25 +30,28 @@ class Player extends AnimatedCharacter
         AnimationManager,
         HasMovementAnimations,
         HasCollisions {
-
   bool debugNoClipMode = false;
   bool debugImmortalMode = false;
+
   //we need this local state flag because of the animation and movement logic, it refers to the global state bool gotHit
   bool _isHitAnimationPlaying = false;
   bool _isRespawningAnimationPlaying = false;
+
   //starting position
   Vector3 startingPosition = Vector3.zero();
 
   //Player name
   String playerCharacter;
+
   //Find the ground of player position
   late double zGround = 0.0;
-
 
   late KeyboardCharacterController<Player> controller;
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
-  Player({required this.playerCharacter, super.position}) : super(size: Vector3(0.8, 0.8, 0.8));
+  Player({required this.playerCharacter, super.position})
+    : super(size: Vector3(0.8, 1.3, 0.8));
+
   @override
   Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.
@@ -71,6 +69,8 @@ class Player extends AnimatedCharacter
   @override
   void update(double dt) {
     super.update(dt);
+
+    //print("hitbox position: ${hitbox.aabb.min} - ${hitbox.aabb.max}");
     //Provider logic follow
     //the ref.watch here makes sure that the player component rebuilds and PlayerData changes its values when the player state changes
     final playerState = ref.watch(playerProvider);
@@ -133,7 +133,8 @@ class Player extends AnimatedCharacter
     position -= Vector3.all(
       32,
     ); //center the player so that the animation displays correctly (its 96*96 and the player is 32*32)
-    scale.x = 1; //flip the player to the right side and a third of the size because the animation is triple of the size
+    scale.x =
+        1; //flip the player to the right side and a third of the size because the animation is triple of the size
     await playAnimation("disappearing"); //display a disappear animation
     await Future.delayed(Duration(milliseconds: 320));
     //wait for the animation to finish
@@ -166,10 +167,9 @@ class Player extends AnimatedCharacter
 
   //find the highest ground block beneath the player and set the zGround to its zPosition + zHeight
   void _findGroundBeneath() {
-
     //todo use 3d position for that
 
-/*    // the highest ground block beneath the player
+    /*    // the highest ground block beneath the player
     final blocks = game.gameWorld.children.whereType<CollisionBlock>();
     //print("number of blocks: ${blocks.length}");
     double highestZ = 0.0; //default floor
@@ -194,13 +194,17 @@ class Player extends AnimatedCharacter
     zGround = highestZ;*/
   }
 
-  ControlActionBundle<Player> buildControlBundle(){
+  ControlActionBundle<Player> buildControlBundle() {
     return ControlActionBundle<Player>({
       //setting physics variables/velocity for game_character movement
       ControlAction("moveUp", key: "W", run: (parent) => parent.velocity.z--),
       ControlAction("moveLeft", key: "A", run: (parent) => parent.velocity.x--),
       ControlAction("moveDown", key: "S", run: (parent) => parent.velocity.z++),
-      ControlAction("moveRight", key: "D", run: (parent) => parent.velocity.x++),
+      ControlAction(
+        "moveRight",
+        key: "D",
+        run: (parent) => parent.velocity.x++,
+      ),
       ControlAction("jump", key: "Space", run: (parent) => parent.velocity.y++),
     });
   }
@@ -237,9 +241,16 @@ class Player extends AnimatedCharacter
     srcSize: tilesize.xy,
     srcPosition: Vector2.zero(),
   );
+
   @override
-  void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]){
+  void render(
+    Canvas canvas, [
+    Canvas? normalCanvas,
+    Paint Function()? getNormalPaint,
+  ]) {
     super.render(canvas);
+    // canvas.drawCircle(toWorldPos(hitbox.position, 0).toOffset(), 2, Paint()..color = Colors.blue);
+    // canvas.drawCircle(toWorldPos(hitbox.size, 0).toOffset(), 2, Paint()..color = Colors.blue);
     //normalSprite.render(normalCanvas!, overridePaint: getNormalPaint!(), position: toWorldPos(position) - Vector2(animationTicker!.getSprite().srcSize.x / 2, 0));
   }
 
@@ -252,6 +263,7 @@ class Player extends AnimatedCharacter
   //we answer the getters from HasMovementAnimations here to tell the mixin if we are currently in hit or respawn frames
   @override
   bool get isInHitFrames => _isHitAnimationPlaying;
+
   @override
   bool get isInRespawnFrames => _isRespawningAnimationPlaying;
 }

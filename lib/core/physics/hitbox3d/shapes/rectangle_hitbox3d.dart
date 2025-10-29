@@ -1,9 +1,13 @@
 import 'dart:async';
 
+import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/core/level/rendering/chunk.dart';
 import 'package:mpg_achievements_app/core/math/ray3.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/raycasting_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_shape_component.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
+import 'package:mpg_achievements_app/util/render_utils.dart';
 
 class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
   RectangleHitbox3D({
@@ -32,5 +36,13 @@ class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
   @override
   String toString(){
     return "RH3D(${aabb.min} - ${aabb.max})";
+  }
+
+  @override
+  void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]){
+    Vector3 size = aabb.max - aabb.min;
+    drawIsometricBox(canvas, Vector3.zero(), Vector3(size.x, -size.y, size.z));
+    canvas.drawCircle(Offset.zero, 2, Paint()..color = Colors.purple);
+    super.render(canvas);
   }
 }

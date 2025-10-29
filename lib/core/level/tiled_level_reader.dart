@@ -112,7 +112,7 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
 
   if (collisionsLayer != null) {
     for (final collision in collisionsLayer.objects) {
-      Vector2 pos = orthogonalToIsometric(collision.position) + Vector2(Chunk.worldSize.x / 2, 0);
+      Vector2 pos = orthogonalToIsometric(collision.position);
       // get z and zHeight from properties, if not set default to 0 and 16
       final double yPos = collision.properties.getValue('zPosition') ?? 0;
 

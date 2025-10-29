@@ -230,19 +230,11 @@ class Transform3D extends ChangeNotifier {
   /// Use [output] to send in a Vector3 object that will be used to avoid
   /// creating a new Vector3 object in this method.
   Vector3 globalToLocal(Vector3 point, {Vector3? output}) {
-    // Here we rely on the fact that in the transform matrix only elements
-    // `m[0]`, `m[1]`, `m[4]`, `m[5]`, `m[12]`, and `m[13]` are modified.
-    // This greatly simplifies computation of the inverse matrix.
-    final m = transformMatrix.storage;
-    var det = m[0] * m[5] - m[1] * m[4];
-    if (det != 0) {
-      det = 1 / det;
-    }
-    final x = ((point.x - m[12]) * m[5] - (point.y - m[13]) * m[4]) * det;
-    final y = ((point.y - m[13]) * m[0] - (point.x - m[12]) * m[1]) * det;
-    final z = ((point.y - m[14]) * m[0] - (point.x - m[11]) * m[1]) * det;
-    return (output?..setValues(x, y, z)) ?? Vector3(x, y, z);
+    final inv = Matrix4.copy(transformMatrix)..invert();
+    final v = inv.transform3(point);
+    return (output?..setFrom(v)) ?? v;
   }
+
 
   /// Whether the transform represents a pure translation, i.e. a transform of
   /// the form `(x, y) -> (x + Δx, y + Δy)`.
