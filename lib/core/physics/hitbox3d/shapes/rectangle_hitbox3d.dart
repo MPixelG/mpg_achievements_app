@@ -39,10 +39,9 @@ class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
   }
 
   @override
-  void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]){
+  void renderDebugMode(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]){
     Vector3 size = aabb.max - aabb.min;
     drawIsometricBox(canvas, Vector3.zero(), Vector3(size.x, -size.y, size.z));
-    canvas.drawCircle(Offset.zero, 2, Paint()..color = Colors.purple);
     super.render(canvas);
   }
 }

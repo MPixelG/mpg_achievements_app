@@ -37,8 +37,8 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
 
   @override
   @mustCallSuper
-  FutureOr<void> onLoad(){
-    super.onLoad();
+  FutureOr<void> onMount(){
+    super.onMount();
     decorator = IsometricDecorator(transform);
   }
 
@@ -52,19 +52,10 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
 
   @override
   void renderTree(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
-
-    canvas.drawCircle(toWorldPos(position).toOffset(), 3, Paint()..color = Colors.pinkAccent);
-    // canvas.drawParagraph((ParagraphBuilder(ParagraphStyle())..addText(runtimeType.toString())..pushStyle(TextStyle(fontSize: 11, foreground: Paint()..colorFilter))).build()..layout(ParagraphConstraints(width: 60)), toWorldPos(position).toOffset());
-
     decorator.applyChain((p0) {
-
-      canvas.drawCircle(Offset.zero, 3, Paint()..color = Colors.red);
-
-      List<Component> allComponents = [];
-
-      allComponents.addAll([
+      List<Component> allComponents = [
         this, ...children
-      ]);
+      ];
 
       allComponents.sort((a, b) => a.priority.compareTo(b.priority)); //todo sort via depth and override childrenFactory to auto sort children
 

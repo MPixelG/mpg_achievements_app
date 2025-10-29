@@ -60,7 +60,7 @@ class Player extends AnimatedCharacter
     controller = KeyboardCharacterController<Player>(buildControlBundle());
     add(controller);
 
-    add(ShadowComponent());
+    //add(ShadowComponent());
     _findGroundBeneath();
 
     return super.onLoad();
