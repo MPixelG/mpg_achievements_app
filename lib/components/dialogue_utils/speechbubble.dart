@@ -1,32 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jenny/jenny.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble_engine.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
+import 'package:mpg_achievements_app/core/iso_component.dart';
 import '../../mpg_pixel_adventure.dart';
 
 class SpeechBubble extends ConsumerStatefulWidget {
   //text to display and position
-  final Player player;
-  final Offset targetPosition;
-  final Offset currentPosition; //todo convert to 3d coords
+  final IsoPositionComponent component; //more generic
+  final String text;
   final PixelAdventure game;
-  final String yarnFilePath;
-  final Map<String, Function> commands;
+  final DialogueChoice? choices;
 
   //callback
   final VoidCallback? onComplete;
   final VoidCallback? onDismiss;
+  final ValueChanged<int>? onChoiceSelected;
 
   const SpeechBubble({
     super.key,
-    required this.player,
+    required this.component,
+    required this.text,
+    this.choices,
     this.onComplete,
     this.onDismiss,
-    required this.targetPosition,
     required this.game,
-    required this.currentPosition,
-    required this.yarnFilePath,
-    required this.commands,
+    this.onChoiceSelected,
   });
 
   @override
