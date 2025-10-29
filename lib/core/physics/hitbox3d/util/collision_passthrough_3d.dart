@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/util/type_utils.dart';
 import 'package:vector_math/vector_math.dart';
-import 'isoCollisionCallbacks.dart';
+import '../isoCollisionCallbacks.dart';
 
 /// This mixin can be used if you want to pass the [CollisionCallbacks] to the
 /// next ancestor that can receive them. It can be used to group hitboxes

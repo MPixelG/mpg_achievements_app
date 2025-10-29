@@ -83,6 +83,9 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
 
     _potentials.clear();
     for (final item in _hitboxes.values) {
+
+      if(item.collisionType != CollisionType.active) continue;
+
       final itemChunks = _getChunksOfHitbox(item);
 
       // print("${item.id} is currently at ${item.aabb.min} - ${item.aabb.max}");

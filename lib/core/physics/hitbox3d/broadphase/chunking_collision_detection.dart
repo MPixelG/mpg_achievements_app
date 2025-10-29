@@ -3,8 +3,8 @@ import 'dart:math' as math;
 import 'package:mpg_achievements_app/core/math/ray3.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/broadphase/broadphase_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/broadphase/chunking_broadphase_3d.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/util/collision_detection_3d.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/raycasting_3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/collision_detection_3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/util/raycasting_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
 import 'package:vector_math/vector_math.dart';
 

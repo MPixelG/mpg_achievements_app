@@ -2,7 +2,7 @@
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/core/math/ray3.dart';
 
-import 'hitbox3d.dart';
+import '../hitbox3d.dart';
 
 /// The result of a raycasting operation.
 ///

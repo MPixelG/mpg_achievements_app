@@ -21,12 +21,17 @@ class RectangleShapeComponent extends ShapeComponent3D {
   }
 
   bool overlaps(RectangleShapeComponent other) {
-    return position.x < other.position.x + other.size.x &&
-        position.x + size.x > other.position.x &&
-        position.y < other.position.y + other.size.y &&
-        position.y + size.y > other.position.y &&
-        position.z < other.position.z + other.size.z &&
-        position.z + size.z > other.position.z;
+    final thisMin = absolutePosition;
+    final thisMax = thisMin + size;
+    final otherMin = other.absolutePosition;
+    final otherMax = otherMin + other.size;
+
+    return thisMin.x < otherMax.x &&
+        thisMax.x > otherMin.x &&
+        thisMin.y < otherMax.y &&
+        thisMax.y > otherMin.y &&
+        thisMin.z < otherMax.z &&
+        thisMax.z > otherMin.z;
   }
 
   Set<Vector3> rectIntersections(RectangleShapeComponent other) {
@@ -36,18 +41,21 @@ class RectangleShapeComponent extends ShapeComponent3D {
       return intersectionPoints;
     }
 
-    final xMin = position.x > other.position.x ? position.x : other.position.x;
-    final xMax = (position.x + size.x) < (other.position.x + other.size.x)
-        ? (position.x + size.x)
-        : (other.position.x + other.size.x);
-    final yMin = position.y > other.position.y ? position.y : other.position.y;
-    final yMax = (position.y + size.y) < (other.position.y + other.size.y)
-        ? (position.y + size.y)
-        : (other.position.y + other.size.y);
-    final zMin = position.z > other.position.z ? position.z : other.position.z;
-    final zMax = (position.z + size.z) < (other.position.z + other.size.z)
-        ? (position.z + size.z)
-        : (other.position.z + other.size.z);
+    final thisMin = absolutePosition;
+    final thisMax = thisMin + size;
+    final otherMin = other.absolutePosition;
+    final otherMax = otherMin + other.size;
+
+    final xMin = thisMin.x > otherMin.x ? thisMin.x : otherMin.x;
+    final xMax = thisMax.x < otherMax.x ? thisMax.x : otherMax.x;
+    final yMin = thisMin.y > otherMin.y ? thisMin.y : otherMin.y;
+    final yMax = thisMax.y < otherMax.y ? thisMax.y : otherMax.y;
+    final zMin = thisMin.z > otherMin.z ? thisMin.z : otherMin.z;
+    final zMax = thisMax.z < otherMax.z ? thisMax.z : otherMax.z;
+
+    if (xMin >= xMax || yMin >= yMax || zMin >= zMax) {
+      return intersectionPoints;
+    }
 
     intersectionPoints.add(Vector3(xMin, yMin, zMin));
     intersectionPoints.add(Vector3(xMax, yMin, zMin));

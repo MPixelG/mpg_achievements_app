@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/enemy/ai/tile_grid.dart';
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/raycasting_3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/util/raycasting_3d.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../../../../core/level/game_world.dart';

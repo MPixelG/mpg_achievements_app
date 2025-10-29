@@ -6,7 +6,7 @@ import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d
 
 import 'broadphase/broadphase_3d.dart';
 import 'broadphase/chunking_collision_detection.dart';
-import 'util/collision_detection_3d.dart';
+import 'collision_detection_3d.dart';
 
 /// Keeps track of all the [ShapeHitbox3D]s in the component's tree and initiates
 /// collision detection every tick.

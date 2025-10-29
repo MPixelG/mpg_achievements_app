@@ -11,8 +11,8 @@ import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detecti
 import 'package:mpg_achievements_app/core/physics/hitbox3d/isoCollisionCallbacks.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/misc/aabb_listener.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_shape_component.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/raycasting_3d.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/util/collision_detection_3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/util/raycasting_3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/collision_detection_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/util/composite_hitbox_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/hitbox3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_component_3d.dart';
@@ -194,8 +194,7 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
   /// overlap, since the shapes have to be within the size of the component.
   @override
   bool possiblyIntersects(ShapeHitbox3D other) {
-    final collisionAllowed =
-        allowSiblingCollision || hitboxParent != other.hitboxParent;
+    final collisionAllowed = allowSiblingCollision || hitboxParent != other.hitboxParent;
     return collisionAllowed && aabb.intersectsWithAabb3(other.aabb);
   }
 

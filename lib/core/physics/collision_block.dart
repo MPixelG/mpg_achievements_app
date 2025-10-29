@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/isoCollisionCallbacks.dart';
@@ -25,7 +26,7 @@ class CollisionBlock extends IsoPositionComponent
 
   @override
   FutureOr<void> onLoad() {
-    //hitbox.collisionType = CollisionType.active;
+    hitbox.collisionType = CollisionType.passive;
     add(hitbox);
   }
 

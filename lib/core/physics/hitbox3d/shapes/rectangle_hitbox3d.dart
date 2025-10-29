@@ -4,7 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/core/level/rendering/chunk.dart';
 import 'package:mpg_achievements_app/core/math/ray3.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/raycasting_3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/util/raycasting_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_shape_component.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
 import 'package:mpg_achievements_app/util/render_utils.dart';

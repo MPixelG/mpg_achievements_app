@@ -1,10 +1,10 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/core/math/ray3.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/raycasting_3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/util/raycasting_3d.dart';
 
-import '../broadphase/broadphase_3d.dart';
-import '../hitbox3d.dart';
+import 'broadphase/broadphase_3d.dart';
+import 'hitbox3d.dart';
 
 /// [CollisionDetection] is the foundation of the collision detection system in
 /// Flame.
