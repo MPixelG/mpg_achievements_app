@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 
-/// A mixin for components that can be rendered in an isometric view.
+// A mixin for components that can be rendered in an isometric view.
 mixin IsometricRenderable {
   Vector3 get gridFeetPos;
   Vector3 get gridHeadPos;

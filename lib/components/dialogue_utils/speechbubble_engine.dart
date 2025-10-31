@@ -1,13 +1,9 @@
 import 'dart:async' as async;
 import 'dart:async';
-
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:jenny/jenny.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble.dart';
-import 'package:mpg_achievements_app/components/dialogue_utils/yarn_creator.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 

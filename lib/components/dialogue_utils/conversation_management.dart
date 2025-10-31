@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'package:flame/src/game/overlay_manager.dart';
+import 'package:flutter/material.dart';
 import 'package:jenny/jenny.dart';
+import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/yarn_creator.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -33,7 +36,7 @@ class ConversationManager with DialogueView {
 
   ConversationManager({required this.game});
 
-  /// Starts a new conversation from a given Yarn script.
+  // Starts a new conversation from a given Yarn script.
   Future<void> startConversation(String yarnFilePath) async {
     // Clear any bubbles from a previous conversation
     _clearAllSpeechBubbles();
@@ -61,10 +64,11 @@ class ConversationManager with DialogueView {
 
   Future<void> onLineSart(DialogueLine line) async {
     _lineCompleter = Completer<void>();
-
+    //get context from game, The BuildContext argument is your handle into the location of the widget in the widget tree. This location is used for looking up inherited widgets
+    final BuildContext? overlayContext = game.buildContext; //todo maybe GlobalKey<NavigatorState> for accessing BuildContext
     // Determine who is speaking. Default to 'Player' if no character is specified.
     // Your Yarn script should have lines like "Player: Hello!" or "Guard: Halt!".
-    final String characterName = line.character.toString() ?? 'Player';
+    final String characterName = line.character?.name ?? 'Character';
     final IsoPositionComponent? character = _findCharacterByName(characterName);
 
     // Remove the previous speech bubble for this character, if one exists.
@@ -75,6 +79,20 @@ class ConversationManager with DialogueView {
         'SpeechBubble_${characterName}_${DateTime.now().millisecondsSinceEpoch}';
     _activeSpeechBubbles[characterName] = overlayKey;
 
+    game.overlays.addEntry(overlayKey, (overlayContext,game) =>
+        SpeechBubble(
+            component: character!,
+            text: line.text,
+            game: this.game,
+          onComplete: (){
+              if (!(_lineCompleter?.isCompleted ?? true)){
+                _lineCompleter?.complete();
+              }
+          },
+          onDismiss: () => _removeSpeechBubbleFor(characterName),
+        )
+        );
+
     // Pause the dialogue runner until the line completer is finished.
     await _lineCompleter?.future;
     _removeSpeechBubbleFor(characterName);
@@ -84,11 +102,13 @@ class ConversationManager with DialogueView {
   Future<int> onChoiceStart(DialogueChoice choice) async {
     _choiceCompleter = Completer<int>();
 
+    final BuildContext? overlayContext = game.buildContext; //todo maybe GlobalKey<NavigatorState> for accessing BuildContext
+
     // Choices are always presented from the player's perspective.
     const characterName = 'Player';
-    final player = _findCharacterByName(characterName);
+    final character = _findCharacterByName(characterName);
 
-    if (player == null) {
+    if (character == null) {
       print("Error: Player not found. Cannot show choices.");
       // Default to the first choice to avoid getting stuck.
       return 0;
@@ -100,6 +120,24 @@ class ConversationManager with DialogueView {
     final String overlayKey =
         'SpeechBubble_Choices_${DateTime.now().millisecondsSinceEpoch}';
     _activeSpeechBubbles[characterName] = overlayKey;
+
+    game.overlays.addEntry(
+      overlayKey,
+          (context, game) => SpeechBubble(
+        key: ValueKey(overlayKey),
+        game: this.game,
+        component: character,
+        text: '', // No primary text, or you could add a prompt like "?"
+        choices: choice, // Pass the DialogueChoice object
+        onChoiceSelected: (int selectedIndex) {
+          // This callback is triggered when a choice is pressed in the bubble
+          _removeSpeechBubbleFor(characterName); // Remove the choice bubble
+          if (!(_choiceCompleter?.isCompleted ?? true)) {
+            _choiceCompleter?.complete(selectedIndex);
+          }
+        },
+      ),
+    );
 
     return _choiceCompleter!.future;
   }
