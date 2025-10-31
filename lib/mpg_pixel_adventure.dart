@@ -10,6 +10,7 @@ import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/components/camera/advanced_camera.dart';
+import 'package:mpg_achievements_app/components/dialogue_utils/conversation_management.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detection.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/isoCollisionCallbacks.dart';
@@ -37,9 +38,9 @@ class PixelAdventure extends FlameGame
   }
 
   //Game components
-  late List<IsoPositionComponent> npcs;
+  final Map<String, IsoPositionComponent> npcs = {};
+  late final ConversationManager conversationManager;
   late final AdvancedCamera cam;
-  late Enemy enemy = Enemy(enemyCharacter: 'Virtual Guy');
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
   late String currentLevel = "Level_9";
@@ -53,7 +54,7 @@ class PixelAdventure extends FlameGame
   FutureOr<void> onLoad() async {
     //all images for the game are loaded into cache when the game start -> could take long at a later stage, but here it is fine for moment being
     await images.loadAllImages();
-
+    conversationManager = ConversationManager(game: this);
     //parse("tiles/$currentLevel.tmx");
 
     //world is loaded after initialising all images

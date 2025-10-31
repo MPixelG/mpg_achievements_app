@@ -172,22 +172,7 @@ class GameScreen extends StatelessWidget {
               game.overlays.remove('DialogueScreen');
             },
             yarnFilePath:
-                'assets/yarn/test.yarn', //todo connect to state management and trigger method
-          );
-        },
-        'SpeechBubble': (BuildContext context, PixelAdventure game) {
-          return SpeechBubble(
-            text: 'Test',
-            game: game,
-            component: game.gameWorld.player,
-            // targetPosition: game.gameWorld.player.position.xy.toOffset(),
-            // currentPosition: game.gameWorld.player.position.xy.toOffset(), //todo convert to 3d
-            onComplete: () {
-              game.overlays.remove('SpeechBubble');
-            },
-            onDismiss: () {
-              game.overlays.remove('SpeechBubble');
-            },
+                'assets/yarn/test.yarn', //todo connect to state management and trigger method, make more customizable not static as atm
           );
         },
       },

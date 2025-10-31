@@ -156,14 +156,7 @@ class ConversationManager with DialogueView {
 
     // You need a way to access your NPCs. This example assumes they are
     // in a list on your `gameWorld` component.
-    try {
-      return game.npcs.firstWhere(
-        (npc) => npc.toString().toLowerCase() == lowerCaseName,
-      );
-    } catch (e) {
-      return null; // Return null if no NPC with that name is found
-    }
-  }
+    return game.npcs[name]; }
 
   /// Removes the currently active speech bubble for a specific character.
   void _removeSpeechBubbleFor(String characterName) {
