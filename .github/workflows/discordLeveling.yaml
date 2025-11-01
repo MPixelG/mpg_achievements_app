@@ -148,13 +148,13 @@ jobs:
                   out+=$'\n'
                   ;;
                 *)
-              if [ "ch" = '\' ]; then
-                out="{out}\\"
+              if [ "$ch" = '\' ]; then
+                out="${out}\\\\"
               else
-                if [ "ch" = '#' ]; then
-                  out+=" "
+                if [ "$ch" = '#' ]; then
+                  out="${out} "
               else
-                out+="$ch"
+                out="${out}\\${ch}"
               fi
               fi
               esac
