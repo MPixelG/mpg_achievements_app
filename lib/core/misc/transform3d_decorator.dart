@@ -11,18 +11,16 @@ import '../math/transform3d.dart';
 /// This decorator is used internally by the [PositionComponent].
 class IsometricDecorator extends Decorator {
    IsometricDecorator([Transform3D? transform, Vector3 Function()? getOffset])
-      : transform3d = transform ?? Transform3D(),
-         getOffset = getOffset ?? (() => Vector3.zero());
+      : transform3d = transform ?? Transform3D();
 
    final Transform3D transform3d;
-   final Vector3 Function() getOffset;
 
    @override
    void apply(void Function(Canvas) draw, Canvas canvas) {
      canvas.save();
 
      final posWithOffset = transform3d.position + transform3d.offset;
-     final screenPos = toWorldPos(posWithOffset - getOffset());
+     final screenPos = toWorldPos(posWithOffset);
 
      canvas.translate(screenPos.x, screenPos.y);
      canvas.rotate(transform3d.angleRoll);

@@ -120,7 +120,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
   @override
   Vector3 get position => transform.position;
 
-  Vector2 get screenPos => toWorldPos(position);
+  Vector2 get screenPos => toWorldPos(absolutePosition);
 
   double get x => position.x;
   set x(double newX) => position = Vector3(newX, position.y, position.z);
@@ -142,12 +142,8 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
 
   /// Similar to [positionOf()], but applies to any anchor point within
   /// the component.
-  Vector3 positionOfAnchor(Anchor3D anchor) {
-    if (anchor == _anchor && scale == Vector3.all(1)) {
-      return position;
-    }
-    return positionOf(Vector3(anchor.x * scaledSize.x, anchor.y * scaledSize.y, anchor.z * scaledSize.z));
-  }
+  Vector3 positionOfAnchor(Anchor3D anchor) =>
+    positionOf(Vector3(anchor.x * scaledSize.x, anchor.y * scaledSize.y, anchor.z * scaledSize.z));
 
   /// Convert local coordinates of a point [point] inside the component
   /// into the global (world) coordinate space.

@@ -67,6 +67,8 @@ class ChunkGrid {
 
   bool currentlyRebuilding = false;
 
+  //todo add upscaling
+  //todo fix viewport scaling when resizing window
   Future<void> buildMaps(
     List<IsometricRenderable> components,
     Vector2 camPos,

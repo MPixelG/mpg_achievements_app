@@ -18,10 +18,14 @@ import 'isometric_tiled_component.dart';
 import 'tile_effects/highlighted_tile.dart';
 
 class TileSelectionResult {
-  final Vector3 gridPosition;
+  final int x;
+  final int y;
+  final int z;
   final Gid tileGid; // The Gid object from Tiled, which contains the tile ID
 
-  TileSelectionResult(this.gridPosition, this.tileGid);
+  TileSelectionResult(this.x, this.y, this.z, this.tileGid);
+
+  Vector3 get pos => Vector3(x.toDouble(), y.toDouble(), z.toDouble());
 }
 
 class IsometricWorld extends GameWorld {
@@ -73,14 +77,14 @@ class IsometricWorld extends GameWorld {
 
       // Create the highlight with both grid position and layer index.
       final highlightedTile = TileHighlightRenderable(
-        position: selectionResult.gridPosition,
+        position: selectionResult.pos,
       );
 
       // Position the highlight using the layer-aware toWorldPos.
-      highlightedTile.position = selectionResult.gridPosition;
+      highlightedTile.position = selectionResult.pos;
       log("Highlight position set to: ${highlightedTile.position}");
 
-      add(CollisionBlock(position: selectionResult.gridPosition, size: Vector3.all(1)));
+      add(CollisionBlock(position: selectionResult.pos, size: Vector3.all(1)));
 
 
       add(highlightedTile); //todo clicking on a tile lower on the screen than the player, the player gets drawn on top of everything
@@ -157,25 +161,27 @@ class IsometricWorld extends GameWorld {
   // It iterates through the map layers from top to bottom.
   TileSelectionResult? getTopmostTileAtGridPos(Vector2 gridPos) {
     final map = game.gameWorld.level.tileMap.map;
-    final x = gridPos.x.toInt();
-    final y = gridPos.y.toInt();
+    final int x = gridPos.x.toInt();
+    final int z = gridPos.y.toInt();
+
+    final int layerAmount = map.layers.length-1;
 
     // Iterate from the top layer (highest index) down to the bottom.
-    for (var i = map.layers.length - 1; i >= 0; i--) {
+    for (var i = layerAmount; i >= 0; i--) {
       final layer = map.layers[i];
 
       // We only care about tile layers for selection.
       if (layer is TileLayer) {
         // Make sure the coordinates are within the bounds of this layer.
-        if (x >= 0 && x < layer.width && y >= 0 && y < layer.height) {
+        if (x >= 0 && x < layer.width && z >= 0 && z < layer.height) {
           // Tiled stores tile data in [row][column] format, so we use [y][x].
-          final gid = layer.tileData![y][x];
+          final gid = layer.tileData![z][x];
 
           // A GID of 0 means the tile is empty. If it's not empty, we've found our target! that means the first tile we find in the top-most layer is our tile that we look for
           if (gid.tile != 0) {
             // Success! Return all the info about the tile we found.
             return TileSelectionResult(
-              Vector3(gridPos.x, i.toDouble(), gridPos.y),
+              x+i, i, z+i,
               gid,
             );
           }

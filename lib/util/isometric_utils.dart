@@ -35,8 +35,7 @@ Vector2 toWorldPos2D(Vector2 gridPos, [double? levelWidth]) {
 
 Vector2 toGridPos(Vector2 worldPos, [double? levelWidth]) => worldToTileIsometric(
         worldPos,
-      ) +
-      Vector2(1, 1);
+      );
 
 // Convert world position to isometric tile coordinates used in toGridPos
 Vector2 worldToTileIsometric(Vector2 worldPos) {

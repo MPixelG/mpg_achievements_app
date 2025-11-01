@@ -14,7 +14,7 @@ import 'package:vector_math/vector_math.dart';
 /// The "default" Anchor3D in most cases is topLeft.
 ///
 /// The Anchor3D is represented by a fraction of the size (in each axis),
-/// where 0 in x-axis means left, 1 in y-axis means top, 1 in z-axis means right
+/// where 0 in x-axis means left, 1 in y-axis means top, 1 in z-axis means front
 @immutable
 class Anchor3D {
   static const Anchor3D topLeftLeft = Anchor3D(0.0, 1.0, 0.0);
