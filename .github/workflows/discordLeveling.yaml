@@ -143,7 +143,7 @@ jobs:
           while [ $i -lt $len ]; do    
             ch="${raw:$i:1}"
             case "$ch" in
-              [a-zA-Z0-9\ \_\-\'\":\#\/\.])
+              [a-zA-Z0-9\ \_\-\'\":\/\.])
                 sanitized="${sanitized}${ch}"
                 ;;
               $'\n')
@@ -171,7 +171,7 @@ jobs:
           while [ $j -lt $la ]; do
             c="${AUTHOR_ESC:$j:1}"
             case "$c" in
-              [a-zA-Z0-9\ \_\-\'\":\#\/\.])
+              [a-zA-Z0-9\ \_\-\'\":\/\.])
                 author_sanitized="${author_sanitized}${c}"
                 ;;
               *)
