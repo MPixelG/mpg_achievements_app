@@ -1,0 +1,77 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+        "mpg_achievements_app"
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "#BasicTiles": {
+            "dynamicWrapping": true
+        },
+        "#Terrain (16x16)": {
+            "dynamicWrapping": false
+        },
+        "C:/Users/Julian/Downloads/IndustrialTile_13.png.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "C:/Users/Julian/Downloads/industrialTiles.tmx": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 26.833333333333343,
+                "y": -47
+            }
+        },
+        "C:/Users/Julian/Downloads/industrialTiles.tmx#BasicTiles": {
+            "scaleInDock": 1
+        },
+        "C:/Users/Julian/Downloads/industrialTiles.tmx#Terrain (16x16)": {
+            "scaleInDock": 3
+        },
+        "C:/Users/Julian/Downloads/industrialTiles.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 2,
+            "scaleInEditor": 4
+        },
+        "C:/Users/Julian/Downloads/unbenannt.tmx": {
+            "scale": 5.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2.0909090909090935,
+                "y": -6
+            }
+        }
+    },
+    "last.externalTilesetPath": "C:/Users/Julian/Downloads",
+    "last.imagePath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/images/tiles",
+    "map.fixedSize": false,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "openFiles": [
+    ],
+    "project": "test.tiled-project",
+    "property.type": "int",
+    "recentFiles": [
+        "C:/Users/Julian/Downloads/unbenannt.tmx",
+        "C:/Users/Julian/Downloads/industrialTiles.tsx",
+        "C:/Users/Julian/Downloads/industrialTiles.tmx",
+        "C:/Users/Julian/Downloads/IndustrialTile_13.png.tsx"
+    ],
+    "tileset.embedInMap": false,
+    "tileset.lastUsedFilter": "Tiled-Kachelsatzdateien (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    },
+    "tileset.type": 1
+}
