@@ -70,6 +70,8 @@ abstract class GameWorld extends World
 
     //add player
     await add(game.gameWorld.player);
+    //add player to the list of component in the game
+    game.npcs[game.gameWorld.player.playerCharacter] = game.gameWorld.player; //todo more refactor necessary e.g. method od instanitating IsoComponents
 
     // Add the level to the game world so it gets rendered.
     await add(level);
@@ -132,7 +134,7 @@ abstract class GameWorld extends World
     // Debug test for SpeechBubble
     if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
       // A method to toggle the speech bubble
-      game.overlays.add('SpeechBubble');
+
     }
 
     // Debug test for Dialogue
