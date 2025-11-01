@@ -149,6 +149,8 @@ jobs:
                 *)
                   if [ "$ch" = '\' ]; then
                     out+='\\\\'
+                  else if [ "$ch" = '#' then
+                    out+=' '
                   else
                     out+="\\$ch"
                   fi
