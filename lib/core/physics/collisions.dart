@@ -27,6 +27,7 @@ mixin HasCollisions
     // add(hitbox!);
     super.onLoad();
 
+
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is CollisionBlock &&
