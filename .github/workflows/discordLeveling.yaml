@@ -148,15 +148,15 @@ jobs:
                   out+=$'\n'
                   ;;
                 *)
-                  if [ "$ch" = '\' ]; then
-                    out+='\\\\'
-                  else
-                    if [ "$ch" = '#']; then
-                      out+=' '
-                  else
-                    out+="\\$ch"
-                  fi
-                  ;;
+              if [ "ch" = '\' ]; then
+                out="{out}\\"
+              else
+                if [ "ch" = '#' ]; then
+                  out+=" "
+              else
+                out+="\\$ch"
+              fi
+              fi
               esac
               i=$((i+1))
             done
