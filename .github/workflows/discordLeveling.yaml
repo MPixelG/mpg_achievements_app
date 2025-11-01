@@ -132,7 +132,7 @@ jobs:
           DELETIONS: ${{ env.DELETIONS }}
           MESSAGE: ${{ env.COMMIT_MESSAGE }}
         run: |
-          # Allowed chars: a-zA-Z space _ - ' " newline 0-9 : # / .
+          # Allowed chars: a-zA-Z space _ - ' " newline 0-9 : / .
           # Escape any other character by prefixing with backslash
           raw="$MESSAGE"
           
