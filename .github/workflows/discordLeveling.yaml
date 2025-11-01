@@ -132,12 +132,67 @@ jobs:
           DELETIONS: ${{ env.DELETIONS }}
           MESSAGE: ${{ env.COMMIT_MESSAGE }}
         run: |
-          # Build payload
-          content="New commit by $AUTHOR $ADDITIONS $DELETIONS"
-          message="$MESSAGE"
+          # Allowed chars: a-zA-Z space _ - ' " newline 0-9 : # / .
+          # Escape any other character by prefixing with backslash
+          raw="$MESSAGE"
+          
+          
+          sanitized=""
+          i=0
+          len=${#raw}
+          while [ $i -lt $len ]; do    
+            ch="${raw:$i:1}"
+            case "$ch" in
+              [a-zA-Z0-9\ \_\-\'\":\#\/\.])
+                sanitized="${sanitized}${ch}"
+                ;;
+              $'\n')
+                sanitized="${sanitized}"
+          
+                ;;
+              *)
+                
+                if [ "$ch" = '\' ]; then
+                  sanitized="${sanitized}\\\\"
+                else
+                  sanitized="${sanitized}\\${ch}"
+                fi
+                ;;
+            esac
+            i=$((i+1))
+          done
+          
+          
+          AUTHOR_ESC="$AUTHOR"
+          # also escape AUTHOR to be safe (same rules)
+          author_sanitized=""
+          j=0
+          la=${#AUTHOR_ESC}
+          while [ $j -lt $la ]; do
+            c="${AUTHOR_ESC:$j:1}"
+            case "$c" in
+              [a-zA-Z0-9\ \_\-\'\":\#\/\.])
+                author_sanitized="${author_sanitized}${c}"
+                ;;
+              *)
+                if [ "$c" = '\' ]; then
+                  author_sanitized="${author_sanitized}\\\\"
+                else
+                  author_sanitized="${author_sanitized}\\${c}"
+                fi
+                ;;
+            esac
+            j=$((j+1))
+          done
+          
+          
+          content="New commit by ${author_sanitized} ${ADDITIONS} ${DELETIONS}"
+          # Keep sanitized description with real newlines
+          message="$sanitized"
+          
           payload=$(jq -nc --arg content "$content" --arg message "$message" '{content:$content, description:$message}')
           curl -s -X POST "https://atlas.bot/api/guilds/1417072674219229307/actions/05652f94-93cf-4515-a2cd-73f1cabe0162/webhook/07b5213c6bac954da52a57918d9b32110b028dd647e51c8536bd5cfcefd6f6c7" \
-          -H "Authorization: Bot $BOT_TOKEN" \
-          -H "Content-Type: application/json" \
-          -d "$payload" --ssl-no-revoke || echo "curl failed" >&2
+            -H "Authorization: Bot $BOT_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$payload" --ssl-no-revoke || echo "curl failed" >&2
           
