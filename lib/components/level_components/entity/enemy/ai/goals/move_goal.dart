@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:mpg_achievements_app/core/level/game_world.dart';
-import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../pathfinder.dart';
 import 'goal.dart';
@@ -66,7 +64,7 @@ class MoveGoal extends Goal {
 
     currentStep = path![stepIndex]; //set the current step
 
-    Vector2 currentStepPosCenter =
+    final Vector2 currentStepPosCenter =
         toWorldPos(currentStep!.node.poiNode.position) +
         (tilesize.xy / 2); //the center of the currently aimed position.
 
@@ -157,10 +155,9 @@ class MoveGoal extends Goal {
   }
 
   ///returns the nearest step to the given position in the given path. it also checks if the 2 points have a clear path between them, so that you dont get a node that isn impossible to get to.
-  PathStep getNearestStep(Vector2 position, List<PathStep> path) {
-    return path.reduce((value, element) {
+  PathStep getNearestStep(Vector2 position, List<PathStep> path) => path.reduce((value, element) {
       //reduce means, that this will get executed until only one element is left. the element returned stays, the other one is removed.
-      PathStep nearestTarget =
+      final PathStep nearestTarget =
           (toWorldPos(value.node.poiNode.position).distanceTo(
                 position,
               ) < //the distance from the current pos and the pos of the first val
@@ -188,7 +185,6 @@ class MoveGoal extends Goal {
         }
       }
     });
-  }
 
   ///uses raycasting to check if theres an intersection between the 2 given points
   bool hasClearPath(Vector2 firstPos, Vector2 otherPos) {
@@ -197,12 +193,12 @@ class MoveGoal extends Goal {
       return true;
     }
 
-    PixelAdventure game = level.game; //get the game
+    final PixelAdventure game = level.game; //get the game
 
-    Vector2 direction = (otherPos - firstPos)
+    final Vector2 direction = (otherPos - firstPos)
         .normalized(); //calculate the direction of the 2 points
 
-    Ray2 ray = Ray2(
+    final Ray2 ray = Ray2(
       origin: toWorldPos(firstPos), //convert the grid pos to the world pos
       direction: direction,
     ); //calculate the ray
@@ -226,14 +222,14 @@ class MoveGoal extends Goal {
       1; //the accuracy brings a bit of randomness in the movement. increase the value to get more random movement. it gets stronger the nearer you are to your destination.
 
   void adjustHorizontalMovementIfNeeded(Vector2 goalPos) {
-    double difference = (position - goalPos)
+    final double difference = (position - goalPos)
         .x; // the difference between the current pos and the given one.
 
-    double random = (Random(
+    final double random = (Random(
       goalKey,
     ).nextInt(accuracy)).toDouble(); //get a random val from 0 to accuracy.
 
-    bool move =
+    final bool move =
         random + 5 <
         difference
             .abs(); //if the difference is smaller than a random val between 0 and accuracy, we dont move.
@@ -251,13 +247,13 @@ class MoveGoal extends Goal {
 
   ///makes you climb on a ladder to the given point.
   void climb(Vector2 goalPos) {
-    double difference = (position - goalPos)
+    final double difference = (position - goalPos)
         .y; //the height to climb. can also be negative to climb down.
 
-    double random = (accuracy - Random().nextInt(accuracy))
+    final double random = (accuracy - Random().nextInt(accuracy))
         .toDouble(); //get a random val from 0 to accuracy.
 
-    bool move =
+    final bool move =
         random <
         difference
             .abs(); //if the difference is smaller than a random val between 0 and accuracy, we dont move.
@@ -277,13 +273,9 @@ class MoveGoal extends Goal {
   get targetedPosition => //returns the position of the currently targeted node. if the path is null, we return the current pos
       path?.elementAtOrNull(0)?.node.poiNode.position ?? position;
 
-  Vector2 toWorldPos(Vector2 val) {
-    return Vector2(val.x * tilesize.x, val.y * tilesize.y);
-  }
+  Vector2 toWorldPos(Vector2 val) => Vector2(val.x * tilesize.x, val.y * tilesize.y);
 
-  Vector2 toGridPos(Vector2 val) {
-    return Vector2(val.x / tilesize.x, val.y / tilesize.y);
-  }
+  Vector2 toGridPos(Vector2 val) => Vector2(val.x / tilesize.x, val.y / tilesize.y);
 }
 
 enum GoalType { idle, move, custom }

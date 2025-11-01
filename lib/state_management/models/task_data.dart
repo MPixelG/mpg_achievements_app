@@ -1,6 +1,6 @@
 import 'package:uuid/uuid.dart';
 
-var uuid = Uuid();
+var uuid = const Uuid();
 
 enum TaskState {
   locked,
@@ -31,14 +31,11 @@ class TaskData {
     String? description,
     int? goal,
     int? progress,
-    TaskState? status,}){
-
-    return TaskData(id: id ?? this.id,
+    TaskState? status,})=> TaskData(id: id ?? this.id,
         description: description ?? this.description,
     goal: goal ?? this.goal,
     progress: progress ?? this.progress,
     state: state);
-  }
 
   void start() {
     if (state == TaskState.available) {

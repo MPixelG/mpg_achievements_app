@@ -47,27 +47,25 @@ class IsometricTileGrid extends TileGrid {
   // Returns a list of four [Offset]s representing the isometric diamond shape.
 
   List<Offset> toVertices(TiledObject obj) {
-    Vector2 topLeft = obj.position;
-    Vector2 topRight = obj.position + Vector2(obj.size.x, 0);
-    Vector2 bottomLeft = obj.position + Vector2(0, obj.size.y);
-    Vector2 bottomRight = obj.position + obj.size;
+    final Vector2 topLeft = obj.position;
+    final Vector2 topRight = obj.position + Vector2(obj.size.x, 0);
+    final Vector2 bottomLeft = obj.position + Vector2(0, obj.size.y);
+    final Vector2 bottomRight = obj.position + obj.size;
 
     // Convert each corner to isometric space
-    Offset isoTopLeft = _orthogonalToIsometric(topLeft).toOffset();
-    Offset isoTopRight = _orthogonalToIsometric(topRight).toOffset();
-    Offset isoBottomLeft = _orthogonalToIsometric(bottomLeft).toOffset();
-    Offset isoBottomRight = _orthogonalToIsometric(bottomRight).toOffset();
+    final Offset isoTopLeft = _orthogonalToIsometric(topLeft).toOffset();
+    final Offset isoTopRight = _orthogonalToIsometric(topRight).toOffset();
+    final Offset isoBottomLeft = _orthogonalToIsometric(bottomLeft).toOffset();
+    final Offset isoBottomRight = _orthogonalToIsometric(bottomRight).toOffset();
 
     return [isoTopLeft, isoTopRight, isoBottomRight, isoBottomLeft];
   }
 
   // Converts orthogonal (grid) coordinates to isometric world coordinates.
-  Vector2 _orthogonalToIsometric(Vector2 orthoPos) {
-    return Vector2(
+  Vector2 _orthogonalToIsometric(Vector2 orthoPos) => Vector2(
       ((orthoPos.x - orthoPos.y) * 1.0),
       (orthoPos.x + orthoPos.y) * 0.5 + 1,
     );
-  }
 
   // Ray-casting algorithm to determine if a point is inside a polygon defined by [vertices].
   // The algorithm works by counting how many times a ray starting from the point intersects
@@ -111,7 +109,7 @@ class IsometricTileGrid extends TileGrid {
 
     if (collisionLayer != null) {
       for (final obj in collisionLayer!.objects) {
-        List<Offset> objVertices = toVertices(obj);
+        final List<Offset> objVertices = toVertices(obj);
         canvas.drawVertices(
           Vertices(VertexMode.triangleFan, objVertices),
           BlendMode
@@ -126,11 +124,11 @@ class IsometricTileGrid extends TileGrid {
 
   void renderTileHighlight(Canvas canvas, Vector2 gridPos) {
     // Convert the selected tile's grid coordinates into its center position in the isometric world.
-    Vector2 worldPos = toWorldPos(Vector3(gridPos.x, gridPos.y, 0));
-    Vector2 halfTile = tileSize / 2;
+    final Vector2 worldPos = toWorldPos(Vector3(gridPos.x, gridPos.y, 0));
+    final Vector2 halfTile = tileSize / 2;
 
     // Define the four vertices of the isometric diamond for the tile.
-    List<Offset> diamond = [
+    final List<Offset> diamond = [
       (worldPos + Vector2(0, -halfTile.y)).toOffset(), // Top center
       (worldPos + Vector2(halfTile.x, 0)).toOffset(), // Middle right
       (worldPos + Vector2(0, halfTile.y)).toOffset(), // Bottom center

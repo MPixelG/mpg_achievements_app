@@ -7,25 +7,69 @@
 
 # The following line activates a set of recommended lints for Flutter apps,
 # packages, and plugins designed to encourage good coding practices.
-analyzer:
-  errors:
-    avoid_print: ignore
 include: package:flutter_lints/flutter.yaml
 
-linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
-  rules:
-    # avoid_print: false # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true # Uncomment to enable the `prefer_single_quotes` rule
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/generated/**"
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+linter:
+  rules:
+    # Style / consistency
+    always_declare_return_types: true
+    annotate_overrides: true
+    prefer_const_constructors: true
+    prefer_const_constructors_in_immutables: true
+    prefer_final_fields: true
+    prefer_final_locals: true
+    use_is_even_rather_than_modulo: false
+
+    # Safety / bug prevention
+    avoid_print: false
+    null_check_on_nullable_type_parameter: true
+    prefer_typing_uninitialized_variables: true
+    use_rethrow_when_possible: true
+    avoid_returning_null_for_future: true
+    avoid_types_on_closure_parameters: false
+
+    # Async / futures
+    require_trailing_commas: true
+
+    type_literal_in_constant_pattern: false
+
+    overridden_fields: false
+
+    # Flutter-specific
+    avoid_unnecessary_containers: true
+    use_key_in_widget_constructors: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true
+
+    # API / public surface
+    library_private_types_in_public_api: true
+    public_member_api_docs: false
+
+    # Performance / readability
+    avoid_redundant_argument_values: true
+    prefer_expression_function_bodies: true
+    unnecessary_null_checks: true
+
+    # Tests
+    avoid_init_to_null: true
+
+overrides:
+  - files: "test/**"
+    analyzer:
+      errors:
+        avoid_print: ignore
+        public_member_api_docs: ignore
+  - files: "lib/generated/**"
+    analyzer:
+      errors:
+        always_declare_return_types: ignore
+        annotate_overrides: ignore

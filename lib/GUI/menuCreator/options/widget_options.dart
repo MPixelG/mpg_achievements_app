@@ -12,23 +12,20 @@ class WidgetOptions {
   WidgetOptions.from(WidgetOptions other, this.widgetType)
     : options = List<WidgetOption>.from(other.options);
 
-  WidgetOption? getOptionByName(String name) {
-    return options
+  WidgetOption? getOptionByName(String name) =>
+    options
         .where((option) => option.name == name)
         .cast<WidgetOption?>()
         .firstOrNull; // Using firstOrNull to avoid exceptions if nothing is found
-  }
 
-  bool hasOption(String name) {
-    return options.any((option) => option.name == name);
-  }
+  bool hasOption(String name) => options.any((option) => option.name == name);
 
   dynamic getDefaultValue(String name) {
     final option = getOptionByName(name);
     return option?.defaultValue;
   }
 
-  dynamic getValue(String name, dynamic value) {
+  dynamic getValue(String name, value) {
     final option = getOptionByName(name);
     if (option != null) {
       return option.parser(value);
@@ -50,9 +47,7 @@ class WidgetOptions {
     );
   }
 
-  static bool isRegistered(Type widgetType) {
-    return _widgetOptionsCache.containsKey(widgetType);
-  }
+  static bool isRegistered(Type widgetType) => _widgetOptionsCache.containsKey(widgetType);
 
   void register() {
     if (_widgetOptionsCache.containsKey(widgetType)) {
@@ -109,10 +104,10 @@ Color? parseColor(dynamic value) {
   if (value is Color) return value;
 
   if (value is Map<String, dynamic>) {
-    double r = parseDouble(value['r']) ?? 0;
-    double g = parseDouble(value['g']) ?? 0;
-    double b = parseDouble(value['b']) ?? 0;
-    double a =
+    final double r = parseDouble(value['r']) ?? 0;
+    final double g = parseDouble(value['g']) ?? 0;
+    final double b = parseDouble(value['b']) ?? 0;
+    final double a =
         parseDouble(value['a']) ?? 1.0; // Default alpha to 1.0 if not provided
 
     return Color.fromRGBO(
@@ -127,10 +122,10 @@ Color? parseColor(dynamic value) {
 
 EdgeInsetsGeometry? parseEdgeInsets(dynamic value) {
   if (value is Map<String, dynamic>) {
-    double left = parseDouble(value['left']) ?? 0.0;
-    double top = parseDouble(value['top']) ?? 0.0;
-    double right = parseDouble(value['right']) ?? 0.0;
-    double bottom = parseDouble(value['bottom']) ?? 0.0;
+    final double left = parseDouble(value['left']) ?? 0.0;
+    final double top = parseDouble(value['top']) ?? 0.0;
+    final double right = parseDouble(value['right']) ?? 0.0;
+    final double bottom = parseDouble(value['bottom']) ?? 0.0;
 
     return EdgeInsets.fromLTRB(left, top, right, bottom);
   }

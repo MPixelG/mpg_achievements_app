@@ -45,14 +45,14 @@ class ChunkGrid {
   NeighborChunkCluster getNeighborChunkCluster(Chunk chunk) {
     final cx = chunk.x;
     final cz = chunk.z;
-    Chunk? tl = chunks[Vector2((cx - 1).toDouble(), (cz - 1).toDouble())];
-    Chunk? t = chunks[Vector2(cx.toDouble(), (cz - 1).toDouble())];
-    Chunk? tr = chunks[Vector2((cx + 1).toDouble(), (cz - 1).toDouble())];
-    Chunk? r = chunks[Vector2((cx + 1).toDouble(), cz.toDouble())];
-    Chunk? br = chunks[Vector2((cx + 1).toDouble(), (cz + 1).toDouble())];
-    Chunk? b = chunks[Vector2(cx.toDouble(), (cz + 1).toDouble())];
-    Chunk? bl = chunks[Vector2((cx - 1).toDouble(), (cz + 1).toDouble())];
-    Chunk? l = chunks[Vector2((cx - 1).toDouble(), cz.toDouble())];
+    final Chunk? tl = chunks[Vector2((cx - 1).toDouble(), (cz - 1).toDouble())];
+    final Chunk? t = chunks[Vector2(cx.toDouble(), (cz - 1).toDouble())];
+    final Chunk? tr = chunks[Vector2((cx + 1).toDouble(), (cz - 1).toDouble())];
+    final Chunk? r = chunks[Vector2((cx + 1).toDouble(), cz.toDouble())];
+    final Chunk? br = chunks[Vector2((cx + 1).toDouble(), (cz + 1).toDouble())];
+    final Chunk? b = chunks[Vector2(cx.toDouble(), (cz + 1).toDouble())];
+    final Chunk? bl = chunks[Vector2((cx - 1).toDouble(), (cz + 1).toDouble())];
+    final Chunk? l = chunks[Vector2((cx - 1).toDouble(), cz.toDouble())];
     return NeighborChunkCluster(
       topLeft: tl,
       top: t,
@@ -76,18 +76,18 @@ class ChunkGrid {
     if (currentlyRebuilding) return;
     currentlyRebuilding = true;
 
-    PictureRecorder albedoRecorder = PictureRecorder();
-    PictureRecorder normalRecorder = PictureRecorder();
+    final PictureRecorder albedoRecorder = PictureRecorder();
+    final PictureRecorder normalRecorder = PictureRecorder();
 
-    Canvas normalCanvas = Canvas(normalRecorder);
-    Canvas albedoCanvas = Canvas(albedoRecorder);
+    final Canvas normalCanvas = Canvas(normalRecorder);
+    final Canvas albedoCanvas = Canvas(albedoRecorder);
 
-    Vector2 posTL = -camPos + (viewportSize / 2);
+    final Vector2 posTL = -camPos + (viewportSize / 2);
     albedoCanvas.translate(posTL.x, posTL.y);
     normalCanvas.translate(posTL.x, posTL.y);
 
     for (var value in chunks.entries) {
-      Chunk chunk = value.value;
+      final Chunk chunk = value.value;
 
       Vector2 chunkPos = Vector2(
         ((chunk.x - chunk.z) * (Chunk.chunkSize + chunkSpacing)) *
@@ -96,7 +96,7 @@ class ChunkGrid {
       );
       chunkPos += offset.toVector2();
       chunkPos.y -= chunk.yHeightUsedPixels;
-      Vector2 unPositionedChunkPos = chunkPos - camPos + (viewportSize / 2);
+      final Vector2 unPositionedChunkPos = chunkPos - camPos + (viewportSize / 2);
 
       // if (unPositionedChunkPos.x < 0) {
       //   continue;
@@ -111,7 +111,7 @@ class ChunkGrid {
         continue;
       }
 
-      Vector2 drawPos = chunk.albedoWorldTopLeft ?? chunkPos;
+      final Vector2 drawPos = chunk.albedoWorldTopLeft ?? chunkPos;
 
       albedoCanvas.save();
       normalCanvas.save();
@@ -180,16 +180,16 @@ class ChunkGrid {
     shader!.setImageSampler(0, fullAlbedo!);
     shader!.setImageSampler(1, fullNormal!);
 
-    double time = DateTime.now().millisecondsSinceEpoch / 10000;
-    double lightX = cos(time) * 600;
-    double lightZ = sin(time) * 600;
+    final double time = DateTime.now().millisecondsSinceEpoch / 10000;
+    final double lightX = cos(time) * 600;
+    final double lightZ = sin(time) * 600;
 
     shader!.setFloatUniforms((val) {
       val.setFloats([viewportSize.x, viewportSize.y, lightX, lightZ, 15]);
     });
 
     shaderPaint.shader = shader;
-    Vector2 posTL = camPos - (viewportSize / 2);
+    final Vector2 posTL = camPos - (viewportSize / 2);
     canvas.save();
     canvas.translate(posTL.x, posTL.y);
     canvas.drawRect(viewportSize.toRect(), shaderPaint);
@@ -209,7 +209,7 @@ class ChunkGrid {
   FragmentShader? shader;
 
   void initShader() async {
-    FragmentProgram program = await FragmentProgram.fromAsset(
+    final FragmentProgram program = await FragmentProgram.fromAsset(
       "assets/shaders/lighting.frag",
     );
     shader = program.fragmentShader();

@@ -139,8 +139,7 @@ class DialogueScreenState extends ConsumerState<DialogueScreen> with DialogueVie
   // These methods break down the UI into smaller, manageable pieces.
 
   // Builds the small floating button used to display the raw script.
-  Widget _buildShowScriptButton() {
-    return Positioned(
+  Widget _buildShowScriptButton() => Positioned(
       top: _outerPadding,
       left: _outerPadding,
       child: FloatingActionButton.small(
@@ -150,11 +149,9 @@ class DialogueScreenState extends ConsumerState<DialogueScreen> with DialogueVie
         child: const Icon(Icons.code, size: 20),
       ),
     );
-  }
 
   // Builds the main card that displays the character name and dialogue text.
-  Widget _buildDialogueCard(DialogueLine line) {
-    return Positioned(
+  Widget _buildDialogueCard(DialogueLine line) => Positioned(
       left: _outerPadding,
       right: _outerPadding,
       bottom: _outerPadding + 20,
@@ -188,7 +185,6 @@ class DialogueScreenState extends ConsumerState<DialogueScreen> with DialogueVie
         ),
       ),
     );
-  }
 
   // Builds the primary action button based on the current dialogue state.
   Widget _buildActionButton() {
@@ -353,8 +349,7 @@ class DialogueScreenState extends ConsumerState<DialogueScreen> with DialogueVie
   }
 
   // Builds the UI for the modal sheet that displays choices.
-  Widget _buildChoiceSheet(DialogueChoice choice, Completer<int> completer) {
-    return Container(
+  Widget _buildChoiceSheet(DialogueChoice choice, Completer<int> completer) => Container(
       padding: _dialogueCardPadding,
       margin: const EdgeInsets.all(_outerPadding),
       decoration: BoxDecoration(
@@ -386,5 +381,4 @@ class DialogueScreenState extends ConsumerState<DialogueScreen> with DialogueVie
         ],
       ),
     );
-  }
 }

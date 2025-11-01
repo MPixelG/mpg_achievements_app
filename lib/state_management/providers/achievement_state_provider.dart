@@ -6,13 +6,12 @@ final achievementProvider = NotifierProvider<AchievementNotifier, AchievementDat
 
 class AchievementNotifier extends Notifier<AchievementData> {
   @override
-  AchievementData build() {
+  AchievementData build() =>
     // Initialize the player data with default values.
     // This method is called when the provider is first created.
     // You can also fetch initial data from a database or API here.
     // For this example, we are just returning a PlayerData object with a default character name
-    return AchievementData(name: "test", description: "test");
-  }
+    AchievementData(name: "test", description: "test");
 
 // increase progress
   void updateProgress([int steps = 1]) {

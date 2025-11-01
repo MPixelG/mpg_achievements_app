@@ -35,12 +35,12 @@ final _tilesetImageCache = <Tileset, Image>{};
 FutureOr<Image?> getImageFromTileset(Tileset tileset) async {
   if (tileset.image?.source == null) return null;
 
-  Image? cacheResult = _tilesetImageCache[tileset];
+  final Image? cacheResult = _tilesetImageCache[tileset];
 
   if (cacheResult != null) {
     return cacheResult;
   }
-  Image? calculatedResult = await getImageFromTilesetPath(
+  final Image? calculatedResult = await getImageFromTilesetPath(
     tileset.image!.source!,
   );
 
@@ -61,7 +61,7 @@ final _normalTilesetImageCache = <Tileset, Image>{};
 FutureOr<Image?> getNormalImageFromTileset(Tileset tileset) async {
   if (tileset.image?.source == null) return null;
 
-  Image? cacheResult = _normalTilesetImageCache[tileset];
+  final Image? cacheResult = _normalTilesetImageCache[tileset];
 
   if (cacheResult != null) {
     return cacheResult;
@@ -70,7 +70,7 @@ FutureOr<Image?> getNormalImageFromTileset(Tileset tileset) async {
   final String normalMapPath =
       "${RegExp("../images/([A-Za-z_0-9/]+).png").firstMatch(tileset.image!.source!)!.group(1)!}_normalMap.png";
 
-  Image? calculatedResult = await getImageFromTilesetPath(normalMapPath);
+  final Image? calculatedResult = await getImageFromTilesetPath(normalMapPath);
 
   if (calculatedResult != null) {
     _normalTilesetImageCache[tileset] = calculatedResult;
@@ -81,7 +81,7 @@ FutureOr<Image?> getNormalImageFromTileset(Tileset tileset) async {
 
 final _spriteImageCache = <Sprite, Image>{};
 Future<Image> getTileFromTilesetToImage(Sprite sprite) async {
-  Image? cacheResult = _spriteImageCache[sprite];
+  final Image? cacheResult = _spriteImageCache[sprite];
   if (cacheResult != null) return cacheResult;
 
   final recorder = ui.PictureRecorder();

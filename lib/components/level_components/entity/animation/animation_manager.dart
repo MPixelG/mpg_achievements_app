@@ -39,7 +39,7 @@ mixin AnimationManager
       return "idle";
     }
 
-    String? converted = animationNames[name];
+    final String? converted = animationNames[name];
 
     assert(converted != null, "animation $name not registered!");
 
@@ -59,7 +59,7 @@ mixin AnimationManager
   Future<void> _loadAnimations() async {
     if (initialized) return;
 
-    Map<String, SpriteAnimation> newAnimations = {
+    final Map<String, SpriteAnimation> newAnimations = {
       //create a new map of animation names and the animations
       for (var option in animationOptions)
         option.name: loadAnimation(
@@ -87,7 +87,7 @@ mixin AnimationManager
     bool loop = true,
     double textureSize = 32,
   }) {
-    Image image = game.images.fromCache(
+    final Image image = game.images.fromCache(
       "$path ${getTextureSizeFileEnding(textureSize)}",
     ); //load the image with the path and the right file ending (bsp: " (32x32) .png")
 
@@ -113,7 +113,7 @@ mixin AnimationManager
     double textureSize, {
     String fileFormat = "png",
   }) {
-    int intTextureSize = textureSize.toInt(); //convert it to an int
+    final int intTextureSize = textureSize.toInt(); //convert it to an int
 
     return "(${intTextureSize}x$intTextureSize).$fileFormat"; //and add brackets and the file type
   }
@@ -151,26 +151,18 @@ mixin HasMovementAnimations on AnimationManager {
     AnimationLoadOptions(
       "idle",
       "$componentSpriteLocation/Idle",
-      loop: true,
-      textureSize: 32,
     ), //some pre-defined animations for movement
     AnimationLoadOptions(
       "running",
       "$componentSpriteLocation/Run",
-      loop: true,
-      textureSize: 32,
     ),
     AnimationLoadOptions(
       "jumping",
       "$componentSpriteLocation/Jump",
-      loop: true,
-      textureSize: 32,
     ),
     AnimationLoadOptions(
       "falling",
       "$componentSpriteLocation/Fall",
-      loop: true,
-      textureSize: 32,
     ),
   ];
 

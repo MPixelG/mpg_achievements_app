@@ -44,8 +44,8 @@ class Enemy extends AnimatedCharacter
     manager = GoalManager();
     add(manager);
 
-    PathtracingGoal goal = PlayerLocatingGoal(1);
-    MoveGoal moveGoal = FollowPlayerGoal(0, game.gameWorld.player);
+    final PathtracingGoal goal = PlayerLocatingGoal(1);
+    final MoveGoal moveGoal = FollowPlayerGoal(0, game.gameWorld.player);
 
     manager.addGoal(goal);
     manager.addGoal(moveGoal);
@@ -66,7 +66,7 @@ class Enemy extends AnimatedCharacter
     velocity = Vector3.zero(); //reset velocity
 
     await Future.delayed(
-      Duration(milliseconds: 250),
+      const Duration(milliseconds: 250),
     ); //wait a quarter of a second for the animation to finish
     position -= Vector3.all(
       32,
@@ -74,19 +74,19 @@ class Enemy extends AnimatedCharacter
     scale.x = 1; //flip the enemy to the right side and a third of the size because the animation is triple of the size
     current = playAnimation("disappearing"); //display a disappear animation
     await Future.delayed(
-      Duration(milliseconds: 320),
+      const Duration(milliseconds: 320),
     ); //wait for the animation to finish
     position =
         startingPosition -
         Vector3.all(32); //position the enemy at the spawn point and also add the displacement of the animation
     scale = Vector3.all(0); //hide the enemy
     await Future.delayed(
-      Duration(milliseconds: 800),
+      const Duration(milliseconds: 800),
     ); //wait a bit for the camera to position and increase the annoyance of the player XD
     scale = Vector3.all(1); //show the enemy
     current = playAnimation("appearing"); //display an appear animation
     await Future.delayed(
-      Duration(milliseconds: 300),
+      const Duration(milliseconds: 300),
     ); //wait for the animation to finish
 
     updatePlayerstate(); //update the enemies feet to the ground
@@ -113,7 +113,6 @@ class Enemy extends AnimatedCharacter
     AnimationLoadOptions(
       "hit",
       "$componentSpriteLocation/Hit",
-      textureSize: 32,
       loop: false,
     ),
 

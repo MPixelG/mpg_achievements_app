@@ -72,7 +72,7 @@ class TileGrid extends Component {
           gridPos.y >= height);
 
   void setAtWorldPos(Vector2 worldPos, [TileType val = TileType.solid]) {
-    Vector2 gridPos = (worldPos..divide(tileSize))..floor();
+    final Vector2 gridPos = (worldPos..divide(tileSize))..floor();
 
     setVal(gridPos, val);
   }
@@ -86,7 +86,7 @@ class TileGrid extends Component {
   void renderDebugTiles(Canvas canvas) {
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
-        TileType val = grid[x][y];
+        final TileType val = grid[x][y];
         if (val != TileType.air) {
           canvas.drawRect(
             Rect.fromPoints(
@@ -104,7 +104,7 @@ class TileGrid extends Component {
           );
         }
 
-        bool highlighted = highlightedSpots[x][y];
+        final bool highlighted = highlightedSpots[x][y];
         if (highlighted) {
           canvas.drawRect(
             Rect.fromPoints(

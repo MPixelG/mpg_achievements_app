@@ -96,15 +96,13 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
         int? priority,
         ComponentKey? key,
       }) : this(
-    animations: data.map((key, value) {
-      return MapEntry(
+    animations: data.map((key, value) => MapEntry(
         key,
         SpriteAnimation.fromFrameData(
           image,
           value,
         ),
-      );
-    }),
+      )),
     current: current,
     autoResize: autoResize,
     removeOnFinish: removeOnFinish,

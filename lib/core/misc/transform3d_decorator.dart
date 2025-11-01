@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flame/extensions.dart';
 import 'package:flame/rendering.dart';

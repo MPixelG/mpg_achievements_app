@@ -122,13 +122,11 @@ class LayoutWidget {
     return true;
   }
 
-  Widget build(BuildContext context) {
-    return _builder(
+  Widget build(BuildContext context) => _builder(
       context,
       children.map((c) => c.build(context)).toList(),
       properties,
     );
-  }
 }
 
 bool isDescendant(LayoutWidget dragged, LayoutWidget target) {

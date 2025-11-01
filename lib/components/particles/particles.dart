@@ -8,7 +8,7 @@ import 'package:flutter/material.dart' hide Image;
 // Function to generate a confetti particle system at a specific position (Vector2 pos)
 ParticleSystemComponent generateConfetti(Vector2 pos, {int amount = 200}) {
   // Create a Particle system with a defined number of particles
-  Particle particle = Particle.generate(
+  final Particle particle = Particle.generate(
     count:
         amount, //low-end/older devices like mine have problems with this amount of particles
     generator: (i) {
@@ -16,12 +16,12 @@ ParticleSystemComponent generateConfetti(Vector2 pos, {int amount = 200}) {
       Vector2 velocity = randomVector2() * 0.7; //generates random velocity
       const double gravity = .2;
       // Randomly choose a color from the Colors.primaries list (Flutter’s built-in primary color palette)
-      Paint paint = Paint()
+      final Paint paint = Paint()
         ..color = Colors.primaries.elementAt(
           Random().nextInt(Colors.primaries.length),
         );
       // Random size for each confetti piece (between 0 and 15 pixels)
-      double size = Random().nextDouble() * 12 + 5;
+      final double size = Random().nextDouble() * 12 + 5;
       // Random angle for the rotation of each confetti piece
       int angle = Random().nextInt(360);
 
@@ -59,8 +59,6 @@ ParticleSystemComponent generateConfetti(Vector2 pos, {int amount = 200}) {
       );
     },
     lifespan: 8,
-    // Ensures that the lifespan of each particle is applied to its child particles as well
-    applyLifespanToChildren: true,
   );
   //Return the particle system component to be added to the game
   return ParticleSystemComponent(particle: particle);

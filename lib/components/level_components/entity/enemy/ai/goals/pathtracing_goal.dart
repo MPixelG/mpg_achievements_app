@@ -2,7 +2,6 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
-import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../../player.dart';
@@ -73,7 +72,7 @@ class PathtracingGoal extends Goal {
           shortestPlayerDistance = element.intersectionPoint!.distanceTo(
             rayOriginPoint,
           );
-          shortestPlayerDistancePos = element.intersectionPoint!;
+          shortestPlayerDistancePos = element.intersectionPoint;
         }
         continue;
       }
@@ -97,15 +96,15 @@ class PathtracingGoal extends Goal {
     for (int i = 0; i < currentRayIntersections.length; i++) {
       //we iterate over every ray
 
-      Hitbox<dynamic>? hitbox1 = currentRayIntersections
+      final Hitbox<dynamic>? hitbox1 = currentRayIntersections
           .elementAt(i)
           .hitbox; //the hitbox of the ray intersection
-      Hitbox<dynamic>? hitbox2 = lastRayIntersections.elementAt(i).hitbox;
+      final Hitbox<dynamic>? hitbox2 = lastRayIntersections.elementAt(i).hitbox;
 
-      PositionComponent? parent1 = getParentAsPositionComponent(
+      final PositionComponent? parent1 = getParentAsPositionComponent(
         hitbox1,
       ); //we get the component of the hitbox the ray collided with. if it cant store a position its null
-      PositionComponent? parent2 = getParentAsPositionComponent(hitbox2);
+      final PositionComponent? parent2 = getParentAsPositionComponent(hitbox2);
 
       if (parent1 == null || parent2 == null) {
         continue; //if this or the last intersection has no position (bc its outside of the world) we continue with the next ray
@@ -129,7 +128,7 @@ class PathtracingGoal extends Goal {
 
     if (hitbox is! ShapeHitbox) return null;
 
-    Component? parent = hitbox.parent;
+    final Component? parent = hitbox.parent;
 
     if (parent == null || parent is! PositionComponent) {
       return null;

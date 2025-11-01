@@ -55,9 +55,7 @@ class LineSegment3D {
   }
 
   /// Returns a new [LineSegment] translated by a given displacement [offset].
-  LineSegment3D translate(Vector3 offset) {
-    return LineSegment3D(from + offset, to + offset);
-  }
+  LineSegment3D translate(Vector3 offset) => LineSegment3D(from + offset, to + offset);
 
   /// Returns a new [LineSegment] with same direction but extended by [amount]
   /// on both sides.
@@ -68,9 +66,7 @@ class LineSegment3D {
 
   /// Returns a new [LineSegment] with same direction but reduced by [amount]
   /// on both sides.
-  LineSegment3D deflate(double amount) {
-    return inflate(-amount);
-  }
+  LineSegment3D deflate(double amount) => inflate(-amount);
 
   /// Returns an empty list if there are no intersections between the segments
   /// If the segments are concurrent, the intersecting point is returned as a
@@ -148,7 +144,5 @@ class LineSegment3D {
   Line3D toLine() => Line3D.fromPoints(from, to);
 
   @override
-  String toString() {
-    return '[$from, $to]';
-  }
+  String toString() => '[$from, $to]';
 }

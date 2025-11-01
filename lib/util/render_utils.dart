@@ -143,7 +143,7 @@ void drawIsometricBox(
     ..isAntiAlias = true
     ..color = const Color(0xFF000000);
 
-  final double sin30 = 0.5;
+  const double sin30 = 0.5;
   final double cos30 = math.sqrt(3) / 2.0;
 
   Offset projectIso(Vector3 p) {
@@ -152,7 +152,7 @@ void drawIsometricBox(
     return Offset(dx, dy) + offset;
   }
 
-  List<Vector3> corners = List<Vector3>.generate(8, (i) {
+  final List<Vector3> corners = List<Vector3>.generate(8, (i) {
     final double x = (i & 1) == 0 ? aabbMin.x : aabbMax.x;
     final double y = (i & 2) == 0 ? aabbMin.y : aabbMax.y;
     final double z = (i & 4) == 0 ? aabbMin.z : aabbMax.z;

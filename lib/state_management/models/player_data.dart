@@ -1,7 +1,7 @@
 import 'package:uuid/uuid.dart';
 import '../../components/level_components/checkpoint/checkpoint.dart';
 
-var uuid = Uuid();
+var uuid = const Uuid();
 
 class PlayerData {
   final String id;
@@ -33,8 +33,7 @@ class PlayerData {
     bool? gotHit,
     bool? isRespawning,
     Checkpoint? lastCheckpoint,
-  }) {
-    return PlayerData(
+  }) => PlayerData(
       id: id ?? this.id,
       // ID should not change, so we keep the current one if not provided
       playerCharacter: playerCharacter ?? this.playerCharacter,
@@ -43,5 +42,4 @@ class PlayerData {
       isRespawning: isRespawning ?? this.isRespawning,
       lastCheckpoint: lastCheckpoint ?? this.lastCheckpoint,
     );
-  }
 }

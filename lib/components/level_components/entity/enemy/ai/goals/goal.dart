@@ -9,9 +9,9 @@ abstract class Goal extends Component {
 
   GoalAttributes? attributes;
 
-  bool _done = false;
+  final bool _done = false;
 
-  Goal(this.prequisite, this.goalPriority, [this.repeat = true]);
+  Goal(this.prequisite, this.goalPriority, {this.repeat = true});
 
   @override
   void update(double dt) {

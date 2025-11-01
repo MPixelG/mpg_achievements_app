@@ -53,7 +53,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
   @override
   void renderTree(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
     decorator.applyChain((p0) {
-      List<Component> allComponents = [
+      final List<Component> allComponents = [
         this, ...children
       ];
 
@@ -138,9 +138,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
 
   /// Convert local coordinates of a point [point] inside the component
   /// into the parent's coordinate space.
-  Vector3 positionOf(Vector3 point) {
-    return transform.localToGlobal(point);
-  }
+  Vector3 positionOf(Vector3 point) => transform.localToGlobal(point);
 
   /// Similar to [positionOf()], but applies to any anchor point within
   /// the component.
@@ -211,7 +209,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
 
 
   void _onModifiedSizeOrAnchor() {
-    Vector3 scaledSize = this.scaledSize;
+    final Vector3 scaledSize = this.scaledSize;
     transform.offset = -Vector3(_anchor.x * scaledSize.x, _anchor.y * scaledSize.y, _anchor.z * scaledSize.z);
     _size2D = projectedBounds(scaledSize.clone(), tilesize.x, tilesize.y, tilesize.z);
   }

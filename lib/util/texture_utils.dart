@@ -16,9 +16,9 @@ void loadTextureOfGid(int gid) async {
   }
   currentOperations.add(gid);
 
-  Tileset tileset = findTileset(gid, Chunk.knownTilesets);
-  Image tilesetImage = (await getImageFromTileset(tileset))!;
-  Image normalMapImg = (await getNormalImageFromTileset(tileset))!;
+  final Tileset tileset = findTileset(gid, Chunk.knownTilesets);
+  final Image tilesetImage = (await getImageFromTileset(tileset))!;
+  final Image normalMapImg = (await getNormalImageFromTileset(tileset))!;
 
   final raw = gid & 0x1FFFFFFF;
   //calculate the local index of the tile within its tileset

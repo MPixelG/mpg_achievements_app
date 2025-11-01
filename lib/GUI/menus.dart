@@ -1,4 +1,3 @@
-import 'package:flame/game.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -100,18 +99,18 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               "Error loading GUI:",
               style: TextStyle(color: Colors.red, fontSize: 18),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               errorMessage!,
-              style: TextStyle(color: Colors.white, fontSize: 14),
+              style: const TextStyle(color: Colors.white, fontSize: 14),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 16),
-            ElevatedButton(onPressed: _loadScreen, child: Text("Retry")),
+            const SizedBox(height: 16),
+            ElevatedButton(onPressed: _loadScreen, child: const Text("Retry")),
           ],
         ),
       );
@@ -137,7 +136,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       return Center(
         child: Text(
           "Error building GUI: $e",
-          style: TextStyle(color: Colors.red),
+          style: const TextStyle(color: Colors.red),
           textAlign: TextAlign.center,
         ),
       );
@@ -151,21 +150,17 @@ class GameScreen extends StatelessWidget {
   const GameScreen({super.key, required this.game});
 
   @override
-  Widget build(BuildContext context) {
-    return RiverpodAwareGameWidget<PixelAdventure>(
+  Widget build(BuildContext context) => RiverpodAwareGameWidget<PixelAdventure>(
       key: gameWidgetKey,
       game: game,
       overlayBuilderMap: {
-        'TextOverlay': (BuildContext context, PixelAdventure game) {
-          return TextOverlay(
+        'TextOverlay': (BuildContext context, PixelAdventure game) => TextOverlay(
             game: game,
             onTextOverlayDone: () {
               game.overlays.remove("TextOverlay");
             },
-          );
-        },
-        'DialogueScreen': (BuildContext context, PixelAdventure game) {
-          return DialogueScreen(
+          ),
+        'DialogueScreen': (BuildContext context, PixelAdventure game) => DialogueScreen(
             game: game,
             //when Dialogue is finishes screen is removed form map
             onDialogueFinished: () {
@@ -173,10 +168,8 @@ class GameScreen extends StatelessWidget {
             },
             yarnFilePath:
                 'assets/yarn/test.yarn', //todo connect to state management and trigger method
-          );
-        },
-        'SpeechBubble': (BuildContext context, PixelAdventure game) {
-          return SpeechBubble(
+          ),
+        'SpeechBubble': (BuildContext context, PixelAdventure game) => SpeechBubble(
             text: 'Test',
             game: game,
             component: game.gameWorld.player,
@@ -188,11 +181,9 @@ class GameScreen extends StatelessWidget {
             onDismiss: () {
               game.overlays.remove('SpeechBubble');
             },
-          );
-        },
+          ),
       },
     );
-  }
 }
 
 class SettingsScreen extends StatefulWidget {

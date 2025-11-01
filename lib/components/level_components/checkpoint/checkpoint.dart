@@ -63,7 +63,7 @@ class Checkpoint extends AnimatedCharacter
 
   void playFlagOutAnimation() async {
     await playAnimation("out");
-    playAnimation("outIdle");
+    await playAnimation("outIdle");
   }
 
   @override

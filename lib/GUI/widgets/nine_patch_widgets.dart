@@ -52,12 +52,13 @@ class NinePatchTexture {
 
   static bool currentlyLoading = false;
   static void loadTextures() async {
-    List<NinePatchTexture> textures = [
+    final List<NinePatchTexture> textures = [
       NinePatchTexture("button_0", 3, 3, 3, 3),
       NinePatchTexture("test_button", 3, 3, 3, 3),
       NinePatchTexture("test_button_2", 3, 3, 3, 3),
     ];
-    Future.doWhile(() async {
+    currentlyLoading = true;
+    await Future.doWhile(() async {
       await Future.delayed(
         const Duration(milliseconds: 10),
       ); // Check every 100ms
@@ -73,6 +74,5 @@ class NinePatchTexture {
       return allLoaded;
     });
 
-    currentlyLoading = true;
   }
 }

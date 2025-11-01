@@ -15,7 +15,7 @@ class GoalManager extends Component {
     super.update(dt);
     attributes.time += dt;
 
-    Iterable<Component> activeGoals = children.where((value) {
+    final Iterable<Component> activeGoals = children.where((value) {
       if (value is Goal && value.prequisite(attributes)) {
         return true;
       }

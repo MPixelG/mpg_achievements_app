@@ -8,9 +8,7 @@ final taskProvider =  NotifierProvider<TaskNotifier, List<TaskData>> (TaskNotifi
 class TaskNotifier extends Notifier<List<TaskData>> {
 
   @override
-  List<TaskData> build() {
-    return [];
-  }
+  List<TaskData> build() => [];
 
 
   /// Task hinzufügen

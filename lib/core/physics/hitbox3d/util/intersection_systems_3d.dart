@@ -10,9 +10,7 @@ T2 extends ShapeComponent3D
 > {
   Set<Vector3> intersect(T1 shapeA, T2 shapeB);
 
-  bool supportsShapes(ShapeComponent3D shapeA, ShapeComponent3D shapeB) {
-    return shapeA is T1 && shapeB is T2 || shapeA is T2 && shapeB is T1;
-  }
+  bool supportsShapes(ShapeComponent3D shapeA, ShapeComponent3D shapeB) => shapeA is T1 && shapeB is T2 || shapeA is T2 && shapeB is T1;
 
   Set<Vector3> unorderedIntersect(
       ShapeComponent3D shapeA,
@@ -39,9 +37,7 @@ class RectangleIntersections
   @override
   Set<Vector3> intersect(
       RectangleShapeComponent rect1,
-      RectangleShapeComponent rect2) {
-    return rect1.rectIntersections(rect2);
-  }
+      RectangleShapeComponent rect2) => rect1.rectIntersections(rect2);
 }
 
 

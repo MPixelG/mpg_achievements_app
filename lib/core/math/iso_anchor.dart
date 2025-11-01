@@ -86,9 +86,7 @@ class Anchor3D {
   /// Returns a string representation of this Anchor3D.
   ///
   /// This should only be used for serialization purposes.
-  String get name {
-    return _valueNames[this] ?? 'Anchor3D($x, $y)';
-  }
+  String get name => _valueNames[this] ?? 'Anchor3D($x, $y)';
 
   /// Returns a string representation of this Anchor3D.
   ///
@@ -149,9 +147,7 @@ class Anchor3D {
   bool operator ==(Object other) =>
       other is Anchor3D && x == other.x && y == other.y && z == other.z;
 
-  Vector3 operator *(Vector3 other) {
-    return Vector3(x * other.x, y * other.y, z * other.z);
-  }
+  Vector3 operator *(Vector3 other) => Vector3(x * other.x, y * other.y, z * other.z);
 
   @override
   int get hashCode => Object.hash(x, y, z);

@@ -16,13 +16,9 @@ class SortedList<T> {
     _data.insert(index, element);
   }
 
-  bool remove(T element) {
-    return _data.remove(element);
-  }
+  bool remove(T element) => _data.remove(element);
 
-  T removeAt(int index) {
-    return _data.removeAt(index);
-  }
+  T removeAt(int index) => _data.removeAt(index);
 
   void addAll(Iterable<T> elements) {
     for (var e in elements) {

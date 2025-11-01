@@ -37,8 +37,8 @@ class LayeredImageBackground extends Background
 
     for (var tiledImage in tiledImages) {
       if (tiledImage.source != null) {
-        int lastSlash = tiledImage.source!.lastIndexOf("/");
-        String newString = tiledImage.source!.substring(lastSlash + 1);
+        final int lastSlash = tiledImage.source!.lastIndexOf("/");
+        final String newString = tiledImage.source!.substring(lastSlash + 1);
 
         loadedImages.add(await game.images.load("sky/$newString"));
         imagesLoaded = true;
@@ -52,7 +52,7 @@ class LayeredImageBackground extends Background
       for (int i = 0; i < loadedImages.length; i++) {
         final loadedImage = loadedImages.elementAt(i);
 
-        Vector2 parallaxFactor =
+        final Vector2 parallaxFactor =
             parallaxFactors?.elementAt(i) ?? Vector2.all(1);
 
         final cameraOffset =
@@ -78,7 +78,7 @@ class LayeredImageBackground extends Background
   }
 
   factory LayeredImageBackground.ofLevel(GameWorld level, AdvancedCamera cam) {
-    int amountOfBackgroundImages =
+    final int amountOfBackgroundImages =
         (level.level.tileMap
                 .getLayer("Level")
                 ?.properties
@@ -88,9 +88,9 @@ class LayeredImageBackground extends Background
 
     // Lists to store background images and their corresponding parallax factors.
     // Lists (not Sets) are used to preserve the order — each image must match its parallax factor by index.
-    Set<TiledImage> images = {};
-    List<Vector2> parralaxFactors = [];
-    List<Vector2> startPositions = [];
+    final Set<TiledImage> images = {};
+    final List<Vector2> parralaxFactors = [];
+    final List<Vector2> startPositions = [];
     ImageLayer? imageLayer;
 
     // Loop through all background image layers defined in Tiled.

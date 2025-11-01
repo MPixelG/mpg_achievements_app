@@ -15,7 +15,6 @@ import 'package:mpg_achievements_app/core/router/router.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../components/background/scrolling_background.dart';
-import '../../components/level_components/entity/animation/animation_style.dart';
 import '../../components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
 import '../../components/level_components/entity/enemy/ai/pathfinder.dart';
 import '../../components/level_components/entity/enemy/enemy.dart';
@@ -119,7 +118,6 @@ abstract class GameWorld extends World
       (parent as PixelAdventure).cam.shakeCamera(
         6,
         5,
-        animationStyle: AnimationStyle.easeOut,
       );
     } //press N to shake the camera
 
@@ -162,7 +160,7 @@ abstract class GameWorld extends World
     //selectedTile = toGridPos(worldPositionTap)..floor();
     //final Vector2 calculatedGridPos = toGridPos(worldPositionTap);
     //final Vector2 worldPositionTile = toWorldPos(calculatedGridPos);
-    Vector2 clickGridPos = toGridPos(worldPositionTap);
+    final Vector2 clickGridPos = toGridPos(worldPositionTap);
 
     //highlight the selected tile
     // _highlightedTile = TileHighlightRenderable(selectedTile!);
@@ -198,15 +196,15 @@ abstract class GameWorld extends World
   void update(double dt) {
     if (debugOverlays.scale == Vector2.zero()) return;
 
-    Vector3 roundedPlayerPos = player.position.clone()..round();
-    Vector3 roundedPlayerHeadPos = player.gridHeadPos.clone()..round();
-    Vector3 roundedPlayerSize = player.size.clone()..round();
-    Vector3 roundedPlayerSizeScaled = player.size.clone()..multiply(tilesize)..round();
+    final Vector3 roundedPlayerPos = player.position.clone()..round();
+    final Vector3 roundedPlayerHeadPos = player.gridHeadPos.clone()..round();
+    final Vector3 roundedPlayerSize = player.size.clone()..round();
+    final Vector3 roundedPlayerSizeScaled = player.size.clone()..multiply(tilesize)..round();
 
-    String playerCoords = roundedPlayerPos.toString();
-    String playerHeadCoords = roundedPlayerHeadPos.toString();
-    String playerSize = roundedPlayerSize.toString();
-    String playerSizeScaled = roundedPlayerSizeScaled.toString();
+    final String playerCoords = roundedPlayerPos.toString();
+    final String playerHeadCoords = roundedPlayerHeadPos.toString();
+    final String playerSize = roundedPlayerSize.toString();
+    final String playerSizeScaled = roundedPlayerSizeScaled.toString();
     debugOverlays.text =
         "Player: $playerCoords\n"
         "Player Head: $playerHeadCoords\n"
@@ -243,7 +241,7 @@ abstract class GameWorld extends World
           backgroundLayer.properties.getValue('BackgroundColor') ?? "Green";
     }
 
-    ScrollingBackground background = ScrollingBackground(
+    final ScrollingBackground background = ScrollingBackground(
       tileColor: backgroundColor,
       camera: (parent as PixelAdventure).cam,
     );

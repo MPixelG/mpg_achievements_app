@@ -61,9 +61,7 @@ class ChunkingCollisionDetection3D<B extends Broadphase3D<ShapeHitbox3D>>
   Set<Vector3> intersections(
       ShapeHitbox3D hitboxA,
       ShapeHitbox3D hitboxB,
-      ) {
-    return hitboxA.intersections(hitboxB);
-  }
+      ) => hitboxA.intersections(hitboxB);
 
 
   static final _temporaryRaycastResult = RaycastResult3D<ShapeHitbox3D>();

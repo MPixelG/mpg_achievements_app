@@ -1,11 +1,9 @@
 import 'dart:ui';
 
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/isoCollisionCallbacks.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'explosion_effect.dart';
@@ -42,7 +40,7 @@ class TileHighlightRenderable extends IsoPositionComponent
     final halfTile = Vector2(tileW / 2, tileH / 2);
 
     // Define the four vertices of the isometric diamond for the tile.
-    List<Offset> diamond = [
+    final List<Offset> diamond = [
       (Vector2(0, -halfTile.y / 2)).toOffset(), // Top center
       (Vector2(halfTile.x, 0)).toOffset(), // Middle right
       (Vector2(0, halfTile.y / 2)).toOffset(), // Bottom center

@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart' hide Vector3;
@@ -8,7 +6,7 @@ import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/core/math/ray3.dart';
 import 'package:mpg_achievements_app/core/math/transform3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detection.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/isoCollisionCallbacks.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/misc/aabb_listener.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_shape_component.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/util/raycasting_3d.dart';
@@ -57,14 +55,10 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
   Set<ShapeHitbox3D>? _activeCollisions;
 
   @override
-  bool get isColliding {
-    return _activeCollisions != null && _activeCollisions!.isNotEmpty;
-  }
+  bool get isColliding => _activeCollisions != null && _activeCollisions!.isNotEmpty;
 
   @override
-  bool collidingWith(Hitbox3D other) {
-    return _activeCollisions != null && activeCollisions.contains(other);
-  }
+  bool collidingWith(Hitbox3D other) => _activeCollisions != null && activeCollisions.contains(other);
 
   CollisionDetection3D? _collisionDetection;
   final List<Transform3D> _transformAncestors = [];
@@ -120,7 +114,7 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
       onAabbChanged.call();
     };
     final positionComponents = ancestors(
-      includeSelf: false,
+      
     ).whereType<IsoPositionComponent>();
     for (final ancestor in positionComponents) {
       _transformAncestors.add(ancestor.transform);
@@ -165,17 +159,13 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
   /// a position in the global coordinate system of your game.
   @override
   @mustCallSuper
-  bool containsPoint3D(Vector3 point) {
-    return _possiblyContainsPoint(point);
-  }
+  bool containsPoint3D(Vector3 point) => _possiblyContainsPoint(point);
 
   /// Since this is a cheaper calculation than checking towards all shapes this
   /// check can be done first to see if it even is possible that the shapes can
   /// contain the point, since the shapes have to be within the size of the
   /// component.
-  bool _possiblyContainsPoint(Vector3 point) {
-    return aabb.containsVector3(point);
-  }
+  bool _possiblyContainsPoint(Vector3 point) => aabb.containsVector3(point);
 
   /// Where this [ShapeComponent] has intersection points with another shape
   @override

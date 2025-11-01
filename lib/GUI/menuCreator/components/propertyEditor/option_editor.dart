@@ -31,34 +31,32 @@ class OptionEditorMenu extends StatefulWidget {
 
 class OptionEditorMenuState extends State<OptionEditorMenu> {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "${widget.node.widgetType} Properties",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 48),
+              const SizedBox(height: 48),
               ..._buildPropertyWidgets(),
             ],
           ),
         ),
       ),
     );
-  }
 
   List<Widget> _buildPropertyWidgets() {
-    WidgetOptions widgetOptions = WidgetOptions.fromType(
+    final WidgetOptions widgetOptions = WidgetOptions.fromType(
       widget.node.widgetType,
     );
 
-    List<Widget> propertyWidgets = [];
+    final List<Widget> propertyWidgets = [];
 
     for (var option in widgetOptions.options) {
       propertyWidgets.add(
@@ -66,12 +64,11 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
           height: 64,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
             spacing: 20,
             children: [
               Stack(
                 children: [
-                  Text(option.name, style: TextStyle(fontSize: 18)),
+                  Text(option.name, style: const TextStyle(fontSize: 18)),
                   SizedBox(
                     width: 160,
                     height: 32,
@@ -127,13 +124,13 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
       return _buildInputField(
         option.name,
         widget.node.properties,
-        TextInputType.numberWithOptions(decimal: false),
+        const TextInputType.numberWithOptions(),
       );
     } else if (option.type == double) {
       return _buildInputField(
         option.name,
         widget.node.properties,
-        TextInputType.numberWithOptions(decimal: true),
+        const TextInputType.numberWithOptions(decimal: true),
       );
     } else if (option.type == bool) {
       return _buildSwitch(option);
@@ -149,15 +146,15 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
 
     return Text(
       'Unsupported type: ${option.type}',
-      style: TextStyle(color: Colors.red),
+      style: const TextStyle(color: Colors.red),
     );
   }
 
   DropdownButton _buildDropdownButton(WidgetOption option) {
-    String currentValue =
+    final String currentValue =
         widget.node.properties[option.name]?.toString() ?? "none";
 
-    String prefix = currentValue.contains(".")
+    final String prefix = currentValue.contains(".")
         ? currentValue.split(".").first
         : "";
 
@@ -193,7 +190,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
   }) {
     properties ??= widget.node.properties;
 
-    Color currentColor =
+    final Color currentColor =
         parseColor(properties[customOptionName ?? option.name]) ?? Colors.black;
     return Row(
       children: [
@@ -202,8 +199,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
             Color pickedColor = currentColor;
             await showDialog(
               context: context,
-              builder: (context) {
-                return AlertDialog(
+              builder: (context) => AlertDialog(
                   content: SingleChildScrollView(
                     child: ColorPicker(
                       pickerColor: currentColor,
@@ -214,7 +210,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
                   ),
                   actions: [
                     TextButton(
-                      child: Text('OK'),
+                      child: const Text('OK'),
                       onPressed: () {
                         properties![customOptionName ?? option.name] =
                             pickedColor;
@@ -231,8 +227,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
                       },
                     ),
                   ],
-                );
-              },
+                ),
             );
           },
           child: Container(
@@ -240,7 +235,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
             height: 32,
             decoration: BoxDecoration(
               color: currentColor,
-              border: Border.all(color: Colors.black),
+              border: Border.all(),
               borderRadius: BorderRadius.circular(4),
             ),
           ),
@@ -249,8 +244,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
     );
   }
 
-  Switch _buildSwitch(WidgetOption option) {
-    return Switch(
+  Switch _buildSwitch(WidgetOption option) => Switch(
       value: widget.node.properties[option.name] ?? false,
       onChanged: (bool newValue) {
         setState(() {
@@ -259,21 +253,18 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
         });
       },
     );
-  }
 
   Widget _buildEdgeInsetsEditor(
     BuildContext context,
     WidgetOption option,
     Map<String, dynamic> properties,
-  ) {
-    return FloatingActionButton(
+  ) => FloatingActionButton(
       heroTag: null,
       onPressed: () {
         _showEdgeInsetsDialog(context, option, properties);
       },
-      child: Icon(Icons.edit_note_outlined),
+      child: const Icon(Icons.edit_note_outlined),
     );
-  }
 
   void _showEdgeInsetsDialog(
     BuildContext context,
@@ -304,9 +295,8 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
               ),
             ),
             body: Container(
-              padding: EdgeInsets.all(32),
+              padding: const EdgeInsets.all(32),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
@@ -315,13 +305,13 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
                       _buildInputField(
                         "left",
                         properties[option.name],
-                        TextInputType.numberWithOptions(decimal: true),
+                        const TextInputType.numberWithOptions(decimal: true),
                         controllerName: option.name,
                       ),
                       _buildInputField(
                         "top",
                         properties[option.name],
-                        TextInputType.numberWithOptions(decimal: true),
+                        const TextInputType.numberWithOptions(decimal: true),
                         controllerName: option.name,
                       ),
                     ],
@@ -332,13 +322,13 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
                       _buildInputField(
                         "right",
                         properties[option.name],
-                        TextInputType.numberWithOptions(decimal: true),
+                        const TextInputType.numberWithOptions(decimal: true),
                         controllerName: option.name,
                       ),
                       _buildInputField(
                         "bottom",
                         properties[option.name],
-                        TextInputType.numberWithOptions(decimal: true),
+                        const TextInputType.numberWithOptions(decimal: true),
                         controllerName: option.name,
                       ),
                     ],
@@ -376,7 +366,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
                       });
                       Navigator.of(context).pop();
                     },
-                    child: Text("Apply"),
+                    child: const Text("Apply"),
                   ),
                 ],
               ),
@@ -394,7 +384,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
     String? controllerName,
     void Function(dynamic)? onChange,
   }) {
-    TextEditingController controller = _getTextController(
+    final TextEditingController controller = _getTextController(
       name,
       widget.node.id,
       controllerName: controllerName ?? "",
@@ -407,11 +397,11 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
       child: TextField(
         controller: controller,
         keyboardType: textInputType,
-        onChanged: (dynamic newValue) {
+        onChanged: (newValue) {
           if (onChange != null) onChange(newValue);
           setState(() {
             dynamic parsedValue = newValue;
-            Type expectedType = properties[name]?.runtimeType ?? String;
+            final Type expectedType = properties[name]?.runtimeType ?? String;
 
             if (expectedType == int) {
               parsedValue = int.tryParse(newValue) ?? 0;
@@ -425,7 +415,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
         },
         decoration: InputDecoration(
           labelText: name,
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
       ),
     );
@@ -444,11 +434,10 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
         onPressed: () {
           showDialog(
             context: context,
-            builder: (context) {
-              return Dialog(
+            builder: (context) => Dialog(
                 child: StatefulBuilder(
                   builder: (context, setDialogState) {
-                    Map<String, dynamic> pressProperties =
+                    final Map<String, dynamic> pressProperties =
                         propertiesFull["onPressed"];
 
                     return SizedBox(
@@ -457,7 +446,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
                       child: Scaffold(
                         backgroundColor: Colors.transparent,
                         appBar: AppBar(
-                          title: Text("Button Action Editor"),
+                          title: const Text("Button Action Editor"),
                           backgroundColor: CupertinoColors.systemGrey4,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(24),
@@ -472,7 +461,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text("Type"),
+                                    const Text("Type"),
                                     _buildInputField(
                                       "actionType",
                                       pressProperties,
@@ -513,8 +502,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
                     );
                   },
                 ),
-              );
-            },
+              ),
           );
         },
         child: Text(option.name),
@@ -528,8 +516,7 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
     StateSetter setDialogState, {
     WidgetOption? option,
     String? customOptionName,
-  }) {
-    return Row(
+  }) => Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(entry.key),
@@ -544,13 +531,12 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
         },
       ],
     );
-  }
 
   Widget _buildTextStyleEditor(
     WidgetOption option,
     Map<String, dynamic> properties,
   ) {
-    Map<String, dynamic> newStyle = {
+    final Map<String, dynamic> newStyle = {
       ...?properties["style"],
       "color": Colors.black,
       "fontFamily": "gameFont",
@@ -566,18 +552,16 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
         onPressed: () {
           showDialog(
             context: context,
-            builder: (context) {
-              return Dialog(
+            builder: (context) => Dialog(
                 child: StatefulBuilder(
                   // setDialogState wird hier vom Builder bereitgestellt
-                  builder: (context, setDialogState) {
-                    return SizedBox(
+                  builder: (context, setDialogState) => SizedBox(
                       width: 600,
                       height: 400,
                       child: Scaffold(
                         // ... (dein AppBar Code)
                         appBar: AppBar(
-                          title: Text("TextStyle Editor"),
+                          title: const Text("TextStyle Editor"),
                           backgroundColor: CupertinoColors.systemGrey4,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(24),
@@ -605,11 +589,9 @@ class OptionEditorMenuState extends State<OptionEditorMenu> {
                           ),
                         ),
                       ),
-                    );
-                  },
+                    ),
                 ),
-              );
-            },
+              ),
           );
         },
         child: Text(option.name),

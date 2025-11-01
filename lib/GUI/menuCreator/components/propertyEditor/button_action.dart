@@ -26,9 +26,7 @@ class ButtonAction {
     }
   }
 
-  Map<String, dynamic> toJson() {
-    return {"actionType": actionType};
-  }
+  Map<String, dynamic> toJson() => {"actionType": actionType};
 }
 
 class DebugButtonAction extends ButtonAction {
@@ -59,9 +57,7 @@ class DebugButtonAction extends ButtonAction {
   }
 
   @override
-  Map<String, dynamic> toJson() {
-    return {"printText": printText, "actionType": actionType};
-  }
+  Map<String, dynamic> toJson() => {"printText": printText, "actionType": actionType};
 }
 
 class ScreenChangeButtonAction extends ButtonAction {
@@ -90,7 +86,5 @@ class ScreenChangeButtonAction extends ButtonAction {
   }
 
   @override
-  Map<String, dynamic> toJson() {
-    return {"screen": screen, "actionType": actionType};
-  }
+  Map<String, dynamic> toJson() => {"screen": screen, "actionType": actionType};
 }

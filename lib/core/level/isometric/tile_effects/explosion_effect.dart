@@ -4,7 +4,6 @@ import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
 
 import '../../../../components/level_components/entity/animation/animation_manager.dart';
 import '../isometric_tiled_component.dart';
-import 'highlighted_tile.dart';
 
 class ExplosionEffect extends AnimatedCharacter with AnimationManager {
 

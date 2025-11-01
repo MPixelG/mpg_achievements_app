@@ -14,7 +14,7 @@ class FollowPlayerGoal extends MoveGoal {
 
   @override
   void updateGoal(double dt) {
-    Vector2? lastPlayerPos = attributes!.attributes["nearestPlayerPosition"];
+    final Vector2? lastPlayerPos = attributes!.attributes["nearestPlayerPosition"];
     lastPlayerSighting += dt;
     if (lastPlayerPos != null) {
       if ((lastPlayerPos..divide(tilesize.xy)).distanceTo(endPos) > 2) {

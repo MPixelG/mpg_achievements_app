@@ -20,13 +20,12 @@ mixin HasCollisions
   bool _debugNoClipMode = false;
 
   @override
-  FutureOr<void> onLoad() {
+  FutureOr<void> onLoad() =>
     // hitbox = IsometricHitbox(Vector2.all(1), Vector3.zero());
     // hitbox!.position = Vector2(0, 16);
     //
     // add(hitbox!);
-    return super.onLoad();
-  }
+    super.onLoad();
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {

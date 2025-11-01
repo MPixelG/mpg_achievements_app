@@ -40,7 +40,7 @@ class ScrollingBackground extends Background with HasGameReference {
   void update(double dt) {
     time += dt; //increase the time variable
 
-    double zoom =
+    final double zoom =
         camera?.viewfinder.zoom ??
         1; //if a camera is given, then we take the zoom from it. otherwise it gets set to 1
     Vector2 cameraPos =
@@ -106,14 +106,14 @@ class ScrollingBackground extends Background with HasGameReference {
     double tileHeight = 64,
   }) {
     //adds all of the tiles and positions them
-    int tilesX =
+    final int tilesX =
         (viewportSize.x / (tileWidth * zoom)).floor() +
         1; //calculates the optimal amount of tiles for the different axis
-    int tilesY = (viewportSize.y / (tileHeight * zoom)).floor() + 1;
+    final int tilesY = (viewportSize.y / (tileHeight * zoom)).floor() + 1;
 
     for (int x = -1; x < tilesX - 1; x++) {
       for (int y = -1; y < tilesY - 1; y++) {
-        BackgroundTile tile = BackgroundTile(
+        final BackgroundTile tile = BackgroundTile(
           color: tileColor,
           backgroundPos: Vector2(x.toDouble(), y.toDouble()),
         );

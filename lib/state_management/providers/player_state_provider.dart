@@ -14,18 +14,14 @@ final playerProvider = NotifierProvider<PlayerNotifier, PlayerData>(
 
 class PlayerNotifier extends Notifier<PlayerData> {
   @override
-  PlayerData build() {
+  PlayerData build() =>
     // Initialize the player data with default values.
     // This method is called when the provider is first created.
     // You can also fetch initial data from a database or API here.
     // For this example, we are just returning a PlayerData object with a default character name
-    return PlayerData(
+    PlayerData(
       playerCharacter: 'default',
-      lives: 3,
-      gotHit: false,
-      lastCheckpoint: null,
     );
-  }
 
   void takeHit() {
     if (state.gotHit || state.isRespawning) return;

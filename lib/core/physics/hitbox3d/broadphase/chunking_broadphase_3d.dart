@@ -24,7 +24,7 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
   void add(T item) {
     _hitboxes[item.id] = item;
 
-    Set<Vector3> chunks = _getChunksOfHitbox(item);
+    final Set<Vector3> chunks = _getChunksOfHitbox(item);
 
     for (var chunk in chunks) {
       _chunks[chunk] ??= [];
@@ -109,19 +109,19 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
 
 
   Set<Vector3> _getChunksOfHitbox(Hitbox3D hitbox){
-    Set<Vector3> occupiedChunks = {};
+    final Set<Vector3> occupiedChunks = {};
 
-    Vector3 start = hitbox.aabb.min;
-    Vector3 end = hitbox.aabb.max;
+    final Vector3 start = hitbox.aabb.min;
+    final Vector3 end = hitbox.aabb.max;
 
 
-    int startX = (start.x / chunkSize).floor();
-    int startY = (start.y / chunkSize).floor();
-    int startZ = (start.z / chunkSize).floor();
+    final int startX = (start.x / chunkSize).floor();
+    final int startY = (start.y / chunkSize).floor();
+    final int startZ = (start.z / chunkSize).floor();
 
-    int endX = (end.x / chunkSize).floor();
-    int endY = (end.y / chunkSize).floor();
-    int endZ = (end.z / chunkSize).floor();
+    final int endX = (end.x / chunkSize).floor();
+    final int endY = (end.y / chunkSize).floor();
+    final int endZ = (end.z / chunkSize).floor();
 
     for(int x = startX; x <= endX; x++){
       for(int y = startY; y <= endY; y++){

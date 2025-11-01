@@ -85,10 +85,8 @@ class Ray3 {
   bool intersectsWithAabb2(Aabb3 box) => intersectsWithAabb3(box);
 
   /// Gives the point at a certain length along the ray.
-  Vector3 point(double length, {Vector3? out}) {
-    return ((out?..setFrom(origin)) ?? origin.clone())
+  Vector3 point(double length, {Vector3? out}) => ((out?..setFrom(origin)) ?? origin.clone())
       ..addScaled(direction, length);
-  }
 
   static final Vector3 _edge1 = Vector3.zero();
   static final Vector3 _edge2 = Vector3.zero();

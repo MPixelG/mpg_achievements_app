@@ -2,7 +2,6 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart' show ObjectGroup, TiledObjectHelpers;
 import 'package:mpg_achievements_app/core/level/tiled_level.dart';
-import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
@@ -13,7 +12,6 @@ import '../../components/level_components/collectables.dart';
 import '../../components/level_components/entity/enemy/enemy.dart';
 import '../../components/level_components/saw.dart';
 import 'game_world.dart';
-import 'rendering/chunk.dart';
 
 void generateSpawningObjectsForLevel(GameWorld gameWorld) {
   //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list
@@ -32,14 +30,14 @@ void generateSpawningObjectsForLevel(GameWorld gameWorld) {
         case 'Player':
           //player spawning
 
-          Vector2 twoDimIsoPos = orthogonalToIsometric(spawnPoint.position); //todo fix for level offset.
+          final Vector2 twoDimIsoPos = orthogonalToIsometric(spawnPoint.position); //todo fix for level offset.
           print("grid pos: $twoDimIsoPos, spawn point: ${spawnPoint.position}");
           gameWorld.player.position = Vector3(7, 1, 7);
           gameWorld.player.priority = 1;
           break;
         case 'Collectable':
           //checking type for spawning
-          bool interactiveTask =
+          final bool interactiveTask =
               spawnPoint.properties.getValue('interactiveTask') ?? false;
           String collectablePath(bool task) =>
               task == true ? 'objects' : 'Items/Fruits';
@@ -103,16 +101,14 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
     'Collisions',
   );
   //convert orthogonal to isometric coordinates
-  Vector2 orthogonalToIsometric(Vector2 orthoPos) {
-    return Vector2(
+  Vector2 orthogonalToIsometric(Vector2 orthoPos) => Vector2(
       ((orthoPos.x - orthoPos.y)),
       (orthoPos.x + orthoPos.y) * 0.5,
     );
-  }
 
   if (collisionsLayer != null) {
     for (final collision in collisionsLayer.objects) {
-      Vector2 pos = orthogonalToIsometric(collision.position);
+      final Vector2 pos = orthogonalToIsometric(collision.position);
       // get z and zHeight from properties, if not set default to 0 and 16
       final double yPos = collision.properties.getValue('zPosition') ?? 0;
 
@@ -132,11 +128,11 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
 }
 
 Future<void> parse(String filename) async{
-  String fileContent = await Flame.assets.readFile(filename);
+  final String fileContent = await Flame.assets.readFile(filename);
 
-  XmlDocument document = XmlDocument.parse(fileContent);
+  final XmlDocument document = XmlDocument.parse(fileContent);
 
-  TiledLevel level = TiledLevel.fromXml(document);
+  final TiledLevel level = TiledLevel.fromXml(document);
   print('Level width: ${level.width}, height: ${level.height}');
   print('Number of layers: ${level.layers.length}');
   print("first layer: ${level.layers[0].name} with width ${level.layers[0].width} and height ${level.layers[0].height}. Data: ${level.layers[0].data}");

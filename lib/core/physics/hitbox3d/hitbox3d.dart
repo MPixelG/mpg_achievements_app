@@ -1,14 +1,10 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart' hide Vector3;
 import 'package:flutter/cupertino.dart';
-import 'package:mpg_achievements_app/core/iso_component.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/isoCollisionCallbacks.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/misc/aabb_listener.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import 'package:mpg_achievements_app/util/render_utils.dart';
 import 'package:vector_math/vector_math.dart' show Vector3;
 
 abstract class Hitbox3D<T extends Hitbox3D<T>> implements GenericIsoCollisionCallbacks<T> {

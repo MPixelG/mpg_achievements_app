@@ -111,9 +111,9 @@ class NodeViewerState extends State<NodeViewer> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
     //build the widget tree for the NodeViewer
-    return Scaffold(
+    Scaffold(
       //the main scaffold for the NodeViewer
       appBar: AppBar(
         //the app bar at the top of the screen
@@ -135,7 +135,7 @@ class NodeViewerState extends State<NodeViewer> {
             setState(() {}); //and refresh the state to update the gui
             widget.updateViewport!();
           },
-          child: Icon(
+          child: const Icon(
             CupertinoIcons.trash,
           ), //the icon of the button is a trash can
         ),
@@ -160,8 +160,6 @@ class NodeViewerState extends State<NodeViewer> {
           //allows to scroll horizontally
           scrollDirection: Axis.horizontal,
           child: SingleChildScrollView(
-            //and vertically
-            scrollDirection: Axis.vertical,
             child: Container(
               //the container that holds the content
               constraints: const BoxConstraints(
@@ -187,5 +185,4 @@ class NodeViewerState extends State<NodeViewer> {
         ),
       ),
     );
-  }
 }

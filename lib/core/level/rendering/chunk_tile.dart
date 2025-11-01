@@ -48,7 +48,7 @@ class ChunkTile with IsometricRenderable {
   final Paint renderPaint = Paint()..isAntiAlias = false..filterQuality = FilterQuality.none;
   @override
   void renderTree(Canvas albedoCanvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
-    Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, 0);
+    final Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, 0);
     if(normalCanvas != null) {
       cachedSprite.normalAndDepth?.render(
         normalCanvas,

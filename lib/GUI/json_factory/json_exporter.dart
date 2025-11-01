@@ -9,12 +9,11 @@ import '../menuCreator/components/widget_declaration.dart';
 
 class WidgetJsonUtils {
   static String exportWidgetToJson(LayoutWidget widget) {
-    Map<String, dynamic> widgetData = _buildWidgetMap(widget);
+    final Map<String, dynamic> widgetData = _buildWidgetMap(widget);
     return _formatJson(widgetData);
   }
 
-  static Map<String, dynamic> _buildWidgetMap(LayoutWidget widget) {
-    return {
+  static Map<String, dynamic> _buildWidgetMap(LayoutWidget widget) => {
       'id': widget.id,
       'widgetType': widget.widgetType.toString(),
       'properties': convertProperties(widget.properties),
@@ -22,7 +21,6 @@ class WidgetJsonUtils {
           .map((child) => _buildWidgetMap(child))
           .toList(),
     };
-  }
 
   static dynamic convertProperties(dynamic input) {
     if (input is Map) {
@@ -134,12 +132,12 @@ class WidgetJsonUtils {
     // Ensure properties are properly restored
     final restoredProps = restoreProperties(data['properties']);
 
-    LayoutWidget? widget = WidgetDeclaration.declarationCache
+    final LayoutWidget? widget = WidgetDeclaration.declarationCache
         .where((element) => element.id == data["widgetType"])
         .first
         .builder(parent, properties: restoredProps);
 
-    List<LayoutWidget> children = (data['children'] as List)
+    final List<LayoutWidget> children = (data['children'] as List)
         .map(
           (child) => importWidget(
             Map<String, dynamic>.from(child),

@@ -12,7 +12,7 @@ import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/components/camera/advanced_camera.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detection.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/isoCollisionCallbacks.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 
 import 'components/level_components/entity/enemy/enemy.dart';
@@ -57,7 +57,7 @@ class PixelAdventure extends FlameGame
     //parse("tiles/$currentLevel.tmx");
 
     //world is loaded after initialising all images
-    Vector2 tileSize = await getTilesizeOfLevel(currentLevel);
+    final Vector2 tileSize = await getTilesizeOfLevel(currentLevel);
 
     gameWorld = IsometricWorld(
       levelName: currentLevel,

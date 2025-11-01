@@ -186,7 +186,7 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
         1,
       ); //make sure its not over or below 0 and 1
 
-      double progressVal = switch (animationStyle) {
+      final double progressVal = switch (animationStyle) {
         //progress of the animation between 0 and 1. this is NOT the same as the time progress, the increase of this variable isn't constant, sometimes getting slower at the end for example
         AnimationStyle.linear => linear(timeProgress), //constant increase
         AnimationStyle.easeIn => easeIn(
@@ -209,7 +209,7 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
 
       if (givenZoom != null) {
         //if there was a zoom given, it has to be calculated as well
-        double zoom = initialZoom! + (givenZoom! - initialZoom!) * progressVal;
+        final double zoom = initialZoom! + (givenZoom! - initialZoom!) * progressVal;
         viewfinder.zoom = zoom;
       }
 
@@ -241,8 +241,8 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
     if (shakingTime > 0) {
       //if theres an ongoing shaking animation
 
-      double ratio = (shakingTime / totalShakingTime).clamp(0.0, 1.0);
-      double power = switch (shakingAnimation) {
+      final double ratio = (shakingTime / totalShakingTime).clamp(0.0, 1.0);
+      final double power = switch (shakingAnimation) {
         AnimationStyle.easeIn => easeIn(
           1 - ratio,
           startVal: shakingAmount,

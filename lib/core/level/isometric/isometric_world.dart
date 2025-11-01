@@ -4,16 +4,13 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
-import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
 import 'package:mpg_achievements_app/core/level/game_world.dart';
-import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
-import 'package:mpg_achievements_app/util/render_utils.dart';
 
 
 import 'isometric_renderable.dart';
@@ -117,9 +114,9 @@ class IsometricWorld extends GameWorld {
 
     if(debugMode) {
 
-      Vector3 scaledPlayerPos = player.position.xyz;
-      Vector3 start = scaledPlayerPos;
-      Vector3 end = player.size.clone()..multiply(tilesize);
+      final Vector3 scaledPlayerPos = player.position.xyz;
+      final Vector3 start = scaledPlayerPos;
+      final Vector3 end = player.size.clone()..multiply(tilesize);
 
       // renderIsoBox(canvas: canvas, start: Vector3.zero(), end: end.xzy, fillSides: false, originOffset: toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftLeft)).toOffset());
       // canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftLeft).xzy).toOffset(), 1, Paint()..color = Colors.red);
@@ -144,7 +141,7 @@ class IsometricWorld extends GameWorld {
         'Only rectangle objects are supported in the Collisions layer.',
       );
 
-      Vector2 gridObjectPos = toGridPos(value.position);
+      final Vector2 gridObjectPos = toGridPos(value.position);
 
       if (Rect.fromPoints(
         gridObjectPos.toOffset(),

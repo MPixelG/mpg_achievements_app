@@ -13,8 +13,7 @@ class TextOverlay extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return game.showDialogue
+  Widget build(BuildContext context) => game.showDialogue
         ? Container(
             color: Colors.transparent.withValues(alpha: 0.15),
             child: AnimatedTextKit(
@@ -38,5 +37,4 @@ class TextOverlay extends StatelessWidget {
             ), //Animatedtextkit
           )
         : Container();
-  }
 }

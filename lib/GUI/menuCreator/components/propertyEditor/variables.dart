@@ -3,19 +3,17 @@ import 'package:flutter/foundation.dart';
 class GuiVariableManager {
   Map<String, GuiVariable> variables = {};
 
-  void add(String name, Type type, [dynamic initialValue]) {
+  void add(String name, Type type, [initialValue]) {
     variables[name] = GuiVariable(name, type, initialValue);
   }
 
-  void set(String variable, dynamic value) {
+  void set(String variable, value) {
     variables[variable] ??= GuiVariable(variable, value.runtimeType, value);
 
     variables[variable]?.value = value;
   }
 
-  dynamic get(String name) {
-    return variables[name]?.value;
-  }
+  dynamic get(String name) => variables[name]?.value;
 }
 
 class GuiVariable {

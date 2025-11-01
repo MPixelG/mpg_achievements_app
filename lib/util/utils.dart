@@ -9,9 +9,7 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 
-import '../components/level_components/entity/player.dart';
 
 //A simple utility function that returns the absolute (positive) value of a number.
 double abs(double val) => val < 0 ? -val : val;
@@ -70,30 +68,30 @@ Vector2 safeNormalize(Vector2 vector) {
 }
 
 Future<Vector2> getTilesizeOfLevel(String levelName) async {
-  String content = await rootBundle.loadString('assets/tiles/$levelName.tmx');
-  List<String> lines = content.split('\n');
+  final String content = await rootBundle.loadString('assets/tiles/$levelName.tmx');
+  final List<String> lines = content.split('\n');
 
-  int indexOfTilesizeWidthDeclaration =
+  final int indexOfTilesizeWidthDeclaration =
       lines[1].indexOf("tilewidth=\"") +
       11; //include the length of 'tilewidth="'
-  int indexOfTilesizeHeightDeclaration =
+  final int indexOfTilesizeHeightDeclaration =
       lines[1].indexOf("tileheight=\"") +
       12; //include the length of 'tileheight="'
 
-  int indexOfNextSemicolonWidth = lines[1].indexOf(
+  final int indexOfNextSemicolonWidth = lines[1].indexOf(
     "\"",
     indexOfTilesizeWidthDeclaration,
   );
-  int indexOfNextSemicolonHeight = lines[1].indexOf(
+  final int indexOfNextSemicolonHeight = lines[1].indexOf(
     "\"",
     indexOfTilesizeHeightDeclaration,
   );
 
-  String tilesizeWidthString = lines[1].substring(
+  final String tilesizeWidthString = lines[1].substring(
     indexOfTilesizeWidthDeclaration,
     indexOfNextSemicolonWidth,
   );
-  String tilesizeHeightString = lines[1].substring(
+  final String tilesizeHeightString = lines[1].substring(
     indexOfTilesizeHeightDeclaration,
     indexOfNextSemicolonHeight,
   );
@@ -116,9 +114,7 @@ num max<T extends num>(List<T> vals) {
   return smallestVal ?? 0;
 }
 
-Vector2 orthogonalToIsometric(Vector2 ortho) {
-  return Vector2(ortho.x - ortho.y, (ortho.x + ortho.y) / 2);
-}
+Vector2 orthogonalToIsometric(Vector2 ortho) => Vector2(ortho.x - ortho.y, (ortho.x + ortho.y) / 2);
 
 ///takes 2 strings and returns a value between 0 and 1, representing the similarity of the 2 strings.
 double jaro(String s1, String s2) {
@@ -208,6 +204,4 @@ Future<File> saveImage(ui.Image image, String filename) async {
 //Check OS for Joystick support
 
 //check which platform is used and if the touch controls must be shown, TODO right settings must be set here
-bool shouldShowJoystick() {
-  return defaultTargetPlatform.name.contains(RegExp("android|iOS|fuchsia"));
-}
+bool shouldShowJoystick() => defaultTargetPlatform.name.contains(RegExp("android|iOS|fuchsia"));

@@ -14,14 +14,10 @@ mixin GenericIsoCollisionCallbacks<T> {
   Set<T> get activeCollisions => _activeCollisions ??= {};
 
   /// Whether the object is currently colliding or not.
-  bool get isColliding {
-    return _activeCollisions?.isNotEmpty ?? false;
-  }
+  bool get isColliding => _activeCollisions?.isNotEmpty ?? false;
 
   /// Whether the object is colliding with [other] or not.
-  bool collidingWith(T other) {
-    return _activeCollisions?.contains(other) ?? false;
-  }
+  bool collidingWith(T other) => _activeCollisions?.contains(other) ?? false;
 
   /// [onCollision] is called in every tick when this object is colliding with
   /// [other].
@@ -76,14 +72,10 @@ implements GenericIsoCollisionCallbacks<IsoPositionComponent> {
   Set<IsoPositionComponent> get activeCollisions => _activeCollisions ??= {};
 
   @override
-  bool get isColliding {
-    return _activeCollisions != null && _activeCollisions!.isNotEmpty;
-  }
+  bool get isColliding => _activeCollisions != null && _activeCollisions!.isNotEmpty;
 
   @override
-  bool collidingWith(IsoPositionComponent other) {
-    return _activeCollisions != null && activeCollisions.contains(other);
-  }
+  bool collidingWith(IsoPositionComponent other) => _activeCollisions != null && activeCollisions.contains(other);
 
   @override
   @mustCallSuper

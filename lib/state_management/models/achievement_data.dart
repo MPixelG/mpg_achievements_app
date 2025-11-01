@@ -1,6 +1,6 @@
 import 'package:uuid/uuid.dart';
 
-var uuid = Uuid();
+var uuid = const Uuid();
 
 enum AchievementState {
   available, completed
@@ -48,8 +48,7 @@ class AchievementData {
     int? totalSteps,
     int? currentSteps,
     bool? isCompleted,
-    DateTime? dateCompleted,}) {
-    return AchievementData(id: id ?? this.id,
+    DateTime? dateCompleted,}) => AchievementData(id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
       category: category ?? this.category,
@@ -62,7 +61,6 @@ class AchievementData {
       isCompleted: isCompleted ?? this.isCompleted,
       dateCompleted: dateCompleted ?? this.dateCompleted,
     );
-  }
 }
 
 

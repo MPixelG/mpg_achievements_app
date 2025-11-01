@@ -64,7 +64,7 @@ class Chunk {
         final localX = x - chunkX * chunkSize;
         final localZ = z - chunkZ * chunkSize;
 
-        int topPos = (y * tilesize.z).toInt();
+        final int topPos = (y * tilesize.z).toInt();
         if (gid != 0 && topPos > yHeightUsedPixels) {
           yHeightUsedPixels = topPos;
         }
@@ -121,16 +121,14 @@ class Chunk {
     }
 
     reSortTiles([]);
-    Future.delayed(Duration(seconds: 1), () => rebuildMaps([]));
+    Future.delayed(const Duration(seconds: 1), () => rebuildMaps([]));
   }
 
   static Vector2 worldSize = Vector2.zero();
 
   List<IsometricRenderable> allRenderables = [];
   void reSortTiles(Iterable<IsometricRenderable> additionals) {
-    tiles.sort((a, b) {
-      return depth(a).compareTo(depth(b));
-    });
+    tiles.sort((a, b) => depth(a).compareTo(depth(b)));
   }
 
   int currentlyActiveOperations = 0;
@@ -139,14 +137,14 @@ class Chunk {
     if(currentlyActiveOperations > maxOperations) return;
 
     currentlyActiveOperations++;
-    List<IsometricRenderable> containedAdditionals = additionals
+    final List<IsometricRenderable> containedAdditionals = additionals
         .where((element) => containsRenderable(element)).toList();
 
     if (neighborChunkCluster != null) {
       usesTempNeighborTileRendering = true;
 
-      List<IsometricRenderable> neighborChunkTiles = [];
-      List<Chunk> neighborChunks = [];
+      final List<IsometricRenderable> neighborChunkTiles = [];
+      final List<Chunk> neighborChunks = [];
 
       for (var value in containedAdditionals) {
         neighborChunks.addAll(neighborChunkCluster!.getWhereContained(value));
@@ -193,13 +191,13 @@ class Chunk {
       toWorldPos(Vector3(maxGridX.toDouble(), 0, maxGridZ.toDouble())) -
           Vector2(tilesize.x / 2, 0),
     ];
-    double minX = corners.map((c) => c.x).reduce(math.min);
-    double minZ = corners.map((c) => c.y).reduce(math.min);
-    double maxX = corners.map((c) => c.x).reduce(math.max);
-    double maxZ = corners.map((c) => c.y).reduce(math.max);
+    final double minX = corners.map((c) => c.x).reduce(math.min);
+    final double minZ = corners.map((c) => c.y).reduce(math.min);
+    final double maxX = corners.map((c) => c.x).reduce(math.max);
+    final double maxZ = corners.map((c) => c.y).reduce(math.max);
 
-    double padTop = yHeightUsedPixels.toDouble();
-    double padBottom = (maxY.toDouble() * tilesize.z) + tilesize.z.toDouble();
+    final double padTop = yHeightUsedPixels.toDouble();
+    final double padBottom = (maxY.toDouble() * tilesize.z) + tilesize.z.toDouble();
 
     final width = (maxX - minX + tilesize.x).ceil();
     final height = (maxZ- minZ + padTop + padBottom).ceil();
@@ -214,10 +212,10 @@ class Chunk {
     if((albedoMap == null || normalAndDepthMap == null) && startedBuildingMaps) return;
     startedBuildingMaps = true;
 
-    PictureRecorder albedoRecorder = PictureRecorder();
-    PictureRecorder normalRecorder = PictureRecorder();
-    Canvas albedoCanvas = Canvas(albedoRecorder);
-    Canvas normalCanvas = Canvas(normalRecorder);
+    final PictureRecorder albedoRecorder = PictureRecorder();
+    final PictureRecorder normalRecorder = PictureRecorder();
+    final Canvas albedoCanvas = Canvas(albedoRecorder);
+    final Canvas normalCanvas = Canvas(normalRecorder);
 
     renderMaps(albedoCanvas, normalCanvas, additionals);
 
@@ -239,7 +237,7 @@ class Chunk {
     albedoCanvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
     normalCanvas.translate(-albedoWorldTopLeft!.x, -albedoWorldTopLeft!.y);
 
-    double currentPaintYPos = double.infinity;
+    const double currentPaintYPos = double.infinity;
 
     int ti = 0, ei = 0;
     double tileDepth;
@@ -303,16 +301,16 @@ class Chunk {
   }
 
   bool containsRenderable(IsometricRenderable r) {
-    double fx = r.gridFeetPos.x;
-    double fz = r.gridFeetPos.z;
-    double hx = r.gridHeadPos.x;
-    double hz = r.gridHeadPos.z;
+    final double fx = r.gridFeetPos.x;
+    final double fz = r.gridFeetPos.z;
+    final double hx = r.gridHeadPos.x;
+    final double hz = r.gridHeadPos.z;
 
 
-    bool smallerX = fx < (x+1)*chunkSize;
-    bool smallerZ = fz < (z+1)*chunkSize;
-    bool greaterX = hx >= x*chunkSize;
-    bool greaterZ = hz >= z*chunkSize;
+    final bool smallerX = fx < (x+1)*chunkSize;
+    final bool smallerZ = fz < (z+1)*chunkSize;
+    final bool greaterX = hx >= x*chunkSize;
+    final bool greaterZ = hz >= z*chunkSize;
 
     return smallerX && smallerZ && greaterX && greaterZ;
   }
@@ -329,7 +327,7 @@ class Chunk {
     if (isUsedByNeighbor) return;
     this.neighborChunkCluster = neighborChunkCluster;
 
-    List<IsometricRenderable> newComponents = [];
+    final List<IsometricRenderable> newComponents = [];
 
     components.where((element) => element.dirty).forEach((element) {
       if (containsRenderable(element)) {

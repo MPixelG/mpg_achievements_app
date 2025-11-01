@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/geometry.dart';
@@ -8,7 +7,6 @@ import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/enemy/ai/tile_grid.dart';
-import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/util/raycasting_3d.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
@@ -62,10 +60,10 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
   List<PathStep>? path;
 
   void onClick(TapDownEvent event) {
-    Vector2 gridPos = (toGridPos(level.mousePos))
+    final Vector2 gridPos = (toGridPos(level.mousePos))
       ..floor(); //converts the mouse position on the screen to a grid position
 
-    POINode? node = getNodeAt(gridPos); //the node at the clicked field
+    final POINode? node = getNodeAt(gridPos); //the node at the clicked field
 
     if (node != null && kDebugMode) {
       //the node is null if theres no node at the given position
@@ -116,7 +114,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
         //if its on the ground you can walk on it
         if (grid.isFree(node.position + Vector2(1, 0))) {
           //if the other position is not solid, we can walk there.
-          POINode? other = getNodeAt(node.position + Vector2(1, 0));
+          final POINode? other = getNodeAt(node.position + Vector2(1, 0));
           if (other != null) {
             //its null if it doesnt exist.
             node.addConnection(
@@ -131,7 +129,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
 
         if (grid.isFree(node.position + Vector2(-1, 0))) {
           //the same for walking left.
-          POINode? other = getNodeAt(node.position + Vector2(-1, 0));
+          final POINode? other = getNodeAt(node.position + Vector2(-1, 0));
           if (other != null) {
             node.addConnection(
               POINodeConnection(
@@ -151,14 +149,14 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
       //for every generated node
       if (!isOnGround(node.position)) {
         //if its in the air, we can fall
-        Vector2 posDownLeft =
+        final Vector2 posDownLeft =
             node.position +
             Vector2(
               -1,
               1,
             ); //all the positions we can fall to. this also includes moving while falling.
-        Vector2 posDown = node.position + Vector2(0, 1);
-        Vector2 posDownRight = node.position + Vector2(1, 1);
+        final Vector2 posDown = node.position + Vector2(0, 1);
+        final Vector2 posDownRight = node.position + Vector2(1, 1);
 
         POINode? otherLeft;
         if (grid.isFree(posDownLeft) &&
@@ -224,7 +222,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
   }
 
   void addJumpNodeInDirection(POINode node, double differenceX) {
-    int heightToCeiling = getHeightToNextCeiling(
+    final int heightToCeiling = getHeightToNextCeiling(
       //get the height to the ceiling. used to find out if the jump is even possible if theres a ceiling over your head.
       node.position,
       maxHeightToCheck:
@@ -233,7 +231,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
 
     if (heightToCeiling > differenceX.abs()) {
       // more diagonal jumps take higher ceilings
-      Vector2 jumpDestination = //calculate the destination
+      final Vector2 jumpDestination = //calculate the destination
           node.position + Vector2(differenceX, -heightToCeiling.toDouble());
 
       if (!hasClearPath(node.position, jumpDestination)) {
@@ -241,13 +239,13 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
         return; //if not, you cant jump and there is no connection.
       }
 
-      POINode? nodeAtDestination = getNodeAt(
+      final POINode? nodeAtDestination = getNodeAt(
         jumpDestination,
       ); //get the node to connect them
 
       if (nodeAtDestination != null) {
         //check if its null
-        POINodeConnection connection = POINodeConnection(
+        final POINodeConnection connection = POINodeConnection(
           nodeAtDestination,
           PathfindingAction.jump,
           2, //it has a base cost of 2 and increases if you jump diagonally. this prevents the entity from jumping all the time
@@ -261,17 +259,17 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
     for (var node in nodes) {
       //for every generated node
       if (grid.valAt(node.position) == TileType.ladder) {
-        Vector2 posUp = node.position + Vector2(0, -1);
-        Vector2 posDown = node.position + Vector2(0, 1);
+        final Vector2 posUp = node.position + Vector2(0, -1);
+        final Vector2 posDown = node.position + Vector2(0, 1);
 
-        bool isLadderOrAirUp = grid.isFree(posUp);
-        bool isLadderOrAitDown = grid.isFree(posDown);
+        final bool isLadderOrAirUp = grid.isFree(posUp);
+        final bool isLadderOrAitDown = grid.isFree(posDown);
 
-        POINode? nodeUp = getNodeAt(posUp);
-        POINode? nodeDown = getNodeAt(posDown);
+        final POINode? nodeUp = getNodeAt(posUp);
+        final POINode? nodeDown = getNodeAt(posDown);
 
         if (nodeUp != null && isLadderOrAirUp) {
-          POINodeConnection connection = POINodeConnection(
+          final POINodeConnection connection = POINodeConnection(
             nodeUp,
             PathfindingAction.climbUp,
             0.7, //it has a base cost of 2 and increases if you jump diagonally. this prevents the entity from jumping all the time
@@ -279,7 +277,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
           node.addConnection(connection);
         }
         if (nodeDown != null && isLadderOrAitDown) {
-          POINodeConnection connection = POINodeConnection(
+          final POINodeConnection connection = POINodeConnection(
             nodeDown,
             PathfindingAction.climbDown,
             0.7, //it has a base cost of 2 and increases if you jump diagonally. this prevents the entity from jumping all the time
@@ -287,11 +285,11 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
           node.addConnection(connection);
         }
       } else if (grid.valAt(node.position) == TileType.air) {
-        Vector2 posDown = node.position + Vector2(0, 1);
+        final Vector2 posDown = node.position + Vector2(0, 1);
         if (grid.valAt(posDown) == TileType.ladder) {
-          POINode? nodeDown = getNodeAt(posDown);
+          final POINode? nodeDown = getNodeAt(posDown);
           if (nodeDown != null) {
-            POINodeConnection connection = POINodeConnection(
+            final POINodeConnection connection = POINodeConnection(
               nodeDown,
               PathfindingAction.climbDown,
               0.7, //it has a base cost of 2 and increases if you jump diagonally. this prevents the entity from jumping all the time
@@ -310,12 +308,12 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
       return true;
     }
 
-    PixelAdventure game = level.game; //get the game
+    final PixelAdventure game = level.game; //get the game
 
-    Vector2 direction = (otherPos - firstPos)
+    final Vector2 direction = (otherPos - firstPos)
         .normalized(); //calculate the direction of the 2 points
 
-    Ray2 ray = Ray2(
+    final Ray2 ray = Ray2(
       origin: toWorldPos(firstPos),
       direction: direction,
     ); //calculate the ray
@@ -353,10 +351,10 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
 
   //returns if the given position is solid.
   bool isOnGround(Vector2 pos) {
-    TileType tileBelow = grid.valAt(
+    final TileType tileBelow = grid.valAt(
       pos + Vector2(0, 1),
     ); //get the tile below the given pos
-    bool isFieldFree = grid.isFree(pos);
+    final bool isFieldFree = grid.isFree(pos);
 
     return (tileBelow ==
                 TileType
@@ -367,7 +365,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
   }
 
   POINode? getNodeAt(Vector2 pos) {
-    Vector2 goalPos = pos.clone()..floor();
+    final Vector2 goalPos = pos.clone()..floor();
     try {
       return nodes.firstWhere(
         (element) => element.position == goalPos,
@@ -379,10 +377,10 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
   }
 
   List<PathStep>? getPathTo(Vector2 startPos, Vector2 endPos) {
-    POINode? startNode = getNodeAt(
+    final POINode? startNode = getNodeAt(
       startPos,
     ); //the node at the start of the path
-    POINode? endNode = getNodeAt(
+    final POINode? endNode = getNodeAt(
       endPos,
     ); //the node at the end of the path. we want to connect those two
 
@@ -406,14 +404,14 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
     }
 
     // this is a collection of Nodes that still have to be looked at. all the discovered nodes will be added to this. These will always get sorted by probability of being the best fitting one.
-    Set<PathfindingNode> openNodes = {};
+    final Set<PathfindingNode> openNodes = {};
 
     //this is a list of nodes that are already done and wont be changed. over time openNodes nodes will be moved here to create the perfect path.
-    Set<PathfindingNode> closedNodes = {};
-    Map<POINode, PathfindingNode> nodeMap =
+    final Set<PathfindingNode> closedNodes = {};
+    final Map<POINode, PathfindingNode> nodeMap =
         {}; //to look up if the POINode is already linked up with a Pathfinding node, so that it doesnt need to be calculated every step.
 
-    PathfindingNode startPathNode = PathfindingNode(
+    final PathfindingNode startPathNode = PathfindingNode(
       //the very first Pathfinding node! The pathfinding nodes are upgraded versions of POINodes, that contain some extra infos, like the distance to the end or the used connection of the given node.
       startNode,
       0, // it has a distance of 0 to the start.
@@ -425,7 +423,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
 
     while (openNodes.isNotEmpty) {
       // break when the best path has been found (return statement) or if all discovered nodes have been looked at and didnt give a good result. this means the path is not possible and null will be returned.
-      PathfindingNode currentNode = openNodes.reduce(
+      final PathfindingNode currentNode = openNodes.reduce(
         //get the one with the lowest total cost. the total cost is the sum of the distance to the start and the calculated distance to the end.
         (a, b) => a.totalCost < b.totalCost ? a : b,
       );
@@ -446,24 +444,24 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
         //if it has connections
         for (POINodeConnection connection in currentNode.poiNode.connections!) {
           //we iterate over every one of them
-          POINode neighbor = connection.target;
+          final POINode neighbor = connection.target;
 
           if (closedNodes.any((node) => node.poiNode == neighbor)) {
             //if we already have this node in our path, we wont add it, because otherwise it will create a loop.
             continue;
           }
 
-          double score =
+          final double score =
               currentNode.distanceToStart +
               connection
                   .cost; //we calculate the score by getting the distance to the start and adding the cost of the movement type to it. this makes the entity more probable of walking than jumping all the time for example.
 
-          PathfindingNode? existingNeighborNode =
+          final PathfindingNode? existingNeighborNode =
               nodeMap[neighbor]; // we look if we already have a Pathfinding node for this POI Node
 
           if (existingNeighborNode == null) {
             //if we dont have one we have to create it.
-            PathfindingNode newNeighborNode = PathfindingNode(
+            final PathfindingNode newNeighborNode = PathfindingNode(
               neighbor, // the POI Node
               score, //the score
               getEstimatedDistanceToEnd(
@@ -509,7 +507,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
 
   //we reconstruct the given end node by adding the parent of the node to a list and repeat that with the parent of that node.
   List<PathStep> reconstructPath(PathfindingNode endNode) {
-    List<PathStep> path = []; //an empty path initialization
+    final List<PathStep> path = []; //an empty path initialization
     PathfindingNode? current = endNode; //set the current node to the end node.
 
     while (current != null) {
@@ -543,17 +541,17 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
 
     for (int i = 0; i < path.length - 1; i++) {
       //for every point in the path
-      Vector2 from =
+      final Vector2 from =
           toWorldPos(path[i].node.poiNode.position) +
           (tilesize.xy /
               2); //calculate the position to use. add another 16 to center the point in the field
-      Vector2 to =
+      final Vector2 to =
           toWorldPos(path[i + 1].node.poiNode.position) +
           (tilesize.xy / 2); //same for the destination point.
 
-      Paint pathPaint = Paint()..strokeWidth = 3.0; //set the stroke width to 3
+      final Paint pathPaint = Paint()..strokeWidth = 3.0; //set the stroke width to 3
 
-      PathfindingAction? nextAction =
+      final PathfindingAction? nextAction =
           path[i + 1].action; //get the next action to color
       switch (nextAction) {
         case PathfindingAction.walk: //green for walking
@@ -581,7 +579,7 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
         pathPaint,
       ); //draw the line
 
-      Paint dotPaint =
+      final Paint dotPaint =
           Paint() //also create a paint for the dots that mark the different nodes.
             ..color = pathPaint.color
             ..style = PaintingStyle.fill;
@@ -594,11 +592,11 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
 
     if (path.isNotEmpty) {
       //also draw a yellow dot at the end of the path
-      Vector2 endPos =
+      final Vector2 endPos =
           (toWorldPos(path.last.node.poiNode.position)) +
           (tilesize.xy /
               2); //calculate the end pos with a little offset to center it
-      Paint endPaint =
+      final Paint endPaint =
           Paint() // a custom paint
             ..color = Colors
                 .yellow //in yellow
@@ -628,23 +626,23 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
       return; // everything else only gets drawn in debug mode. so we return if thats not the case
     }
 
-    Vector2 selectedGridPos = (toGridPos(level.mousePos))
+    final Vector2 selectedGridPos = (toGridPos(level.mousePos))
       ..floor(); //convert the mouse pos to a grid pos
 
-    POINode? selectedNode = getNodeAt(
+    final POINode? selectedNode = getNodeAt(
       selectedGridPos,
     ); //and get the node at that position
 
     if (selectedNode != null) {
       //if the node is null, we dont draw
 
-      List<POINodeConnection>? connections =
+      final List<POINodeConnection>? connections =
           selectedNode.connections; //get all of the connections
 
       if (connections != null) {
         // if it has connections we can draw those
 
-        Paint paint = Paint()
+        final Paint paint = Paint()
           ..color =
               Colors.blue; //we will draw all of the connections with blue paint
         paint.strokeWidth = 2.0; //and a stroke width of 2
@@ -662,13 +660,9 @@ class POIGenerator extends Component with HasGameReference<PixelAdventure> {
     }
   }
 
-  Vector2 toGridPos(Vector2 pos) {
-    return Vector2(pos.x / tilesize.x, pos.y / tilesize.y);
-  }
+  Vector2 toGridPos(Vector2 pos) => Vector2(pos.x / tilesize.x, pos.y / tilesize.y);
 
-  Vector2 toWorldPos(Vector2 pos) {
-    return Vector2(pos.x * tilesize.x, pos.y * tilesize.y);
-  }
+  Vector2 toWorldPos(Vector2 pos) => Vector2(pos.x * tilesize.x, pos.y * tilesize.y);
 }
 
 class POINode {
@@ -687,9 +681,7 @@ class POINode {
   ); //adds a given connection to the connection list.
 
   @override
-  String toString() {
-    return "node at ${position.toString()}";
-  }
+  String toString() => "node at ${position.toString()}";
 
   @override
   bool operator ==(Object other) {
@@ -756,9 +748,7 @@ class PathStep {
   PathStep(this.node, [this.action, this.cost = 0]); //basic constructor
 
   @override
-  String toString() {
-    return "${node.toString()} : ${action.toString()}";
-  }
+  String toString() => "${node.toString()} : ${action.toString()}";
 
   @override
   bool operator ==(Object other) {

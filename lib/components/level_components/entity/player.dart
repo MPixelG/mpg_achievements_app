@@ -16,7 +16,6 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import '../../../state_management/providers/player_state_provider.dart';
 import '../../controllers/control_action_bundle.dart';
 import 'animation/animation_manager.dart';
-import 'isometric_character_shadow.dart';
 
 //todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations
@@ -127,7 +126,7 @@ class Player extends AnimatedCharacter
     velocity = Vector3.zero(); //reset velocity
 
     await Future.delayed(
-      Duration(milliseconds: 250),
+      const Duration(milliseconds: 250),
     ); //wait a quarter of a second for the animation to finish
 
     position -= Vector3.all(
@@ -136,7 +135,7 @@ class Player extends AnimatedCharacter
     scale.x =
         1; //flip the player to the right side and a third of the size because the animation is triple of the size
     await playAnimation("disappearing"); //display a disappear animation
-    await Future.delayed(Duration(milliseconds: 320));
+    await Future.delayed(const Duration(milliseconds: 320));
     //wait for the animation to finish
 
     //Positioning the player after respawn
@@ -147,12 +146,12 @@ class Player extends AnimatedCharacter
     //position the player at the spawn point and also add the displacement of the animation
     scale = Vector3.all(0); //hide the player
     await Future.delayed(
-      Duration(milliseconds: 800),
+      const Duration(milliseconds: 800),
     ); //wait a bit for the camera to position and increase the annoyance of the player XD
     scale = Vector3.all(1); //show the player
     await playAnimation("appearing"); //display an appear animation
 
-    await Future.delayed(Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 300));
 
     //wait for the animation to finish
     updateMovement = true;
@@ -194,8 +193,7 @@ class Player extends AnimatedCharacter
     zGround = highestZ;*/
   }
 
-  ControlActionBundle<Player> buildControlBundle() {
-    return ControlActionBundle<Player>({
+  ControlActionBundle<Player> buildControlBundle() => ControlActionBundle<Player>({
       //setting physics variables/velocity for game_character movement
       ControlAction("moveUp", key: "W", run: (parent) => parent.velocity.z--),
       ControlAction("moveLeft", key: "A", run: (parent) => parent.velocity.x--),
@@ -207,7 +205,6 @@ class Player extends AnimatedCharacter
       ),
       ControlAction("jump", key: "Space", run: (parent) => parent.velocity.y++),
     });
-  }
 
   //Getters
   double getzGround() => zGround;
@@ -229,7 +226,6 @@ class Player extends AnimatedCharacter
     AnimationLoadOptions(
       "hit",
       "$componentSpriteLocation/Hit",
-      textureSize: 32,
       loop: false,
     ),
 

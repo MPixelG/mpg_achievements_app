@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:vector_math/vector_math.dart';
 
-import '../../core/level/rendering/chunk.dart';
 import '../../mpg_pixel_adventure.dart';
 
 Vector2 toWorldPos(Vector3 gridPos, [double? levelWidth, Vector3? tileSizeOverride]) {
@@ -34,12 +33,10 @@ Vector2 toWorldPos2D(Vector2 gridPos, [double? levelWidth]) {
   return localPoint + offset;
 }
 
-Vector2 toGridPos(Vector2 worldPos, [double? levelWidth]) {
-  return worldToTileIsometric(
+Vector2 toGridPos(Vector2 worldPos, [double? levelWidth]) => worldToTileIsometric(
         worldPos,
       ) +
       Vector2(1, 1);
-}
 
 // Convert world position to isometric tile coordinates used in toGridPos
 Vector2 worldToTileIsometric(Vector2 worldPos) {
@@ -51,29 +48,25 @@ Vector2 worldToTileIsometric(Vector2 worldPos) {
   return Vector2(tileX, tileY);
 }
 
-Vector2 isoToScreen(Vector3 iso) {
-  return Vector2(
+Vector2 isoToScreen(Vector3 iso) => Vector2(
     (iso.x - iso.z) / 2,
     (iso.x + iso.z) / 4 - iso.y,
   );
-}
 
 @pragma('vm:prefer-inline')
-Vector2 quickConvertSize3dTo2d(Vector3 size) {
-  return Vector2(
+Vector2 quickConvertSize3dTo2d(Vector3 size) => Vector2(
       (size.x + size.y) * 0.866025403784*0.5,
       size.z + (size.x + size.y) * 0.25
   );
-}
 
 Vector2 project(Vector3 p, double scaleX, double scaleY, double zScale) {
-  double sx = (p.x - p.z) * scaleX;
-  double sy = (p.x + p.z) * scaleY - p.y * zScale;
+  final double sx = (p.x - p.z) * scaleX;
+  final double sy = (p.x + p.z) * scaleY - p.y * zScale;
   return Vector2(sx, sy);
 }
 
 Vector2 projectedBounds(Vector3 size, double scaleX, double scaleY, double zScale) {
-  List<Vector3> corners = [
+  final List<Vector3> corners = [
     Vector3(-size.x/2, -size.z/2, 0),
     Vector3(size.x/2, -size.z/2, 0),
     Vector3(-size.x/2, size.z/2, 0),
@@ -86,7 +79,7 @@ Vector2 projectedBounds(Vector3 size, double scaleX, double scaleY, double zScal
   double minX = double.infinity, minY = double.infinity;
   double maxX = double.negativeInfinity, maxY = double.negativeInfinity;
   for (var c in corners) {
-    var s = project(c, scaleX, scaleY, zScale);
+    final s = project(c, scaleX, scaleY, zScale);
     minX = min(minX, s.x); minY = min(minY, s.y);
     maxX = max(maxX, s.x); maxY = max(maxY, s.y);
   }

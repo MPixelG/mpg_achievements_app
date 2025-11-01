@@ -8,7 +8,5 @@ class ControlActionBundle<T extends Component>{
   ControlActionBundle(this.controlActions);
 
 
-  ControlActionBundle operator&(ControlActionBundle<T> other){
-    return ControlActionBundle(controlActions + other.controlActions);
-  }
+  ControlActionBundle operator&(ControlActionBundle<T> other)=> ControlActionBundle(controlActions + other.controlActions);
 }

@@ -55,7 +55,7 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
       }
     };
 
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       RawKeyboard.instance.addListener(_controlAndExitListener!);
     });
 
@@ -88,7 +88,7 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
   Widget build(BuildContext context) {
     WidgetDeclaration? currentBestMatch;
 
-    SearchController searchController = SearchController();
+    final SearchController searchController = SearchController();
 
     return KeyboardListener(
       focusNode: _rootFocus,
@@ -100,7 +100,7 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
         child: SearchAnchor(
           searchController: searchController,
           builder: (context, controller) {
-            SearchBar searchBar = SearchBar(
+            final SearchBar searchBar = SearchBar(
               controller: controller,
               focusNode: _searchBarFocusNode,
               onSubmitted: (value) {
@@ -122,7 +122,7 @@ class _WidgetSearchBarState extends State<WidgetSearchBar> {
           },
           suggestionsBuilder:
               (BuildContext context, SearchController controller) {
-                var allElements = WidgetDeclaration.declarationCache.toList();
+                final allElements = WidgetDeclaration.declarationCache.toList();
                 allElements.sort(
                   (a, b) => jaroWinkler(
                     b.displayName,

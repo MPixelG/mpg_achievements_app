@@ -23,7 +23,7 @@ class NeighborChunkCluster {
   });
 
   List<Chunk> getWhereContained(IsometricRenderable renderable) {
-    List<Chunk> out = [];
+    final List<Chunk> out = [];
 
     if (top != null && top!.containsRenderable(renderable)) out.add(top!);
     if (right != null && right!.containsRenderable(renderable)) out.add(right!);

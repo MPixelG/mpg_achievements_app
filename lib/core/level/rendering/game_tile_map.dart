@@ -149,8 +149,8 @@ class GameTileMap {
     //calculate the local index of the tile within its tileset
     final localIndex = raw - tileset.firstGid!;
 
-    Image img = (await getImageFromTileset(tileset))!;
-    Image normalMapImg = (await getNormalImageFromTileset(tileset))!;
+    final Image img = (await getImageFromTileset(tileset))!;
+    final Image normalMapImg = (await getNormalImageFromTileset(tileset))!;
 
     final cols = tileset.columns!; //amount of columns in the tileset image
 
@@ -188,7 +188,7 @@ class GameTileMap {
 
   final _spriteImageCache = <Sprite, Image>{};
   Future<Image> getTileFromTilesetToImage(Sprite sprite) async {
-    Image? cacheResult = _spriteImageCache[sprite];
+    final Image? cacheResult = _spriteImageCache[sprite];
     if (cacheResult != null) return cacheResult;
 
     final recorder = ui.PictureRecorder();

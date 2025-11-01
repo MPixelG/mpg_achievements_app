@@ -115,7 +115,7 @@ class _GuiEditorState extends State<GuiEditor> {
       body: ResizableContainer(
         children: [
           ResizableChild(
-            divider: ResizableDivider(thickness: 3),
+            divider: const ResizableDivider(thickness: 3),
 
             child: Stack(
               alignment: Alignment.bottomRight,
@@ -123,12 +123,12 @@ class _GuiEditorState extends State<GuiEditor> {
                 nodeViewer!,
                 Column(
                   children: [
-                    SizedBox(height: 57),
+                    const SizedBox(height: 57),
 
                     FloatingActionButton(
                       heroTag: null,
                       onPressed: () {
-                        String json = WidgetJsonUtils.exportWidgetToJson(
+                        final String json = WidgetJsonUtils.exportWidgetToJson(
                           root,
                         ); //we convert the root widget to a json string
                         if (kDebugMode) {
@@ -136,7 +136,7 @@ class _GuiEditorState extends State<GuiEditor> {
                         }
                         Clipboard.setData(ClipboardData(text: json));
                       },
-                      child: Icon(Icons.outbond_outlined),
+                      child: const Icon(Icons.outbond_outlined),
                     ),
                     SizedBox(height: screenHeight * 0.62),
 
@@ -152,7 +152,7 @@ class _GuiEditorState extends State<GuiEditor> {
                             color: Colors.black.withValues(alpha: 0.3),
                             spreadRadius: 2,
                             blurRadius: 6,
-                            offset: Offset(0, 3),
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
@@ -163,7 +163,7 @@ class _GuiEditorState extends State<GuiEditor> {
                             CupertinoColors.systemGrey4,
                           ),
                           elevation: WidgetStateProperty.all(6.0),
-                          shape: WidgetStateProperty.all(CircleBorder()),
+                          shape: WidgetStateProperty.all(const CircleBorder()),
                         ),
 
                         itemBuilder: (context) => [
@@ -183,11 +183,11 @@ class _GuiEditorState extends State<GuiEditor> {
                             //we switch on the value of the selected item
                             case "Positioned":
                               {
-                                LayoutWidget? parent = getNearestStackRecursive(
+                                final LayoutWidget? parent = getNearestStackRecursive(
                                   root,
                                 );
 
-                                var widgetDeclaration = WidgetDeclaration
+                                final widgetDeclaration = WidgetDeclaration
                                     .declarationCache
                                     .where((element) => element.id == value)
                                     .firstOrNull;
@@ -197,11 +197,11 @@ class _GuiEditorState extends State<GuiEditor> {
                               } //if the value is positioned, we add a positioned widget to the root widget
                             case "Expanded":
                               {
-                                LayoutWidget? parent = getNearestFlexRecursive(
+                                final LayoutWidget? parent = getNearestFlexRecursive(
                                   root,
                                 ); //we get the nearest stack widget to add the expanded widget to, because you can only add expanded widgets to a row or column
 
-                                var widgetDeclaration = WidgetDeclaration
+                                final widgetDeclaration = WidgetDeclaration
                                     .declarationCache
                                     .where((element) => element.id == value)
                                     .firstOrNull;
@@ -211,7 +211,7 @@ class _GuiEditorState extends State<GuiEditor> {
                               }
                             default:
                               {
-                                var widgetDeclaration = WidgetDeclaration
+                                final widgetDeclaration = WidgetDeclaration
                                     .declarationCache
                                     .where((element) => element.id == value)
                                     .firstOrNull;
@@ -226,7 +226,7 @@ class _GuiEditorState extends State<GuiEditor> {
                           ); //this updates the node viewer to show the new widget that was added
                         },
                         tooltip: "open widget menu",
-                        child: Icon(Icons.add_box_rounded),
+                        child: const Icon(Icons.add_box_rounded),
                       ), //tooltip and + icon
                     ),
                   ],
@@ -235,16 +235,16 @@ class _GuiEditorState extends State<GuiEditor> {
             ),
           ),
           ResizableChild(
-            size: ResizableSize.expand(flex: 5),
+            size: const ResizableSize.expand(flex: 5),
             child: ResizableContainer(
               children: [
                 ResizableChild(
-                  size: ResizableSize.expand(flex: 3),
-                  divider: ResizableDivider(thickness: 3),
+                  size: const ResizableSize.expand(flex: 3),
+                  divider: const ResizableDivider(thickness: 3),
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      double containerWidth = constraints.maxWidth;
-                      double containerHeight = constraints.maxHeight;
+                      final double containerWidth = constraints.maxWidth;
+                      final double containerHeight = constraints.maxHeight;
 
                       return Stack(
                         children: [
@@ -267,11 +267,11 @@ class _GuiEditorState extends State<GuiEditor> {
                     children: [
                       ResizableChild(
                         child: optionEditor!,
-                        divider: ResizableDivider(thickness: 3),
+                        divider: const ResizableDivider(thickness: 3),
                       ),
                       ResizableChild(
                         child: Container(),
-                        size: ResizableSize.ratio(0.6),
+                        size: const ResizableSize.ratio(0.6),
                       ),
                     ],
                   ),
@@ -285,9 +285,8 @@ class _GuiEditorState extends State<GuiEditor> {
         direction: Axis.horizontal,
       ),
 
-      floatingActionButton: Row(
+      floatingActionButton: const Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: [],
       ),
     );
   }
@@ -310,9 +309,7 @@ class _GuiEditorState extends State<GuiEditor> {
     });
   }
 
-  List<Widget> toWidgetList(List<LayoutWidget> widgets) {
-    return widgets.map((widget) => widget.build(context)).toList();
-  }
+  List<Widget> toWidgetList(List<LayoutWidget> widgets) => widgets.map((widget) => widget.build(context)).toList();
 
   LayoutWidget? getNearestStackRecursive(LayoutWidget widget) {
     for (var value in widget.children) {

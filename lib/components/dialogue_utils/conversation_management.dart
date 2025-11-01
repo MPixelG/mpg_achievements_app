@@ -56,7 +56,7 @@ class ConversationManager with DialogueView {
     );
 
     // Start the dialogue from the node named 'Start'.
-    _dialogueRunner.startDialogue('Start');
+    unawaited(_dialogueRunner.startDialogue('Start'));
   }
 
   Future<void> onLineSart(DialogueLine line) async {

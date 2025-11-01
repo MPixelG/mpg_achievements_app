@@ -8,14 +8,14 @@ class AppRouter {
   static GameScreen gameScreen = GameScreen(
     game: PixelAdventure.currentInstance,
   );
-  static GuiEditor guiEditor = GuiEditor();
+  static GuiEditor guiEditor = const GuiEditor();
 
   static final GoRouter router = GoRouter(
     routes: [
       GoRoute(
         path: "/",
         name: "main_menu",
-        builder: (context, state) => MainMenuScreen(),
+        builder: (context, state) => const MainMenuScreen(),
       ),
       GoRoute(
         path: "/game",

@@ -27,8 +27,7 @@ class NinePatchButton extends StatefulWidget {
 
 class _NinePatchButtonState extends State<NinePatchButton> {
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
+  Widget build(BuildContext context) => GestureDetector(
       onTap: widget.onPressed,
       child: CustomPaint(
         painter: widget.painter,
@@ -38,5 +37,4 @@ class _NinePatchButtonState extends State<NinePatchButton> {
         ),
       ),
     );
-  }
 }

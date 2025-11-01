@@ -38,24 +38,20 @@ class WidgetDeclaration {
       Object.hashAll([widgetType, id, displayName, icon, builder]);
 
   @override
-  bool operator ==(Object other) {
-    return this == other;
-  }
+  bool operator ==(Object other) => this == other;
 
   @override
-  String toString() {
-    return displayName;
-  }
+  String toString() => displayName;
 }
 
 void declareWidgets() {
-  Map<String, dynamic> defaultFont = {"fontSize": 0.01};
+  final Map<String, dynamic> defaultFont = {"fontSize": 0.01};
 
   WidgetDeclaration(
     Container,
     "Container",
     "Container",
-    Icon(Icons.check_box_outline_blank),
+    const Icon(Icons.check_box_outline_blank),
     WidgetOptions(
       Container,
       options: [
@@ -116,18 +112,18 @@ void declareWidgets() {
     )..register(),
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
       //if a parent is provided, we add the container to the parent
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
           //this is the builder function that builds the widget
 
-          WidgetOptions options = WidgetOptions.fromType(
+          final WidgetOptions options = WidgetOptions.fromType(
             Container,
           ); //we get the widget options for the container widget, which defines the properties that can be set in the GUI editor
 
-          double availableWidth = MediaQuery.of(context)
+          final double availableWidth = MediaQuery.of(context)
               .size
               .width; //we get the available width of the parent widget, if no parent is provided, we use the screen width
-          double availableHeight = MediaQuery.of(context).size.height;
+          final double availableHeight = MediaQuery.of(context).size.height;
 
           properties["width"] ??= options.getDefaultValue(
             "width",
@@ -195,7 +191,7 @@ void declareWidgets() {
     Row,
     "Row",
     "Row",
-    Icon(Icons.view_agenda_rounded),
+    const Icon(Icons.view_agenda_rounded),
     WidgetOptions(
       Row,
       options: [
@@ -240,11 +236,11 @@ void declareWidgets() {
     )..register(),
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
       //this is used to add a row widget to the layout
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
           //this is the builder function that builds the widget
 
-          WidgetOptions options = WidgetOptions.fromType(Row);
+          final WidgetOptions options = WidgetOptions.fromType(Row);
 
           properties["mainAxisSize"] ??= options.getDefaultValue(
             "mainAxisSize",
@@ -290,15 +286,15 @@ void declareWidgets() {
     Column,
     "Column",
     "Column",
-    Icon(Icons.view_week_rounded),
+    const Icon(Icons.view_week_rounded),
     WidgetOptions.from(WidgetOptions.fromType(Row), Column)..register(),
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
       //this is used to add a row widget to the layout
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
           //this is the builder function that builds the widget
 
-          WidgetOptions options = WidgetOptions.fromType(
+          final WidgetOptions options = WidgetOptions.fromType(
             Row,
           ); //a Row has the same options as a Column, so we can use the same widget options class
 
@@ -347,7 +343,7 @@ void declareWidgets() {
     NinePatchButton,
     "NinePatchButton",
     "Nine Patch Button",
-    Icon(Icons.view_agenda_rounded),
+    const Icon(Icons.view_agenda_rounded),
     WidgetOptions(
       NinePatchButton,
       options: [
@@ -379,9 +375,9 @@ void declareWidgets() {
       ],
     )..register(),
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
-          WidgetOptions options = WidgetOptions.fromType(NinePatchButton);
+          final WidgetOptions options = WidgetOptions.fromType(NinePatchButton);
 
           properties["text"] ??= options.getDefaultValue("text");
           properties["onPressed"] ??= options.getDefaultValue("onPressed");
@@ -419,7 +415,7 @@ void declareWidgets() {
     Text,
     "Text",
     "Text",
-    Icon(Icons.text_fields_outlined),
+    const Icon(Icons.text_fields_outlined),
     WidgetOptions(
       Text,
       options: [
@@ -455,16 +451,16 @@ void declareWidgets() {
     )..register(),
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
       //this is used to add a text widget to the layout
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
           //this is the builder function that builds the widget
 
-          WidgetOptions options = WidgetOptions.fromType(Text);
+          final WidgetOptions options = WidgetOptions.fromType(Text);
 
-          double screenWidth = MediaQuery.of(context)
+          final double screenWidth = MediaQuery.of(context)
               .size
               .width; //getter for the screen width, so we can use it to calculate the size of the widgets
-          double screenHeight = MediaQuery.of(
+          final double screenHeight = MediaQuery.of(
             context,
           ).size.width; //same for the width
 
@@ -505,7 +501,7 @@ void declareWidgets() {
     Expanded,
     "Expanded",
     "Expanded",
-    Icon(Icons.expand),
+    const Icon(Icons.expand),
     WidgetOptions(
       Expanded,
       options: [
@@ -524,11 +520,11 @@ void declareWidgets() {
         return null; //if the parent is null or cannot have children, we return null
       }
 
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
           //this is the builder function that builds the widget
 
-          WidgetOptions options = WidgetOptions.fromType(Expanded);
+          final WidgetOptions options = WidgetOptions.fromType(Expanded);
 
           properties["flex"] ??= options.getDefaultValue(
             "flex",
@@ -563,7 +559,7 @@ void declareWidgets() {
     Positioned,
     "Positioned",
     "Positioned",
-    Icon(Icons.add_circle_outline),
+    const Icon(Icons.add_circle_outline),
     WidgetOptions(
       Positioned,
       options: [
@@ -596,16 +592,16 @@ void declareWidgets() {
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
       //this is used to add a positioned widget to the layout
       if (parent == null || !parent.canAddChild) return null;
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
           //this is the builder function that builds the widget
 
-          WidgetOptions options = WidgetOptions.fromType(Positioned);
+          final WidgetOptions options = WidgetOptions.fromType(Positioned);
 
-          double screenWidth = MediaQuery.of(context)
+          final double screenWidth = MediaQuery.of(context)
               .size
               .width; //getter for the screen width, so we can use it to calculate the size of the widgets
-          double screenHeight = MediaQuery.of(
+          final double screenHeight = MediaQuery.of(
             context,
           ).size.width; //same for the width
 
@@ -658,7 +654,7 @@ void declareWidgets() {
     FittedBox,
     "FittedBox",
     "Fitted Box",
-    Icon(Icons.indeterminate_check_box_outlined),
+    const Icon(Icons.indeterminate_check_box_outlined),
     WidgetOptions(
       FittedBox,
       options: [
@@ -696,9 +692,9 @@ void declareWidgets() {
       ],
     )..register(),
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
-      LayoutWidget widget = LayoutWidget(
-        (context, children, properties) {
-          WidgetOptions options = WidgetOptions.fromType(FittedBox);
+      final LayoutWidget widget = LayoutWidget(
+        (BuildContext context, List<Widget> children, Map<String, dynamic> properties) {
+          final WidgetOptions options = WidgetOptions.fromType(FittedBox);
 
           properties["alignment"] ??= options.getDefaultValue("alignment");
           properties["fit"] ??= options.getDefaultValue("fit");
@@ -724,7 +720,7 @@ void declareWidgets() {
     Transform,
     "Transform",
     "Transform",
-    Icon(Icons.linear_scale_rounded),
+    const Icon(Icons.linear_scale_rounded),
     WidgetOptions(
       Transform,
       options: [
@@ -761,9 +757,9 @@ void declareWidgets() {
       ],
     )..register(),
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
-          WidgetOptions options = WidgetOptions.fromType(Transform);
+          final WidgetOptions options = WidgetOptions.fromType(Transform);
 
           properties["rotation"] ??= options.getDefaultValue("rotation");
           properties["scale"] ??= options.getDefaultValue("scale");
@@ -794,7 +790,7 @@ void declareWidgets() {
     Opacity,
     "Opacity",
     "Opacity",
-    Icon(Icons.opacity),
+    const Icon(Icons.opacity),
     WidgetOptions(
       Opacity,
       options: [
@@ -808,9 +804,9 @@ void declareWidgets() {
       ],
     )..register(),
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
-          WidgetOptions options = WidgetOptions.fromType(Opacity);
+          final WidgetOptions options = WidgetOptions.fromType(Opacity);
 
           properties["opacity"] ??= options.getDefaultValue("opacity");
 
@@ -834,7 +830,7 @@ void declareWidgets() {
     Card,
     "Card",
     "Card",
-    Icon(Icons.credit_card),
+    const Icon(Icons.credit_card),
     WidgetOptions(
       Card,
       options: [
@@ -847,23 +843,23 @@ void declareWidgets() {
         WidgetOption<EdgeInsetsGeometry?>(
           parseEdgeInsets,
           name: "margin",
-          defaultValue: EdgeInsets.all(8.0),
+          defaultValue: const EdgeInsets.all(8.0),
           description: "The margin of the card. If not set, 8.0 will be used.",
         ),
       ],
     )..register(),
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
-          WidgetOptions options = WidgetOptions.fromType(Card);
+          final WidgetOptions options = WidgetOptions.fromType(Card);
 
           properties["color"] ??= options.getDefaultValue("color");
           properties["margin"] ??= options.getDefaultValue("margin");
 
-          double availableWidth = MediaQuery.of(context)
+          final double availableWidth = MediaQuery.of(context)
               .size
               .width; //we get the available width of the parent widget, if no parent is provided, we use the screen width
-          double availableHeight = MediaQuery.of(context).size.height;
+          final double availableHeight = MediaQuery.of(context).size.height;
 
           return Card(
             color: options.getValue("color", properties["color"]),
@@ -890,7 +886,7 @@ void declareWidgets() {
     GridView,
     "GridView",
     "Grid View",
-    Icon(Icons.grid_4x4),
+    const Icon(Icons.grid_4x4),
     WidgetOptions(
       GridView,
       options: [
@@ -911,9 +907,9 @@ void declareWidgets() {
       ],
     )..register(),
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
-          WidgetOptions options = WidgetOptions.fromType(GridView);
+          final WidgetOptions options = WidgetOptions.fromType(GridView);
 
           properties["crossAxisCount"] ??= options.getDefaultValue(
             "crossAxisCount",
@@ -949,7 +945,7 @@ void declareWidgets() {
     Image,
     "Image",
     "Image",
-    Icon(Icons.image),
+    const Icon(Icons.image),
     WidgetOptions(
       Image,
       options: [
@@ -977,14 +973,14 @@ void declareWidgets() {
       ],
     )..register(), //no options for stack, because it is just a container for other widgets,
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
-          WidgetOptions options = WidgetOptions.fromType(Image);
+          final WidgetOptions options = WidgetOptions.fromType(Image);
 
-          double screenWidth = MediaQuery.of(context)
+          final double screenWidth = MediaQuery.of(context)
               .size
               .width; //getter for the screen width, so we can use it to calculate the size of the widgets
-          double screenHeight = MediaQuery.of(
+          final double screenHeight = MediaQuery.of(
             context,
           ).size.width; //same for the width
 
@@ -1016,21 +1012,20 @@ void declareWidgets() {
     Stack,
     "Stack",
     "Stack",
-    Icon(Icons.layers),
+    const Icon(Icons.layers),
     WidgetOptions(
       Stack,
       options: [],
     )..register(), //no options for stack, because it is just a container for other widgets,
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
-      LayoutWidget widget = LayoutWidget(
-        (context, children, properties) {
+      final LayoutWidget widget = LayoutWidget(
+        (context, children, properties) =>
           //this is the builder function that builds the widget
-          return Stack(
+          Stack(
             //the actual stack widget that will be displayed
             children:
                 children, //the children of the stack are the children passed to the builder function, which are the widgets that will be displayed in the stack
-          );
-        },
+          ),
         id: 'stack${stackId++}', //same as the container
         type: ContainerType
             .unlimited, //sets the type of the stack to unlimited, so it can have multiple children
@@ -1048,7 +1043,7 @@ void declareWidgets() {
     InteractiveViewer,
     "InteractiveViewer",
     "Interactive Viewer",
-    Icon(Icons.view_carousel_outlined),
+    const Icon(Icons.view_carousel_outlined),
     WidgetOptions(
       InteractiveViewer,
       options: [
@@ -1092,9 +1087,9 @@ void declareWidgets() {
       ],
     )..register(), //no options for stack, because it is just a container for other widgets,
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
-          WidgetOptions options = WidgetOptions.fromType(InteractiveViewer);
+          final WidgetOptions options = WidgetOptions.fromType(InteractiveViewer);
 
           properties["panEnabled"] ??= options.getDefaultValue("panEnabled");
           properties["scaleEnabled"] ??= options.getDefaultValue(
@@ -1138,7 +1133,7 @@ void declareWidgets() {
     SingleChildScrollView,
     "SingleChildScrollView",
     "Single Child Scroll View",
-    Icon(Icons.view_headline),
+    const Icon(Icons.view_headline),
     WidgetOptions(
       SingleChildScrollView,
       options: [
@@ -1151,9 +1146,9 @@ void declareWidgets() {
       ],
     )..register(), //no options for stack, because it is just a container for other widgets,
     (LayoutWidget? parent, {Map<String, dynamic>? properties}) {
-      LayoutWidget widget = LayoutWidget(
+      final LayoutWidget widget = LayoutWidget(
         (context, children, properties) {
-          WidgetOptions options = WidgetOptions.fromType(SingleChildScrollView);
+          final WidgetOptions options = WidgetOptions.fromType(SingleChildScrollView);
 
           properties["axis"] ??= options.getDefaultValue("axis");
 

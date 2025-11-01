@@ -11,7 +11,7 @@ class KeyboardCharacterController<T extends Component> extends CharacterControll
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if(event is KeyUpEvent || event is KeyDownEvent) {
-      Set<String> pressedKeyNames = keysPressed.map((e) => e.keyLabel).toSet();
+      final Set<String> pressedKeyNames = keysPressed.map((e) => e.keyLabel).toSet();
       //every key pressed and assigned to an action is added to the currentlyActiveActions
       currentlyActiveActions = actionBundle.controlActions.where((element) =>
           pressedKeyNames.contains(element.key)).toSet();

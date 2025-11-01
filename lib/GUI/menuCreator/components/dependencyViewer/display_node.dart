@@ -37,13 +37,13 @@ class _DisplayNodeState extends State<DisplayNode> {
 
   @override
   Widget build(BuildContext context) {
-    LayoutWidget node = widget.node;
+    final LayoutWidget node = widget.node;
 
     //build the widget tree for the DisplayNode and its children
     final children =
         widget.node.children; //get the children of the node to display
 
-    List<Widget> displayedChildren =
+    final List<Widget> displayedChildren =
         []; //a list to hold the widgets that will be displayed as children
     for (int i = 0; i < children.length; i++) {
       //iterate over them
@@ -63,10 +63,10 @@ class _DisplayNodeState extends State<DisplayNode> {
       );
     }
 
-    bool canMoveUp =
+    final bool canMoveUp =
         (node.parent?.children.indexOf(node) ?? 0) >
         0; //check if the node can be moved up (if its not the first child)
-    bool canMoveDown =
+    final bool canMoveDown =
         (node.parent?.children.indexOf(node) ?? 0) <
         (node.parent?.children.length ?? 0) -
             1; //check if the node can be moved down (if its not the last child)
@@ -83,7 +83,7 @@ class _DisplayNodeState extends State<DisplayNode> {
             details,
           ); //show the context menu at the position of the tap
           Future.delayed(
-            Duration(milliseconds: 10),
+            const Duration(milliseconds: 10),
             () => hasTapped = false,
           ); // reset the static variable after a short delay to allow the menu to be shown again
         }
@@ -96,15 +96,15 @@ class _DisplayNodeState extends State<DisplayNode> {
         hasTapped =
             true; //set the static variable to true to indicate that a menu is shown
 
-        Future.delayed(Duration(milliseconds: 10), () => hasTapped = false);
+        Future.delayed(const Duration(milliseconds: 10), () => hasTapped = false);
 
-        double buttonX = 16;
+        const double buttonX = 16;
 
         if (buttonX - details.localPosition.dx > 20) {
           return;
         }
 
-        double secondButtonX = 16 * 3; //the position of the second button
+        const double secondButtonX = 16 * 3; //the position of the second button
 
         if ((buttonX - details.localPosition.dx).abs() <
             (secondButtonX - details.localPosition.dx).abs()) {
@@ -131,14 +131,13 @@ class _DisplayNodeState extends State<DisplayNode> {
 
       child: DragTarget<LayoutWidget>(
         //the DisplayNode is also a DragTarget so that we can drop widgets onto it
-        onWillAcceptWithDetails: (dragged) {
+        onWillAcceptWithDetails: (dragged) =>
           //when a widget is dragged over the DisplayNode we check if we can accept it
-          return dragged.data != node &&
+          dragged.data != node &&
               node.canAddChild &&
               dragged.data.canDropOn(
                 node,
-              ); //if its not the same node and if the node can accept children, we return true
-        },
+              ), //if its not the same node and if the node can accept children, we return true
         onAcceptWithDetails: (dragged) {
           //when a widget is dropped onto the DisplayNode
           if (widget.onReorder != null) {
@@ -150,7 +149,7 @@ class _DisplayNodeState extends State<DisplayNode> {
         },
         builder: (context, candidateData, rejectedData) {
           //build the widget tree for the DisplayNode
-          bool isHovering = candidateData
+          final bool isHovering = candidateData
               .isNotEmpty; //check if the DisplayNode is currently being hovered over by a dragged widget
 
           return Draggable<LayoutWidget>(
@@ -217,9 +216,9 @@ class _DisplayNodeState extends State<DisplayNode> {
     List<Widget>
     displayedChildren, //the list of widgets that are the children of the node
   ) {
-    LayoutWidget node = widget.node;
+    final LayoutWidget node = widget.node;
 
-    Color containerColor =
+    final Color containerColor =
         isHovering ||
             (DisplayNode.widgetToDropOff != null &&
                 DisplayNode.widgetToDropOff!.canDropOn(node) &&
@@ -229,7 +228,7 @@ class _DisplayNodeState extends State<DisplayNode> {
         ? Colors.blue.shade300
         : Colors.grey.shade100;
 
-    BoxBorder boxBorder =
+    final BoxBorder boxBorder =
         isHovering ||
             (DisplayNode.widgetToDropOff != null &&
                 DisplayNode.widgetToDropOff!.canDropOn(node) &&
@@ -237,7 +236,6 @@ class _DisplayNodeState extends State<DisplayNode> {
         ? Border.all(color: Colors.green, width: 2) // a green border
         : Border.all(
             color: Colors.grey.shade300, // a light grey border
-            width: 1,
           );
 
     return Container(
@@ -335,7 +333,7 @@ class _DisplayNodeState extends State<DisplayNode> {
   }
 
   void _showContextMenu(BuildContext context, TapDownDetails details) {
-    LayoutWidget node = widget.node;
+    final LayoutWidget node = widget.node;
 
     //a function to show a context menu when the user right clicks on the DisplayNode
     hasTapped =
@@ -393,13 +391,10 @@ class _DisplayNodeState extends State<DisplayNode> {
 
     showDialog(
       context: context,
-      barrierDismissible: true,
-      builder: (context) {
-        return OptionEditorMenu(
+      builder: (context) => OptionEditorMenu(
           node: widget.node,
           updateView: () => widget.updateViewport(),
-        );
-      },
+        ),
     );
   }
 }

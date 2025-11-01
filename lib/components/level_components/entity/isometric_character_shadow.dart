@@ -30,7 +30,7 @@ class ShadowComponent extends IsoPositionComponent {
   void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
     // Convert the selected tile's grid coordinates into its center position in the isometric world.
 
-    Vector2 shadowSize = Vector2(tilesize.x/1.2, tilesize.z/1.5);
+    final Vector2 shadowSize = Vector2(tilesize.x/1.2, tilesize.z/1.5);
     // Define the four points
     final rect = Rect.fromCenter(
         center: Offset(0, owner.size.y * 32 - (shadowSize.y / 2)),

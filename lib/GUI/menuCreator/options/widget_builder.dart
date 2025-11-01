@@ -8,7 +8,7 @@ EdgeInsetsGeometry? convertToAbsolute(
 ) {
   if (current == null) return current;
 
-  EdgeInsets resolved = current.resolve(TextDirection.ltr);
+  final EdgeInsets resolved = current.resolve(TextDirection.ltr);
   return EdgeInsets.fromLTRB(
     resolved.left * screenWidth,
     resolved.top * screenHeight,

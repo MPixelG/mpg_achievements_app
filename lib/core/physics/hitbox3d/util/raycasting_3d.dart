@@ -81,13 +81,11 @@ class RaycastResult3D<T extends Hitbox3D<T>> {
     _isInsideHitbox = isInsideHitbox;
   }
 
-  RaycastResult3D<T> clone() {
-    return RaycastResult3D(
+  RaycastResult3D<T> clone() => RaycastResult3D(
       hitbox: hitbox,
       reflectionRay: _reflectionRay.clone(),
       normal: _normal.clone(),
       distance: distance,
       isInsideHitbox: isInsideHitbox,
     );
-  }
 }

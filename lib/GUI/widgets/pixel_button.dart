@@ -20,8 +20,7 @@ class _PixelButtonState extends State<PixelButton> {
   bool hover = false; //if theres a mouse hovering over it
 
   @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
+  Widget build(BuildContext context) => MouseRegion(
       //for hover detection
       onEnter: (_) => setState(
         () => hover = true,
@@ -44,10 +43,10 @@ class _PixelButtonState extends State<PixelButton> {
             .onPressed, //when you press, the action of the button is executed
         child: AnimatedContainer(
           //a container including text and background and stuff thats animatable
-          duration: Duration(
+          duration: const Duration(
             milliseconds: 70,
           ), //the duration of the animation when hovering
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 8,
           ), //the size of the button for the gradient
@@ -71,7 +70,7 @@ class _PixelButtonState extends State<PixelButton> {
           child: Text(
             //some more customization for the text
             widget.text, //put the text of the button in it
-            style: TextStyle(
+            style: const TextStyle(
               //with a given style
               color: Colors.white, //a white text color
               fontSize: 14, //, a font size of 14
@@ -82,20 +81,19 @@ class _PixelButtonState extends State<PixelButton> {
         ),
       ),
     );
-  }
 
   List<Color> _getGradientColors() {
     if (isPressed) {
-      return [Color(0xFF3A7BC8), Color(0xFF2E5F9A)]; //light and dark blue
+      return [const Color(0xFF3A7BC8), const Color(0xFF2E5F9A)]; //light and dark blue
     } else if (hover) {
       return [
-        Color(0xFF6BB3FF),
-        Color(0xFF5AA3F0),
+        const Color(0xFF6BB3FF),
+        const Color(0xFF5AA3F0),
       ]; // some lighter versions for the hover animations
     } else {
       return [
-        Color(0xFF5AA3F0),
-        Color(0xFF4A90E2),
+        const Color(0xFF5AA3F0),
+        const Color(0xFF4A90E2),
       ]; //and some blue tones if it isnt pressed or hovered
     }
   }
@@ -103,12 +101,12 @@ class _PixelButtonState extends State<PixelButton> {
   Color _getBorderColor() {
     //some colors for the borders with bit of contrast to the other colors
     if (isPressed) {
-      return Color(0xFF2E5F9A); //if its pressed, its pretty dark blue
+      return const Color(0xFF2E5F9A); //if its pressed, its pretty dark blue
     }
     if (hover) {
-      return Color(0xFF7BC4FF); // or really light blue when its being hovered
+      return const Color(0xFF7BC4FF); // or really light blue when its being hovered
     }
-    return Color(0xFF6BB3FF); //or sth in the middle for the regular state
+    return const Color(0xFF6BB3FF); //or sth in the middle for the regular state
   }
 
   List<BoxShadow> _getShadow() {
@@ -121,29 +119,26 @@ class _PixelButtonState extends State<PixelButton> {
       return [
         BoxShadow(
           //just a regular a box shadow
-          color: Color(
+          color: const Color(
             0xFF7BC4FF,
           ).withValues(alpha: .3), //light transparent blue
-          offset: Offset(0, 0), //with no offset
           blurRadius: 18, //and a big blur radius
           spreadRadius:
               2, //and a smaller spread, so that it appears a bit circular
         ),
-        BoxShadow(
+        const BoxShadow(
           color: Color(
             0xFF1A1A1A,
           ), //add a black one with a bit of offset, so that it seems to have a little 3d effect
           offset: Offset(2, 2), //just a small offset
-          blurRadius: 0, //and no blur radius
         ),
       ];
     }
     return [
-      BoxShadow(
+      const BoxShadow(
         //if its pressed, we just want a little black shadow to give a 3d effect
         color: Color(0xFF1A1A1A), //dark grey
         offset: Offset(2, 2), //with a bit of offset
-        blurRadius: 0, //and no blur radius
       ),
     ];
   }
