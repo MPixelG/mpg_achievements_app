@@ -157,7 +157,7 @@ jobs:
                 out="${out}\\${ch}"
               fi
               fi
-          
+
               esac
               i=$((i+1))
             done
