@@ -1,0 +1,96 @@
+title: Start
+tags:
+---
+// This is the starting node. The conversation begins here.
+
+// Test 1: A standard dialogue line from a named character.
+// This tests 'onLineStart', character name parsing, and the typing effect.
+BubbleMaster: Greetings! I am the BubbleMaster. I'm here to test the dialogue system.
+
+// Test 2: Sequential lines to ensure the completer logic works.
+BubbleMaster: This is the first line of a sequence. Please click to continue.
+BubbleMaster: And this is the second. When you proceed, we'll get to the interesting part.
+
+// Test 3: A long line to check text wrapping and animation duration.
+BubbleMaster: This next line is going to be quite a bit longer to make sure that the text wrapping inside the speech bubble is working as expected and doesn't overflow or look strange. It should handle multiple lines gracefully.
+
+// Test 4: A line attributed to the default 'Player' character.
+Player: (This is a line from the player's perspective. It should appear over my head.)
+
+// Test 5: Jump to a new node that handles choices.
+BubbleMaster: Now, for your first test... a choice!
+<<jump ChoicesNode>>
+===
+
+
+title: ChoicesNode
+tags:
+---
+// This node tests the 'onChoiceStart' and 'onChoiceSelected' logic.
+
+// The introductory line for the choice.
+BubbleMaster: Please choose one of the options below. Your selection will change my response.
+
+// Choice 1: A standard, available choice.
+-> Option 1: Tell me about variables.
+    // This block runs if the player selects Option 1.
+    // We'll use a command to set a variable.
+    <<set $knows_variables to true>>
+    BubbleMaster: An excellent choice! Variables let us remember things.
+    // Now we jump to a new path to see the result of the variable.
+    <<jump VariablePath>>
+
+// Choice 2: Another standard choice leading to a different path.
+-> Option 2: Just end the test.
+    BubbleMaster: As you wish. We can skip straight to the end.
+    <<jump EndPath>>
+
+// Choice 3: A disabled choice.
+// The 'if false' condition ensures this option is not available to be clicked.
+// Your 'SpeechBubble' UI should show this button as disabled.
+-> Option 3: This option is disabled. <<if false>>
+    // This code block should be unreachable.
+    BubbleMaster: You shouldn't be able to see this line.
+===
+
+
+title: VariablePath
+tags:
+---
+// This node is reached only if the player chose to learn about variables.
+// It tests conditional logic based on the variable we just set.
+
+BubbleMaster: Because you made that choice, I have set a variable called `$knows_variables` to true in my memory.
+
+// Test 6: Conditional dialogue.
+// This <<if>> block checks the variable.
+<<if $knows_variables is true>>
+    // This line should be displayed.
+    BubbleMaster: This line is only visible because the `$knows_variables` variable is true. This confirms our conditional logic is working.
+<<else>>
+    // This line should NOT be displayed.
+    BubbleMaster: You should not be seeing this line. It means the conditional logic failed.
+<</if>>
+
+BubbleMaster: Now, let's proceed to the end.
+<<jump EndPath>>
+===
+
+
+title: EndPath
+tags:
+---
+// This is the final node of the conversation.
+
+// Test 7: An intentionally blank line from a character.
+// Your system should handle this gracefully, likely by showing an empty bubble
+// and allowing the user to proceed immediately.
+BubbleMaster:
+
+// The final lines before the conversation ends.
+BubbleMaster: This concludes the test of the speech bubble and dialogue system.
+BubbleMaster: Everything seems to be in order. Farewell!
+
+// After this last line, the dialogue will end,
+// and the 'onDialogueFinish' method in your ConversationManager should be triggered.
+===
