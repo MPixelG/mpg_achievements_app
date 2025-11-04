@@ -1,10 +1,18 @@
+// Global declarations for the entire script must come first,
+// outside of any node. The parser reads these before it even
+// looks for the first "title:".
+<<declare $BubbleMaster = "BubbleMaster">>
+<<declare $Player = "Player">>
+
+
+// Now, the nodes can begin.
 title: Start
 tags:
 ---
 // This is the starting node. The conversation begins here.
 
 // Test 1: A standard dialogue line from a named character.
-// This tests 'onLineStart', character name parsing, and the typing effect.
+// The parser now knows who "BubbleMaster" is from the global declarations.
 BubbleMaster: Greetings! I am the BubbleMaster. I'm here to test the dialogue system.
 
 // Test 2: Sequential lines to ensure the completer logic works.
@@ -70,7 +78,7 @@ BubbleMaster: Because you made that choice, I have set a variable called `$knows
 <<else>>
     // This line should NOT be displayed.
     BubbleMaster: You should not be seeing this line. It means the conditional logic failed.
-<</if>>
+<<endif>>
 
 BubbleMaster: Now, let's proceed to the end.
 <<jump EndPath>>

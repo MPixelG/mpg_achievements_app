@@ -105,6 +105,8 @@ flutter:
     - assets/images/Menu/Buttons/test_button.png
     - assets/screens/
     - assets/images/Explosions/explosion1d/
+    - assets/yarn/
+    - assets/yarn/speechbubble_test.yarn
     - assets/yarn/test.yarn
     - assets/images/Pixel_ArtTop_Down/basic_isometric_block_normal.png
     - assets/images/Pixel_ArtTop_Down/iso_tile_export_normalMap.png

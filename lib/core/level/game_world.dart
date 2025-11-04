@@ -134,7 +134,7 @@ abstract class GameWorld extends World
     // Debug test for SpeechBubble
     if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
       // A method to toggle the speech bubble
-      game.conversationManager.startConversation('assets/yarn/test.yarn');
+      game.conversationManager.startConversation('assets/yarn/speechbubble_test.yarn');
 
     }
 

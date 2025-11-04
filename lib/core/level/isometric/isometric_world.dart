@@ -39,7 +39,9 @@ class IsometricWorld extends GameWorld {
   @override
   Future<void> onLoad() async {
     // Initialize the player as an IsometricPlayer
-    player = Player(playerCharacter: 'Pink Man');
+    player = Player(playerCharacter: "BubbleMaster");
+    game.npcs[player.playerCharacter] = player;
+    print(player.playerCharacter);
     //need to be added here and should not be a child of player because of separate movement when jumping
     await super.onLoad();
     //find the collision layer
