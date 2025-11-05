@@ -168,7 +168,8 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     _bubblePosition = widget.game.cam.localToGlobal(
       toWorldPos(widget.component.position),);
     print('BubblePosition:$_bubblePosition');
-      if (_bubblePosition.x.isNaN || _bubblePosition.y.isNaN) {
+      if (_bubblePosition.x.isNaN || _bubblePosition.y.isNaN)
+      {
         print("SPEECHBUBBLE BUILD ERROR: Position is NaN! Hiding widget.");
         return const SizedBox.shrink();
       }
