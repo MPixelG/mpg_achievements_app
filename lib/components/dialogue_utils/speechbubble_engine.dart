@@ -164,8 +164,8 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     _componentWidth = widget.component.width;
     // Adjust the position based on the camera's local to global conversion
     _bubblePosition = widget.game.cam.localToGlobal(
-      toWorldPos(component.position),
-    );
+      toWorldPos(component.position),);
+    print('BubblePosition:$_bubblePosition');
 
     return AnimatedPositioned(
       // The position is now directly derived from the character's state vector

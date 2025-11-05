@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flame/src/game/overlay_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:jenny/jenny.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble.dart';
@@ -69,15 +68,21 @@ class ConversationManager with DialogueView {
     // Determine who is speaking. Default to 'Player' if no character is specified.
     // Your Yarn script should have lines like "Player: Hello!" or "Guard: Halt!".
     final String characterName = line.character?.name ?? 'Character';
+    print(characterName);
     final IsoPositionComponent? character = _findCharacterByName(characterName);
-
+    print('character:$character');
+    // Add this check
+    if (character == null) {
+      print("Error: Character '$characterName' not found in game.npcs. Cannot show speech bubble.");}
     // Remove the previous speech bubble for this character, if one exists.
     _removeSpeechBubbleFor(characterName);
 
     // Create a new, unique overlay key for this bubble.
     final overlayKey =
         'SpeechBubble_${characterName}_${DateTime.now().millisecondsSinceEpoch}';
+    print('overlayKey1:$overlayKey');
     _activeSpeechBubbles[characterName] = overlayKey;
+
 
     game.overlays.addEntry(overlayKey, (overlayContext,game) =>
         SpeechBubble(
@@ -107,6 +112,7 @@ class ConversationManager with DialogueView {
     // Choices are always presented from the player's perspective.
     const characterName = 'Player';
     final character = _findCharacterByName(characterName);
+    print('characterChoice:$character');
 
     if (character == null) {
       print("Error: Player not found. Cannot show choices.");
@@ -115,11 +121,12 @@ class ConversationManager with DialogueView {
     }
 
     // Remove the player's last line to make room for the choices bubble.
-    _removeSpeechBubbleFor(characterName);
+   // _removeSpeechBubbleFor(characterName);
 
     final String overlayKey =
         'SpeechBubble_Choices_${DateTime.now().millisecondsSinceEpoch}';
     _activeSpeechBubbles[characterName] = overlayKey;
+    print('overlaykeychoice:$overlayKey');
 
     game.overlays.addEntry(
       overlayKey,

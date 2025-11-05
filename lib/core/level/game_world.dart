@@ -33,6 +33,7 @@ abstract class GameWorld extends World
   final String levelName;
   late TiledComponent level;
   late Player player;
+  late Player player2;
   late Enemy enemy;
   int totalCollectables = 0;
   late final Background background;
@@ -70,9 +71,12 @@ abstract class GameWorld extends World
 
     //add player
     await add(game.gameWorld.player);
-    //add player to the list of component in the game
+    await add(game.gameWorld.player2);
+       //add player to the list of component in the game
     game.npcs[game.gameWorld.player.playerCharacter] = game.gameWorld.player; //todo more refactor necessary e.g. method od instanitating IsoComponents
-
+    game.npcs[game.gameWorld.player2.playerCharacter] = game.gameWorld.player2;
+    print(player.playerCharacter);
+    print(player2.playerCharacter);
     // Add the level to the game world so it gets rendered.
     await add(level);
 
