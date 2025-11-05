@@ -21,11 +21,9 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   String _displayedText = '';
 
   //text to display
-  late String text = '';
   int _currentIndex = 0;
   bool _isTypingComplete = false;
   bool _isSpeechBubbleVisible = false;
-  late final IsoPositionComponent component;
 
   //Timers
   late async.Timer? _typingTimer;
@@ -110,6 +108,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       // Start the speech bubble animation
       _initializeSpeechBubble();
     });
+    print('bubbleinit');
   }
 
   //Animation and Typing Logic
@@ -119,6 +118,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
     //Visibility true
     setState(() {
+      print('insideinitialize');
       _isSpeechBubbleVisible = true;
       _displayedText = ''; // Clear the displayed text
       _currentIndex = 0; // Reset the current index for typing
@@ -155,17 +155,23 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   /// Builds the speech bubble widget
   @override
   Widget build(BuildContext context) {
-    if (!_isSpeechBubbleVisible) {
-      return const SizedBox.shrink(); // Render nothing if not visible
-    }
+    try {
+      if (!_isSpeechBubbleVisible) {
+        return const SizedBox.shrink(); // Render nothing if not visible
+      }
+
 
     // Initialize the player position and height
     _componentHeight = widget.component.height;
     _componentWidth = widget.component.width;
     // Adjust the position based on the camera's local to global conversion
     _bubblePosition = widget.game.cam.localToGlobal(
-      toWorldPos(component.position),);
+      toWorldPos(widget.component.position),);
     print('BubblePosition:$_bubblePosition');
+      if (_bubblePosition.x.isNaN || _bubblePosition.y.isNaN) {
+        print("SPEECHBUBBLE BUILD ERROR: Position is NaN! Hiding widget.");
+        return const SizedBox.shrink();
+      }
 
     return AnimatedPositioned(
       // The position is now directly derived from the character's state vector
@@ -222,7 +228,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
                           return ElevatedButton(
                             onPressed: option.isAvailable
                                 ? () =>
-                                      widget.onChoiceSelected?.call(optionIndex)
+                                widget.onChoiceSelected?.call(optionIndex)
                                 : null,
                             child: Text(option.text),
                           );
@@ -252,12 +258,20 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       ),
     );
   }
+    catch (e, stackTrace) { // <-- ADD THIS
+    print("!!!!!!!! UNHANDLED ERROR IN SPEECHBUBBLE BUILD !!!!!!!");
+    print("Error: $e");
+    print("StackTrace: $stackTrace");
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    return const SizedBox.shrink(); // Return an empty widget on error
+    }
+  }
 
   void _startTypingText() {
     _typingTimer?.cancel();
     _isTypingComplete = false;
 
-    if (text.isEmpty) {
+    if (widget.text.isEmpty) {
       _onTypingComplete();
       return;
     }
@@ -290,8 +304,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       _isTypingComplete = true;
     });
 
-    widget
-        .onComplete!(); // Call the callback if provided to notify that typing is complete
+    widget.onComplete?.call(); // Call the callback if provided to notify that typing is complete
 
     // If autoDismiss is false, the speech bubble will remain visible until manually dismissed
     if (!autoDismiss) {
@@ -317,7 +330,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
           _isSpeechBubbleVisible = false;
           _displayedText = ''; // Clear the displayed text
           _currentIndex = 0; // Reset the current index for next use
-          widget.onDismiss!();
+          widget.onDismiss?.call();
         });
       }
     });

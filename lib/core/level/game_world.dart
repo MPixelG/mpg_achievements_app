@@ -142,6 +142,28 @@ abstract class GameWorld extends World
 
     }
 
+    //overlaydebug
+    if(keysPressed.contains(LogicalKeyboardKey.keyO)){
+    final registeredOverlays = game.overlays.registeredOverlays;
+    print('--- Overlay Status ---');
+    if (registeredOverlays.isEmpty) {
+      print('Registered (static) Overlays: None');
+    } else {
+      print('Registered (static) Overlays: $registeredOverlays');
+    }
+
+    // 2. Get the keys of all currently active (visible) overlays.
+    // This includes static overlays that are "on" and any dynamic
+    // overlays added with addEntry().
+    final activeOverlays = game.overlays.activeOverlays;
+    if (activeOverlays.isEmpty) {
+      print('Active (visible) Overlays: None');
+    } else {
+      print('Active (visible) Overlays: $activeOverlays');
+    }
+    print('----------------------');
+  }
+
     // Debug test for Dialogue
     if (keysPressed.contains(LogicalKeyboardKey.keyQ)) {
       // A method to toggle the speech bubble

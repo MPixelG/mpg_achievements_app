@@ -4,6 +4,7 @@ import 'package:jenny/jenny.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/yarn_creator.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
+import 'package:mpg_achievements_app/core/router/router.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 class ConversationManager with DialogueView {
@@ -64,7 +65,7 @@ class ConversationManager with DialogueView {
   Future<void> onLineSart(DialogueLine line) async {
     _lineCompleter = Completer<void>();
     //get context from game, The BuildContext argument is your handle into the location of the widget in the widget tree. This location is used for looking up inherited widgets
-    final BuildContext? overlayContext = game.buildContext; //todo maybe GlobalKey<NavigatorState> for accessing BuildContext
+    final BuildContext? _ = rootNavigatorKey.currentContext; //todo maybe GlobalKey<NavigatorState> for accessing BuildContext
     // Determine who is speaking. Default to 'Player' if no character is specified.
     // Your Yarn script should have lines like "Player: Hello!" or "Guard: Halt!".
     final String characterName = line.character?.name ?? 'Character';
@@ -84,7 +85,7 @@ class ConversationManager with DialogueView {
     _activeSpeechBubbles[characterName] = overlayKey;
 
 
-    game.overlays.addEntry(overlayKey, (overlayContext,game) =>
+    game.overlays.addEntry(overlayKey, (_,game) =>
         SpeechBubble(
             component: character!,
             text: line.text,
@@ -107,7 +108,7 @@ class ConversationManager with DialogueView {
   Future<int> onChoiceStart(DialogueChoice choice) async {
     _choiceCompleter = Completer<int>();
 
-    final BuildContext? overlayContext = game.buildContext; //todo maybe GlobalKey<NavigatorState> for accessing BuildContext
+    final BuildContext? _ = rootNavigatorKey.currentContext; //todo maybe GlobalKey<NavigatorState> for accessing BuildContext
 
     // Choices are always presented from the player's perspective.
     const characterName = 'Player';
@@ -130,11 +131,11 @@ class ConversationManager with DialogueView {
 
     game.overlays.addEntry(
       overlayKey,
-          (context, game) => SpeechBubble(
+          (_, game) => SpeechBubble(
         key: ValueKey(overlayKey),
         game: this.game,
         component: character,
-        text: '', // No primary text, or you could add a prompt like "?"
+        text: 'Test', // No primary text, or you could add a prompt like "?"
         choices: choice, // Pass the DialogueChoice object
         onChoiceSelected: (int selectedIndex) {
           // This callback is triggered when a choice is pressed in the bubble
