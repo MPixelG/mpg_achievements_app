@@ -4,7 +4,6 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble.dart';
-import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 class SpeechBubbleState extends ConsumerState<SpeechBubble>
@@ -18,7 +17,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late final double _bubbleOffset = 40;
 
   //currently displayed text
-  String _displayedText = '';
+  String _displayedText = 'testy';
 
   //text to display
   int _currentIndex = 0;

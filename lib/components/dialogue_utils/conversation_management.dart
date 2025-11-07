@@ -99,6 +99,8 @@ class ConversationManager with DialogueView {
         )
         );
 
+    game.overlays.add(overlayKey);
+
     // Pause the dialogue runner until the line completer is finished.
     await _lineCompleter?.future;
     _removeSpeechBubbleFor(characterName);
@@ -135,7 +137,7 @@ class ConversationManager with DialogueView {
         key: ValueKey(overlayKey),
         game: this.game,
         component: character,
-        text: 'Test', // No primary text, or you could add a prompt like "?"
+        text: '', // No primary text, or you could add a prompt like "?"
         choices: choice, // Pass the DialogueChoice object
         onChoiceSelected: (int selectedIndex) {
           // This callback is triggered when a choice is pressed in the bubble
@@ -147,6 +149,9 @@ class ConversationManager with DialogueView {
       ),
     );
 
+    game.overlays.add(overlayKey);
+
+
     return _choiceCompleter!.future;
   }
 
@@ -156,8 +161,8 @@ class ConversationManager with DialogueView {
     _clearAllSpeechBubbles();
   }
 
-  /// Finds a character component in the game world by its name.
-  /// This is a crucial link between your dialogue script and game objects.
+  // Finds a character component in the game world by its name.
+  // This is a crucial link between your dialogue script and game objects.
   IsoPositionComponent? _findCharacterByName(String name) {
     // Case-insensitive comparison
     final String lowerCaseName = name.toLowerCase();
@@ -166,7 +171,7 @@ class ConversationManager with DialogueView {
     // in a list on your `gameWorld` component.
     return game.npcs[name]; }
 
-  /// Removes the currently active speech bubble for a specific character.
+  // Removes the currently active speech bubble for a specific character.
   void _removeSpeechBubbleFor(String characterName) {
     if (_activeSpeechBubbles.containsKey(characterName)) {
       final String? oldOverlayKey = _activeSpeechBubbles.remove(characterName);
@@ -184,17 +189,16 @@ class ConversationManager with DialogueView {
 
   // Shows a debug dialog displaying the raw content of the Yarn script.
   Future<void> _showScript() async {
-    late final double buttonSpacing = 10;
+    const double buttonSpacing = 10;
     // Ensure the widget is still in the tree before showing a dialog.
     if (!_showingScript) return;
 
     _showingScript = true;
-
     //pause game
     game.pauseEngine();
 
-    /*await showDialog<void>(
-      context: ,
+    await showDialog<void>(
+      context: game.buildContext!,
       // The builder provides a `dialogContext` which is crucial for closing.
       builder: (dialogContext) => SimpleDialog(
         title: const Text('Script Content'),
@@ -215,7 +219,7 @@ class ConversationManager with DialogueView {
             child: TextButton(
               // Using `dialogContext` ensures we only pop the dialog itself,
               // not the entire dialogue screen or game view.
-              onPressed: () => {Navigator.of(dialogContext).pop(), _showScript = false},
+              onPressed: () => {Navigator.of(dialogContext).pop(), _showingScript = false},
               child: const Text('Close'),
             ),
           ),
@@ -223,9 +227,9 @@ class ConversationManager with DialogueView {
       ),
     );
 
-    if (!_showScript) {
+    if (!_showingScript) {
       // Resume the game engine after the dialog is closed.
       game.resumeEngine();
-    }*/
+    }
   }
 }
