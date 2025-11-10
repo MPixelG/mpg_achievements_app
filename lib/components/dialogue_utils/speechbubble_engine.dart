@@ -17,7 +17,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late final double _bubbleOffset = 40;
 
   //currently displayed text
-  String _displayedText = 'testy';
+  String _displayedText = '';
 
   //text to display
   int _currentIndex = 0;
@@ -30,9 +30,9 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
   //Configuration of Widget and Animations
   //Duration between character appearing and text displaying
-  late final Duration typingSpeed = const Duration(milliseconds: 150);
-  late final Duration showDuration = const Duration(seconds: 5);
-  late final Duration dismissDuration = const Duration(seconds: 10);
+  late final Duration typingSpeed = const Duration(milliseconds: 50);
+  late final Duration showDuration = const Duration(seconds: 15);
+  late final Duration dismissDuration = const Duration(seconds: 30);
   late final bool autoDismiss =
       true; // Automatically dismiss the speech bubble after a certain duration
   late final bool autoStart =
@@ -117,7 +117,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
     //Visibility true
     setState(() {
-      print('insideinitialize');
       _isSpeechBubbleVisible = true;
       _displayedText = ''; // Clear the displayed text
       _currentIndex = 0; // Reset the current index for typing
@@ -151,7 +150,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   }
 
   // UI Building
-  /// Builds the speech bubble widget
   @override
   Widget build(BuildContext context) {
     try {
@@ -167,11 +165,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     _bubblePosition = widget.game.cam.localToGlobal(
       toWorldPos(widget.component.position),);
     print('BubblePosition:$_bubblePosition');
-      if (_bubblePosition.x.isNaN || _bubblePosition.y.isNaN)
-      {
-        print("SPEECHBUBBLE BUILD ERROR: Position is NaN! Hiding widget.");
-        return const SizedBox.shrink();
-      }
 
     return AnimatedPositioned(
       // The position is now directly derived from the character's state vector
@@ -193,6 +186,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
             // Allow the tail to extend outside the bubble
             children: [
               Container(
+                constraints: const BoxConstraints(maxWidth: 300),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12.0,
                   vertical: 8.0,
@@ -218,21 +212,24 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
                     ),
                     if (_isChoiceBubble) ...[
                       const SizedBox(height: 12.0),
-                      Wrap(
-                        spacing: 8.0,
-                        runSpacing: 4.0,
-                        children: widget.choices!.options.map((option) {
-                          final optionIndex = widget.choices!.options.indexOf(
-                            option,
-                          );
-                          return ElevatedButton(
-                            onPressed: option.isAvailable
-                                ? () =>
-                                widget.onChoiceSelected?.call(optionIndex)
-                                : null,
-                            child: Text(option.text),
-                          );
-                        }).toList(),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: widget.choices!.options.map((option) {
+                            final optionIndex = widget.choices!.options.indexOf(
+                              option,
+                            );
+                            // ADDED: Padding for vertical spacing between buttons
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2.0),
+                              child: ElevatedButton(
+                                onPressed: option.isAvailable
+                                    ? () =>
+                                    widget.onChoiceSelected?.call(optionIndex)
+                                    : null,
+                                child: Text(option.text),
+                              ),
+                            );
+                          }).toList(),
                       ),
                     ],
                   ],

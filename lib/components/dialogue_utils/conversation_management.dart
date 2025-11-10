@@ -15,17 +15,17 @@ class ConversationManager with DialogueView {
   // waits until `completer.complete()` is called, which happens when the user
   // clicks the "Next" button.
   // The current [DialogueLine] being displayed to the user.
-  // If `null`, the dialogue UI is hidden.
-  late final DialogueRunner _dialogueRunner;
+  // If `null`, the dialogue UI is hidden. Nullable to have more freedom over new conversations
+  DialogueRunner? _dialogueRunner;
   Completer<void>? _lineCompleter;
   DialogueLine? _currentLine;
   Completer<int>? _choiceCompleter;
   DialogueChoice? _currentChoice;
   //variables for YarnEngine
   // The compiled Yarn project containing all nodes, lines, and commands.
-  late final YarnProject _project;
+  YarnProject? _project;
   // The raw string content of the loaded .yarn file, used for the script viewer.
-  late final String _rawYarnScript;
+  String? _rawYarnScript;
   // A flag indicating whether the entire dialogue sequence has finished.
   // When `true`close conversation
   final bool _isConversationFinished = false;
@@ -38,7 +38,7 @@ class ConversationManager with DialogueView {
 
   // Starts a new conversation from a given Yarn script.
   Future<void> startConversation(String yarnFilePath) async {
-    // Clear any bubbles from a previous conversation
+      // Clear any bubbles from a previous conversation
     _clearAllSpeechBubbles();
     // Helper class to load and parse the .yarn file.
     final yarnCreator = YarnCreator(
@@ -54,27 +54,32 @@ class ConversationManager with DialogueView {
     // Create the DialogueRunner, providing it with the project and a
     // list of views. `[this]` means this class will handle UI events. properties passed into the widget are used for yarnCreation
     _dialogueRunner = DialogueRunner(
-      yarnProject: _project,
+      yarnProject: _project!,
       dialogueViews: [this],
     );
 
     // Start the dialogue from the node named 'Start'.
-    unawaited(_dialogueRunner.startDialogue('Start'));
+    unawaited(_dialogueRunner!.startDialogue('Start'));
   }
 
-  Future<void> onLineSart(DialogueLine line) async {
+  @override
+  Future<bool> onLineStart(DialogueLine line) async {
     _lineCompleter = Completer<void>();
     //get context from game, The BuildContext argument is your handle into the location of the widget in the widget tree. This location is used for looking up inherited widgets
     final BuildContext? _ = rootNavigatorKey.currentContext; //todo maybe GlobalKey<NavigatorState> for accessing BuildContext
     // Determine who is speaking. Default to 'Player' if no character is specified.
     // Your Yarn script should have lines like "Player: Hello!" or "Guard: Halt!".
     final String characterName = line.character?.name ?? 'Character';
-    print(characterName);
+    print("Speaking character:'$characterName'");
     final IsoPositionComponent? character = _findCharacterByName(characterName);
-    print('character:$character');
+    print('found character:$character');
     // Add this check
     if (character == null) {
-      print("Error: Character '$characterName' not found in game.npcs. Cannot show speech bubble.");}
+      print("Error: Character '$characterName' not found in game.npcs. Cannot show speech bubble.");
+      // Complete the line immediately so dialogue doesn't hang
+      _lineCompleter?.complete();
+    return true;
+    }
     // Remove the previous speech bubble for this character, if one exists.
     _removeSpeechBubbleFor(characterName);
 
@@ -87,12 +92,12 @@ class ConversationManager with DialogueView {
 
     game.overlays.addEntry(overlayKey, (_,game) =>
         SpeechBubble(
-            component: character!,
+            component: character,
             text: line.text,
             game: this.game,
           onComplete: (){
-              if (!(_lineCompleter?.isCompleted ?? true)){
-                _lineCompleter?.complete();
+              if (!(_lineCompleter!.isCompleted ?? true)){
+                _lineCompleter!.complete();
               }
           },
           onDismiss: () => _removeSpeechBubbleFor(characterName),
@@ -104,6 +109,7 @@ class ConversationManager with DialogueView {
     // Pause the dialogue runner until the line completer is finished.
     await _lineCompleter?.future;
     _removeSpeechBubbleFor(characterName);
+    return true; //always true after completion
   }
 
   @override
@@ -118,7 +124,7 @@ class ConversationManager with DialogueView {
     print('characterChoice:$character');
 
     if (character == null) {
-      print("Error: Player not found. Cannot show choices.");
+      print("Error: Character '$characterName' not found. Cannot show choices.");
       // Default to the first choice to avoid getting stuck.
       return 0;
     }
@@ -129,7 +135,7 @@ class ConversationManager with DialogueView {
     final String overlayKey =
         'SpeechBubble_Choices_${DateTime.now().millisecondsSinceEpoch}';
     _activeSpeechBubbles[characterName] = overlayKey;
-    print('overlaykeychoice:$overlayKey');
+    print('overlayKeyChoice:$overlayKey');
 
     game.overlays.addEntry(
       overlayKey,
@@ -208,12 +214,12 @@ class ConversationManager with DialogueView {
             constraints: const BoxConstraints(maxHeight: 400, maxWidth: 300),
             child: SingleChildScrollView(
               child: Text(
-                _rawYarnScript,
+                _rawYarnScript!,
                 style: const TextStyle(fontFamily: 'gameFont'),
               ),
             ),
           ),
-          SizedBox(height: buttonSpacing),
+          const SizedBox(height: buttonSpacing),
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
