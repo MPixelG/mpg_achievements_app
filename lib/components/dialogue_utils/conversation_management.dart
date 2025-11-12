@@ -108,7 +108,7 @@ class ConversationManager with DialogueView {
 
     // Pause the dialogue runner until the line completer is finished.
     await _lineCompleter?.future;
-    _removeSpeechBubbleFor(characterName);
+
     return true; //always true after completion
   }
 

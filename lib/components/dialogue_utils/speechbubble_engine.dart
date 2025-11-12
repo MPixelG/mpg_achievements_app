@@ -14,28 +14,27 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late double _componentWidth;
 
   //offset from character(i.e. y/x position from head
-  late final double _bubbleOffset = 40;
+  static const double _bubbleOffset = 40;
 
   //currently displayed text
   String _displayedText = '';
-
   //text to display
   int _currentIndex = 0;
   bool _isTypingComplete = false;
   bool _isSpeechBubbleVisible = false;
 
   //Timers
-  late async.Timer? _typingTimer;
-  late async.Timer? _dismissTimer;
+  async.Timer? _typingTimer;
+  async.Timer? _dismissTimer;
 
   //Configuration of Widget and Animations
   //Duration between character appearing and text displaying
-  late final Duration typingSpeed = const Duration(milliseconds: 50);
+  late final Duration typingSpeed = const Duration(milliseconds: 20);
   late final Duration showDuration = const Duration(seconds: 15);
   late final Duration dismissDuration = const Duration(seconds: 30);
-  late bool autoDismiss =
+  bool _autoDismiss =
       true; // Automatically dismiss the speech bubble after a certain duration
-  late final bool autoStart =
+  bool autoStart =
       true; // Automatically start the speech bubble animation when the widget is built
 
   //styling
@@ -45,7 +44,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late final BorderRadius borderRadius = BorderRadius.circular(8.0);
   late final bool showTail = true;
   // 1. Define constants and styles for easy configuration.
-  static const int maxLinesBeforeScroll = 2;
+  static const int maxLinesBeforeScroll = 3;
   static const TextStyle textStyle = TextStyle(
     color: Colors.black,
     fontSize: 14,
@@ -53,7 +52,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     height: 1.2, // Standard line height for accurate calculation
   );
 
-  // 2. Calculate the maximum height for the text area.
+  //Calculate the maximum height for the text area.
   // This is more robust than hardcoding pixel values.
   final double singleLineHeight = textStyle.fontSize! * textStyle.height!;
   late final double maxScrollableHeight = singleLineHeight * maxLinesBeforeScroll;
@@ -109,12 +108,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       begin: 1.0,
       end: 0.0,
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.linear));
-    //init typingtimer
-    _typingTimer = async.Timer(
-      const Duration(seconds: 5),
-      _dismissSpeechBubble,
-    );
-    //start the animation if autostart is true
+
     //Use WidgetsBinding to ensure the widget is fully built before starting the animation
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Start the speech bubble animation
@@ -135,16 +129,9 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
   Future<void> _initializeSpeechBubble() async {
     if (!mounted) return;
-
-    // If the bubble has choices, it should not dismiss automatically.
-    if (_isChoiceBubble) {
-      autoDismiss = false;
-    } else {
-      // Ensure it's reset to true for standard text bubbles.
-      autoDismiss = true;
-    }
-
-    //Visibility true
+    // Choice bubbles should not auto-dismiss
+    _autoDismiss = !_isChoiceBubble;
+   //Visibility true
     setState(() {
       _isSpeechBubbleVisible = true;
       _displayedText = ''; // Clear the displayed text
@@ -156,26 +143,130 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     //scaleController reset because it was used for entrance animation of the speech bubble
     _scaleController.reset();
 
-    _scaleController.forward().then((_) {
-      if (_isSpeechBubbleVisible && mounted) {
-        if (_isChoiceBubble || widget.text.isEmpty) {
+   await _scaleController.forward();
+
+   if (!_isSpeechBubbleVisible || !mounted) return;
+   if (_isChoiceBubble || widget.text.isEmpty) {
           _onTypingComplete();
         } else {
           // After the scale animation completes, start the typing text
           _startTypingText();
         }
       }
-    });
-  }
+
 
   @override
   void dispose() {
-    super.dispose();
+
     // Dispose of the controllers to free up resources
     _scaleController.dispose();
     _fadeController.dispose();
     _typingTimer?.cancel();
     _dismissTimer?.cancel();
+    super.dispose();
+  }
+
+
+  void _startTypingText() {
+    _typingTimer?.cancel();
+    _isTypingComplete = false;
+
+    if (widget.text.isEmpty) {
+      _onTypingComplete();
+      return;
+    }
+
+    _typingTimer = async.Timer.periodic(typingSpeed, (timer) {
+
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      // Convert the full text to a list of runes (complete characters)
+      final runes = widget.text.runes.toList();
+      //check if there is still text to display
+      if (_currentIndex < runes.length) {
+        setState(() {
+          // Build the displayed text from the list of runes
+          // This is safe and will never split a character.
+          final currentRunes = runes.sublist(0, _currentIndex);
+          _displayedText = String.fromCharCodes(currentRunes);
+          _currentIndex++;
+        });
+      } else {
+        // Stop the typing timer when the text is fully displayed
+        timer.cancel();
+        // Start the dismiss timer after typing is complete
+        _onTypingComplete();
+      }
+    });
+  }
+
+
+  void _onTypingComplete() {
+    if (!mounted) return; // Check if the widget is still mounted before updating state
+
+    setState(() {
+      _isTypingComplete = true;
+      // For choice bubbles, ensure the full text is displayed immediately.
+      // Ensure full text is displayed for choice bubbles
+      if (_isChoiceBubble) {
+      _displayedText = widget.text;
+      }
+      });
+
+    widget.onComplete
+        ?.call(); // Call the callback if provided to notify that typing is complete
+
+    if (_autoDismiss) {
+      _dismissTimer?.cancel();
+      // If autoDismiss is true, start the dismiss timer
+      _dismissTimer = async.Timer(dismissDuration, () {
+        _dismissSpeechBubble();
+      });}
+
+  }
+
+  Future<void> _dismissSpeechBubble() async {
+    if (!mounted) return;
+    // Start the fade animation
+     _fadeController.forward().then((_) {
+      if (mounted) {
+        // After the fade animation completes, set visibility to false
+        setState(() {
+          _isSpeechBubbleVisible = false;
+          _displayedText = ''; // Clear the displayed text
+          _currentIndex = 0; // Reset the current index for next use
+
+        });
+        widget.onDismiss?.call();
+      }
+    });
+  }
+
+  void restartSpeechBubble() {
+
+    // Cancel any existing timers
+    _typingTimer?.cancel();
+    _dismissTimer?.cancel();
+
+    // Reset the state of the speech bubble
+    setState(() {
+      _displayedText = '';
+      _currentIndex = 0;
+      _isTypingComplete = false;
+      _isSpeechBubbleVisible = false;
+    });
+
+
+
+    // Reset the animation controllers
+    _scaleController.reset();
+    _fadeController.reset();
+
+    // Restart the animation
+    _initializeSpeechBubble();
   }
 
   // UI Building
@@ -311,98 +402,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       return const SizedBox.shrink(); // Return an empty widget on error
     }
-  }
-
-  void _startTypingText() {
-    _typingTimer?.cancel();
-    _isTypingComplete = false;
-
-    if (widget.text.isEmpty) {
-      _onTypingComplete();
-      return;
-    }
-
-    _typingTimer = async.Timer.periodic(typingSpeed, (timer) {
-      //check if there is still text to display
-      if (_currentIndex < widget.text.length) {
-        setState(() {
-          // Append the next character to the displayed text
-          _displayedText = widget.text.substring(0, _currentIndex + 1);
-
-          _currentIndex++;
-        });
-      } else {
-        // the text is fully displayed, stop the timer
-        _typingTimer?.cancel();
-        // Stop the typing timer when the text is fully displayed
-        timer.cancel();
-        // Start the dismiss timer after typing is complete
-        _onTypingComplete();
-      }
-    });
-  }
-
-  void _onTypingComplete() {
-    if (!mounted) {
-      return; // Check if the widget is still mounted before updating state
-    }
-    setState(() {
-      _isTypingComplete = true;
-      // For choice bubbles, ensure the full text is displayed immediately.
-      if (_isChoiceBubble) {
-        _displayedText = widget.text;
-      }
-    });
-
-    widget.onComplete
-        ?.call(); // Call the callback if provided to notify that typing is complete
-
-    if (autoDismiss) {
-      _dismissTimer?.cancel();
-      // If autoDismiss is true, start the dismiss timer
-      _dismissTimer = async.Timer(dismissDuration, () {
-        _dismissSpeechBubble();
-      });
-    } else {
-      _dismissTimer?.cancel();
-    }
-  }
-
-  void _dismissSpeechBubble() {
-    if (!mounted) return;
-    // Start the fade animation
-    _fadeController.forward().then((_) {
-      if (mounted) {
-        // After the fade animation completes, set visibility to false
-        setState(() {
-          _isSpeechBubbleVisible = false;
-          _displayedText = ''; // Clear the displayed text
-          _currentIndex = 0; // Reset the current index for next use
-          widget.onDismiss?.call();
-        });
-      }
-    });
-  }
-
-  void restartSpeechBubble() {
-    // Reset the state of the speech bubble
-    setState(() {
-      _displayedText = '';
-      _currentIndex = 0;
-      _isTypingComplete = false;
-      _isSpeechBubbleVisible = false;
-    });
-
-    // Cancel any existing timers
-    _typingTimer?.cancel();
-    _dismissTimer?.cancel();
-
-    // Reset the animation controllers
-    _scaleController.reset();
-    _fadeController.reset();
-
-    // Restart the animation
-    _initializeSpeechBubble();
   }
 }
 
