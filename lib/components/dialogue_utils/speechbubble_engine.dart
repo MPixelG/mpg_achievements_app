@@ -33,7 +33,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late final Duration typingSpeed = const Duration(milliseconds: 50);
   late final Duration showDuration = const Duration(seconds: 15);
   late final Duration dismissDuration = const Duration(seconds: 30);
-  late final bool autoDismiss =
+  late bool autoDismiss =
       true; // Automatically dismiss the speech bubble after a certain duration
   late final bool autoStart =
       true; // Automatically start the speech bubble animation when the widget is built
@@ -44,6 +44,19 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late final EdgeInsets padding = const EdgeInsets.all(8.0);
   late final BorderRadius borderRadius = BorderRadius.circular(8.0);
   late final bool showTail = true;
+  // 1. Define constants and styles for easy configuration.
+  static const int maxLinesBeforeScroll = 2;
+  static const TextStyle textStyle = TextStyle(
+    color: Colors.black,
+    fontSize: 14,
+    fontFamily: 'gameFont',
+    height: 1.2, // Standard line height for accurate calculation
+  );
+
+  // 2. Calculate the maximum height for the text area.
+  // This is more robust than hardcoding pixel values.
+  final double singleLineHeight = textStyle.fontSize! * textStyle.height!;
+  late final double maxScrollableHeight = singleLineHeight * maxLinesBeforeScroll;
 
   //styling for the tail of the speech bubble
   // Define the tail's dimensions. You can adjust these.
@@ -107,13 +120,29 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       // Start the speech bubble animation
       _initializeSpeechBubble();
     });
-    print('bubbleinit');
   }
 
-  //Animation and Typing Logic
+  //we can detect when the text or choices have changed and trigger our restartSpeechBubble method, which now correctly !!!cancels old timers and re-initializes the state from scratch.
+  @override
+  void didUpdateWidget(SpeechBubble oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If the parent widget rebuilt with different content for us...
+    if (widget.text != oldWidget.text || widget.choices != oldWidget.choices) {
+      //we must do a full restart to ensure the state is clean.
+      Future.microtask(() => restartSpeechBubble());
+    }
+  }
 
   Future<void> _initializeSpeechBubble() async {
     if (!mounted) return;
+
+    // If the bubble has choices, it should not dismiss automatically.
+    if (_isChoiceBubble) {
+      autoDismiss = false;
+    } else {
+      // Ensure it's reset to true for standard text bubbles.
+      autoDismiss = true;
+    }
 
     //Visibility true
     setState(() {
@@ -157,110 +186,130 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
         return const SizedBox.shrink(); // Render nothing if not visible
       }
 
+      // Initialize the player position and height
+      _componentHeight = widget.component.height;
+      _componentWidth = widget.component.width;
+      // Adjust the position based on the camera's local to global conversion
+      _bubblePosition = widget.game.cam.localToGlobal(
+        toWorldPos(widget.component.position),
+      );
 
-    // Initialize the player position and height
-    _componentHeight = widget.component.height;
-    _componentWidth = widget.component.width;
-    // Adjust the position based on the camera's local to global conversion
-    _bubblePosition = widget.game.cam.localToGlobal(
-      toWorldPos(widget.component.position),);
-    print('BubblePosition:$_bubblePosition');
-
-    return AnimatedPositioned(
-      // The position is now directly derived from the character's state vector
-      left: _bubblePosition.x,
-      // Center the bubble horizontally
-      top: _bubblePosition.y - _componentHeight - _bubbleOffset,
-      // Position above the character
-      // Position above the character
-      // Use the bubbleOffset to adjust the position if needed
-      duration: const Duration(milliseconds: 300),
-      // Animation duration for position change
-      child: FadeTransition(
-        //as the speech bubble fades out, it will also scale down
-        opacity: _fadeAnimation,
-        child: ScaleTransition(
-          scale: _scaleAnimation,
-          child: Stack(
-            clipBehavior: Clip.none,
-            // Allow the tail to extend outside the bubble
-            children: [
-              Container(
-                constraints: const BoxConstraints(maxWidth: 300),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12.0,
-                  vertical: 8.0,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(128),
-                      blurRadius: 5,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _displayedText,
-                      style: const TextStyle(color: Colors.black, fontSize: 14),
-                    ),
-                    if (_isChoiceBubble) ...[
-                      const SizedBox(height: 12.0),
-                      Column(
+      return AnimatedPositioned(
+        // The position is now directly derived from the character's state vector
+        left: _bubblePosition.x,
+        // Center the bubble horizontally
+        top: _bubblePosition.y - _componentHeight - _bubbleOffset,
+        // Position above the character
+        // Position above the character
+        // Use the bubbleOffset to adjust the position if needed
+        duration: const Duration(milliseconds: 100),
+        // Animation duration for position change
+        child: FadeTransition(
+          //as the speech bubble fades out, it will also scale down
+          opacity: _fadeAnimation,
+          child: ScaleTransition(
+            scale: _scaleAnimation,
+            child: Stack(
+              clipBehavior: Clip.none,
+              // Allow the tail to extend outside the bubble
+              children: [
+                Container(
+                  constraints: const BoxConstraints(maxWidth: 400),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12.0,
+                    vertical: 8.0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(128),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: maxScrollableHeight,
+                        ),
+                        child: SingleChildScrollView(
+                          child: Text(
+                            _displayedText,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontFamily: 'gameFont',
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (_isChoiceBubble) ...[
+                        const SizedBox(height: 12.0),
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: widget.choices!.options.map((option) {
                             final optionIndex = widget.choices!.options.indexOf(
                               option,
                             );
-                            // ADDED: Padding for vertical spacing between buttons
+                            // Padding for vertical spacing between buttons
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2.0),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 2.0,
+                              ),
                               child: ElevatedButton(
                                 onPressed: option.isAvailable
-                                    ? () =>
-                                    widget.onChoiceSelected?.call(optionIndex)
+                                    ? () => widget.onChoiceSelected?.call(
+                                        optionIndex,
+                                      )
                                     : null,
-                                child: Text(option.text),
+                                child: Text(
+                                  option.text,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontFamily: 'gameFont',
+                                  ),
+                                ),
                               ),
                             );
                           }).toList(),
-                      ),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
 
-              Positioned(
-                left: 15,
-                bottom: -tailHeight,
-                child: CustomPaint(
-                  // CustomPaint is used to draw the tail of the speech bubble
-                  size: const Size(tailWidth, tailHeight),
-                  painter: SpeechBubbleTailPainter(
-                    bubbleColor: Colors.white,
-                    borderColor: borderColor,
-                    borderWidth: borderWidth,
-                  ), // Color of the tail
+                Positioned(
+                  left: 15,
+                  bottom: -tailHeight,
+                  child: CustomPaint(
+                    // CustomPaint is used to draw the tail of the speech bubble
+                    size: const Size(tailWidth, tailHeight),
+                    painter: SpeechBubbleTailPainter(
+                      bubbleColor: Colors.white,
+                      borderColor: borderColor,
+                      borderWidth: borderWidth,
+                    ), // Color of the tail
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
-    catch (e, stackTrace) { // <-- ADD THIS
-    print("!!!!!!!! UNHANDLED ERROR IN SPEECHBUBBLE BUILD !!!!!!!");
-    print("Error: $e");
-    print("StackTrace: $stackTrace");
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    return const SizedBox.shrink(); // Return an empty widget on error
+      );
+    } catch (e, stackTrace) {
+      // <-- ADD THIS
+      print("!!!!!!!! UNHANDLED ERROR IN SPEECHBUBBLE BUILD !!!!!!!");
+      print("Error: $e");
+      print("StackTrace: $stackTrace");
+      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      return const SizedBox.shrink(); // Return an empty widget on error
     }
   }
 
@@ -299,26 +348,28 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     }
     setState(() {
       _isTypingComplete = true;
+      // For choice bubbles, ensure the full text is displayed immediately.
+      if (_isChoiceBubble) {
+        _displayedText = widget.text;
+      }
     });
 
-    widget.onComplete?.call(); // Call the callback if provided to notify that typing is complete
-
-    // If autoDismiss is false, the speech bubble will remain visible until manually dismissed
-    if (!autoDismiss) {
-      // If autoDismiss is false, the speech bubble will remain visible until manually dismissed
-      // You can add any additional logic here if needed
-      print("Speech bubble typing complete, waiting for manual dismissal.");
-    }
+    widget.onComplete
+        ?.call(); // Call the callback if provided to notify that typing is complete
 
     if (autoDismiss) {
+      _dismissTimer?.cancel();
       // If autoDismiss is true, start the dismiss timer
       _dismissTimer = async.Timer(dismissDuration, () {
         _dismissSpeechBubble();
       });
+    } else {
+      _dismissTimer?.cancel();
     }
   }
 
   void _dismissSpeechBubble() {
+    if (!mounted) return;
     // Start the fade animation
     _fadeController.forward().then((_) {
       if (mounted) {
