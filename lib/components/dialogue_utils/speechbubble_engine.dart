@@ -55,7 +55,8 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   //Calculate the maximum height for the text area.
   // This is more robust than hardcoding pixel values.
   final double singleLineHeight = textStyle.fontSize! * textStyle.height!;
-  late final double maxScrollableHeight = singleLineHeight * maxLinesBeforeScroll;
+  late final double maxScrollableHeight =
+      singleLineHeight * maxLinesBeforeScroll;
 
   //styling for the tail of the speech bubble
   // Define the tail's dimensions. You can adjust these.
@@ -131,7 +132,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     if (!mounted) return;
     // Choice bubbles should not auto-dismiss
     _autoDismiss = !_isChoiceBubble;
-   //Visibility true
+    //Visibility true
     setState(() {
       _isSpeechBubbleVisible = true;
       _displayedText = ''; // Clear the displayed text
@@ -143,21 +144,19 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     //scaleController reset because it was used for entrance animation of the speech bubble
     _scaleController.reset();
 
-   await _scaleController.forward();
+    await _scaleController.forward();
 
-   if (!_isSpeechBubbleVisible || !mounted) return;
-   if (_isChoiceBubble || widget.text.isEmpty) {
-          _onTypingComplete();
-        } else {
-          // After the scale animation completes, start the typing text
-          _startTypingText();
-        }
-      }
-
+    if (!_isSpeechBubbleVisible || !mounted) return;
+    if (_isChoiceBubble || widget.text.isEmpty) {
+      _onTypingComplete();
+    } else {
+      // After the scale animation completes, start the typing text
+      _startTypingText();
+    }
+  }
 
   @override
   void dispose() {
-
     // Dispose of the controllers to free up resources
     _scaleController.dispose();
     _fadeController.dispose();
@@ -165,7 +164,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     _dismissTimer?.cancel();
     super.dispose();
   }
-
 
   void _startTypingText() {
     _typingTimer?.cancel();
@@ -177,7 +175,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     }
 
     _typingTimer = async.Timer.periodic(typingSpeed, (timer) {
-
       if (!mounted) {
         timer.cancel();
         return;
@@ -203,18 +200,18 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     });
   }
 
-
   void _onTypingComplete() {
-    if (!mounted) return; // Check if the widget is still mounted before updating state
+    if (!mounted)
+      return; // Check if the widget is still mounted before updating state
 
     setState(() {
       _isTypingComplete = true;
       // For choice bubbles, ensure the full text is displayed immediately.
       // Ensure full text is displayed for choice bubbles
       if (_isChoiceBubble) {
-      _displayedText = widget.text;
+        _displayedText = widget.text;
       }
-      });
+    });
 
     widget.onComplete
         ?.call(); // Call the callback if provided to notify that typing is complete
@@ -224,21 +221,20 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       // If autoDismiss is true, start the dismiss timer
       _dismissTimer = async.Timer(dismissDuration, () {
         _dismissSpeechBubble();
-      });}
-
+      });
+    }
   }
 
   Future<void> _dismissSpeechBubble() async {
     if (!mounted) return;
     // Start the fade animation
-     _fadeController.forward().then((_) {
+    _fadeController.forward().then((_) {
       if (mounted) {
         // After the fade animation completes, set visibility to false
         setState(() {
           _isSpeechBubbleVisible = false;
           _displayedText = ''; // Clear the displayed text
           _currentIndex = 0; // Reset the current index for next use
-
         });
         widget.onDismiss?.call();
       }
@@ -246,7 +242,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   }
 
   void restartSpeechBubble() {
-
     // Cancel any existing timers
     _typingTimer?.cancel();
     _dismissTimer?.cancel();
@@ -258,8 +253,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       _isTypingComplete = false;
       _isSpeechBubbleVisible = false;
     });
-
-
 
     // Reset the animation controllers
     _scaleController.reset();
