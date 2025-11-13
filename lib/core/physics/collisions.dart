@@ -7,6 +7,7 @@ import 'package:mpg_achievements_app/components/level_components/entity/game_cha
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'collision_block.dart';
+import 'hitbox3d/hitbox3d.dart';
 
 /// Mixin for adding collision detection behavior to a component.
 /// Requires implementing methods to provide hitbox, position, velocity, etc
@@ -32,26 +33,19 @@ mixin HasCollisions
     if (other is CollisionBlock &&
         !_debugNoClipMode) {
       velocity = Vector3.zero();
-      gridPos = lastSafePosition;
+      position = lastSafePosition;
       return;
     }
     super.onCollision(intersectionPoints, other);
   }
 
-  Vector2 lastSafePosition = Vector2.zero();
+  Vector3 lastSafePosition = Vector3.zero();
   @override
   void update(double dt) {
-    if (!game.gameWorld.checkCollisionAt(gridPos.clone()..floor())) {
-      lastSafePosition = gridPos;
+    if (!game.gameWorld.checkCollisionAt(position.clone()
+      ..floor())) {
+      lastSafePosition = position;
     } else {}
     super.update(dt);
-  }
-
-  bool isHitboxInside(Hitbox? hitboxA, Hitbox? hitboxB) {
-    if (hitboxB == null || hitboxA == null) return false;
-    return hitboxB.aabb
-        .toRect()
-        .translate(0.8, 0.8)
-        .overlaps(hitboxA.aabb.toRect());
   }
 }

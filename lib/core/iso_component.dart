@@ -78,7 +78,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
   Vector3 get gridFeetPos => positionOfAnchor(Anchor3D.bottomLeftLeft);
 
   @override
-  Vector3 get gridHeadPos => positionOfAnchor(Anchor3D.topRightRight);
+  Vector3 get gridHeadPos => positionOfAnchor(Anchor3D.bottomLeftLeft);
 
   @override
   Anchor3D get anchor => _anchor;

@@ -194,7 +194,7 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
     if(animationTicker == null) return;
 
     canvas.save();
-    canvas.translate(-animationTicker!.getSprite().srcSize.x / 2, 0);
+    canvas.translate(-animationTicker!.getSprite().srcSize.x / 2, -animationTicker!.getSprite().srcSize.y);
     animationTicker!.getSprite().render(
       canvas,
       overridePaint: paint,

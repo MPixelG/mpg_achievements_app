@@ -301,5 +301,5 @@ abstract class GameWorld extends World
     }
   }
 
-  bool checkCollisionAt(Vector2 gridPos);
+  bool checkCollisionAt(Vector3 gridPos);
 }

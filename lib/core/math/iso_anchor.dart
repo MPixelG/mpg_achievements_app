@@ -49,13 +49,13 @@ class Anchor3D {
   final double x;
 
   /// The relative y position with respect to the object's height;
-  /// 0 means totally to the front (beginning) and 1 means totally to the
-  /// back (end).
+  /// 0 means totally on the bottom (beginning) and 1 means totally on the
+  /// top (end).
   final double y;
 
   /// The relative z position with respect to the object's depth;
-  /// 0 means totally to the top (beginning) and 1 means totally to the
-  /// bottom (end).
+  /// 0 means totally to the front (beginning) and 1 means totally to the
+  /// back (end).
   final double z;
 
   /// Returns [x] and [y] as a Vector2. Note that this is still a relative

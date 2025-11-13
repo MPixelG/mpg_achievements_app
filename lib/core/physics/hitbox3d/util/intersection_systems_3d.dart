@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_shape_component.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_component_3d.dart';
 import 'package:vector_math/vector_math.dart';
@@ -29,15 +30,15 @@ T2 extends ShapeComponent3D
 
 
 class RectangleIntersections
-    extends Intersections3D<RectangleShapeComponent, RectangleShapeComponent> {
+    extends Intersections3D<RectangleHitbox3D, RectangleHitbox3D> {
   /// Returns the intersection points of [polygonA] and [polygonB]
   /// The two polygons are required to be convex
   /// If they share a segment of a line, both end points and the center point of
   /// that line segment will be counted as collision points
   @override
   Set<Vector3> intersect(
-      RectangleShapeComponent rect1,
-      RectangleShapeComponent rect2) => rect1.rectIntersections(rect2);
+      RectangleHitbox3D rect1,
+      RectangleHitbox3D rect2) => rect1.rectIntersections(rect2);
 }
 
 

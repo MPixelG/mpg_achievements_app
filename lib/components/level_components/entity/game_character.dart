@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
@@ -22,12 +23,6 @@ abstract class GameCharacter extends IsoPositionComponent
     super.priority,
     super.key,
   });
-  Vector2 get gridPos =>
-      Vector2(position.x / tilesize.x, position.z / tilesize.z);
-
-  set gridPos(Vector2 newGridPos) {
-    position.xz = newGridPos * tilesize.x;
-  }
 
   Vector3 velocity = Vector3.zero();
   bool updateMovement = true;
@@ -49,5 +44,13 @@ abstract class GameCharacter extends IsoPositionComponent
       position += velocity * dt * movementSpeed;
     }
     super.update(dt);
+  }
+
+  @override
+  void renderTree(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]){
+    super.renderTree(canvas, normalCanvas, getNormalPaint);
+
+    canvas.drawCircle(Offset.zero, 7, Paint()..color=Color.fromARGB(50, 0, 255, 0));
+
   }
 }

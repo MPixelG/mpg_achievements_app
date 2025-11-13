@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flame/src/game/overlay_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:jenny/jenny.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble.dart';

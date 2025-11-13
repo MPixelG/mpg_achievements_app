@@ -2,13 +2,14 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart' hide Vector3;
 import 'package:flutter/cupertino.dart' hide Matrix4;
+import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/core/math/ray3.dart';
 import 'package:mpg_achievements_app/core/math/transform3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detection.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/misc/aabb_listener.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_shape_component.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/util/raycasting_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/collision_detection_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/util/composite_hitbox_3d.dart';
@@ -111,11 +112,10 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
 
     _transformListener = () {
       _validAabb = false;
-      onAabbChanged.call();
+      onAabbChanged();
     };
-    final positionComponents = ancestors(
-      
-    ).whereType<IsoPositionComponent>();
+    final positionComponents = ancestors().whereType<IsoPositionComponent>();
+
     for (final ancestor in positionComponents) {
       _transformAncestors.add(ancestor.transform);
       ancestor.transform.addListener(_transformListener);
@@ -171,11 +171,11 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
   @override
   Set<Vector3> intersections(Hitbox3D other) {
     assert(
-    this is RectangleShapeComponent &&
-    other is RectangleShapeComponent,
+    this is RectangleHitbox3D &&
+    other is RectangleHitbox3D,
     'The intersection can only be performed between rect shapes',  //todo add support for more shapes
     );
-    return intersection_system.intersections(this as RectangleShapeComponent, other as RectangleShapeComponent);
+    return intersection_system.intersections(this, other as RectangleHitbox3D);
   }
 
 
@@ -206,13 +206,32 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
 
   Aabb3 _recalculateAabb() {
     _halfExtents.setValues(
-      size.x / 2 + _extentEpsilon,
-      size.y / 2 + _extentEpsilon,
-      size.z / 2 + _extentEpsilon,
+      scaledSize.x / 2 + _extentEpsilon,
+      scaledSize.y / 2 + _extentEpsilon,
+      scaledSize.z / 2 + _extentEpsilon,
+    );
+
+    final Vector3 hitboxMin = absolutePosition;
+    final Vector3 hitboxCenter = hitboxMin + Vector3(
+      scaledSize.x / 2,
+      scaledSize.y / 2,
+      scaledSize.z / 2,
     );
 
     _validAabb = true;
-    return _aabb..setCenterAndHalfExtents(absoluteCenter, _halfExtents);
+    if(hitboxParent is! Player) {
+      print("recalculated aabb! expected min: $hitboxMin, expected max: ${hitboxMin + scaledSize}, center: $hitboxCenter, half Extends: $_halfExtents");
+
+      _aabb.setCenterAndHalfExtents(hitboxCenter, _halfExtents);
+
+      print(" -> aabb: ${_aabb.min} - ${_aabb.max}");
+      print(" -> parent pos: ${hitboxParent.absolutePosition}");
+    }else {
+      _aabb.setCenterAndHalfExtents(hitboxCenter, _halfExtents);
+    }
+
+
+    return _aabb;
   }
 
 

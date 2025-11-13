@@ -25,8 +25,8 @@ mixin IsometricRenderable {
 
 double depth(IsometricRenderable? renderable){
   if(renderable == null) return 0;
-  final double feetLength = Vector3(renderable.gridFeetPos.x, renderable.gridFeetPos.y, renderable.gridFeetPos.z).length;
-  final double headLength = Vector3(renderable.gridHeadPos.x, renderable.gridHeadPos.y, renderable.gridHeadPos.z).length;
+  final double feetLength = Vector3.copy(renderable.gridFeetPos).length;
+  final double headLength = Vector3.copy(renderable.gridHeadPos).length;
 
-  return max(feetLength, headLength);
+  return min(feetLength, headLength);
 }
