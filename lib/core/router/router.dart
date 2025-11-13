@@ -1,8 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import '../../GUI/menuCreator/components/gui_editor.dart';
 import '../../GUI/menus.dart';
+
+// This key will be used to access the NavigatorState of the root router
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
 
 class AppRouter {
   static GameScreen gameScreen = GameScreen(
@@ -11,6 +16,7 @@ class AppRouter {
   static GuiEditor guiEditor = const GuiEditor();
 
   static final GoRouter router = GoRouter(
+    navigatorKey: rootNavigatorKey,
     routes: [
       GoRoute(
         path: "/",

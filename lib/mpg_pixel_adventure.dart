@@ -43,7 +43,7 @@ class PixelAdventure extends FlameGame
   late final AdvancedCamera cam;
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
-  late String currentLevel = "Level_9";
+  late String currentLevel = "Level_12";
   //bools for game logic
   //needs to go into the overlay_controller later
   bool showDialogue = false;

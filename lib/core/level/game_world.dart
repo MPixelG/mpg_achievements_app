@@ -33,6 +33,7 @@ abstract class GameWorld extends World
   final String levelName;
   late TiledComponent level;
   late Player player;
+  late Player player2;
   late Enemy enemy;
   int totalCollectables = 0;
   late final Background background;
@@ -70,9 +71,12 @@ abstract class GameWorld extends World
 
     //add player
     await add(game.gameWorld.player);
-    //add player to the list of component in the game
+    await add(game.gameWorld.player2);
+       //add player to the list of component in the game
     game.npcs[game.gameWorld.player.playerCharacter] = game.gameWorld.player; //todo more refactor necessary e.g. method od instanitating IsoComponents
-
+    game.npcs[game.gameWorld.player2.playerCharacter] = game.gameWorld.player2;
+    print(player.playerCharacter);
+    print(player2.playerCharacter);
     // Add the level to the game world so it gets rendered.
     await add(level);
 
@@ -134,8 +138,31 @@ abstract class GameWorld extends World
     // Debug test for SpeechBubble
     if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
       // A method to toggle the speech bubble
+      game.conversationManager.startConversation('assets/yarn/speechbubble_test.yarn');
 
     }
+
+    //overlaydebug
+    if(keysPressed.contains(LogicalKeyboardKey.keyO)){
+    final registeredOverlays = game.overlays.registeredOverlays;
+    print('--- Overlay Status ---');
+    if (registeredOverlays.isEmpty) {
+      print('Registered (static) Overlays: None');
+    } else {
+      print('Registered (static) Overlays: $registeredOverlays');
+    }
+
+    // 2. Get the keys of all currently active (visible) overlays.
+    // This includes static overlays that are "on" and any dynamic
+    // overlays added with addEntry().
+    final activeOverlays = game.overlays.activeOverlays;
+    if (activeOverlays.isEmpty) {
+      print('Active (visible) Overlays: None');
+    } else {
+      print('Active (visible) Overlays: $activeOverlays');
+    }
+    print('----------------------');
+  }
 
     // Debug test for Dialogue
     if (keysPressed.contains(LogicalKeyboardKey.keyQ)) {
