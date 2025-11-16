@@ -1,125 +1,69 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:mpg_achievements_app/components/background/background.dart';
 import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/components/camera/advanced_camera.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-class ScrollingBackground extends Background with HasGameReference {
-  AdvancedCamera? camera;
+class ScrollingBackground extends Background with HasGameReference<PixelAdventure> {
+  //Background color is set in Tiled builder for each level in the property backgroundColor
+  final String color;
+  //sets how fast the background scrolls
+  double scrollSpeed = 0.04;
+  Vector2 size = Vector2.all(64.8);
 
-  late Vector2 size;
+  ScrollingBackground({this.color = "blue"});
 
-  Set<BackgroundTile> tiles = {};
-
-  Vector2 tileSpeed = Vector2(tilesize.x, tilesize.z);
-
-  double time = 0;
-
-  String tileColor;
-  ScrollingBackground({this.tileColor = "blue", this.camera});
-  @override
-  FutureOr<void> onLoad() {
-    priority = -1;
-
-    if (camera == null) {
-      //if no camera is given, then use the game size.
-      size = game.size;
-    } else {
-      //if a camera is given, then you can get the visible game size, with the zoom of it calculated.
-      size = game.size * camera!.viewfinder.zoom;
-    }
-
-    updateTiles(size); //adds and positions the tiles
-
-    return super.onLoad();
-  }
 
   @override
-  void update(double dt) {
-    time += dt; //increase the time variable
+  void render(Canvas canvas) {
+    final Image? img = image;
+    if(img == null) return;
 
-    final double zoom =
-        camera?.viewfinder.zoom ??
-        1; //if a camera is given, then we take the zoom from it. otherwise it gets set to 1
-    Vector2 cameraPos =
-        camera?.viewfinder.position ??
-        Vector2.zero(); //the same for the position
-    if (camera != null && camera?.viewfinder != null) {
-      cameraPos -= camera!.viewfinder.anchor
-          .toVector2(); //if the anchor is the centre of the screen for example, we need to subtract these coordinates
-    }
+    final double zoom = game.cam.viewfinder.zoom;
 
-    for (var value in tiles) {
-      //for every tile
-      value.position = calculateAbsoluteTilePosition(
-        value.backgroundPos,
-        cameraPos,
-        zoom,
-        Vector2.all(64),
-      ); //get the position of the tile without the animation
-      value.position += tileSpeed * time; //add the animation
-      value.position +=
-          Vector2(64, 64) -
-          cameraPos +
-          size / 2; //move to the side so that the modulo can work
-      value.position %=
-          size -
-          size %
-              Vector2.all(
-                64,
-              ); //modulo to reset the tile of its out of the screen
-      value.position -=
-          Vector2(64, 64) - cameraPos + size / 2; //move the tiles back
-    }
+    //calculate the position of the tile
+    final double distance = ((DateTime.now().millisecondsSinceEpoch) * scrollSpeed) % size.y;
+    final Vector2 pos = Vector2.all(distance) - size*2; //start just above the screen with a bit of offset to give the effect of movement
 
-    time %= double.maxFinite - 1000; //if the time is close to the double limit, then reset it
-  }
+    //tile the image to fill the screen
 
-  Vector2 calculateAbsoluteTilePosition(
-    Vector2 relativePos,
-    Vector2 cameraPos,
-    double zoom,
-    Vector2 tileSize,
-  ) {
-    //relativePos is the coordinate of the tile, so 1|1, 2|1 3|1 usw.
-    relativePos = relativePos
-        .clone(); //clone so that no references will get created
-    cameraPos = cameraPos.clone();
-    tileSize = tileSize.clone();
+    final Vector2 startPos = pos + (game.cam.viewfinder.position - (game.cam.viewport.virtualSize / 2) / zoom);
+    final Vector2 endPos = startPos + (screenSize / zoom) + size*2;
 
-    tileSize.x *= zoom; //tilesize is affected by zoom
-    tileSize.y *= zoom;
-
-    relativePos.x *= tileSize.x;
-    relativePos.y *= tileSize.y;
-
-    return relativePos +
-        cameraPos; //add the cameraPos so that it moves with the camera
-  }
-
-  void updateTiles(
-    Vector2 viewportSize, {
-    double zoom = 1,
-    double tileWidth = 64,
-    double tileHeight = 64,
-  }) {
-    //adds all of the tiles and positions them
-    final int tilesX =
-        (viewportSize.x / (tileWidth * zoom)).floor() +
-        1; //calculates the optimal amount of tiles for the different axis
-    final int tilesY = (viewportSize.y / (tileHeight * zoom)).floor() + 1;
-
-    for (int x = -1; x < tilesX - 1; x++) {
-      for (int y = -1; y < tilesY - 1; y++) {
-        final BackgroundTile tile = BackgroundTile(
-          color: tileColor,
-          backgroundPos: Vector2(x.toDouble(), y.toDouble()),
+    for(double x = startPos.x; x < endPos.x; x += size.x) {
+      for(double y = startPos.y; y < endPos.y; y += size.y) {
+        canvas.drawImageRect(
+          img,
+          Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble()),
+          Rect.fromLTWH(x, y, size.x, size.y),
+          Paint(),
         );
-        tiles.add(tile); //adds it to the list
-        add(tile); //adds it to the component
       }
     }
+  }
+
+
+  Image? get image {
+    if(!tileImages.containsKey(color)) {
+      loadImage(color);
+      return null;
+    }
+    return tileImages[color];
+  }
+  static Map<String, Image> tileImages = {};
+
+  Set<String> currentlyLoadingImages = {};
+
+  void loadImage(String color) {
+    if(currentlyLoadingImages.contains(color)) return;
+    currentlyLoadingImages.add(color);
+    Flame.images.load('Background/$color.png').then((img) {
+      tileImages[color] = img;
+      currentlyLoadingImages.remove(color);
+    });
   }
 }

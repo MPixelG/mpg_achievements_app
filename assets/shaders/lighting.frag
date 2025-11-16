@@ -75,6 +75,27 @@ void main() {
     vec4 normalPixel = texture(depthMap, uv);
     float pixelHeight = normalPixel.b;
 
+    float dx = 1.0 / screenSize.x;
+    float dy = 1.0 / screenSize.y;
+
+    float H = texture(depthMap, uv).b;
+
+    float Hleft  = texture(depthMap, uv + vec2(-dx, 0.0)).b;
+    float Hright = texture(depthMap, uv + vec2(+dx, 0.0)).b;
+    float Hdown  = texture(depthMap, uv + vec2(0.0, -dy)).b;
+    float Hup    = texture(depthMap, uv + vec2(0.0, +dy)).b;
+
+    float dHx = Hright - Hleft;
+    float dHy = Hup - Hdown;
+
+    float normalStrength = 0.2;
+
+    vec3 normal = normalize(vec3(-dHx, -dHy, normalStrength));
+
+    normalPixel.rgb = normal * 0.5 + 0.5;
+
+
+
     if(normalPixel.a == 0) return;
 
     float heightScale = 0.5;
@@ -85,5 +106,5 @@ void main() {
     vec3 diffuse = calculateBasicLighting(adjustedLightPos);
     vec3 color = albedoPixel.rgb * (vec3(0.11, 0.1, 0.1)*2 + diffuse);
 
-    fragColor = vec4(color, albedoPixel.a);
+    fragColor = vec4(normalPixel.rgb, albedoPixel.a);
 }

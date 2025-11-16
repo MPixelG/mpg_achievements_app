@@ -92,20 +92,19 @@ class ChunkGrid {
       final Chunk chunk = value.value;
 
       Vector2 chunkPos = Vector2(
-        ((chunk.x - chunk.z) * (Chunk.chunkSize + chunkSpacing)) *
-            tilesize.x / 2,
+        ((chunk.x - chunk.z) * (Chunk.chunkSize + chunkSpacing)) * tilesize.x / 2,
         (chunk.x + chunk.z) * (Chunk.chunkSize + chunkSpacing) * tilesize.z / 2,
       );
       chunkPos += offset.toVector2();
       chunkPos.y -= chunk.yHeightUsedPixels;
       final Vector2 unPositionedChunkPos = chunkPos - camPos + (viewportSize / 2);
 
-      // if (unPositionedChunkPos.x < 0) {
-      //   continue;
-      // }
-      // if (unPositionedChunkPos.y < 0) {
-      //   continue;
-      // }
+      if (unPositionedChunkPos.x < 0) {
+        continue;
+      }
+      if (unPositionedChunkPos.y < 0) {
+        continue;
+      }
       if (unPositionedChunkPos.x > viewportSize.x) {
         continue;
       }
@@ -130,8 +129,6 @@ class ChunkGrid {
 
       albedoCanvas.restore();
       normalCanvas.restore();
-
-      currentlyRebuilding = false;
     }
 
     await Future.wait([
@@ -148,6 +145,7 @@ class ChunkGrid {
       fullNormal?.dispose();
       fullAlbedo = lastAlbedo;
       fullNormal = lastNormal;
+      currentlyRebuilding = false;
     });
   }
 
@@ -183,11 +181,11 @@ class ChunkGrid {
     shader!.setImageSampler(1, fullNormal!);
 
     final double time = DateTime.now().millisecondsSinceEpoch / 10000;
-    final double lightX = cos(time) * 600;
-    final double lightZ = sin(time) * 600;
+    final double lightX = cos(time) * 300;
+    final double lightZ = sin(time) * 300;
 
     shader!.setFloatUniforms((val) {
-      val.setFloats([viewportSize.x, viewportSize.y, lightX, lightZ, 15]);
+      val.setFloats([viewportSize.x, viewportSize.y, lightX, lightZ, 35]);
     });
 
     shaderPaint.shader = shader;

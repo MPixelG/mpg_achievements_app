@@ -40,7 +40,7 @@ class ChunkTile with IsometricRenderable {
 
 
   @override
-  Vector3 get gridFeetPos => posWorld;
+  Vector3 get gridFeetPos => posWorld + Vector3.all(1);
 
   @override
   Vector3 get gridHeadPos => gridFeetPos;
@@ -48,7 +48,7 @@ class ChunkTile with IsometricRenderable {
   final Paint renderPaint = Paint()..isAntiAlias = false..filterQuality = FilterQuality.none;
   @override
   void renderTree(Canvas albedoCanvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
-    final Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, tilesize.z);
+    final Vector2 position = toWorldPos(posWorld) - Vector2(tilesize.x / 2, 0);
     if(normalCanvas != null) {
       cachedSprite.normalAndDepth?.render(
         normalCanvas,

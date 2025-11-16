@@ -264,15 +264,13 @@ abstract class GameWorld extends World
 
   void _loadScrollingBackground() {
     final Layer? backgroundLayer = level.tileMap.getLayer('Level');
-    String backgroundColor = this is IsometricWorld ? "Black" : "Green";
+    String backgroundColor = "Black";
     if (backgroundLayer != null) {
-      backgroundColor =
-          backgroundLayer.properties.getValue('BackgroundColor') ?? "Green";
+      backgroundColor = backgroundLayer.properties.getValue('BackgroundColor') ?? "Green";
     }
 
     final ScrollingBackground background = ScrollingBackground(
-      tileColor: backgroundColor,
-      camera: (parent as PixelAdventure).cam,
+      color: backgroundColor,
     );
     background.priority = -3;
 

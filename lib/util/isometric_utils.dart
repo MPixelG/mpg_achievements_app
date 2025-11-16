@@ -23,14 +23,8 @@ Vector2 toWorldPos2D(Vector2 gridPos, [double? levelWidth]) {
     (gridPos.x - gridPos.y) * (tilesize.x / 2),
     (gridPos.x + gridPos.y) * (tilesize.z / 2),
   );
-  // Convert local point to global world position, Add the maps's visual origin offset back to the local point
-  // to get the correct world position
-  final offset = Vector2(
-    0, //map origin
-    0, //height offset
-  );
   //apply vertical movement for different layers according to z-index
-  return localPoint + offset;
+  return localPoint;
 }
 
 Vector2 toGridPos(Vector2 worldPos, [double? levelWidth]) => worldToTileIsometric(

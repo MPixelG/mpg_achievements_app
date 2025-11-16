@@ -16,7 +16,6 @@ import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detecti
 import 'package:mpg_achievements_app/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 
-import 'components/level_components/entity/enemy/enemy.dart';
 import 'core/level/game_world.dart';
 import 'core/level/isometric/isometric_world.dart';
 
@@ -43,7 +42,7 @@ class PixelAdventure extends FlameGame
   late final AdvancedCamera cam;
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
-  late String currentLevel = "Level_12";
+  late String currentLevel = "Level_9";
   //bools for game logic
   //needs to go into the overlay_controller later
   bool showDialogue = false;
@@ -118,7 +117,7 @@ Vector3 get tilesize =>
     PixelAdventure.currentInstance.gameWorld.calculatedTileSize;
 
 Vector2 get screenSize =>
-    PixelAdventure.currentInstance.cam.visibleWorldRect.toVector2();
+    PixelAdventure.currentInstance.cam.viewport.virtualSize;
 
 //helper class to follow the player after the world and player are loaded
 class _FollowCameraComponent extends Component

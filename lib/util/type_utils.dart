@@ -1,5 +1,3 @@
-import 'package:flame/components.dart';
-
 T safeCast<T>(dynamic parent) {
   if (parent is T) {
     return parent;

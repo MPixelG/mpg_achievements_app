@@ -22,8 +22,8 @@ class Chunk {
   bool isUsedByNeighbor = false;
 
   Vector2? albedoWorldTopLeft;
-  int albedoWidth = 0;
-  int albedoHeight = 0;
+  int albedoWidth = 1;
+  int albedoHeight = 1;
 
   int yHeightUsedPixels = 0;
   static int highestYTileInWorld = 0;
@@ -196,7 +196,7 @@ class Chunk {
     final double maxX = corners.map((c) => c.x).reduce(math.max);
     final double maxZ = corners.map((c) => c.y).reduce(math.max);
 
-    final double padTop = yHeightUsedPixels.toDouble();
+    final double padTop = yHeightUsedPixels.toDouble() + tilesize.z;
     final double padBottom = (maxY.toDouble() * tilesize.z) + tilesize.z.toDouble();
 
     final width = (maxX - minX + tilesize.x).ceil();
@@ -320,14 +320,15 @@ class Chunk {
   void render(
     Canvas canvas,
     Canvas normalCanvas,
-    List<IsometricRenderable> components,
-    NeighborChunkCluster neighborChunkCluster, [
+    [ List<IsometricRenderable>? components,
+    NeighborChunkCluster? neighborChunkCluster,
     Offset offset = Offset.zero,
   ]) {
     if (isUsedByNeighbor) return;
     this.neighborChunkCluster = neighborChunkCluster;
 
     final List<IsometricRenderable> newComponents = [];
+    components ??= [];
 
     components.where((element) => element.dirty).forEach((element) {
       if (containsRenderable(element)) {

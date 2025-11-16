@@ -7,7 +7,6 @@ import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/enemy/enemy.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
 import 'package:mpg_achievements_app/core/level/game_world.dart';
@@ -125,8 +124,8 @@ class IsometricWorld extends GameWorld {
     (level as IsometricTiledComponent).renderComponentsInTree(
       canvas,
       children.whereType<IsometricRenderable>().toList(),
-      CameraComponent.currentCamera!.viewfinder.position,
-      CameraComponent.currentCamera!.viewport.size,
+      CameraComponent.currentCamera!.viewfinder.position - (CameraComponent.currentCamera!.viewport.virtualSize/2),
+      CameraComponent.currentCamera!.viewport.virtualSize,
     );
 
     if(debugMode && tmpBlocks.isNotEmpty) {
@@ -139,8 +138,6 @@ class IsometricWorld extends GameWorld {
       final Vector2 playerHitboxScreenPos = toWorldPos(player.hitbox.aabb.min);
       final Vector2 playerHitboxScreenPosMax = toWorldPos(player.hitbox.aabb.max);
 
-      print("player min: ${player.hitbox.aabb.min}");
-
       canvas.drawCircle(playerHitboxScreenPos.toOffset(), 1, Paint()..color = Colors.cyan);
       canvas.drawCircle(playerHitboxScreenPosMax.toOffset(), 1, Paint()..color = Colors.red);
 
@@ -148,9 +145,6 @@ class IsometricWorld extends GameWorld {
       final Aabb3 blockAabb = tmpBlocks.last.hitbox.aabb;
       final Vector2 tileHitboxScreenPos = toWorldPos(blockAabb.min);
       final Vector2 tileHitboxScreenPosMax = toWorldPos(blockAabb.max);
-
-      print("hitbox min: ${blockAabb.min}");
-
 
       canvas.drawCircle(tileHitboxScreenPos.toOffset(), 1, Paint()..color = Colors.deepOrange);
       canvas.drawCircle(tileHitboxScreenPosMax.toOffset(), 1, Paint()..color = Colors.deepPurpleAccent);
@@ -170,6 +164,10 @@ class IsometricWorld extends GameWorld {
     if(layer.tileData == null){
       throw UnimplementedError("chunking is not implemented yet!");
     }else {
+      if(gridPos.x.toInt() < 0 || gridPos.x.toInt() >= layer.width ||
+          gridPos.z.toInt() < 0 || gridPos.z.toInt() >= layer.height){
+        return true;
+      }
       final int gid = layer.tileData![gridPos.z.toInt()][gridPos.x.toInt()].tile;
 
       return gid != 0;

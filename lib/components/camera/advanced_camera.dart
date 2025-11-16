@@ -18,24 +18,26 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
 
   Player? player; //the player to follow
 
-  Vector2 pos = Vector2.zero(); //current camera pos
+  Vector2 get pos => viewfinder.position;
+  set pos(Vector2 newPos) => viewfinder.position = newPos;
 
-  Vector2 initialPos =
-      Vector2.zero(); //the position of the camera when it received a move task
-  Vector2 givenMovePosition =
-      Vector2.zero(); //the position the camera has to move to
+  Vector2 initialPos = Vector2.zero(); //the position of the camera when it received a move task
+  Vector2 givenMovePosition = Vector2.zero(); //the position the camera has to move to
 
-  double?
-  initialZoom; //the zoom of the camera at the beginning of the animation
+  double positionTimeLeft = 0; //the time left to get to the given position (seconds)
+  double initialGivenPositionTime = 0; //the initial given time for getting to the position (seconds)
+
+  double? initialZoom; //the zoom of the camera at the beginning of the animation
   double? givenZoom; //the zoom the camera has to reach
 
-  double timeLeft = 0; //the time left to get to the given position (seconds)
-  double initialGivenTime = 0; //the initial given time for getting to the position (seconds)
+  double zoomTimeLeft = 0; //the time left to get to the given position (seconds)
+  double initialGivenZoomTime = 0; //the initial given time for getting to the position (seconds)
+
+
 
   AnimationStyle animationStyle = AnimationStyle.linear; // the animation style of the camera. for example 'easeOut' means
 
-  Vector2 dir =
-      Vector2.zero(); //the direction the camera is currently going into
+  Vector2 dir = Vector2.zero(); //the direction the camera is currently going into
 
   Vector2 shakingPosition = Vector2.zero();
   late double shakingAmount = 0;
@@ -66,8 +68,7 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
     if (speed == double.infinity && time == 0) {
       // if theres no speed and time for the camera given, we complete it instant
       pos = point;
-      viewfinder.zoom =
-          zoom ?? viewfinder.zoom; //if there was given a new zoom val, use it
+      viewfinder.zoom = zoom ?? viewfinder.zoom; //if there was given a new zoom val, use it
       // apply once (avoid multiple moveTo/moveBy calls per frame)
       viewfinder.position = pos;
       return;
@@ -77,14 +78,17 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
       //if a zoom is given
       initialZoom = viewfinder.zoom;
       givenZoom = zoom;
+
+      zoomTimeLeft = time > 0 ? time / 300.0 : 0.0; //seconds
+      initialGivenZoomTime = zoomTimeLeft;
     }
 
     givenMovePosition = point;
     initialPos = pos.clone();
 
     // convert incoming time (ms in original API) to seconds for dt consistency
-    timeLeft = time > 0 ? time / 300.0 : 0.0; //seconds
-    initialGivenTime = timeLeft;
+    positionTimeLeft = time > 0 ? time / 300.0 : 0.0; //seconds
+    initialGivenPositionTime = positionTimeLeft;
 
     this.animationStyle = animationStyle;
   }
@@ -175,54 +179,68 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
 
   @override
   void update(double dt) {
-    if (timeLeft > 0) {
+    if (positionTimeLeft > 0) {
       //if theres an active task with time left
-      timeLeft -= dt; //dt is seconds in Flame
+      positionTimeLeft -= dt; //dt is seconds in Flame
 
-      double timeProgress = 1 - (timeLeft / initialGivenTime); //progress of the time between 0 and 1
+      double posTimeProgress = 1 - (positionTimeLeft / initialGivenPositionTime); //progress of the time between 0 and 1
 
-      timeProgress = timeProgress.clamp(
-        0,
-        1,
-      ); //make sure its not over or below 0 and 1
+      posTimeProgress = posTimeProgress.clamp(0, 1); //make sure its not over or below 0 and 1
 
-      final double progressVal = switch (animationStyle) {
-        //progress of the animation between 0 and 1. this is NOT the same as the time progress, the increase of this variable isn't constant, sometimes getting slower at the end for example
-        AnimationStyle.linear => linear(timeProgress), //constant increase
+      final double posProgressVal = switch (animationStyle) {
+      //progress of the animation between 0 and 1. this is NOT the same as the time progress, the increase of this variable isn't constant, sometimes getting slower at the end for example
+        AnimationStyle.linear => linear(posTimeProgress), //constant increase
         AnimationStyle.easeIn => easeIn(
-          timeProgress,
+          posTimeProgress,
         ), //slow at the beginning and fast at the end
         AnimationStyle.easeOut => easeOut(
-          timeProgress,
+          posTimeProgress,
         ), //first fast and then slow
         AnimationStyle.easeInOut => easeInOut(
-          timeProgress,
+          posTimeProgress,
         ), //slow -> fast -> slow
       };
 
       pos = Vector2(
         initialPos.x +
             (givenMovePosition.x - initialPos.x) *
-                progressVal, //converting the direction and the progress of the animation into a position for the camera
-        initialPos.y + (givenMovePosition.y - initialPos.y) * progressVal,
+                posProgressVal, //converting the direction and the progress of the animation into a position for the camera
+        initialPos.y + (givenMovePosition.y - initialPos.y) * posProgressVal,
       );
+
+      if (posTimeProgress <= 0) {
+        //if the time is over, then set the position to the given one to avoid inaccuracies
+        pos = givenMovePosition;
+        posTimeProgress = 0;
+        initialGivenPositionTime = 0;
+      }
+    }
+
+    if(zoomTimeLeft > 0){
+      zoomTimeLeft -= dt;
+
+      double zoomTimeProgress = 1 - (zoomTimeLeft / initialGivenZoomTime);
+      zoomTimeProgress = zoomTimeProgress.clamp(0, 1);
+
+      final double zoomProgressVal = switch (animationStyle) {
+      //progress of the animation between 0 and 1. this is NOT the same as the time progress, the increase of this variable isn't constant, sometimes getting slower at the end for example
+        AnimationStyle.linear => linear(zoomTimeProgress), //constant increase
+        AnimationStyle.easeIn => easeIn(
+          zoomTimeProgress,
+        ), //slow at the beginning and fast at the end
+        AnimationStyle.easeOut => easeOut(
+          zoomTimeProgress,
+        ), //first fast and then slow
+        AnimationStyle.easeInOut => easeInOut(
+          zoomTimeProgress,
+        ), //slow -> fast -> slow
+      };
 
       if (givenZoom != null) {
         //if there was a zoom given, it has to be calculated as well
-        final double zoom = initialZoom! + (givenZoom! - initialZoom!) * progressVal;
+        final double zoom = initialZoom! + (givenZoom! - initialZoom!) * zoomProgressVal;
         viewfinder.zoom = zoom;
       }
-
-      if (timeLeft <= 0) {
-        //if the time is over, then set the position to the given one to avoid inaccuracies
-        pos = givenMovePosition;
-        timeLeft = 0;
-        initialGivenTime = 0;
-        givenZoom = null;
-      }
-    } else {
-      givenZoom =
-          null; //if the animation is over we reset the zoom to null so that the next animation can also have no zoom change
     }
 
     if (followPlayer) {
@@ -278,6 +296,12 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
     super.update(dt);
   }
 
+
+  Vector2 screenToWorld(Vector2 screenPos) => toGridPos(screenPos);
+  Vector2 worldToScreen(Vector3 worldPos) => toWorldPos(worldPos);
+
+
+
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
 
@@ -297,6 +321,12 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
     }
     if(keysPressed.contains(LogicalKeyboardKey.arrowDown)){
       moveBy(Vector2(0, 50));
+    }
+    if(keysPressed.contains(LogicalKeyboardKey.numpad1)){
+      moveBy(Vector2(0, 0), zoom: viewfinder.zoom + 0.1);
+    }
+    if(keysPressed.contains(LogicalKeyboardKey.numpad2)){
+      moveBy(Vector2(0, 0), zoom: max(0.1, viewfinder.zoom - 0.1));
     }
 
     return super.onKeyEvent(event, keysPressed);
