@@ -30,10 +30,10 @@ class IsometricTiledComponent extends TiledComponent with KeyboardHandler{ //tod
     final ChunkGenerator generator = TiledMapGenerator(gameTileMap);
     chunks = ChunkGrid(generator: generator);
 
-    //update rebuild every 2 seconds to true for testing
-    Timer.periodic(const Duration(seconds: 2), (timer) {
-      rebuild = true;
-    });
+    // //update rebuild every 2 seconds to true for testing
+    // Timer.periodic(const Duration(seconds: 2), (timer) {
+    //   rebuild = true;
+    // });
 
 
 
@@ -47,21 +47,17 @@ class IsometricTiledComponent extends TiledComponent with KeyboardHandler{ //tod
     Vector2 position,
     Vector2 viewportSize,
   ) {
-    if(rebuild){
-      chunks.rebuildCaches(position, viewportSize);
-      rebuild = false;
-    }
+
 
     chunks.render(canvas, components, position, viewportSize);
   }
 
   void forceRebuildCache() {}
 
-  bool rebuild = true;
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if(event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.keyF) {
-      rebuild = true;
+      chunks.rebuild = true;
       return true;
     }
     return super.onKeyEvent(event, keysPressed);

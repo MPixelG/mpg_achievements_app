@@ -300,8 +300,14 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
   Vector2 screenToWorld(Vector2 screenPos) => toGridPos(screenPos);
   Vector2 worldToScreen(Vector3 worldPos) => toWorldPos(worldPos);
 
+  double lastZoomBeforeDecoupling = 1.0;
+  double get zoom => decoupledZoom ? lastZoomBeforeDecoupling : viewfinder.zoom;
+  double get coupledZoom => viewfinder.zoom;
+  set zoom(double val) => viewfinder.zoom = val;
 
 
+  bool decoupledZoom = false;
+  //bool decoupledMovement = false;
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
 
@@ -328,6 +334,17 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
     if(keysPressed.contains(LogicalKeyboardKey.numpad2)){
       moveBy(Vector2(0, 0), zoom: max(0.1, viewfinder.zoom - 0.1));
     }
+    if(keysPressed.contains(LogicalKeyboardKey.numpad4)){
+      decoupledZoom = !decoupledZoom;
+      print("toggled decoupled cam zoom to $decoupledZoom");
+      if(decoupledZoom){
+        lastZoomBeforeDecoupling = viewfinder.zoom;
+      }
+    }
+    // if(keysPressed.contains(LogicalKeyboardKey.numpad5)){
+    //   decoupledMovement = !decoupledMovement;
+    //   print("toggled decoupled cam movement to $decoupledMovement");
+    // }
 
     return super.onKeyEvent(event, keysPressed);
   }
