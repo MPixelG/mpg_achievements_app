@@ -38,7 +38,7 @@ class ConversationManager with DialogueView {
 
   // Starts a new conversation from a given Yarn script.
   Future<void> startConversation(String yarnFilePath) async {
-      // Clear any bubbles from a previous conversation
+    // Clear any bubbles from a previous conversation
     _clearAllSpeechBubbles();
     // Helper class to load and parse the .yarn file.
     final yarnCreator = YarnCreator(
@@ -66,7 +66,8 @@ class ConversationManager with DialogueView {
   Future<bool> onLineStart(DialogueLine line) async {
     _lineCompleter = Completer<void>();
     //get context from game, The BuildContext argument is your handle into the location of the widget in the widget tree. This location is used for looking up inherited widgets
-    final BuildContext? _ = rootNavigatorKey.currentContext; //todo maybe GlobalKey<NavigatorState> for accessing BuildContext
+    final BuildContext? _ = rootNavigatorKey
+        .currentContext; //todo maybe GlobalKey<NavigatorState> for accessing BuildContext
     // Determine who is speaking. Default to 'Player' if no character is specified.
     // Your Yarn script should have lines like "Player: Hello!" or "Guard: Halt!".
     final String characterName = line.character?.name ?? 'Character';
@@ -75,10 +76,12 @@ class ConversationManager with DialogueView {
     print('found character:$character');
     // Add this check
     if (character == null) {
-      print("Error: Character '$characterName' not found in game.npcs. Cannot show speech bubble.");
+      print(
+        "Error: Character '$characterName' not found in game.npcs. Cannot show speech bubble.",
+      );
       // Complete the line immediately so dialogue doesn't hang
       _lineCompleter?.complete();
-    return true;
+      return true;
     }
     // Remove the previous speech bubble for this character, if one exists.
     _removeSpeechBubbleFor(characterName);
@@ -89,20 +92,21 @@ class ConversationManager with DialogueView {
     print('overlayKey1:$overlayKey');
     _activeSpeechBubbles[characterName] = overlayKey;
 
-
-    game.overlays.addEntry(overlayKey, (_,game) =>
-        SpeechBubble(
-            component: character,
-            text: line.text,
-            game: this.game,
-          onComplete: (){
-              if (!(_lineCompleter!.isCompleted ?? true)){
-                _lineCompleter!.complete();
-              }
-          },
-          onDismiss: () => _removeSpeechBubbleFor(characterName),
-        )
-        );
+    game.overlays.addEntry(
+      overlayKey,
+      (_, game) => SpeechBubble(
+        component: character,
+        text: line.text,
+        game: this.game,
+        onDismiss: () {
+          _removeSpeechBubbleFor(characterName);
+          //complete line after speechbubble is dismissed other bubble is dismissed too early
+          if (!(_lineCompleter!.isCompleted ?? true)) {
+            _lineCompleter!.complete();
+          }
+        },
+      ),
+    );
 
     game.overlays.add(overlayKey);
 
@@ -116,7 +120,8 @@ class ConversationManager with DialogueView {
   Future<int> onChoiceStart(DialogueChoice choice) async {
     _choiceCompleter = Completer<int>();
 
-    final BuildContext? _ = rootNavigatorKey.currentContext; //todo maybe GlobalKey<NavigatorState> for accessing BuildContext
+    final BuildContext? _ = rootNavigatorKey
+        .currentContext; //todo maybe GlobalKey<NavigatorState> for accessing BuildContext
 
     // Choices are always presented from the player's perspective.
     const characterName = 'Player';
@@ -124,13 +129,15 @@ class ConversationManager with DialogueView {
     print('characterChoice:$character');
 
     if (character == null) {
-      print("Error: Character '$characterName' not found. Cannot show choices.");
+      print(
+        "Error: Character '$characterName' not found. Cannot show choices.",
+      );
       // Default to the first choice to avoid getting stuck.
       return 0;
     }
 
     // Remove the player's last line to make room for the choices bubble.
-   // _removeSpeechBubbleFor(characterName);
+    // _removeSpeechBubbleFor(characterName);
 
     final String overlayKey =
         'SpeechBubble_Choices_${DateTime.now().millisecondsSinceEpoch}';
@@ -139,7 +146,7 @@ class ConversationManager with DialogueView {
 
     game.overlays.addEntry(
       overlayKey,
-          (_, game) => SpeechBubble(
+      (_, game) => SpeechBubble(
         key: ValueKey(overlayKey),
         game: this.game,
         component: character,
@@ -156,7 +163,6 @@ class ConversationManager with DialogueView {
     );
 
     game.overlays.add(overlayKey);
-
 
     return _choiceCompleter!.future;
   }
@@ -175,7 +181,8 @@ class ConversationManager with DialogueView {
 
     // You need a way to access your NPCs. This example assumes they are
     // in a list on your `gameWorld` component.
-    return game.npcs[name]; }
+    return game.npcs[name];
+  }
 
   // Removes the currently active speech bubble for a specific character.
   void _removeSpeechBubbleFor(String characterName) {
@@ -225,7 +232,10 @@ class ConversationManager with DialogueView {
             child: TextButton(
               // Using `dialogContext` ensures we only pop the dialog itself,
               // not the entire dialogue screen or game view.
-              onPressed: () => {Navigator.of(dialogContext).pop(), _showingScript = false},
+              onPressed: () => {
+                Navigator.of(dialogContext).pop(),
+                _showingScript = false,
+              },
               child: const Text('Close'),
             ),
           ),

@@ -12,11 +12,9 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late Vector2 _bubblePosition;
   late double _componentHeight;
   late double _componentWidth;
+  late Vector2 _bubbleCorrectionOffset;
 
-  //offset from character(i.e. y/x position from head
-  static const double _bubbleOffset = 40;
-
-  //currently displayed text
+   //currently displayed text
   String _displayedText = '';
   //text to display
   int _currentIndex = 0;
@@ -31,7 +29,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   //Duration between character appearing and text displaying
   late final Duration typingSpeed = const Duration(milliseconds: 20);
   late final Duration showDuration = const Duration(seconds: 15);
-  late final Duration dismissDuration = const Duration(seconds: 30);
+  late final Duration dismissDuration = const Duration(seconds: 1);
   bool _autoDismiss =
       true; // Automatically dismiss the speech bubble after a certain duration
   bool autoStart =
@@ -265,6 +263,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   // UI Building
   @override
   Widget build(BuildContext context) {
+
     try {
       if (!_isSpeechBubbleVisible) {
         return const SizedBox.shrink(); // Render nothing if not visible
@@ -273,16 +272,19 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       // Initialize the player position and height
       _componentHeight = widget.component.height;
       _componentWidth = widget.component.width;
+      //offset from character(i.e. y/x position from head
+      _bubbleCorrectionOffset = Vector2(0, 100);
+
       // Adjust the position based on the camera's local to global conversion
       _bubblePosition = widget.game.cam.localToGlobal(
-        toWorldPos(widget.component.position),
+        toWorldPos(widget.component.gridHeadPos),
       );
 
       return AnimatedPositioned(
         // The position is now directly derived from the character's state vector
         left: _bubblePosition.x,
         // Center the bubble horizontally
-        top: _bubblePosition.y - _componentHeight - _bubbleOffset,
+        top: _bubblePosition.y - _bubbleCorrectionOffset.y,
         // Position above the character
         // Position above the character
         // Use the bubbleOffset to adjust the position if needed
