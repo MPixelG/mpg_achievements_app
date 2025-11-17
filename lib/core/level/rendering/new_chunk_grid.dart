@@ -1,8 +1,8 @@
+import 'dart:async';
 import 'dart:core';
-import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:flame/components.dart';
+import 'package:flame/components.dart' hide Timer;
 import 'package:mpg_achievements_app/core/level/generation/chunk_generator.dart';
 import 'package:mpg_achievements_app/core/level/rendering/cached_image_world_map.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -20,7 +20,11 @@ class ChunkGrid {
 
   ChunkGenerator generator;
 
-  ChunkGrid({required this.generator});
+  ChunkGrid({required this.generator}){
+    Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      tickNextFrame = true;
+    });
+  }
 
   void generateChunksInViewport(Vector2 position, Vector2 size) {
     final Set<Vector2> visibleChunkCoords = chunksVisibleByCamera(position, size);
@@ -33,8 +37,43 @@ class ChunkGrid {
     }
   }
 
-  static const double viewportExtendPixels = 32;
+  static const double viewportExtendPixels = 128;
   static const double upscaleFactor = 1;
+
+
+  bool camOutsideCache(Vector2 camPos, CachedImageWorldMap? cache, Vector2 viewportSize) {
+    if(cache == null) return true;
+
+    final Vector2 cacheBR = cache.capturedSize + cache.camPos;
+    final Vector2 cacheTL = cache.camPos;
+
+    if(camPos.x < cacheTL.x || camPos.y < cacheTL.y) return true;
+    if(camPos.x + viewportSize.x > cacheBR.x || camPos.y + viewportSize.y > cacheBR.y) return true;
+
+    return false;
+  }
+
+  bool tickNextFrame = true;
+  void tick(Vector2 position, Vector2 viewportSize) {
+    tickNextFrame = false;
+    if(camOutsideCache(position, albedoCache, viewportSize) || rebuild) {
+      rebuildCaches(position - Vector2.all(viewportExtendPixels/2), viewportSize + Vector2.all(viewportExtendPixels));
+      rebuild = false;
+    }
+  }
+
+  double timeSinceLastRebuild = 0;
+  Paint debugPaint = Paint()
+    ..color = const Color(0x8813C52A)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2;
+  Paint debugPaint2 = Paint()
+    ..color = const Color(0x88FF0000)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2;
+
+  Vector2 lastCamPos = Vector2.zero();
+  Vector2 lastViewportSize = Vector2.zero();
 
   void render(
     Canvas canvas,
@@ -42,18 +81,26 @@ class ChunkGrid {
     Vector2 position,
     Vector2 viewportSize,
   ) async {
+
+    if(lastCamPos != position || lastViewportSize != viewportSize) {
+      lastCamPos = position.clone();
+      lastViewportSize = viewportSize.clone();
+      tick(position, viewportSize);
+    }
+
     if (albedoCache != null) {
       if(albedoCache!.image != null) {
         final Vector2 posTL = position - Vector2.all(viewportExtendPixels / upscaleFactor / 2);
 
         canvas.save();
-        canvas.translate(posTL.x, posTL.y);
+        canvas.translate(position.x, position.y);
 
-        canvas.drawImage(albedoCache!.image!, -(posTL - albedoCache!.camPos).toOffset(), Paint());
+        canvas.drawImage(albedoCache!.image!, -(position - albedoCache!.camPos).toOffset(), Paint());
 
-        canvas.drawCircle((viewportSize / 2).toOffset() -(posTL - albedoCache!.camPos).toOffset(), 15, Paint()..color=const Color(0x887B15B7));
-
-        canvas.drawRect(-(position - albedoCache!.camPos).toOffset() & (viewportSize + Vector2.all(viewportExtendPixels)) .toSize(), Paint()..color = const Color(0x88FF0000)..style=PaintingStyle.stroke..strokeWidth=2);
+        // canvas.drawCircle((viewportSize / 2).toOffset() - (position - albedoCache!.camPos).toOffset(), 15, Paint()..color=const Color(0x887B15B7));
+        //
+        // canvas.drawRect(-(posTL - albedoCache!.camPos).toOffset() & (viewportSize) .toSize(), debugPaint);
+        // canvas.drawRect(-(position - albedoCache!.camPos).toOffset() & (viewportSize + Vector2.all(viewportExtendPixels)) .toSize(), debugPaint2);
 
 
         canvas.restore();
@@ -68,7 +115,7 @@ class ChunkGrid {
     }
   }
 
-
+  bool rebuild = true;
   bool currentlyRebuilding = false;
   Future<void> rebuildCaches(Vector2 position, Vector2 viewportSize) async {
     if (currentlyRebuilding) return;
@@ -90,7 +137,7 @@ class ChunkGrid {
     final Canvas normalCanvas = Canvas(normalRecorder);
 
 
-    final Vector2 posTL = -position + Vector2.all(viewportExtendPixels / upscaleFactor / 2); //todo adjust in velocity of camera
+    final Vector2 posTL = -position; //todo adjust in velocity of camera
     albedoCanvas.translate(posTL.x, posTL.y);
     normalCanvas.translate(posTL.x, posTL.y);
 
