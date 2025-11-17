@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'dart:math' as math;
 
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
@@ -146,7 +147,34 @@ enum AnimatedComponentGroup {
   effect, //for later use, indicates if the object changes in some vals or not.
 }
 
+// Isometrische Richtungen für 8-Richtungenewegung
+enum IsoDirection {
+  s,   // South (unten)
+  se,  // South-East (rechtsunten)
+  e,   // East (rechts)
+  ne,  // North-East (rechtsoben)
+  n,   // North (oben)
+  nw,  // North-West (linkoben)
+  w,   // West (links)
+  sw,  // South-West (linksunten)
+}
+
 mixin HasMovementAnimations on AnimationManager {
+  //current character face direction
+  final IsoDirection _currentDirection = IsoDirection.s;
+  IsoDirection get currentDirection => _currentDirection;
+
+  IsoDirection calculateIsoDirection(Vector3 velocity) {
+    if (velocity.x == 0 && velocity.z == 0) {
+      return _currentDirection;
+    }
+
+    //calcualte angle
+    double angle = math.atan2(velocity.z, velocity.x)*180/math.pi;
+    if (angle<0) angle += 360;
+    return IsoDirection.e;
+  }
+
   List<AnimationLoadOptions> get movementAnimationDefaultOptions => [
     AnimationLoadOptions(
       "idle",
