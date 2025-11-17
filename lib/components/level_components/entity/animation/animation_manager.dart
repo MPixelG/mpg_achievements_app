@@ -6,8 +6,7 @@ import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-mixin AnimationManager
-    on AnimatedCharacter, HasGameReference<PixelAdventure> {
+mixin AnimationManager on AnimatedCharacter, HasGameReference<PixelAdventure> {
   final double stepTime = 0.05; //the time for every frame
 
   String get componentSpriteLocation; //the path to the objects animations
@@ -149,14 +148,14 @@ enum AnimatedComponentGroup {
 
 // Isometrische Richtungen für 8-Richtungenewegung
 enum IsoDirection {
-  s,   // South (unten)
-  se,  // South-East (rechtsunten)
-  e,   // East (rechts)
-  ne,  // North-East (rechtsoben)
-  n,   // North (oben)
-  nw,  // North-West (linkoben)
-  w,   // West (links)
-  sw,  // South-West (linksunten)
+  s, // South (unten)
+  se, // South-East (rechtsunten)
+  e, // East (rechts)
+  ne, // North-East (rechtsoben)
+  n, // North (oben)
+  nw, // North-West (linkoben)
+  w, // West (links)
+  sw, // South-West (linksunten)
 }
 
 mixin HasMovementAnimations on AnimationManager {
@@ -170,8 +169,8 @@ mixin HasMovementAnimations on AnimationManager {
     }
 
     //calcualte angle
-    double angle = math.atan2(velocity.z, velocity.x)*180/math.pi;
-    if (angle<0) angle += 360;
+    double angle = math.atan2(velocity.z, velocity.x) * 180 / math.pi;
+    if (angle < 0) angle += 360;
     return IsoDirection.e;
   }
 
@@ -180,22 +179,15 @@ mixin HasMovementAnimations on AnimationManager {
       "idle",
       "$componentSpriteLocation/Idle",
     ), //some pre-defined animations for movement
-    AnimationLoadOptions(
-      "running",
-      "$componentSpriteLocation/Run",
-    ),
-    AnimationLoadOptions(
-      "jumping",
-      "$componentSpriteLocation/Jump",
-    ),
-    AnimationLoadOptions(
-      "falling",
-      "$componentSpriteLocation/Fall",
-    ),
+    AnimationLoadOptions("running", "$componentSpriteLocation/Run"),
+    AnimationLoadOptions("jumping", "$componentSpriteLocation/Jump"),
+    AnimationLoadOptions("falling", "$componentSpriteLocation/Fall"),
   ];
 
-  bool get isInHitFrames; //if the player is currently being hit, we dont want to overwrite the animation
-  bool get isInRespawnFrames; //if the player is currently respawning, we dont want to overwrite the animation
+  bool
+  get isInHitFrames; //if the player is currently being hit, we dont want to overwrite the animation
+  bool
+  get isInRespawnFrames; //if the player is currently respawning, we dont want to overwrite the animation
 
   @override
   void update(double dt) {
@@ -219,7 +211,10 @@ mixin HasMovementAnimations on AnimationManager {
       scale.x = -scale.x;
     }
     //Check if moving
-    if (velocity.x > 4 || velocity.x < -4 || velocity.z > 4 || velocity.z < -4) {
+    if (velocity.x > 4 ||
+        velocity.x < -4 ||
+        velocity.z > 4 ||
+        velocity.z < -4) {
       animation = getAnimation("running");
     }
 
