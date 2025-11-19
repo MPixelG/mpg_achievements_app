@@ -38,7 +38,7 @@ void main() {
     vec4 albedoPixel = texture(albedoMap, uv);
     vec4 albedoPixelEntity = texture(albedoMapEntity, uvEntity);
 
-    albedoPixel += albedoPixelEntity / 10;
+    albedoPixel += albedoPixelEntity / 7; // slight glow from entities, even when behind walls
 
 
     vec4 normalPixel = texture(depthMap, uv);

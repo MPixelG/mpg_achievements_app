@@ -45,12 +45,4 @@ abstract class GameCharacter extends IsoPositionComponent
     }
     super.update(dt);
   }
-
-  @override
-  void renderTree(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]){
-    super.renderTree(canvas, normalCanvas, getNormalPaint);
-
-    canvas.drawCircle(Offset.zero, 7, Paint()..color=Color.fromARGB(50, 0, 255, 0));
-
-  }
 }
