@@ -3,62 +3,64 @@ precision mediump float;
 
 uniform sampler2D albedoMap;
 uniform sampler2D depthMap;
-uniform vec2 screenSize;
+uniform sampler2D albedoMapEntity;
+uniform sampler2D depthMapEntity;
+uniform vec2 mapSize;
+uniform vec2 entityMapSize;
+uniform vec2 entityMapOffset;
 uniform vec3 lightPos;
 uniform float heightScale;
 uniform float testUniform;
 
 out vec4 fragColor;
 
-vec2 iso2orth(vec3 iso) {
-    float sum = iso.y / heightScale + iso.z;
-    float diff = iso.x;
-    float x = (sum + diff) * 0.5;
-    float y = (sum - diff) * 0.5;
-    return vec2(x, y);
-}
+float dx = (1.0 / mapSize.x) * 1;
+float dy = (1.0 / mapSize.y) * 1;
+float dxEntity = (1.0 / entityMapSize.x) * 1;
+float dyEntity = (1.0 / entityMapSize.y) * 1;
 
-float calculateShadow(vec3 fragPos, vec3 dirToLight, float heightScale){
-    vec3 currentPos = fragPos;
-    float stepSize = 0.005;
-
-    float shadow = 1.0;
-
-    for (int i = 0; i < 5; i++){
-        currentPos += dirToLight * stepSize;
-
-        if (any(lessThan(currentPos.xy, vec2(0.0))) || any(greaterThan(currentPos.xy, vec2(1.0)))){
-            break;
-        }
-
-        float heightVal = texture(depthMap, currentPos.xy).b * heightScale;
-
-        if (heightVal > currentPos.z + 0.1){
-            shadow = clamp(shadow - 0.9, 0.0, 1.0);
-            break;
-        }
+float heightInDirection(vec2 uv, vec2 uvEntity, vec2 dir) {
+    float h = texture(depthMap, uv).b;
+    float hEntity = texture(depthMapEntity, uvEntity).b;
+    if(hEntity > h){
+        return texture(depthMapEntity, uvEntity + dir*vec2(dxEntity, dyEntity)).b;
     }
-    return shadow;
+
+    return texture(depthMap, uv + dir*vec2(dx, dy)).b;
 }
+
 void main() {
     vec3 adjustedLightPos = lightPos;
-    vec2 uv = (FlutterFragCoord().xy) / screenSize;
-    vec4 albedoPixel = texture(albedoMap, uv);
-    vec4 normalPixel = texture(depthMap, uv);
 
-    if(normalPixel.a == 0) return;
+    vec2 uv = (FlutterFragCoord().xy) / mapSize;
+    vec2 uvEntity = (FlutterFragCoord().xy + entityMapOffset) / entityMapSize;
+
+    vec4 albedoPixel = texture(albedoMap, uv);
+    vec4 albedoPixelEntity = texture(albedoMapEntity, uvEntity);
+
+    albedoPixel += albedoPixelEntity / 10;
+
+
+    vec4 normalPixel = texture(depthMap, uv);
+    vec4 normalPixelEntity = texture(depthMapEntity, uvEntity);
+
+    if(normalPixel.a == 0 && normalPixelEntity.a == 0) return;
 
 
     float pixelHeight = normalPixel.b;
+    float pixelHeightEntity = normalPixelEntity.b;
 
-    float dx = (1.0 / screenSize.x) * 1;
-    float dy = (1.0 / screenSize.y) * 1;
-    float H = texture(depthMap, uv).b;
+    if(pixelHeightEntity > pixelHeight){
+        albedoPixel = albedoPixelEntity + (albedoPixel.a-albedoPixelEntity.a)*albedoPixel;
+        normalPixel = normalPixelEntity;
+        pixelHeight = pixelHeightEntity;
+    }
 
-    float Hleft  = texture(depthMap, uv + vec2(-dx, 0.0)).b;
-    float Hright = texture(depthMap, uv + vec2(+dx, 0.0)).b;
-    float Hdown  = texture(depthMap, uv + vec2(0.0, -dy)).b;
-    float Hup    = texture(depthMap, uv + vec2(0.0, +dy)).b;
+
+    float Hleft  = heightInDirection(uv, uvEntity, vec2(-1.0, 0.0));
+    float Hright = heightInDirection(uv, uvEntity, vec2(+1.0, 0.0));
+    float Hdown  = heightInDirection(uv, uvEntity, vec2(+0.0, -1.0));
+    float Hup    = heightInDirection(uv, uvEntity, vec2(+0.0, +1.0));
 
     float dHx = Hright - Hleft;
     float dHy = Hup - Hdown;
@@ -83,7 +85,7 @@ void main() {
     vec3 diffuse = lightColor * NdotL  * (((pixelHeight) / 5) + 0.75);
     vec3 color = albedoPixel.rgb * (vec3(0.11, 0.1, 0.1)*2 + diffuse);
 
-    float HleftUp  = texture(depthMap, uv + vec2(-dx, -dy)).b;
+    float HleftUp  = heightInDirection(uv, uvEntity, vec2(-1.0, +1.0));
 
     //if(pixelHeight - Hleft < -0.01 || pixelHeight - Hup < -0.01) color.rgb *= 0.8;
 

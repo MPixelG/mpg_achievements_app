@@ -12,6 +12,7 @@ import 'package:mpg_achievements_app/components/controllers/keyboard_character_c
 import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import '../../../state_management/providers/player_state_provider.dart';
 import '../../controllers/control_action_bundle.dart';
@@ -247,7 +248,11 @@ class Player extends AnimatedCharacter
     super.render(canvas);
     // canvas.drawCircle(toWorldPos(hitbox.position, 0).toOffset(), 2, Paint()..color = Colors.blue);
     // canvas.drawCircle(toWorldPos(hitbox.size, 0).toOffset(), 2, Paint()..color = Colors.blue);
-    //normalSprite.render(normalCanvas!, overridePaint: getNormalPaint!(), position: toWorldPos(position) - Vector2(animationTicker!.getSprite().srcSize.x / 2, 0));
+    canvas.save();
+    //canvas.translate(0, -animationTicker!.getSprite().srcSize.y - tilesize.z/2);
+    normalSprite.render(normalCanvas!, overridePaint: getNormalPaint!(), position: toWorldPos(position) - Vector2(animationTicker!.getSprite().srcSize.x / 2, animationTicker!.getSprite().srcSize.y - tilesize.z/2));
+    //normalSprite.render(canvas, overridePaint: getNormalPaint(), position: toWorldPos(position) - Vector2(animationTicker!.getSprite().srcSize.x / 2, 0));
+    canvas.restore();
   }
 
   @override

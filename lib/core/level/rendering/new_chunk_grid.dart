@@ -273,6 +273,8 @@ class ChunkGrid {
       canvas.save();
       shader!.setImageSampler(0, _currentAlbedoCache!.image);
       shader!.setImageSampler(1, _currentNormalCache!.image);
+      shader!.setImageSampler(2, _currentAlbedoCacheEntity!.image);
+      shader!.setImageSampler(3, _currentNormalCacheEntity!.image);
 
       final double time = DateTime.now().millisecondsSinceEpoch / 10000;
       final double lightX = cos(time) * 300;
@@ -282,6 +284,10 @@ class ChunkGrid {
         val.setFloats([
           _currentAlbedoCache!.width,
           _currentAlbedoCache!.height,
+          _currentAlbedoCacheEntity!.width,
+          _currentAlbedoCacheEntity!.height,
+          _currentAlbedoCache!.pos.x - _currentAlbedoCacheEntity!.pos.x,
+          _currentAlbedoCache!.pos.y - _currentAlbedoCacheEntity!.pos.y,
           lightX,
           lightZ,
           35
@@ -298,11 +304,14 @@ class ChunkGrid {
     if (_currentNormalCacheEntity != null &&
         _currentAlbedoCacheEntity != null) {
       canvas.save();
-      canvas.drawImage(
-          _currentAlbedoCacheEntity!.image,
-          (_currentAlbedoCacheEntity!.pos).toOffset(),
-          Paint()
-      );
+      // canvas.drawImage(
+      //     _currentAlbedoCacheEntity!.image,
+      //     (_currentAlbedoCacheEntity!.pos).toOffset(), //a bit of transparency to indicate loading
+      //     Paint()..colorFilter = const ColorFilter.mode(
+      //       Color(0x25FFFFFF),
+      //       BlendMode.modulate,
+      //     )
+      // );
       canvas.restore();
     }
   }
@@ -312,8 +321,8 @@ class ChunkGrid {
 
   Paint calculateNormalPaint(IsometricRenderable renderable) {
     final double startVal =
-        ((renderable.gridFeetPos.y - 1) / Chunk.highestYTileInWorld) * 256;
-    final double endVal = (renderable.gridFeetPos.y / Chunk.highestYTileInWorld);
+        ((renderable.gridFeetPos.y) / Chunk.highestYTileInWorld) * 256;
+    final double endVal = ((renderable.gridFeetPos.y+1) / Chunk.highestYTileInWorld);
 
     overridePaint.colorFilter = ColorFilter.matrix([
       1, 0, 0, 0,
