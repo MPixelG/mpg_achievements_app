@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -241,4 +242,15 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
       _autoResize = false;
     }
   }
+
+  @override
+  int get hashCode => Object.hashAll([
+    super.hashCode,
+    removeOnFinish,
+    _animations,
+    playing,
+    _autoResize,
+    autoResetTicker,
+    animationTicker?.currentFrame,
+  ]);
 }

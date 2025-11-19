@@ -18,34 +18,6 @@ vec2 iso2orth(vec3 iso) {
     return vec2(x, y);
 }
 
-
-vec3 calculateBasicLighting(vec3 lightPos){
-    vec2 uv = (FlutterFragCoord().xy) / screenSize;
-
-
-    vec4 depthMapPixel = texture(depthMap, uv);
-    vec2 nxy = depthMapPixel.rg * 2.0 - 1.0;
-    float nz = sqrt(max(0.0, 1.0 - nxy.x*nxy.x - nxy.y*nxy.y));
-    vec3 n = normalize(vec3(nxy, nz));
-
-    float height = depthMapPixel.b;
-
-    vec3 fragPos = vec3(uv, height);
-
-    vec3 L = lightPos - fragPos;
-    float dist = length(L);
-    L = normalize(L);
-
-    float NdotL = max(dot(n, L), 0);
-    float range = 2.2;
-    float att = 1.0 / (1.0 + 16.0 * (dist / range) * (dist / range));
-
-    vec3 lightColor = vec3(1, 0.7, 0.75);
-    vec3 diffuse = lightColor * NdotL;
-
-    return diffuse * (((depthMapPixel.b) / 5) + 0.75);
-}
-
 float calculateShadow(vec3 fragPos, vec3 dirToLight, float heightScale){
     vec3 currentPos = fragPos;
     float stepSize = 0.005;
@@ -73,11 +45,14 @@ void main() {
     vec2 uv = (FlutterFragCoord().xy) / screenSize;
     vec4 albedoPixel = texture(albedoMap, uv);
     vec4 normalPixel = texture(depthMap, uv);
+
+    if(normalPixel.a == 0) return;
+
+
     float pixelHeight = normalPixel.b;
 
-    float dx = 1.0 / screenSize.x;
-    float dy = 1.0 / screenSize.y;
-
+    float dx = (1.0 / screenSize.x) * 1;
+    float dy = (1.0 / screenSize.y) * 1;
     float H = texture(depthMap, uv).b;
 
     float Hleft  = texture(depthMap, uv + vec2(-dx, 0.0)).b;
@@ -88,23 +63,29 @@ void main() {
     float dHx = Hright - Hleft;
     float dHy = Hup - Hdown;
 
-    float normalStrength = 0.2;
+    float normalStrength = 0.06;
 
     vec3 normal = normalize(vec3(-dHx, -dHy, normalStrength));
 
     normalPixel.rgb = normal * 0.5 + 0.5;
 
 
+    vec3 fragPos = vec3(uv, pixelHeight);
+    vec3 L = lightPos - fragPos;
+    float dist = length(L);
+    L = normalize(L);
 
-    if(normalPixel.a == 0) return;
+    float NdotL = max(dot(normalPixel.rgb, L), 0);
+    float range = 2.2;
+    float att = 1.0 / (1.0 + 16.0 * (dist / range) * (dist / range));
 
-    float heightScale = 0.5;
-    vec3 fragPos = vec3(uv, pixelHeight * heightScale);
-    vec3 dirToLight = normalize(adjustedLightPos - fragPos);
-
-
-    vec3 diffuse = calculateBasicLighting(adjustedLightPos);
+    vec3 lightColor = vec3(1, 0.7, 0.75);
+    vec3 diffuse = lightColor * NdotL  * (((pixelHeight) / 5) + 0.75);
     vec3 color = albedoPixel.rgb * (vec3(0.11, 0.1, 0.1)*2 + diffuse);
 
-    fragColor = vec4(normalPixel.rgb, albedoPixel.a);
+    float HleftUp  = texture(depthMap, uv + vec2(-dx, -dy)).b;
+
+    //if(pixelHeight - Hleft < -0.01 || pixelHeight - Hup < -0.01) color.rgb *= 0.8;
+
+    fragColor = vec4(color, albedoPixel.a);
 }

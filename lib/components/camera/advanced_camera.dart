@@ -46,8 +46,7 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
   late AnimationStyle shakingAnimation;
 
   bool followPlayer = false;
-  late double
-  followAccuracy; //the distance between camera pos and player pos it needs to move the camera. so a higher value equals less frequent camera adjustments
+  late double followAccuracy; //the distance between camera pos and player pos it needs to move the camera. so a higher value equals less frequent camera adjustments
 
   Vector2 boundsMin = Vector2.zero();
   Vector2 boundsMax = Vector2.all(double.infinity);
@@ -155,9 +154,6 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
     shakingAnimation = animationStyle;
   }
 
-  late Vector2 centeredCamPos;
-
-  // easing helpers
   double linear(double t, {double startVal = 0, double endVal = 1}) =>
       startVal + (endVal - startVal) * t;
   double easeIn(double t, {double startVal = 0, double endVal = 1}) =>
@@ -207,13 +203,6 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
                 posProgressVal, //converting the direction and the progress of the animation into a position for the camera
         initialPos.y + (givenMovePosition.y - initialPos.y) * posProgressVal,
       );
-
-      if (posTimeProgress <= 0) {
-        //if the time is over, then set the position to the given one to avoid inaccuracies
-        pos = givenMovePosition;
-        posTimeProgress = 0;
-        initialGivenPositionTime = 0;
-      }
     }
 
     if(zoomTimeLeft > 0){

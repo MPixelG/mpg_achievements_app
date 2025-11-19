@@ -111,12 +111,9 @@ class IsometricWorld extends GameWorld {
   @override
   void renderFromCamera(Canvas canvas) {
     assert(CameraComponent.currentCamera != null);
-    renderTree(canvas);
-
-    if (level is! IsometricTiledComponent) return;
 
     for (final child in children.where(
-      (element) => element is! IsometricRenderable && element != level,
+          (element) => element is! IsometricRenderable && element != level,
     )) {
       child.renderTree(canvas);
     }
@@ -127,29 +124,6 @@ class IsometricWorld extends GameWorld {
       CameraComponent.currentCamera!.viewfinder.position - (CameraComponent.currentCamera!.viewport.virtualSize/2),
       CameraComponent.currentCamera!.viewport.virtualSize,
     );
-
-    if(debugMode && tmpBlocks.isNotEmpty) {
-      // renderIsoBox(canvas: canvas, start: Vector3.zero(), end: end.xzy, fillSides: false, originOffset: toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftLeft)).toOffset());
-      // canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftLeft).xzy).toOffset(), 1, Paint()..color = Colors.red);
-      // canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomRightRight).xzy).toOffset(), 1, Paint()..color = Colors.green);
-      // canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomRightLeft).xzy).toOffset(), 1, Paint()..color = Colors.blue);
-      // canvas.drawCircle(toWorldPos(player.positionOfAnchor(Anchor3D.bottomLeftRight).xzy).toOffset(), 1, Paint()..color = Colors.cyan);
-
-      final Vector2 playerHitboxScreenPos = toWorldPos(player.hitbox.aabb.min);
-      final Vector2 playerHitboxScreenPosMax = toWorldPos(player.hitbox.aabb.max);
-
-      canvas.drawCircle(playerHitboxScreenPos.toOffset(), 1, Paint()..color = Colors.cyan);
-      canvas.drawCircle(playerHitboxScreenPosMax.toOffset(), 1, Paint()..color = Colors.red);
-
-
-      final Aabb3 blockAabb = tmpBlocks.last.hitbox.aabb;
-      final Vector2 tileHitboxScreenPos = toWorldPos(blockAabb.min);
-      final Vector2 tileHitboxScreenPosMax = toWorldPos(blockAabb.max);
-
-      canvas.drawCircle(tileHitboxScreenPos.toOffset(), 1, Paint()..color = Colors.deepOrange);
-      canvas.drawCircle(tileHitboxScreenPosMax.toOffset(), 1, Paint()..color = Colors.deepPurpleAccent);
-
-    }
   }
 
   @override

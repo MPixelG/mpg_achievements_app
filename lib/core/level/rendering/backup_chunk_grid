@@ -17,6 +17,8 @@ class ChunkGrid {
 
   bool _isRebuildingTerrain = false;
   bool _isRebuildingEntities = false;
+  bool _needsTerrainRebuild = true;
+  bool _needsEntityRebuild = true;
 
   CachedImageWorldMap? _currentAlbedoCache;
   CachedImageWorldMap? _nextAlbedoCache;
@@ -60,8 +62,8 @@ class ChunkGrid {
   bool camOutsideCache(Vector2 camPos, CachedImageWorldMap? cache, Vector2 viewportSize) {
     if(cache == null) return true;
 
-    final Vector2 cacheBR = cache.capturedSize + cache.pos;
-    final Vector2 cacheTL = cache.pos;
+    final Vector2 cacheBR = cache.capturedSize + cache.camPos;
+    final Vector2 cacheTL = cache.camPos;
 
     if(camPos.x < cacheTL.x || camPos.y < cacheTL.y) return true;
     if(camPos.x + viewportSize.x > cacheBR.x || camPos.y + viewportSize.y > cacheBR.y) return true;
@@ -74,8 +76,10 @@ class ChunkGrid {
     tickNextFrame = false;
 
     if (camOutsideCache(position, _currentAlbedoCache, viewportSize) ||
+        _needsTerrainRebuild ||
         _currentAlbedoCache == null) {
       if (!_isRebuildingTerrain) {
+        _needsTerrainRebuild = false;
         _rebuildTerrainCachesAsync(
             position - Vector2.all(viewportExtendPixels/2),
             viewportSize + Vector2.all(viewportExtendPixels)
@@ -289,8 +293,8 @@ class ChunkGrid {
       });
 
       shaderPaint.shader = shader;
-      canvas.translate(_currentAlbedoCache!.pos.x, _currentAlbedoCache!.pos.y);
-      canvas.drawRect((viewportSize + Vector2.all(viewportExtendPixels)).toRect(), shaderPaint);
+
+      canvas.drawRect(_currentAlbedoCache!.camPos.toOffset() & viewportSize.toSize(), shaderPaint);
 
       canvas.restore();
     }
@@ -300,7 +304,7 @@ class ChunkGrid {
       canvas.save();
       canvas.drawImage(
           _currentAlbedoCacheEntity!.image,
-          (_currentAlbedoCacheEntity!.pos).toOffset(),
+          (_currentAlbedoCacheEntity!.camPos).toOffset(),
           Paint()
       );
       canvas.restore();

@@ -127,6 +127,8 @@ class ChunkGrid {
         getNeighborChunkCluster(chunk),
       );
 
+
+
       albedoCanvas.restore();
       normalCanvas.restore();
     }
