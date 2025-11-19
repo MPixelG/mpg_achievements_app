@@ -8,6 +8,8 @@ mixin IsometricRenderable {
   Vector3 get gridFeetPos;
   Vector3 get gridHeadPos;
 
+  Vector3 get size => gridHeadPos - gridFeetPos;
+
   bool _dirty = true;
   bool updatesNextFrame = false;
 

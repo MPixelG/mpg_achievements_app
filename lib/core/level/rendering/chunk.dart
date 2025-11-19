@@ -11,6 +11,7 @@ import '../isometric/isometric_renderable.dart';
 import 'chunk_tile.dart';
 import 'game_tile_map.dart';
 import 'neighbor_chunk_cluster.dart';
+import 'new_chunk_grid.dart';
 
 class Chunk {
   final int x;
@@ -278,27 +279,12 @@ class Chunk {
 
       }
 
-      currentRenderable.renderTree(albedoCanvas, normalCanvas, () => calculateNormalPaint(currentRenderable!));
+      currentRenderable.renderTree(albedoCanvas, normalCanvas, () => calculateNormalPaint(currentRenderable!, overridePaint));
     }
     albedoCanvas.restore();
     normalCanvas.restore();
   }
   Paint overridePaint = Paint()..isAntiAlias = false..filterQuality = FilterQuality.none;
-
-  Paint calculateNormalPaint(IsometricRenderable renderable) {
-    final double startVal =
-        ((renderable.gridFeetPos.y - 1) / highestYTileInWorld) * 256;
-    final double endVal = (renderable.gridFeetPos.y / highestYTileInWorld);
-
-    overridePaint.colorFilter = ColorFilter.matrix([
-      1, 0, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 0,
-      endVal, 0, startVal, 0,
-      0, 0, 1, 0,
-    ]);
-    return overridePaint;
-  }
 
   bool containsRenderable(IsometricRenderable r) {
     final double fx = r.gridFeetPos.x;

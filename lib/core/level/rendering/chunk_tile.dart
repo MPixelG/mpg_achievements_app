@@ -40,10 +40,10 @@ class ChunkTile with IsometricRenderable {
 
 
   @override
-  Vector3 get gridFeetPos => posWorld + Vector3.all(1);
+  Vector3 get gridFeetPos => posWorld;
 
   @override
-  Vector3 get gridHeadPos => gridFeetPos;
+  Vector3 get gridHeadPos => gridFeetPos + Vector3.all(1);
 
   final Paint renderPaint = Paint()..isAntiAlias = false..filterQuality = FilterQuality.none;
   @override

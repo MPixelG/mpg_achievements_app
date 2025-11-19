@@ -56,6 +56,9 @@ void main() {
         pixelHeight = pixelHeightEntity;
     }
 
+//    fragColor = normalPixel;
+//    return;
+
 
     float Hleft  = heightInDirection(uv, uvEntity, vec2(-1.0, 0.0));
     float Hright = heightInDirection(uv, uvEntity, vec2(+1.0, 0.0));

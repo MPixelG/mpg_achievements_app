@@ -154,7 +154,7 @@ class ChunkGrid {
       component.renderTree(
         albedoCanvas,
         normalCanvas,
-            () => calculateNormalPaint(component),
+            () => calculateNormalPaint(component, overridePaint),
       );
       component.setDirty(false);
     }
@@ -319,20 +319,7 @@ class ChunkGrid {
 
   Paint overridePaint = Paint()..isAntiAlias = false..filterQuality = FilterQuality.none;
 
-  Paint calculateNormalPaint(IsometricRenderable renderable) {
-    final double startVal =
-        ((renderable.gridFeetPos.y) / Chunk.highestYTileInWorld) * 256;
-    final double endVal = ((renderable.gridFeetPos.y+1) / Chunk.highestYTileInWorld);
 
-    overridePaint.colorFilter = ColorFilter.matrix([
-      1, 0, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 0,
-      endVal, 0, startVal, 0,
-      0, 0, 1, 0,
-    ]);
-    return overridePaint;
-  }
 
   bool rebuild = true;
 
@@ -377,4 +364,25 @@ class ChunkGrid {
     final int chunkZ = (worldPos.y / (Chunk.chunkSize * tilesize.y)).floor();
     return Vector2(chunkX.toDouble(), chunkZ.toDouble());
   }
+}
+
+
+Paint calculateNormalPaint(IsometricRenderable renderable, Paint overridePaint) {
+  final double footY = renderable.gridFeetPos.y;
+  final double headY = footY + renderable.size.y;
+
+  final double footValue = (footY / Chunk.highestYTileInWorld);
+  final double headValue = (headY / Chunk.highestYTileInWorld);
+
+  final double scale = (headValue - footValue);
+  final double offset = footValue * 255;
+
+  overridePaint.colorFilter = ColorFilter.matrix([
+    1, 0, 0, 0, 0,
+    0, 1, 0, 0, 0,
+    0, 0, scale, 0, offset,
+    0, 0, 0, 1, 0,
+  ]);
+
+  return overridePaint;
 }

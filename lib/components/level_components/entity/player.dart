@@ -248,11 +248,18 @@ class Player extends AnimatedCharacter
     super.render(canvas);
     // canvas.drawCircle(toWorldPos(hitbox.position, 0).toOffset(), 2, Paint()..color = Colors.blue);
     // canvas.drawCircle(toWorldPos(hitbox.size, 0).toOffset(), 2, Paint()..color = Colors.blue);
-    canvas.save();
+    normalCanvas!.save();
     //canvas.translate(0, -animationTicker!.getSprite().srcSize.y - tilesize.z/2);
-    normalSprite.render(normalCanvas!, overridePaint: getNormalPaint!(), position: toWorldPos(position) - Vector2(animationTicker!.getSprite().srcSize.x / 2, animationTicker!.getSprite().srcSize.y - tilesize.z/2));
+    normalCanvas.scale(scale.x, scale.y);
+    final Vector2 pos = toWorldPos(position);
+
+    if(scale.x < 0) {
+      pos.x = -pos.x;
+    }
+
+    normalSprite.render(normalCanvas, overridePaint: getNormalPaint!(), position: pos - Vector2(animationTicker!.getSprite().srcSize.x / 2, animationTicker!.getSprite().srcSize.y - tilesize.z/2));
     //normalSprite.render(canvas, overridePaint: getNormalPaint(), position: toWorldPos(position) - Vector2(animationTicker!.getSprite().srcSize.x / 2, 0));
-    canvas.restore();
+    normalCanvas.restore();
   }
 
   @override
