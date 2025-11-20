@@ -1,37 +1,27 @@
 import 'dart:ui';
 
+import 'package:flame/components.dart';
 import 'package:flutter/cupertino.dart' show mustCallSuper;
 
 
 class GameTexture {
-  late final String assetPath;
-  late final String? depthMapPath;
   late final String name;
-  late final int width;
-  late final int height;
+  late final double? direction;
+  int get width => _albedoMap.image.width;
+  int get height => _albedoMap.image.height;
 
-  Image? _albedoMap;
-  Image? _depthMap;
-
-  GameTexture.fromPath({
-    required this.assetPath,
-  });
+  late Sprite _albedoMap;
+  late Sprite _depthMap;
 
 
-  GameTexture.fromMetadata(Map<String, dynamic> metadata, String basePath){
-    name = metadata['name'];
-    assetPath = "$basePath/name";
-    depthMapPath = metadata['depthMap']?['customPath'] ?? "${assetPath}_depth.png";
-
-    registerExtra(metadata);
+  GameTexture(Image spritesheet, Image depthSpritesheet, this.name, Vector2 srcPos, Vector2 size, this.direction){
+    _albedoMap = Sprite(spritesheet, srcPosition: srcPos, srcSize: size);
+    _depthMap = Sprite(depthSpritesheet, srcPosition: srcPos, srcSize: size);
   }
-
-  /// can be overridden to add extra metadata fields
-  void registerExtra(Map<String, dynamic> metadata){}
 
   @mustCallSuper
   void dispose(){
-    _albedoMap?.dispose();
-    _depthMap?.dispose();
+    _albedoMap.image.dispose();
+    _depthMap.image.dispose();
   }
 }

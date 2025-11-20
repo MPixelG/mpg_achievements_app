@@ -28,6 +28,7 @@ linter:
     prefer_final_fields: true
     prefer_final_locals: true
     use_is_even_rather_than_modulo: false
+    
 
     # Safety / bug prevention
     avoid_print: false

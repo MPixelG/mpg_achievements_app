@@ -50,7 +50,7 @@ class Player extends AnimatedCharacter
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position})
-    : super(size: Vector3(0.8, 1.3, 0.8));
+    : super(size: Vector3(0.8, 1.1, 0.8));
 
   @override
   Future<void> onLoad() async {
@@ -257,7 +257,7 @@ class Player extends AnimatedCharacter
       pos.x = -pos.x;
     }
 
-    normalSprite.render(normalCanvas, overridePaint: getNormalPaint!(), position: pos - Vector2(animationTicker!.getSprite().srcSize.x / 2, animationTicker!.getSprite().srcSize.y - tilesize.z/2));
+    normalSprite.render(normalCanvas, overridePaint: getNormalPaint!(), position: pos - Vector2(animationTicker!.getSprite().srcSize.x / 2, animationTicker!.getSprite().srcSize.y));
     //normalSprite.render(canvas, overridePaint: getNormalPaint(), position: toWorldPos(position) - Vector2(animationTicker!.getSprite().srcSize.x / 2, 0));
     normalCanvas.restore();
   }

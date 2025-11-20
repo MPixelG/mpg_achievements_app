@@ -3,6 +3,8 @@
 *.log
 *.pyc
 *.swp
+*.tmx
+*.tsx
 .DS_Store
 .atom/
 .build/

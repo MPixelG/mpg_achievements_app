@@ -268,6 +268,8 @@ class ChunkGrid {
 
     if (_currentNormalCache != null &&
         _currentAlbedoCache != null &&
+        _currentAlbedoCacheEntity != null &&
+        _currentNormalCacheEntity != null &&
         shader != null) {
 
       canvas.save();

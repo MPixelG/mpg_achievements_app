@@ -1,0 +1,249 @@
+{
+  "name": "mage",
+  "path": "Main Characters/Mage_Aseprite/Mage-Sheet.png",
+  "width": 32,
+  "height": 48,
+  "textures": [
+    {
+      "name": "idle",
+      "position": [0, 0],
+      "rotation": 180,
+      "animation": {
+        "frames": 6,
+        "type": "loop",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "walk",
+      "position": [0, 48],
+      "rotation": 180,
+      "animation": {
+        "frames": 6,
+        "type": "pingPong",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "attack",
+      "position": [0, 96],
+      "rotation": 180,
+      "animation": {
+        "frames": 6,
+        "type": "once",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "idle",
+      "position": [0, 144],
+      "rotation": 225,
+      "animation": {
+        "frames": 6,
+        "type": "loop",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "walk",
+      "position": [0, 192],
+      "rotation": 225,
+      "animation": {
+        "frames": 6,
+        "type": "pingPong",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "attack",
+      "position": [0, 240],
+      "rotation": 225,
+      "animation": {
+        "frames": 6,
+        "type": "once",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "idle",
+      "position": [0, 288],
+      "rotation": 270,
+      "animation": {
+        "frames": 6,
+        "type": "loop",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "walk",
+      "position": [0, 336],
+      "rotation": 270,
+      "animation": {
+        "frames": 6,
+        "type": "pingPong",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "attack",
+      "position": [0, 384],
+      "rotation": 270,
+      "animation": {
+        "frames": 6,
+        "type": "once",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "idle",
+      "position": [0, 432],
+      "rotation": 315,
+      "animation": {
+        "frames": 6,
+        "type": "loop",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "walk",
+      "position": [0, 480],
+      "rotation": 315,
+      "animation": {
+        "frames": 6,
+        "type": "pingPong",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "attack",
+      "position": [0, 528],
+      "rotation": 315,
+      "animation": {
+        "frames": 6,
+        "type": "once",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "idle",
+      "position": [0, 576],
+      "rotation": 0,
+      "animation": {
+        "frames": 6,
+        "type": "loop",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "walk",
+      "position": [0, 624],
+      "rotation": 0,
+      "animation": {
+        "frames": 6,
+        "type": "pingPong",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "attack",
+      "position": [0, 672],
+      "rotation": 0,
+      "animation": {
+        "frames": 6,
+        "type": "once",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "idle",
+      "position": [0, 720],
+      "rotation": 135,
+      "animation": {
+        "frames": 6,
+        "type": "loop",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "walk",
+      "position": [0, 768],
+      "rotation": 135,
+      "animation": {
+        "frames": 6,
+        "type": "pingPong",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "attack",
+      "position": [0, 816],
+      "rotation": 135,
+      "animation": {
+        "frames": 6,
+        "type": "once",
+        "direction": "horizontal"
+      }
+    },
+
+    {
+      "name": "idle",
+      "position": [0, 864],
+      "rotation": 90,
+      "animation": {
+        "frames": 6,
+        "type": "loop",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "walk",
+      "position": [0, 912],
+      "rotation": 90,
+      "animation": {
+        "frames": 6,
+        "type": "pingPong",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "attack",
+      "position": [0, 960],
+      "rotation": 90,
+      "animation": {
+        "frames": 6,
+        "type": "once",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "idle",
+      "position": [0, 1008],
+      "rotation": 45,
+      "animation": {
+        "frames": 6,
+        "type": "loop",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "walk",
+      "position": [0, 1056],
+      "rotation": 45,
+      "animation": {
+        "frames": 6,
+        "type": "pingPong",
+        "direction": "horizontal"
+      }
+    },
+    {
+      "name": "attack",
+      "position": [0, 1104],
+      "rotation": 45,
+      "animation": {
+        "frames": 6,
+        "type": "once",
+        "direction": "horizontal"
+      }
+    }
+  ]
+}
