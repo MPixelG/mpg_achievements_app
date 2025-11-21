@@ -7,6 +7,7 @@ import '../../mpg_pixel_adventure.dart';
 
 class SpeechBubble extends ConsumerStatefulWidget {
   //text to display and position
+  final bool isRapidText;
   final IsoPositionComponent component; //more generic
   final String text;
   final PixelAdventure game;
@@ -26,6 +27,7 @@ class SpeechBubble extends ConsumerStatefulWidget {
     this.onDismiss,
     required this.game,
     this.onChoiceSelected,
+    this.isRapidText = false,
   });
 
   @override
