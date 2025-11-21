@@ -50,7 +50,7 @@ void main() {
     float pixelHeight = normalPixel.b;
     float pixelHeightEntity = normalPixelEntity.b;
 
-    if(pixelHeightEntity > pixelHeight){
+    if(pixelHeightEntity > pixelHeight ){
         albedoPixel = albedoPixelEntity + (albedoPixel.a-albedoPixelEntity.a)*albedoPixel;
         normalPixel = normalPixelEntity;
         pixelHeight = pixelHeightEntity;

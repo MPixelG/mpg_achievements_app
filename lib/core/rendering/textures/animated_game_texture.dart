@@ -1,33 +1,22 @@
 import 'package:mpg_achievements_app/core/rendering/textures/game_texture.dart';
 
 class AnimatedGameTexture extends GameTexture {
-  AnimatedGameTexture.fromMetadata(super.metadata, super.basePath) : super.fromMetadata();
-  AnimatedGameTexture.fromPath(String assetPath) : super.fromPath(assetPath: assetPath);
-
-  late int frames;
+  int frames;
   late AnimationType animationType;
   late AnimationDirection animationDirection;
-
-
-  @override
-  void registerExtra(Map<String, dynamic> metadata) {
-    assert(metadata.containsKey("animation"));
-    final animationData = metadata["animation"];
-    frames = animationData["frames"] ?? 1;
-    animationType = switch (animationData["type"] ?? "loop") {
+  AnimatedGameTexture(super.spritesheet, super.depthSpritesheet, super.name, super.srcPos, super.size, super.direction, this.frames, {String? animationType, String? animationDirection}){
+    this.animationType = switch(animationType){
       "loop" => AnimationType.loop,
       "pingPong" => AnimationType.pingPong,
       "once" => AnimationType.once,
       _ => AnimationType.loop,
     };
-    animationDirection = switch (animationData["direction"] ?? "horizontal") {
+    this.animationDirection = switch(animationDirection){
       "horizontal" => AnimationDirection.horizontal,
       "vertical" => AnimationDirection.vertical,
       _ => AnimationDirection.horizontal,
     };
-    super.registerExtra(metadata);
   }
-
 }
 
 enum AnimationType {

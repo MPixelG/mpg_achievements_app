@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -6,7 +5,6 @@ import 'package:flame/sprite.dart';
 import 'package:flutter/cupertino.dart' hide Image;
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
 import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
   /// Key with the current playing animation
@@ -153,7 +151,7 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
   /// and pass in a new map of animations.
   Map<T, SpriteAnimation>? get animations =>
       _animations != null ? Map.unmodifiable(_animations!) : null;
-
+  
   /// Sets the given [value] as new animation state map.
   set animations(Map<T, SpriteAnimation>? value) {
     if (_animations != value) {
@@ -169,13 +167,13 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
       _resizeToSprite();
     }
   }
-
+  
   /// Returns a map containing [SpriteAnimationTicker] for each state.
   Map<T, SpriteAnimationTicker>? get animationTickers => _animationTickers;
-
+  
   /// Returns current value of auto resize flag.
   bool get autoResize => _autoResize;
-
+  
   /// Sets the given value of autoResize flag.
   ///
   /// Will update the [size] to fit srcSize of current animation sprite if set
@@ -184,7 +182,7 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
     _autoResize = value;
     _resizeToSprite();
   }
-
+  
   /// This flag helps in detecting if the size modification is done by
   /// some external call vs [_autoResize]ing code from [_resizeToSprite].
   bool _isAutoResizing = false;
@@ -194,9 +192,9 @@ abstract class AnimatedCharacter<T> extends GameCharacter with HasPaint{
   void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
     super.render(canvas, normalCanvas, getNormalPaint);
     if(animationTicker == null) return;
-
+    
     canvas.save();
-    canvas.translate(-animationTicker!.getSprite().srcSize.x / 2, -animationTicker!.getSprite().srcSize.y + tilesize.z/2);
+    canvas.translate(-animationTicker!.getSprite().srcSize.x / 2, -animationTicker!.getSprite().srcSize.y);
     animationTicker!.getSprite().render(
       canvas,
       overridePaint: paint,
