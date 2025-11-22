@@ -172,44 +172,65 @@ jobs:
             -H "Authorization: Bot $BOT_TOKEN" \
             -H "Content-Type: application/json" \
             -d "$payload" --ssl-no-revoke || echo "curl failed" >&2
-      - name: Send commit message to Discord webhook
+      - name: Send commit message to Discord webhook (Embed)
         env:
           MESSAGE: ${{ env.COMMIT_MESSAGE }}
           AUTHOR: ${{ env.FOUND_LOGIN }}
+          ADDITIONS: ${{ env.ADDITIONS }}
+          DELETIONS: ${{ env.DELETIONS }}
+          COMMIT_SHA: ${{ env.COMMIT_SHA }}
         run: |
-          escape_keep_newlines() {
-            local raw="$1"
-            local out=""
-            local i=0
-            local len=${#raw}
-            while [ $i -lt $len ]; do
-              ch="${raw:$i:1}"
-              case "$ch" in
-                [a-zA-Z0-9\ \_\-\'\":\/\.])
-                  out+="$ch"
-                  ;;
-                $'\n')
-                  out+=$'\n'
-                  ;;
-                *)
-                  if [ "$ch" = '\' ]; then
-                    out="${out}\\\\"
-                  elif [ "$ch" = '#' ]; then
-                    out="${out} "
-                  else
-                    out="${out}\\${ch}"
-                  fi
-                  ;;
-              esac
-              i=$((i+1))
-            done
-            printf '%s' "$out"
+          escape() {
+            printf '%s' "$1" | sed 's/"/\\"/g'
           }
-          
-          sanitized_msg=$(escape_keep_newlines "$MESSAGE")
-          sanitized_author=$(escape_keep_newlines "$AUTHOR")
-          
-          # Post the actual commit message to the dedicated Discord webhook
-          discord_payload=$(jq -nc --arg content "$sanitized_msg" --arg username "$sanitized_author" '{content:$content, username:$username}')
-          
-          curl -s -H "Content-Type: application/json" -d "$discord_payload" "https://discord.com/api/webhooks/1421199463225098473/XB2Btsx6IAsS8tVikH7GvaEKaS2sp78paVMYLVtbRMmb-WUWn_j8rmJm_6y_iELZL_PX" || echo "discord curl failed" >&2
+
+          sanitized_msg=$(escape "$MESSAGE")
+          sanitized_author=$(escape "$AUTHOR")
+
+          discord_payload=$(jq -nc \
+            --arg author "$sanitized_author" \
+            --arg msg "$sanitized_msg" \
+            --arg adds "$ADDITIONS" \
+            --arg dels "$DELETIONS" \
+            --arg sha "$COMMIT_SHA" \
+            '{
+              "embeds": [
+                {
+                  "title": "Neues Commit",
+                  "color": 5814783,
+                  "fields": [
+                    {
+                      "name": "Autor",
+                      "value": $author,
+                      "inline": false
+                    },
+                    {
+                      "name": "Commit Nachricht",
+                      "value": ($msg | if . == "" then "*Kein Commit-Text*" else . end),
+                      "inline": false
+                    },
+                    {
+                      "name": "Additions",
+                      "value": $adds,
+                      "inline": true
+                    },
+                    {
+                      "name": "Deletions",
+                      "value": $dels,
+                      "inline": true
+                    },
+                    {
+                      "name": "Commit SHA",
+                      "value": $sha,
+                      "inline": false
+                    }
+                  ]
+                }
+              ]
+            }')
+
+          curl -s -H "Content-Type: application/json" \
+            -d "$discord_payload" \
+            "https://discord.com/api/webhooks/1421199463225098473/XB2Btsx6IAsS8tVikH7GvaEKaS2sp78paVMYLVtbRMmb-WUWn_j8rmJm_6y_iELZL_PX" \
+            || echo "discord curl failed" >&2
+      
