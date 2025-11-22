@@ -122,7 +122,6 @@ jobs:
           git_author=$(git log -1 --pretty=format:'%an')
           echo "FOUND_LOGIN=$git_author" >> $GITHUB_ENV
           echo "fallback to author name: $git_author" >&2
-
       - name: Send message via bot
         env:
           BOT_TOKEN: ${{ secrets.DISCHORD_BOT_TOKEN }}
@@ -142,36 +141,75 @@ jobs:
               case "$ch" in
                 [a-zA-Z0-9\ \_\-\'\":\/\.])
                   out+="$ch"
-          
                   ;;
                 $'\n')
                   out+=$'\n'
                   ;;
                 *)
-              if [ "$ch" = '\' ]; then
-                out="${out}\\\\"
-              elif [ "$ch" = '#' ]; then
-                out="${out} "
-              else
-                out="${out}\\${ch}"
-              fi
-
+                  if [ "$ch" = '\' ]; then
+                    out="${out}\\\\"
+                  elif [ "$ch" = '#' ]; then
+                    out="${out} "
+                  else
+                    out="${out}\\${ch}"
+                  fi
+                  ;;
               esac
               i=$((i+1))
             done
             printf '%s' "$out"
           }
-
-          # sanitize MESSAGE and AUTHOR preserving real newlines
+          
           sanitized_msg=$(escape_keep_newlines "$MESSAGE")
           sanitized_author=$(escape_keep_newlines "$AUTHOR")
-
+          
           content="New commit by ${sanitized_author} ${ADDITIONS} ${DELETIONS}"
-
-          # Build JSON with jq; supply description with actual newlines preserved
-          payload=$(jq -nc --arg content "$content" --arg description "$sanitized_msg" '{content:$content, description:$description}')
-
+          
+          # Send to existing atlas.bot webhook with an empty commit message/description
+          payload=$(jq -nc --arg content "$content" --arg description "" '{content:$content, description:$description}')
+          
           curl -s -X POST "https://atlas.bot/api/guilds/1417072674219229307/actions/05652f94-93cf-4515-a2cd-73f1cabe0162/webhook/07b5213c6bac954da52a57918d9b32110b028dd647e51c8536bd5cfcefd6f6c7" \
             -H "Authorization: Bot $BOT_TOKEN" \
             -H "Content-Type: application/json" \
             -d "$payload" --ssl-no-revoke || echo "curl failed" >&2
+      - name: Send commit message to Discord webhook
+        env:
+          MESSAGE: ${{ env.COMMIT_MESSAGE }}
+          AUTHOR: ${{ env.FOUND_LOGIN }}
+        run: |
+          escape_keep_newlines() {
+            local raw="$1"
+            local out=""
+            local i=0
+            local len=${#raw}
+            while [ $i -lt $len ]; do
+              ch="${raw:$i:1}"
+              case "$ch" in
+                [a-zA-Z0-9\ \_\-\'\":\/\.])
+                  out+="$ch"
+                  ;;
+                $'\n')
+                  out+=$'\n'
+                  ;;
+                *)
+                  if [ "$ch" = '\' ]; then
+                    out="${out}\\\\"
+                  elif [ "$ch" = '#' ]; then
+                    out="${out} "
+                  else
+                    out="${out}\\${ch}"
+                  fi
+                  ;;
+              esac
+              i=$((i+1))
+            done
+            printf '%s' "$out"
+          }
+          
+          sanitized_msg=$(escape_keep_newlines "$MESSAGE")
+          sanitized_author=$(escape_keep_newlines "$AUTHOR")
+          
+          # Post the actual commit message to the dedicated Discord webhook
+          discord_payload=$(jq -nc --arg content "$sanitized_msg" --arg username "$sanitized_author" '{content:$content, username:$username}')
+          
+          curl -s -H "Content-Type: application/json" -d "$discord_payload" "https://discord.com/api/webhooks/1421199463225098473/XB2Btsx6IAsS8tVikH7GvaEKaS2sp78paVMYLVtbRMmb-WUWn_j8rmJm_6y_iELZL_PX" || echo "discord curl failed" >&2
