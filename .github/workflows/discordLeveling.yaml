@@ -207,11 +207,11 @@ jobs:
                   "title": "New Commit!",
                   "color": $color,
                   "fields": [
-                    { "name": "Author", "value": $author, "inline": true },
-                    { "name": "Commit Message", "value": ($msg | if . == "" then "*No Commit-Message*" else . end), "inline": false },
-                    { "name": "Additions", "value": $adds, "inline": true },
-                    { "name": "Deletions", "value": $dels, "inline": true },
-                    { "name": "Files Changed", "value": $files, "inline": true }
+                    { "name": "Author:", "value": $author, "inline": true },
+                    { "name": "Commit Message:", "value": ($msg | if . == "" then "*No Commit-Message*" else . end), "inline": false },
+                    { "name": "Additions:", "value": $adds, "inline": true },
+                    { "name": "Deletions:", "value": $dels, "inline": true },
+                    { "name": "Files Changed:", "value": $files, "inline": true }
                   ]
                 }
               ]
