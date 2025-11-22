@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/core/math/ray3.dart';
@@ -19,12 +17,6 @@ class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
   @override
   void fillParent() {
     //todo create fill parent function
-  }
-
-  @override
-  FutureOr<void> onLoad() {
-    print("onLoad RectHitbox with position $position and size $size");
-    return super.onLoad();
   }
 
   @override

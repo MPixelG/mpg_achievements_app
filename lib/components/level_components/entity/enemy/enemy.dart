@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/animation/animated_character.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
+import 'package:mpg_achievements_app/components/animation/new_animated_character.dart';
 import 'package:mpg_achievements_app/components/level_components/saw.dart';
 import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
 
@@ -17,7 +17,6 @@ class Enemy extends AnimatedCharacter
     with
         KeyboardHandler,
         CollisionCallbacks,
-        AnimationManager,
         HasMovementAnimations {
   bool gotHit = false;
   bool isRespawning = false;
@@ -35,7 +34,7 @@ class Enemy extends AnimatedCharacter
     required this.enemyCharacter,
     super.position,
     super.anchor = Anchor3D.center,
-  }) : super(size: Vector3(1, 1, 1));
+  }) : super(size: Vector3(1, 1, 1), name: "Enemy");
 
   late GoalManager manager;
   @override
@@ -73,7 +72,7 @@ class Enemy extends AnimatedCharacter
       32,
     ); //center the enemy so that the animation displays correctly (its 96*96 and the enemy is 32*32)
     scale.x = 1; //flip the enemy to the right side and a third of the size because the animation is triple of the size
-    current = playAnimation("disappearing"); //display a disappear animation
+    playAnimation("disappearing"); //display a disappear animation
     await Future.delayed(
       const Duration(milliseconds: 320),
     ); //wait for the animation to finish
@@ -85,7 +84,7 @@ class Enemy extends AnimatedCharacter
       const Duration(milliseconds: 800),
     ); //wait a bit for the camera to position and increase the annoyance of the player XD
     scale = Vector3.all(1); //show the enemy
-    current = playAnimation("appearing"); //display an appear animation
+    playAnimation("appearing"); //display an appear animation
     await Future.delayed(
       const Duration(milliseconds: 300),
     ); //wait for the animation to finish
@@ -96,35 +95,6 @@ class Enemy extends AnimatedCharacter
       32,
     ); //reposition the enemy, because it had a bit of displacement because of the respawn animation
   }
-
-  @override
-  List<AnimationLoadOptions> get animationOptions => [
-    AnimationLoadOptions(
-      "appearing",
-      "Main Characters/Appearing",
-      textureSize: 96,
-      loop: false,
-    ),
-    AnimationLoadOptions(
-      "disappearing",
-      "Main Characters/Disappearing",
-      textureSize: 96,
-      loop: false,
-    ),
-    AnimationLoadOptions(
-      "hit",
-      "$componentSpriteLocation/Hit",
-      loop: false,
-    ),
-
-    ...movementAnimationDefaultOptions,
-  ];
-
-  @override
-  String get componentSpriteLocation => "Main Characters/Virtual Guy";
-
-  @override
-  AnimatedComponentGroup get group => AnimatedComponentGroup.entity;
 
   @override
   bool get isInHitFrames => gotHit;

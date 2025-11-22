@@ -39,7 +39,7 @@ class IsometricWorld extends GameWorld {
   Future<void> onLoad() async {
     // Initialize the player as an IsometricPlayer
     player = Player(playerCharacter: 'Player');
-    player2 = Player(playerCharacter: 'BubbleMaster', position: Vector3(3, 1, 3));
+    player2 = Player(playerCharacter: 'BubbleMaster', position: Vector3(8, 1, 8), controllable: false);
 
     await super.onLoad();
     //find the collision layer

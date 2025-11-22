@@ -21,10 +21,18 @@ abstract class AnimatedCharacter extends GameCharacter with HasPaint{
   final Map<String, bool> removeOnFinish;
 
   /// Map with the available states for this animation group
-  GameTextureBatch textureBatch;
+  GameTextureBatch? _textureBatch;
+  String name;
+  
+  GameTextureBatch? get textureBatch => _textureBatch;
+  
+  set textureBatch(GameTextureBatch? newTextureBatch){
+    _textureBatch = newTextureBatch;
+    updateAnimationTickers();
+  }
 
   /// Map containing animation tickers for each animation state.
-  Map<String, GameSpriteAnimationTicker>? _animationTickers;
+  Map<String, Map<double? ,GameSpriteAnimationTicker>>? _animationTickers;
 
   /// Whether the animation is paused or playing.
   bool playing;
@@ -39,7 +47,8 @@ abstract class AnimatedCharacter extends GameCharacter with HasPaint{
 
   /// Creates a component with an empty animation which can be set later
   AnimatedCharacter({
-    required this.textureBatch,
+    GameTextureBatch? textureBatch,
+    required this.name,
     String? current,
     bool? autoResize,
     this.playing = true,
@@ -54,7 +63,8 @@ abstract class AnimatedCharacter extends GameCharacter with HasPaint{
     super.priority,
     super.key,
   }) :  _current = current,
-        _autoResize = autoResize ?? true
+        _autoResize = autoResize ?? true,
+        _textureBatch = textureBatch
         {
     if (paint != null) {
       this.paint = paint;
@@ -63,21 +73,30 @@ abstract class AnimatedCharacter extends GameCharacter with HasPaint{
     /// Register a listener to differentiate between size modification done by
     /// external calls v/s the ones done by [_resizeToSprite].
     size.addListener(_handleAutoResizeState);
-    final Map<String, GameSpriteAnimationTicker> newTickers = {};
-    textureBatch.textures.forEach(
-            (key, value) => value.forEach(
-                (direction, value) {
-                  newTickers[key] = value.createTicker();
-                }
-            )
-        );
-    _animationTickers = newTickers;
+    updateAnimationTickers();
     
     _resizeToSprite();
   }
   
-  GameTexture? get animation => textureBatch[current ?? ""]?[0]; //todo rotation
-  GameSpriteAnimationTicker? get animationTicker => _animationTickers?[current];
+  void updateAnimationTickers(){
+    final Map<String, Map<double?, GameSpriteAnimationTicker>> newTickers = {};
+    textureBatch?.textures.forEach(
+            (key, value) => value.forEach(
+                (direction, value) {
+                  newTickers[key] ??= {};
+                  newTickers[key]![direction] = value.createTicker();
+            }
+        )
+    );
+    _animationTickers = newTickers;
+  }
+  
+  double direction = 0;
+  GameTexture? get animation {
+    print("got animation in direction $direction!");
+    return textureBatch?[current ?? "idle"]?[direction];
+  }
+  GameSpriteAnimationTicker? get animationTicker => _animationTickers?[current]?[direction];
 
   /// Returns the current group state.
   String? get current => _current;
@@ -86,8 +105,9 @@ abstract class AnimatedCharacter extends GameCharacter with HasPaint{
   ///
   /// Will update [size] if [autoResize] is true.
   set current(String? value) {
+    assert(textureBatch != null, 'Texture batch must not be null!');
     assert(
-    textureBatch.containsTexture(value ?? ""),
+    textureBatch!.containsTexture(value ?? ""),
     'Animation not found for key: $value',
     );
 
@@ -107,23 +127,25 @@ abstract class AnimatedCharacter extends GameCharacter with HasPaint{
   ///
   /// If you want to change the contents of the map use the animations setter
   /// and pass in a new map of animations.
-  Map<String, Map<double?, GameTexture>> get animations => textureBatch.textures;
+  Map<String, Map<double?, GameTexture>>? get animations => textureBatch?.textures;
   
   /// Sets the given [value] as new animation state map.
-  set animations(Map<String, Map<double?, GameTexture>> value) {
-    if (textureBatch.textures != value) {
-      textureBatch.textures = value;
+  set animations(Map<String, Map<double?, GameTexture>>? value) {
+    if (textureBatch?.textures != value && value != null) {
+      if(textureBatch == null) {
+        textureBatch = GameTextureBatch(name, value);
+      } else {
+        textureBatch!.textures = value;
+      }
 
-      final Map<String, GameSpriteAnimationTicker> newTickers = {};
-      value.forEach((key, value) => value.forEach((direction, value) => newTickers[key] = (value.createTicker())));
-      _animationTickers = newTickers;
+      updateAnimationTickers();
       
       _resizeToSprite();
     }
   }
   
   /// Returns a map containing [SpriteAnimationTicker] for each state.
-  Map<String, GameSpriteAnimationTicker>? get animationTickers => _animationTickers;
+  Map<String, Map<double?, GameSpriteAnimationTicker>>? get animationTickers => _animationTickers;
   
   /// Returns current value of auto resize flag.
   bool get autoResize => _autoResize;
@@ -219,4 +241,9 @@ abstract class AnimatedCharacter extends GameCharacter with HasPaint{
     autoResetTicker,
     animationTicker?.currentFrame,
   ]);
+  
+  Future<void> playAnimation(String name){
+    current = name;
+    return animationTicker!.completed;
+  }
 }

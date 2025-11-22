@@ -17,7 +17,7 @@ class TestSpriteEntity extends AnimatedCharacter {
     super.children,
     super.priority,
     super.key,
-  });
+  }) : super(name: "Test Sprite Entity");
   @override
   void render(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]){
     current = "idle";

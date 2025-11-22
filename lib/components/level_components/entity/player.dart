@@ -2,19 +2,17 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/flame.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/animation/animated_character.dart';
 import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
+import 'package:mpg_achievements_app/components/animation/new_animated_character.dart';
 import 'package:mpg_achievements_app/components/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/test_sprite_entity.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
 import 'package:mpg_achievements_app/core/rendering/textures/game_texture_batch.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import '../../../state_management/providers/player_state_provider.dart';
@@ -29,7 +27,6 @@ class Player extends AnimatedCharacter
         RiverpodComponentMixin,
         KeyboardHandler,
         CollisionCallbacks,
-        AnimationManager,
         HasMovementAnimations,
         HasCollisions {
   bool debugNoClipMode = false;
@@ -50,17 +47,24 @@ class Player extends AnimatedCharacter
 
   late KeyboardCharacterController<Player> controller;
 
+  bool controllable = true;
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
-  Player({required this.playerCharacter, super.position})
-    : super(size: Vector3(0.8, 1.05, 0.8));
+  Player({required this.playerCharacter, super.position, this.controllable = true})
+    : super(name: "player", size: Vector3(0.8, 1.15, 0.8)){
+    print("constructor!");
+  }
 
   @override
   Future<void> onLoad() async {
     // The player inspects its environment (the world) and configures itself.
     startingPosition = position.clone();
 
-    controller = KeyboardCharacterController<Player>(buildControlBundle());
-    add(controller);
+    loadTextureBatchFromFile("test_batch.json").then((value) => textureBatch = value);
+    
+    if(controllable) {
+      controller = KeyboardCharacterController<Player>(buildControlBundle());
+      add(controller);
+    }
 
     //add(ShadowComponent());
     _findGroundBeneath();
@@ -71,6 +75,7 @@ class Player extends AnimatedCharacter
   @override
   void update(double dt) {
     super.update(dt);
+    updatePlayerstate();
 
     //print("hitbox position: ${hitbox.aabb.min} - ${hitbox.aabb.max}");
     //Provider logic follow
@@ -222,41 +227,12 @@ class Player extends AnimatedCharacter
   double getzGround() => zGround;
 
   @override
-  List<AnimationLoadOptions> get animationOptions => [
-    AnimationLoadOptions(
-      "appearing",
-      "Main Characters/Appearing",
-      textureSize: 96,
-      loop: false,
-    ),
-    AnimationLoadOptions(
-      "disappearing",
-      "Main Characters/Disappearing",
-      textureSize: 96,
-      loop: false,
-    ),
-    AnimationLoadOptions(
-      "hit",
-      "$componentSpriteLocation/Hit",
-      loop: false,
-    ),
-
-    ...movementAnimationDefaultOptions,
-  ];
-
-  Sprite normalSprite = Sprite(
-    Flame.images.fromCache("playerNormal.png"),
-    srcSize: tilesize.xy,
-    srcPosition: Vector2.zero(),
-  );
-
-  @override
   void render(
     Canvas canvas, [
     Canvas? normalCanvas,
     Paint Function()? getNormalPaint,
   ]) {
-    super.render(canvas);
+    super.render(canvas, normalCanvas, getNormalPaint);
     // canvas.drawCircle(toWorldPos(hitbox.position, 0).toOffset(), 2, Paint()..color = Colors.blue);
     // canvas.drawCircle(toWorldPos(hitbox.size, 0).toOffset(), 2, Paint()..color = Colors.blue);
     normalCanvas!.save();
@@ -267,17 +243,10 @@ class Player extends AnimatedCharacter
     if(scale.x < 0) {
       pos.x = -pos.x;
     }
-
-    normalSprite.render(normalCanvas, overridePaint: getNormalPaint!(), position: pos - Vector2(animationTicker!.getSprite().srcSize.x / 2, animationTicker!.getSprite().srcSize.y));
+    
     //normalSprite.render(canvas, overridePaint: getNormalPaint(), position: toWorldPos(position) - Vector2(animationTicker!.getSprite().srcSize.x / 2, 0));
     normalCanvas.restore();
   }
-
-  @override
-  String get componentSpriteLocation => "Main Characters/Ninja Frog";
-
-  @override
-  AnimatedComponentGroup get group => AnimatedComponentGroup.entity;
 
   //we answer the getters from HasMovementAnimations here to tell the mixin if we are currently in hit or respawn frames
   @override

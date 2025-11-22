@@ -5,7 +5,6 @@ import 'package:flame/src/cache/images.dart';
 import 'package:flame/src/flame.dart';
 import 'package:flame/src/image_composition.dart';
 import 'package:flame/src/palette.dart';
-import 'package:mpg_achievements_app/core/level/rendering/chunk.dart';
 import 'package:mpg_achievements_app/util/type_utils.dart';
 
 /// A [Sprite] is a region of an [Image] that can be rendered in the Canvas.
@@ -220,22 +219,6 @@ class GameSprite {
     final srcRectDepth = (depthPositionSrc ?? anchor*(srcDepth?.size.toVector2() ?? srcSize)).toPositionedRect(depthSizeSrc ?? srcDepth?.size.toVector2() ?? srcSize);
 
     albedoCanvas.drawImageRect(albedoImage, srcRectAlbedo, drawRectAlbedo, drawPaintAlbedo);
-    
-    final double footY = 2;
-    final double headY = 3;
-
-    final double footValue = (footY / Chunk.highestYTileInWorld);
-    final double headValue = (headY / Chunk.highestYTileInWorld);
-
-    final double scale = (headValue - footValue);
-    final double offset = footValue * 255;
-    drawPaintDepth.colorFilter = ColorFilter.matrix([
-      1, 0, 0, 0, 0,
-      0, 1, 0, 0, 0,
-      0, 0, scale, 0, offset,
-      0, 0, 0, 1, 0,
-    ]);
-    
     depthCanvas.drawImageRect(depthImage, srcRectAlbedo, drawRectDepth, drawPaintDepth);
   }
 

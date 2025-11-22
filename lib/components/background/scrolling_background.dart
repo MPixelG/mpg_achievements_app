@@ -11,7 +11,7 @@ class ScrollingBackground extends Component with HasGameReference<PixelAdventure
   double scrollSpeed = 0.04;
   Vector2 size = Vector2.all(64.8);
 
-  ScrollingBackground({this.color = "blue"});
+  ScrollingBackground({this.color = "blue"}) : super(priority: -32000);
 
 
   @override

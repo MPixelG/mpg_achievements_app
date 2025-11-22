@@ -6,7 +6,7 @@ import 'package:mpg_achievements_app/components/animation/game_sprite_animation_
 
 import 'game_texture.dart';
 
-class GameTextureBatch {
+class GameTextureBatch { //todo caching
   final Map<String, Map<double?, GameTexture>> _textures = {};
   late String name;
 
@@ -53,11 +53,17 @@ class GameTextureBatch {
       final Image depthSpritesheet = Flame.images.containsKey(customDepthPath) ? Flame.images.fromCache(customDepthPath) : await Flame.images.load(customDepthPath);
       
       _textures[textureName] ??= {};
+      print("added rotation $rotation for animation $textureName");
       _textures[textureName]![rotation] = GameTexture(spritesheet, depthSpritesheet, textureName, rotation, position, size, animationType: _parseAnimationType(animationOptions?['type']!), frames: frames);
     } //todo
     
     
     ready = true;
+  }
+  
+  
+  GameTextureBatch(this.name, Map<String, Map<double?, GameTexture>> data){
+    _textures.addAll(data);
   }
   
   void dispose(){

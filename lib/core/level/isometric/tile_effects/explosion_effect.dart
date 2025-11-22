@@ -1,13 +1,12 @@
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/animation/animated_character.dart';
-import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
+import 'package:mpg_achievements_app/components/animation/new_animated_character.dart';
 import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
 
 import '../isometric_tiled_component.dart';
 
-class ExplosionEffect extends AnimatedCharacter with AnimationManager {
+class ExplosionEffect extends AnimatedCharacter {
 
-  ExplosionEffect(Vector3 gridPos) : super(position: gridPos, size: Vector3(3, 3, 6));
+  ExplosionEffect(Vector3 gridPos) : super(position: gridPos, size: Vector3(3, 3, 6), name: "Explosion Effect");
 
   @override
   Future<void> onLoad() async {
@@ -23,21 +22,4 @@ class ExplosionEffect extends AnimatedCharacter with AnimationManager {
   }
 
   bool done = false;
-
-  @override
-  AnimatedComponentGroup get group => AnimatedComponentGroup.entity;
-
-  @override
-  String get componentSpriteLocation => 'Explosions/explosion1d';
-
-  @override
-  List<AnimationLoadOptions> get animationOptions => [
-    AnimationLoadOptions(
-      "explosion_1",
-      "$componentSpriteLocation/explosion1d", // Use the path directly
-      textureSize: 128,
-      loop: false,
-      stepTime: 0.1,
-    ),
-  ];
 }

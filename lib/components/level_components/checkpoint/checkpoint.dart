@@ -1,8 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
-import 'package:mpg_achievements_app/components/animation/animated_character.dart';
-import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
+import 'package:mpg_achievements_app/components/animation/new_animated_character.dart';
 
 import '../../../core/level/game_world.dart';
 import '../../../core/math/iso_anchor.dart';
@@ -12,12 +11,11 @@ import '../entity/player.dart';
 class Checkpoint extends AnimatedCharacter
     with
         CollisionCallbacks,
-        AnimationManager,
         RiverpodComponentMixin {
   final int id;
   bool isActivated;
 
-  Checkpoint({required this.id, this.isActivated = false, super.position}) : super(size: Vector3.all(1));
+  Checkpoint({required this.id, this.isActivated = false, super.position}) : super(size: Vector3.all(1), name: "Checkpoint");
 
   @override
   Future<void> onLoad() async {
@@ -65,32 +63,4 @@ class Checkpoint extends AnimatedCharacter
     await playAnimation("out");
     await playAnimation("outIdle");
   }
-
-  @override
-  String get componentSpriteLocation => "images/Items/Checkpoints/Checkpoint";
-
-  @override
-  AnimatedComponentGroup get group => AnimatedComponentGroup.object;
-
-  @override
-  List<AnimationLoadOptions> get animationOptions => [
-    AnimationLoadOptions(
-      "outIdle",
-      "Items/Checkpoints/Checkpoint/Checkpoint (Flag Idle)",
-      textureSize: 64,
-    ),
-    AnimationLoadOptions(
-      "out",
-      "Items/Checkpoints/Checkpoint/Checkpoint (Flag Out)",
-      textureSize: 64,
-      stepTime: 0.04,
-      loop: false,
-    ),
-    AnimationLoadOptions(
-      "noFlag",
-      "Items/Checkpoints/Checkpoint/Checkpoint (No Flag)",
-      textureSize: 64,
-      loop: false,
-    ),
-  ];
 }
