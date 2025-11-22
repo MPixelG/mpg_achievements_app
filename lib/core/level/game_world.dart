@@ -8,8 +8,6 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/components/background/background.dart';
-import 'package:mpg_achievements_app/components/background/background_tile.dart';
 import 'package:mpg_achievements_app/core/level/tiled_level_reader.dart';
 import 'package:mpg_achievements_app/core/router/router.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -21,7 +19,6 @@ import '../../components/level_components/entity/enemy/enemy.dart';
 import '../../components/level_components/entity/player.dart';
 import '../../util/isometric_utils.dart';
 import 'isometric/isometric_tiled_component.dart';
-import 'isometric/isometric_world.dart';
 
 abstract class GameWorld extends World
     with
@@ -36,7 +33,7 @@ abstract class GameWorld extends World
   late Player player2;
   late Enemy enemy;
   int totalCollectables = 0;
-  late final Background background;
+  late final ScrollingBackground background;
 
   Vector3 calculatedTileSize;
 
@@ -49,7 +46,7 @@ abstract class GameWorld extends World
   //constructor
   GameWorld({
     required this.levelName,
-    Background? background,
+    ScrollingBackground? background,
     required this.calculatedTileSize,
   }) {
     if (background != null) this.background = background;
@@ -253,8 +250,6 @@ abstract class GameWorld extends World
   void setDebugMode(bool val) {
     debugMode = val;
     for (var value in descendants()) {
-      if (value is BackgroundTile) continue;
-
       value.debugMode = val;
     }
   }
@@ -264,7 +259,7 @@ abstract class GameWorld extends World
 
   void _loadScrollingBackground() {
     final Layer? backgroundLayer = level.tileMap.getLayer('Level');
-    String backgroundColor = "Black";
+    String backgroundColor = "Green";
     if (backgroundLayer != null) {
       backgroundColor = backgroundLayer.properties.getValue('BackgroundColor') ?? "Green";
     }

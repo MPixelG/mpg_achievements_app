@@ -1,14 +1,10 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:mpg_achievements_app/components/background/background.dart';
-import 'package:mpg_achievements_app/components/background/background_tile.dart';
-import 'package:mpg_achievements_app/components/camera/advanced_camera.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
-class ScrollingBackground extends Background with HasGameReference<PixelAdventure> {
+class ScrollingBackground extends Component with HasGameReference<PixelAdventure> {
   //Background color is set in Tiled builder for each level in the property backgroundColor
   final String color;
   //sets how fast the background scrolls
@@ -39,7 +35,7 @@ class ScrollingBackground extends Background with HasGameReference<PixelAdventur
         canvas.drawImageRect(
           img,
           Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble()),
-          Rect.fromLTWH(x, y, size.x, size.y),
+          Rect.fromLTWH(x, y, size.x+0.5, size.y+0.5),
           Paint(),
         );
       }

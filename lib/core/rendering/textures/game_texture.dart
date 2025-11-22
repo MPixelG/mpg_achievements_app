@@ -1,27 +1,33 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flutter/cupertino.dart' show mustCallSuper;
+import 'package:mpg_achievements_app/components/animation/game_sprite_animation_ticker.dart';
+
+import 'game_sprite.dart';
 
 
 class GameTexture {
   late final String name;
   late final double? direction;
-  int get width => _albedoMap.image.width;
-  int get height => _albedoMap.image.height;
-
-  late Sprite _albedoMap;
-  late Sprite _depthMap;
-
-
-  GameTexture(Image spritesheet, Image depthSpritesheet, this.name, Vector2 srcPos, Vector2 size, this.direction){
-    _albedoMap = Sprite(spritesheet, srcPosition: srcPos, srcSize: size);
-    _depthMap = Sprite(depthSpritesheet, srcPosition: srcPos, srcSize: size);
+  
+  late GameSprite sprite;
+  
+  late final AnimationType? animationType;
+  int get frameCount => frames.length;
+  late final List<GameSpriteAnimationFrame> frames;
+  
+  GameTexture(Image spritesheet, Image depthSpritesheet, this.name, this.direction, Vector2 srcPos, Vector2 size, {Vector2? srcPosDepth, Vector2? srcSizeDepth, this.animationType, List<GameSpriteAnimationFrame>? frames}){
+    sprite = GameSprite(spritesheet, depthSpritesheet, srcSize: size, srcPosition: srcPos, srcSizeDepth: srcSizeDepth, srcPositionDepth: srcPosDepth);
+    this.frames = frames ?? [];
   }
-
-  @mustCallSuper
+  
+  GameSpriteAnimationTicker createTicker() => GameSpriteAnimationTicker(this);
+  
+  
   void dispose(){
-    _albedoMap.image.dispose();
-    _depthMap.image.dispose();
+    sprite.dispose();
   }
+  
+  @override
+  String toString() => "$name: $direction [frames: $frameCount]";
 }

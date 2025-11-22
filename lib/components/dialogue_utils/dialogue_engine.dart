@@ -1,4 +1,5 @@
 import 'dart:async'; // Required for async operations and the Completer class.
+
 import 'package:flutter/material.dart'; // Flutter's material design widget library.
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jenny/jenny.dart'; // The core Jenny dialogue engine library.
@@ -140,51 +141,51 @@ class DialogueScreenState extends ConsumerState<DialogueScreen> with DialogueVie
 
   // Builds the small floating button used to display the raw script.
   Widget _buildShowScriptButton() => Positioned(
-      top: _outerPadding,
-      left: _outerPadding,
-      child: FloatingActionButton.small(
-        onPressed: _showScript,
-        backgroundColor: _scriptButtonColor,
-        tooltip: 'Show Script',
-        child: const Icon(Icons.code, size: 20),
-      ),
-    );
+    top: _outerPadding,
+    left: _outerPadding,
+    child: FloatingActionButton.small(
+      onPressed: _showScript,
+      backgroundColor: _scriptButtonColor,
+      tooltip: 'Show Script',
+      child: const Icon(Icons.code, size: 20),
+    ),
+  );
 
   // Builds the main card that displays the character name and dialogue text.
   Widget _buildDialogueCard(DialogueLine line) => Positioned(
-      left: _outerPadding,
-      right: _outerPadding,
-      bottom: _outerPadding + 20,
-      child: Opacity(
-        opacity: _dialogueCardOpacity,
-        child: Card(
-          color: _dialogueCardColor,
-          elevation: 4,
-          shape: RoundedRectangleBorder(borderRadius: _dialogueBorderRadius),
-          child: Padding(
-            padding: _dialogueCardPadding,
-            child: Column(
-              mainAxisSize: MainAxisSize
-                  .min, // The card should only be as tall as its content.
-              children: [
-                // Display the character's name, or an empty string if none.
-                Text(line.character?.name ?? '', style: _characterNameStyle),
-                const SizedBox(height: 8),
-                // Display the actual dialogue text.
-                Text(
-                  line.text,
-                  textAlign: TextAlign.center,
-                  style: _dialogueTextStyle,
-                ),
-                const SizedBox(height: _buttonSpacing),
-                // This method will decide whether to show a "Next" or "Close" button.
-                _buildActionButton(),
-              ],
-            ),
+    left: _outerPadding,
+    right: _outerPadding,
+    bottom: _outerPadding + 20,
+    child: Opacity(
+      opacity: _dialogueCardOpacity,
+      child: Card(
+        color: _dialogueCardColor,
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: _dialogueBorderRadius),
+        child: Padding(
+          padding: _dialogueCardPadding,
+          child: Column(
+            mainAxisSize: MainAxisSize
+                .min, // The card should only be as tall as its content.
+            children: [
+              // Display the character's name, or an empty string if none.
+              Text(line.character?.name ?? '', style: _characterNameStyle),
+              const SizedBox(height: 8),
+              // Display the actual dialogue text.
+              Text(
+                line.text,
+                textAlign: TextAlign.center,
+                style: _dialogueTextStyle,
+              ),
+              const SizedBox(height: _buttonSpacing),
+              // This method will decide whether to show a "Next" or "Close" button.
+              _buildActionButton(),
+            ],
           ),
         ),
       ),
-    );
+    ),
+  );
 
   // Builds the primary action button based on the current dialogue state.
   Widget _buildActionButton() {
@@ -225,7 +226,7 @@ class DialogueScreenState extends ConsumerState<DialogueScreen> with DialogueVie
     setState(() {
       _currentLine = line;
       _isDialogueFinished =
-          false; // A new line means the dialogue is not finished.
+      false; // A new line means the dialogue is not finished.
       _lineCompleter = completer;
     });
 
@@ -243,7 +244,7 @@ class DialogueScreenState extends ConsumerState<DialogueScreen> with DialogueVie
       context: context,
       isDismissible: false, // The user must make a choice to proceed.
       backgroundColor:
-          Colors.transparent, // Allows our custom container to define the look.
+      Colors.transparent, // Allows our custom container to define the look.
       builder: (context) => _buildChoiceSheet(choice, completer),
     );
 
@@ -350,35 +351,35 @@ class DialogueScreenState extends ConsumerState<DialogueScreen> with DialogueVie
 
   // Builds the UI for the modal sheet that displays choices.
   Widget _buildChoiceSheet(DialogueChoice choice, Completer<int> completer) => Container(
-      padding: _dialogueCardPadding,
-      margin: const EdgeInsets.all(_outerPadding),
-      decoration: BoxDecoration(
-        color: _choiceSheetColor,
-        borderRadius: _dialogueBorderRadius,
-        border: Border.all(color: Colors.white24, width: 2),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Create a button for each option in the choice.
-          for (final (index, option) in choice.options.indexed) ...[
-            OutlinedButton(
-              // A choice can be unavailable if its condition (e.g., `<<if $seen_key>>`) is false.
-              onPressed: option.isAvailable
-                  ? () {
-                      // Complete the future with the index of the chosen option.
-                      completer.complete(index);
-                      // Close the bottom sheet.
-                      Navigator.pop(context);
-                    }
-                  : null, // `null` onPressed disables the button.
-              child: Text(option.text, style: _buttonTextStyle),
-            ),
-            // Add spacing between buttons, but not after the last one.
-            if (index < choice.options.length - 1) const SizedBox(height: 10),
-          ],
+    padding: _dialogueCardPadding,
+    margin: const EdgeInsets.all(_outerPadding),
+    decoration: BoxDecoration(
+      color: _choiceSheetColor,
+      borderRadius: _dialogueBorderRadius,
+      border: Border.all(color: Colors.white24, width: 2),
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Create a button for each option in the choice.
+        for (final (index, option) in choice.options.indexed) ...[
+          OutlinedButton(
+            // A choice can be unavailable if its condition (e.g., `<<if $seen_key>>`) is false.
+            onPressed: option.isAvailable
+                ? () {
+              // Complete the future with the index of the chosen option.
+              completer.complete(index);
+              // Close the bottom sheet.
+              Navigator.pop(context);
+            }
+                : null, // `null` onPressed disables the button.
+            child: Text(option.text, style: _buttonTextStyle),
+          ),
+          // Add spacing between buttons, but not after the last one.
+          if (index < choice.options.length - 1) const SizedBox(height: 10),
         ],
-      ),
-    );
+      ],
+    ),
+  );
 }

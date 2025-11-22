@@ -1,14 +1,14 @@
-import 'package:mpg_achievements_app/core/rendering/textures/game_texture.dart';
+import 'package:mpg_achievements_app/core/rendering/textures/game_texture_batch.dart';
 
 class TextureManager {
-  final Map<String, GameTexture> _textures = {};
+  final Map<String, GameTextureBatch> _textures = {};
 
-  void loadTexture(String id, String path) {
+  void loadTexture(String id, String path) async{
     // Load texture from path and store it in the map
-    _textures[id] = GameTexture.fromPath(assetPath: path);
+    _textures[id] = await loadTextureBatchFromFile(path);
   }
 
-  GameTexture? getTexture(String id) => _textures[id];
+  GameTextureBatch? getTexture(String id) => _textures[id];
 
   void unloadTexture(String id) {
     _textures.remove(id)?.dispose();

@@ -3,10 +3,9 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/animation/animation_style.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
-
-import '../level_components/entity/animation/animation_style.dart';
-import '../level_components/entity/player.dart';
 
 
 class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo completely, currently a mix of old code and new isometric camera code

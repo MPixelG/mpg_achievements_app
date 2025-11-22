@@ -14,27 +14,27 @@ class TextOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => game.showDialogue
-        ? Container(
-            color: Colors.transparent.withValues(alpha: 0.15),
-            child: AnimatedTextKit(
-              animatedTexts: [
-                TyperAnimatedText(
-                  "Text goes here!",
-                  textStyle: const TextStyle(
-                    color: Color.from(alpha: 2, red: 5, green: 6, blue: 7),
-                    fontSize: 18,
-                    fontFamily: "gameFont",
-                  ),
-                  speed: const Duration(milliseconds: 100),
-                ),
-              ],
-              isRepeatingAnimation: false,
+      ? Container(
+    color: Colors.transparent.withValues(alpha: 0.15),
+    child: AnimatedTextKit(
+      animatedTexts: [
+        TyperAnimatedText(
+          "Text goes here!",
+          textStyle: const TextStyle(
+            color: Color.from(alpha: 2, red: 5, green: 6, blue: 7),
+            fontSize: 18,
+            fontFamily: "gameFont",
+          ),
+          speed: const Duration(milliseconds: 100),
+        ),
+      ],
+      isRepeatingAnimation: false,
 
-              onFinished: () {
-                game.showDialogue = false;
-                onTextOverlayDone();
-              },
-            ), //Animatedtextkit
-          )
-        : Container();
+      onFinished: () {
+        game.showDialogue = false;
+        onTextOverlayDone();
+      },
+    ), //Animatedtextkit
+  )
+      : Container();
 }

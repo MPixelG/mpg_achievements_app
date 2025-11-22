@@ -1,10 +1,11 @@
 import 'dart:async';
-import 'dart:ui';
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
+import 'animated_character.dart';
 
 mixin AnimationManager on AnimatedCharacter, HasGameReference<PixelAdventure> {
   final double stepTime = 0.05; //the time for every frame

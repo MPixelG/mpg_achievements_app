@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
+import 'package:mpg_achievements_app/components/animation/animated_character.dart';
+import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/level_components/saw.dart';
 import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
-import '../animation/animation_manager.dart';
+
 import 'ai/goals/follow_player_goal.dart';
 import 'ai/goals/goal_manager.dart';
 import 'ai/goals/move_goal.dart';
@@ -29,7 +30,7 @@ class Enemy extends AnimatedCharacter
   Vector3 startingPosition = Vector3.zero();
   String enemyCharacter;
 
-  //constructor super is reference to the SpriteanimationGroupComponent above, which contains position as attributes
+  //constructor super is reference to the AnimatedCharacter above, which contains position as attributes
   Enemy({
     required this.enemyCharacter,
     super.position,

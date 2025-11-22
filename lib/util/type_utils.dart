@@ -1,3 +1,5 @@
+import 'package:flame/components.dart';
+
 T safeCast<T>(dynamic parent) {
   if (parent is T) {
     return parent;
@@ -23,4 +25,8 @@ extension IterableFirstWhereOrNull<T> on Iterable<T> {
     }
     return null;
   }
+}
+
+extension AnchorMultiplication on Anchor {
+  Vector2 operator*(Vector2 other) => other.clone()..multiply(toVector2());
 }

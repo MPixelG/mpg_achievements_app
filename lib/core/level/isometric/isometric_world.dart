@@ -1,11 +1,9 @@
 import 'dart:developer';
-import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
-import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/enemy/ai/isometric_tile_grid.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/isometric_character_shadow.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
@@ -13,7 +11,6 @@ import 'package:mpg_achievements_app/core/level/game_world.dart';
 import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
-
 
 import 'isometric_renderable.dart';
 import 'isometric_tiled_component.dart';
@@ -42,7 +39,7 @@ class IsometricWorld extends GameWorld {
   Future<void> onLoad() async {
     // Initialize the player as an IsometricPlayer
     player = Player(playerCharacter: 'Player');
-    player2 = Player(playerCharacter: 'BubbleMaster');
+    player2 = Player(playerCharacter: 'BubbleMaster', position: Vector3(3, 1, 3));
 
     await super.onLoad();
     //find the collision layer

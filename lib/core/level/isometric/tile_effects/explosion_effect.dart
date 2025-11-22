@@ -1,8 +1,8 @@
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
+import 'package:mpg_achievements_app/components/animation/animated_character.dart';
+import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/core/math/iso_anchor.dart';
 
-import '../../../../components/level_components/entity/animation/animation_manager.dart';
 import '../isometric_tiled_component.dart';
 
 class ExplosionEffect extends AnimatedCharacter with AnimationManager {

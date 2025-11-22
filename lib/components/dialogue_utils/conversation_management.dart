@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:jenny/jenny.dart';
 import 'package:mpg_achievements_app/components/dialogue_utils/speechbubble.dart';
@@ -30,15 +31,27 @@ class ConversationManager with DialogueView {
   // When `true`close conversation
   final bool _isConversationFinished = false;
   late bool _showingScript = false;
+  bool _isPaused = false; // Flag für Pause-Status
   // Tracks the currently active speech bubble overlay key for each character.
   // This allows us to remove the correct bubble when a character speaks again.
   final Map<String, String> _activeSpeechBubbles = {};
 
   ConversationManager({required this.game});
 
+  bool _isRapidLine(DialogueLine line) {
+    // Option 1: Hashtags in Yarn nutzen
+    if (line.tags.contains('rapid')) return true;
+
+    // Option 2: Sehr kurze Texte automatisch als rapid behandeln
+    if (line.text.length < 20) return true;
+
+    return false;
+  }
+
   // Starts a new conversation from a given Yarn script.
   Future<void> startConversation(String yarnFilePath) async {
     // Clear any bubbles from a previous conversation
+    _isPaused = false;
     _clearAllSpeechBubbles();
     // Helper class to load and parse the .yarn file.
     final yarnCreator = YarnCreator(
@@ -62,47 +75,60 @@ class ConversationManager with DialogueView {
     unawaited(_dialogueRunner!.startDialogue('Start'));
   }
 
+  // Neue Methode für Interaction Break
+  void pauseConversation() {
+    if (_lineCompleter != null && !_lineCompleter!.isCompleted) {
+      // Pausiere nicht, wenn bereits auf Completion gewartet wird
+      return;
+    }
+    print("Conversation paused by interaction break");
+  }
+
+  void resumeConversation() {
+    print("Conversation resumed");
+    // bei Bedarf die Conversation fortsetzen
+  }
+
   @override
   Future<bool> onLineStart(DialogueLine line) async {
     _lineCompleter = Completer<void>();
-    //get context from game, The BuildContext argument is your handle into the location of the widget in the widget tree. This location is used for looking up inherited widgets
-    final BuildContext? _ = rootNavigatorKey
-        .currentContext; //todo maybe GlobalKey<NavigatorState> for accessing BuildContext
-    // Determine who is speaking. Default to 'Player' if no character is specified.
-    // Your Yarn script should have lines like "Player: Hello!" or "Guard: Halt!".
+    _currentLine = line;
+
+    final BuildContext? _ = rootNavigatorKey.currentContext;
+
     final String characterName = line.character?.name ?? 'Character';
     print("Speaking character:'$characterName'");
     final IsoPositionComponent? character = _findCharacterByName(characterName);
     print('found character:$character');
-    // Add this check
+
     if (character == null) {
       print(
         "Error: Character '$characterName' not found in game.npcs. Cannot show speech bubble.",
       );
-      // Complete the line immediately so dialogue doesn't hang
       _lineCompleter?.complete();
       return true;
     }
-    // Remove the previous speech bubble for this character, if one exists.
+
     _removeSpeechBubbleFor(characterName);
 
-    // Create a new, unique overlay key for this bubble.
     final overlayKey =
         'SpeechBubble_${characterName}_${DateTime.now().millisecondsSinceEpoch}';
     print('overlayKey1:$overlayKey');
     _activeSpeechBubbles[characterName] = overlayKey;
 
+    final bool isRapid = _isRapidLine(line);
+
     game.overlays.addEntry(
       overlayKey,
-      (_, game) => SpeechBubble(
+          (_, game) => SpeechBubble(
         component: character,
         text: line.text,
         game: this.game,
+        isRapidText: isRapid,
         onDismiss: () {
           _removeSpeechBubbleFor(characterName);
-          //complete line after speechbubble is dismissed other bubble is dismissed too early
-          if (!(_lineCompleter!.isCompleted ?? true)) {
-            _lineCompleter!.complete();
+          if (!(_lineCompleter?.isCompleted ?? true)) {
+            _lineCompleter?.complete();
           }
         },
       ),
@@ -110,10 +136,9 @@ class ConversationManager with DialogueView {
 
     game.overlays.add(overlayKey);
 
-    // Pause the dialogue runner until the line completer is finished.
     await _lineCompleter?.future;
 
-    return true; //always true after completion
+    return true;
   }
 
   @override
@@ -146,7 +171,7 @@ class ConversationManager with DialogueView {
 
     game.overlays.addEntry(
       overlayKey,
-      (_, game) => SpeechBubble(
+          (_, game) => SpeechBubble(
         key: ValueKey(overlayKey),
         game: this.game,
         component: character,

@@ -7,16 +7,18 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/components/animation/animated_character.dart';
+import 'package:mpg_achievements_app/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/components/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/animation/animated_character.dart';
+import 'package:mpg_achievements_app/components/level_components/entity/test_sprite_entity.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
+import 'package:mpg_achievements_app/core/rendering/textures/game_texture_batch.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import '../../../state_management/providers/player_state_provider.dart';
 import '../../controllers/control_action_bundle.dart';
-import 'animation/animation_manager.dart';
 
 //todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations
@@ -50,7 +52,7 @@ class Player extends AnimatedCharacter
 
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position})
-    : super(size: Vector3(0.8, 1.1, 0.8));
+    : super(size: Vector3(0.8, 1.05, 0.8));
 
   @override
   Future<void> onLoad() async {
@@ -101,6 +103,9 @@ class Player extends AnimatedCharacter
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    
+    if(event is KeyUpEvent) return super.onKeyEvent(event, keysPressed);
+    
     if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
       ref.read(playerProvider.notifier).manualRespawn();
     }
@@ -117,6 +122,12 @@ class Player extends AnimatedCharacter
       if (kDebugMode) {
         print("healed");
       }
+    }
+
+    if (keysPressed.contains(LogicalKeyboardKey.keyG)) {
+      loadTextureBatchFromFile("test_batch.json").then((value) {
+        game.gameWorld.add(TestSpriteEntity(textureBatch: value, size: Vector3.all(1), position: position, current: "idle"));
+      });
     }
 
     return super.onKeyEvent(event, keysPressed);

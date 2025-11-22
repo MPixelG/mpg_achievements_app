@@ -6,15 +6,15 @@ import 'package:mpg_achievements_app/components/level_components/entity/player.d
 import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/core/math/ray3.dart';
 import 'package:mpg_achievements_app/core/math/transform3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/collision_detection_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detection.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/hitbox3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/misc/aabb_listener.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/util/raycasting_3d.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/collision_detection_3d.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/util/composite_hitbox_3d.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/hitbox3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_component_3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/util/composite_hitbox_3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/util/raycasting_3d.dart';
 import 'package:vector_math/vector_math.dart' show Vector3;
 
 import '../util/intersection_systems_3d.dart' as intersection_system;
@@ -220,12 +220,12 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
 
     _validAabb = true;
     if(hitboxParent is! Player) {
-      print("recalculated aabb! expected min: $hitboxMin, expected max: ${hitboxMin + scaledSize}, center: $hitboxCenter, half Extends: $_halfExtents");
+      //print("recalculated aabb! expected min: $hitboxMin, expected max: ${hitboxMin + scaledSize}, center: $hitboxCenter, half Extends: $_halfExtents");
 
       _aabb.setCenterAndHalfExtents(hitboxCenter, _halfExtents);
 
-      print(" -> aabb: ${_aabb.min} - ${_aabb.max}");
-      print(" -> parent pos: ${hitboxParent.absolutePosition}");
+      //print(" -> aabb: ${_aabb.min} - ${_aabb.max}");
+      //print(" -> parent pos: ${hitboxParent.absolutePosition}");
     }else {
       _aabb.setCenterAndHalfExtents(hitboxCenter, _halfExtents);
     }

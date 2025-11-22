@@ -27,7 +27,7 @@ class YarnCreator extends Component with DialogueView {
     return project;
   }
 
-void _registerCommands() {
+  void _registerCommands() {
     for (final entry in commands.entries) {
       final name = entry.key;
       final command = entry.value;

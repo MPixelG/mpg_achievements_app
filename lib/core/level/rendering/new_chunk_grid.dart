@@ -5,11 +5,11 @@ import 'dart:ui';
 
 import 'package:flame/extensions.dart';
 import 'package:mpg_achievements_app/core/level/generation/chunk_generator.dart';
-import 'package:mpg_achievements_app/core/level/rendering/cached_image_world_map.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import '../isometric/isometric_renderable.dart';
+import 'cached_image_world_map.dart';
 import 'chunk.dart';
 
 class ChunkGrid {
@@ -33,8 +33,8 @@ class ChunkGrid {
   ChunkGenerator generator;
 
   ChunkGrid({required this.generator}){
-    Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      tickNextFrame = true;
+    Timer.periodic(const Duration(milliseconds: 300), (timer) {
+      sortNextFrame = true;
     });
     if (!shaderInitialized && !shaderBeingInitialized) {
       shaderBeingInitialized = true;
@@ -69,9 +69,10 @@ class ChunkGrid {
     return false;
   }
 
-  bool tickNextFrame = true;
+  bool sortNextFrame = true;
   void tick(Vector2 position, Vector2 viewportSize, List<IsometricRenderable> components) {
-    tickNextFrame = false;
+    components.sort((a, b) => depth(a).compareTo(depth(b)));
+    sortNextFrame = false;
 
     if (camOutsideCache(position, _currentAlbedoCache, viewportSize) ||
         _currentAlbedoCache == null) {
@@ -278,7 +279,7 @@ class ChunkGrid {
       shader!.setImageSampler(2, _currentAlbedoCacheEntity!.image);
       shader!.setImageSampler(3, _currentNormalCacheEntity!.image);
 
-      final double time = DateTime.now().millisecondsSinceEpoch / 10000;
+      final double time = DateTime.now().millisecondsSinceEpoch / 1000;
       final double lightX = cos(time) * 300;
       final double lightZ = sin(time) * 300;
 
@@ -292,7 +293,9 @@ class ChunkGrid {
           _currentAlbedoCache!.pos.y - _currentAlbedoCacheEntity!.pos.y,
           lightX,
           lightZ,
-          35
+          35,
+          0.5,
+          DateTime.now().millisecondsSinceEpoch.toDouble() % 32000000,
         ]);
       });
 

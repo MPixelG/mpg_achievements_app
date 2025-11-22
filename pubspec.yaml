@@ -114,6 +114,9 @@ flutter:
     - assets/images/playerNormal.png
     - assets/images/Pixel_ArtTop_Down/iso_sprite_sheet.png
     - assets/images/Pixel_ArtTop_Down/iso_sprite_sheet_normalMap.png
+    - assets/images/Main Characters/Mage_Aseprite/Mage-Sheet.png
+    - assets/images/Main Characters/Mage_Aseprite/Mage-Sheet_depth.png
+    - assets/test_batch.json
 
   shaders:
     - assets/shaders/lighting.frag
