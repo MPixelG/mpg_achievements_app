@@ -120,6 +120,7 @@ class IsometricWorld extends GameWorld {
       children.whereType<IsometricRenderable>().toList(),
       CameraComponent.currentCamera!.viewfinder.position - (CameraComponent.currentCamera!.viewport.virtualSize/2),
       CameraComponent.currentCamera!.viewport.virtualSize,
+      CameraComponent.currentCamera!.viewfinder.zoom,
     );
   }
 

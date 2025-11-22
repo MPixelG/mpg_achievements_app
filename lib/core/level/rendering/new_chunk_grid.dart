@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:core';
 import 'dart:math';
 import 'dart:ui';
@@ -33,9 +32,6 @@ class ChunkGrid {
   ChunkGenerator generator;
 
   ChunkGrid({required this.generator}){
-    Timer.periodic(const Duration(milliseconds: 300), (timer) {
-      sortNextFrame = true;
-    });
     if (!shaderInitialized && !shaderBeingInitialized) {
       shaderBeingInitialized = true;
       initShader();
@@ -54,8 +50,6 @@ class ChunkGrid {
   }
 
   static const double viewportExtendPixels = 128;
-  static const double upscaleFactor = 1;
-
 
   bool camOutsideCache(Vector2 camPos, CachedImageWorldMap? cache, Vector2 viewportSize) {
     if(cache == null) return true;
@@ -69,10 +63,8 @@ class ChunkGrid {
     return false;
   }
 
-  bool sortNextFrame = true;
   void tick(Vector2 position, Vector2 viewportSize, List<IsometricRenderable> components) {
     components.sort((a, b) => depth(a).compareTo(depth(b)));
-    sortNextFrame = false;
 
     if (camOutsideCache(position, _currentAlbedoCache, viewportSize) ||
         _currentAlbedoCache == null) {
@@ -96,34 +88,17 @@ class ChunkGrid {
       Vector2 viewportSize,
       List<IsometricRenderable> components
       ) {
+    if (components.any((c) => c.dirty)) return true;
 
-    final currentHashes = components
-        .map((c) => c.hashCode)
-        .toList();
+    if (components.length != _lastEntityHashes.length) return true;
 
-    if (currentHashes.length != _lastEntityHashes.length) {
-      return true;
+    for (int i = 0; i < components.length; i++) {
+      if (components[i].hashCode != _lastEntityHashes[i]) return true;
     }
 
-    for (int i = 0; i < currentHashes.length; i++) {
-      if (currentHashes[i] != _lastEntityHashes[i]) {
-        return true;
-      }
-    }
-
-    return components.any((c) => c.dirty);
+    return false;
   }
-
-  double timeSinceLastRebuild = 0;
-  Paint debugPaint = Paint()
-    ..color = const Color(0x8813C52A)
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 2;
-  Paint debugPaint2 = Paint()
-    ..color = const Color(0x88FF0000)
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 2;
-
+  
   Vector2 lastCamPos = Vector2.zero();
   Vector2 lastViewportSize = Vector2.zero();
 
@@ -264,6 +239,7 @@ class ChunkGrid {
       List<IsometricRenderable> components,
       Vector2 position,
       Vector2 viewportSize,
+      double zoom
       ) {
     tick(position, viewportSize, components);
 
@@ -318,6 +294,31 @@ class ChunkGrid {
       //     )
       // );
       canvas.restore();
+    }
+  }
+
+
+  void unloadDistantChunks(Vector2 position, Vector2 size, int maxDistance) {
+    final visibleChunks = chunksVisibleByCamera(position, size);
+    final chunksToRemove = <Vector2>[];
+
+    for (var coord in chunks.keys) {
+      bool isNearVisible = false;
+      for (var visible in visibleChunks) {
+        if ((coord - visible).length <= maxDistance) {
+          isNearVisible = true;
+          break;
+        }
+      }
+      if (!isNearVisible) {
+        chunksToRemove.add(coord);
+      }
+    }
+
+    for (var coord in chunksToRemove) {
+      chunks[coord]?.albedoMap?.dispose();
+      chunks[coord]?.normalAndDepthMap?.dispose();
+      chunks.remove(coord);
     }
   }
 

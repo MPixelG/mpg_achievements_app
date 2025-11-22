@@ -29,13 +29,15 @@ class ScrollingBackground extends Component with HasGameReference<PixelAdventure
 
     final Vector2 startPos = pos + (game.cam.viewfinder.position - (game.cam.viewport.virtualSize / 2) / zoom);
     final Vector2 endPos = startPos + (screenSize / zoom) + size*2;
-
+    
+    final double sizeExtend = 0.5/CameraComponent.currentCamera!.viewfinder.zoom;
+    
     for(double x = startPos.x; x < endPos.x; x += size.x) {
       for(double y = startPos.y; y < endPos.y; y += size.y) {
         canvas.drawImageRect(
           img,
           Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble()),
-          Rect.fromLTWH(x, y, size.x+0.5, size.y+0.5),
+          Rect.fromLTWH(x, y, size.x+sizeExtend, size.y+sizeExtend),
           Paint(),
         );
       }

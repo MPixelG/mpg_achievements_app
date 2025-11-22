@@ -10,7 +10,6 @@ import 'package:mpg_achievements_app/components/animation/animation_manager.dart
 import 'package:mpg_achievements_app/components/animation/new_animated_character.dart';
 import 'package:mpg_achievements_app/components/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
-import 'package:mpg_achievements_app/components/level_components/entity/test_sprite_entity.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
 import 'package:mpg_achievements_app/core/rendering/textures/game_texture_batch.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
@@ -128,13 +127,6 @@ class Player extends AnimatedCharacter
         print("healed");
       }
     }
-
-    if (keysPressed.contains(LogicalKeyboardKey.keyG)) {
-      loadTextureBatchFromFile("test_batch.json").then((value) {
-        game.gameWorld.add(TestSpriteEntity(textureBatch: value, size: Vector3.all(1), position: position, current: "idle"));
-      });
-    }
-
     return super.onKeyEvent(event, keysPressed);
   }
 

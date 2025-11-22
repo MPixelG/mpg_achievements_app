@@ -14,13 +14,10 @@ mixin HasMovementAnimations on AnimatedCharacter{
       return possibleIsoDirections.first;
     }
 
-    // Z-Achse invertieren, da -z = hinten in deinem System
     double angle = math.atan2(-velocity.z, -velocity.x) * 180 / math.pi;
 
-    // Normalisieren auf 0-360
     angle = (angle + 360) % 360;
 
-    // 90° Korrektur für isometrische Ansicht
     angle = (angle - 45) % 360;
 
     double nearest = possibleIsoDirections.first;
@@ -36,7 +33,6 @@ mixin HasMovementAnimations on AnimatedCharacter{
       }
     }
 
-    print("velocity: (${velocity.x}, ${velocity.z}), raw angle: ${math.atan2(-velocity.z, -velocity.x) * 180 / math.pi}, transformed: $angle, nearest: $nearest");
     return nearest;
   }
 

@@ -7,8 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/core/level/generation/chunk_generator.dart';
 import 'package:mpg_achievements_app/core/level/generation/tiled_map_generator.dart';
 
-import '../rendering/new_chunk_grid.dart';
 import '../rendering/game_tile_map.dart';
+import '../rendering/new_chunk_grid.dart';
 import 'isometric_renderable.dart';
 
 // A data class designed to hold all the necessary information for rendering a single object,
@@ -46,10 +46,9 @@ class IsometricTiledComponent extends TiledComponent with KeyboardHandler{ //tod
     List<IsometricRenderable> components,
     Vector2 position,
     Vector2 viewportSize,
+      double zoom
   ) {
-
-
-    chunks.render(canvas, components, position, viewportSize);
+    chunks.render(canvas, components, position, viewportSize, zoom);
   }
 
   void forceRebuildCache() {}
