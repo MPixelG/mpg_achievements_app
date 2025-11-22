@@ -45,6 +45,7 @@ jobs:
 
           total_added=0
           total_deleted=0
+          total_files_changed=0
           all_msgs=""
           author_name=""
           author_email=""
@@ -54,7 +55,9 @@ jobs:
             added=$(git show --numstat --pretty="" "$sha" | awk '$1 ~ /^[0-9]+$/ {sum += $1} END {print sum+0}')
             deleted=$(git show --numstat --pretty="" "$sha" | awk '$2 ~ /^[0-9]+$/ {sum += $2} END {print sum+0}')
             msg=$(git log -1 --pretty=format:'%B' "$sha" | tr -d '\000-\010\013\014\016-\037')
-
+            files=$(git show --numstat --pretty="" "$sha" | awk '{print $3}' | sort -u | wc -l)
+            total_files_changed=$((total_files_changed + files))
+            
             echo "Added: $added, Deleted: $deleted" >&2
 
             total_added=$((total_added + added))
@@ -82,6 +85,7 @@ jobs:
           echo "AUTHOR_EMAIL=$author_email" >> $GITHUB_ENV
           echo "ADDITIONS=$total_added" >> $GITHUB_ENV
           echo "DELETIONS=$total_deleted" >> $GITHUB_ENV
+          echo "FILES_CHANGED=$total_files_changed" >> $GITHUB_ENV
           echo "COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
           echo "$all_msgs" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
@@ -178,7 +182,7 @@ jobs:
           AUTHOR: ${{ env.FOUND_LOGIN }}
           ADDITIONS: ${{ env.ADDITIONS }}
           DELETIONS: ${{ env.DELETIONS }}
-          COMMIT_SHA: ${{ env.COMMIT_SHA }}
+          FILES_CHANGED: ${{ env.FILES_CHANGED }}
         run: |
           escape() {
             printf '%s' "$1" | sed 's/"/\\"/g'
@@ -187,43 +191,27 @@ jobs:
           sanitized_msg=$(escape "$MESSAGE")
           sanitized_author=$(escape "$AUTHOR")
 
+          color_hex=$(printf '%s' "$sanitized_author" | sha1sum | cut -c1-6)
+          color_dec=$((16#$color_hex))
+
           discord_payload=$(jq -nc \
             --arg author "$sanitized_author" \
             --arg msg "$sanitized_msg" \
             --arg adds "$ADDITIONS" \
             --arg dels "$DELETIONS" \
-            --arg sha "$COMMIT_SHA" \
+            --arg files "$FILES_CHANGED" \
+            --argjson color "$color_dec" \
             '{
               "embeds": [
                 {
-                  "title": "Neues Commit",
-                  "color": 5814783,
+                  "title": "Neuer Commit!",
+                  "color": $color,
                   "fields": [
-                    {
-                      "name": "Autor",
-                      "value": $author,
-                      "inline": false
-                    },
-                    {
-                      "name": "Commit Nachricht",
-                      "value": ($msg | if . == "" then "*Kein Commit-Text*" else . end),
-                      "inline": false
-                    },
-                    {
-                      "name": "Additions",
-                      "value": $adds,
-                      "inline": true
-                    },
-                    {
-                      "name": "Deletions",
-                      "value": $dels,
-                      "inline": true
-                    },
-                    {
-                      "name": "Commit SHA",
-                      "value": $sha,
-                      "inline": false
-                    }
+                    { "name": "Autor", "value": $author, "inline": false },
+                    { "name": "Commit Nachricht", "value": ($msg | if . == "" then "*Kein Commit-Text*" else . end), "inline": false },
+                    { "name": "Additions", "value": $adds, "inline": true },
+                    { "name": "Deletions", "value": $dels, "inline": true },
+                    { "name": "Files Changed", "value": $files, "inline": true }
                   ]
                 }
               ]
