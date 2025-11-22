@@ -1,0 +1,23 @@
+{
+  "name": "Ninja Frog",
+  "Texture": "images/Main Characters/Ninja Frog/Idle (32x32).png",
+  "spriteWidth": 32,
+  "spriteHeight": 32,
+  "sprites": [
+    {
+      "name": "idle",
+
+      "x": 0,
+      "y": 0,
+
+      "animated": true,
+      "animationOptions": {
+        "frameCount": 4,
+        "frameDirection": "horizontal",
+        "frameDuration": 0.1,
+        "loop": true,
+        "pingPong": false
+      }
+    }
+  ]
+}

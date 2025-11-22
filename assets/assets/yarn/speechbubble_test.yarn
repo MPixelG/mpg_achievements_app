@@ -1,0 +1,221 @@
+<<character "BubbleMaster" BubbleMaster>>
+<<character "Player" Player>>
+<<character "UnknownNPC" UnknownNPC>>
+<<declare $knows_variables = false>>
+<<declare $test_counter = 0>>
+<<declare $rapid_fire_count = 0>>
+
+title: Start
+tags:
+---
+BubbleMaster: Greetings! I am the BubbleMaster. I'm here to test the dialogue system comprehensively.
+
+// Test 1: Basic line display
+BubbleMaster: This is a basic test to ensure speech bubbles appear correctly.
+
+// Test 2: Sequential lines (tests completer logic and bubble removal)
+BubbleMaster: This is the first line of a sequence. Click to continue.
+BubbleMaster: Second line. The previous bubble should have been removed.
+BubbleMaster: Third line. Each line should wait for your interaction.
+
+// Test 3: Very long line (tests text wrapping, overflow handling)
+BubbleMaster: This is an exceptionally long line designed to test the text wrapping mechanism inside speech bubbles. It should gracefully handle multiple lines without causing any layout issues, overflow errors, or visual glitches. The tail should remain properly positioned even with wrapped text.
+
+// Test 4: Very short line (tests minimum bubble size)
+BubbleMaster: Hi.
+
+// Test 5: Empty line edge case
+BubbleMaster:
+
+// Test 6: Multiple characters in sequence (tests character switching)
+Player: Now it's my turn to speak!
+BubbleMaster: And I respond.
+Player: This tests rapid character switching.
+
+// Test 7: Punctuation and Unicode characters
+BubbleMaster: Testing punctuation marks! Question? Exclamation! Comma, period.
+BubbleMaster: Testing parentheses (like this) and hyphens-and-dashes.
+BubbleMaster: Unicode test: 你好 مرحبا Привет 🎮 🎨 ✨
+
+// Test 8: Numbers and variables in text
+<<set $test_counter to 42>>
+BubbleMaster: The counter is now set to {$test_counter}. Can you see it?
+
+<<jump ChoicesTestNode>>
+===
+
+title: ChoicesTestNode
+tags:
+---
+BubbleMaster: Now let's test the choice system thoroughly.
+
+// Test 9: Standard choices
+-> Option 1: Tell me about variables
+    <<set $knows_variables to true>>
+    BubbleMaster: Variables let us track state across the conversation!
+    <<jump VariableTestNode>>
+
+-> Option 2: Test nested choices
+    BubbleMaster: Good choice! Let's go deeper.
+    <<jump NestedChoicesNode>>
+
+-> Option 3: Test rapid dialogue
+    BubbleMaster: Buckle up! This will be fast.
+    <<jump RapidFireNode>>
+
+-> Option 4: Skip to end
+    BubbleMaster: Very well, skipping ahead.
+    <<jump EndPath>>
+
+// Test 10: Disabled choice
+-> Option 5: This should be disabled <<if false>>
+    BubbleMaster: ERROR: You shouldn't see this!
+===
+
+title: VariableTestNode
+tags:
+---
+// Test 11: Conditional logic based on variables
+<<if $knows_variables is true>>
+    BubbleMaster: ✓ Conditional check PASSED. The variable is true.
+<<else>>
+    BubbleMaster: ✗ ERROR: Variable should be true but isn't!
+<<endif>>
+
+<<set $test_counter to $test_counter + 10>>
+BubbleMaster: I incremented the counter. It's now {$test_counter}.
+
+<<if $test_counter > 50>>
+    BubbleMaster: The counter is greater than 50, as expected.
+<<endif>>
+
+<<jump CharacterSwitchingTest>>
+===
+
+title: NestedChoicesNode
+tags:
+---
+BubbleMaster: You chose nested choices. Here's another decision:
+
+-> Go left
+    BubbleMaster: You went left!
+    <<jump MergePoint>>
+
+-> Go right
+    BubbleMaster: You went right!
+    <<jump MergePoint>>
+
+-> Go back
+    BubbleMaster: Returning to main choices...
+    <<jump ChoicesTestNode>>
+===
+
+title: MergePoint
+tags:
+---
+BubbleMaster: Paths merged. Continuing...
+<<jump CharacterSwitchingTest>>
+===
+
+title: RapidFireNode
+tags:
+---
+// Test 12: Rapid consecutive lines (stress tests animation system)
+BubbleMaster: Line 1
+BubbleMaster: Line 2
+BubbleMaster: Line 3
+BubbleMaster: Line 4
+BubbleMaster: Line 5
+BubbleMaster: That was rapid! Did all animations complete correctly?
+
+<<set $rapid_fire_count to 5>>
+<<jump CharacterSwitchingTest>>
+===
+
+title: CharacterSwitchingTest
+tags:
+---
+// Test 13: Multiple characters talking in sequence
+BubbleMaster: Let's test character switching thoroughly.
+Player: I'm the player speaking now!
+BubbleMaster: Back to me.
+Player: And back to the player.
+
+// Test 14: Same character speaking multiple times rapidly
+Player: First player line.
+Player: Second player line immediately after.
+Player: Third player line. Each should replace the previous.
+
+// Test 15: Unknown character test
+UnknownNPC: This character might not exist in game.npcs. Does it error gracefully?
+
+<<jump FinalChoicesNode>>
+===
+
+title: FinalChoicesNode
+tags:
+---
+BubbleMaster: Final test section! Choose wisely:
+
+-> Test more conditionals
+    <<jump ConditionalTestNode>>
+
+-> Test all characters simultaneously
+    <<jump SimultaneousTestNode>>
+
+-> End the test
+    <<jump EndPath>>
+===
+
+title: ConditionalTestNode
+tags:
+---
+// Test 16: Complex conditional logic
+<<set $test_counter to $test_counter + 8>>
+
+<<if $knows_variables is true and $test_counter > 55>>
+    BubbleMaster: ✓ Complex AND condition PASSED!
+<<else>>
+    BubbleMaster: ✗ Complex condition FAILED. Variables: knows={$knows_variables}, counter={$test_counter}
+<<endif>>
+
+<<if $rapid_fire_count > 0>>
+    BubbleMaster: ✓ You did the rapid fire test!
+<<else>>
+    BubbleMaster: You skipped the rapid fire test.
+<<endif>>
+
+<<jump EndPath>>
+===
+
+title: SimultaneousTestNode
+tags:
+---
+// Test 17: Verify old bubbles are properly cleaned up
+BubbleMaster: Watch carefully. Multiple characters will speak in sequence.
+Player: If you see multiple bubbles at once, there's a cleanup bug!
+BubbleMaster: Did it work correctly?
+
+<<jump EndPath>>
+===
+
+title: EndPath
+tags:
+---
+BubbleMaster: Test sequence complete! Here's a summary:
+
+<<if $knows_variables is true>>
+    BubbleMaster: ✓ Variables work
+<<endif>>
+
+<<if $rapid_fire_count > 0>>
+    BubbleMaster: ✓ Rapid fire tested
+<<endif>>
+
+BubbleMaster: Counter final value: {$test_counter}
+
+BubbleMaster: Thank you for testing! This was the final line.
+BubbleMaster: Goodbye! The dialogue system will now finish.
+
+// Test 18: onDialogueFinish should be called and clear all bubbles
+===
