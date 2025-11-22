@@ -204,11 +204,11 @@ jobs:
             '{
               "embeds": [
                 {
-                  "title": "Neuer Commit!",
+                  "title": "New Commit!",
                   "color": $color,
                   "fields": [
-                    { "name": "Autor", "value": $author, "inline": false },
-                    { "name": "Commit Nachricht", "value": ($msg | if . == "" then "*Kein Commit-Text*" else . end), "inline": false },
+                    { "name": "Author", "value": $author, "inline": true },
+                    { "name": "Commit Message", "value": ($msg | if . == "" then "*No Commit-Message*" else . end), "inline": false },
                     { "name": "Additions", "value": $adds, "inline": true },
                     { "name": "Deletions", "value": $dels, "inline": true },
                     { "name": "Files Changed", "value": $files, "inline": true }
