@@ -18,7 +18,7 @@ class CachedImageWorldMap {
     required this.image,
     required this.capturedSize,
     Vector2? camPos,
-    this.zoom = 1.0,
+    required this.zoom,
     this.upscaleFactor = 1.0,
     this.extendPixels = 0,
   }) : pos = camPos ?? Vector2.zero();

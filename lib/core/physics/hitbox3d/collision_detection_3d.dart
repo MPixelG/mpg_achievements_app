@@ -51,7 +51,7 @@ T extends Hitbox3D<T>, B extends Broadphase3D<T>> {
             handleCollisionStart(intersectionPoints, itemA, itemB);
           }
           handleCollision(intersectionPoints, itemA, itemB);
-          //print("       --->  collision!");
+          print("       --->  collision!");
         } else if (itemA.collidingWith(itemB)) {
           handleCollisionEnd(itemA, itemB);
         }

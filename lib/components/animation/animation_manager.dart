@@ -57,7 +57,9 @@ mixin HasMovementAnimations on AnimatedCharacter{
     if (velocity.length > 4) {
       direction = calculateIsoDirection(velocity);
       nextAnimation = "walk";
-    }
+      animationTicker?.timeMultiplier = velocity.length * 0.1;
+    } else animationTicker?.timeMultiplier = 1;
+
 
     // update state to falling if velocity is greater than 0
     // if (velocity.y > 4) nextAnimation = "jumping";

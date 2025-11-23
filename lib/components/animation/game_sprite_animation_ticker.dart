@@ -20,6 +20,8 @@ class GameSpriteAnimationTicker {
   ///
   /// It's ticked by the update method. It's reset every frame change.
   double clock = 0.0;
+  
+  double timeMultiplier = 1.0;
 
   /// Total elapsed time of this animation, in seconds, since start or a reset.
   double elapsed = 0.0;
@@ -127,8 +129,8 @@ class GameSpriteAnimationTicker {
     if (_paused) {
       return;
     }
-    clock += dt;
-    elapsed += dt;
+    clock += dt * timeMultiplier;
+    elapsed += dt * timeMultiplier;
     if (_done) {
       return;
     }

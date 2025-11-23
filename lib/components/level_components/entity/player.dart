@@ -49,7 +49,7 @@ class Player extends AnimatedCharacter
   bool controllable = true;
   //constructor super is reference to the SpriteAnimationGroupComponent above, which contains position as attributes
   Player({required this.playerCharacter, super.position, this.controllable = true})
-    : super(name: "player", size: Vector3(0.8, 1.15, 0.8));
+    : super(name: "player", size: Vector3(0.8, 1.5, 0.8));
 
   @override
   Future<void> onLoad() async {

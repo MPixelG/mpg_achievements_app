@@ -220,7 +220,7 @@ void main() {
     float pixelHeight = normalPixel.b;
     float pixelHeightEntity = normalPixelEntity.b;
 
-    //albedoPixel += albedoPixelEntity / 7; // slight glow from entities, even when behind walls
+    
 
 
 
@@ -234,6 +234,8 @@ void main() {
         albedoPixel = albedoPixelEntity + (albedoPixel.a-albedoPixelEntity.a)*albedoPixel;
         normalPixel = normalPixelEntity + (normalPixel.a-normalPixelEntity.a)*normalPixel;
         pixelHeight = pixelHeightEntity + (albedoPixel.a-albedoPixelEntity.a)*pixelHeight;
+    } else {
+        albedoPixel += albedoPixelEntity / 3; // slight glow from entities, even when behind walls
     }
 
 //    fragColor = vec4(normalPixel);

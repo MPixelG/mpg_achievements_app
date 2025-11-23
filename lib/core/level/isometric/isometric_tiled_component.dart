@@ -60,13 +60,13 @@ class IsometricTiledComponent extends TiledComponent with KeyboardHandler{ //tod
       chunks.rebuild = true;
       return true;
     }
-    if(event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.numpad4) {
-      zoomVelocity+=0.05;
+    if(event is! KeyUpEvent && event.logicalKey == LogicalKeyboardKey.numpad4) {
+      zoomVelocity+=0.04;
       print("zoom set to $virtualZoom");
       return true;
     }
-    if(event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.numpad5) {
-      zoomVelocity-=0.05;
+    if(event is! KeyUpEvent && event.logicalKey == LogicalKeyboardKey.numpad5) {
+      zoomVelocity-=0.04;
       print("zoom set to $virtualZoom");
       return true;
     }
@@ -77,9 +77,9 @@ class IsometricTiledComponent extends TiledComponent with KeyboardHandler{ //tod
   double lastZoom = double.negativeInfinity;
   @override
   void update(double dt){
-    zoomVelocity *= 0.8;
+    zoomVelocity *= 0.9;
     virtualZoom += zoomVelocity;
-    if(abs(lastZoom - virtualZoom) > 0.01) {
+    if(abs(lastZoom - virtualZoom) > 0.001) {
       chunks.rebuild = true;
       lastZoom = virtualZoom;
       print("rebuilding!");

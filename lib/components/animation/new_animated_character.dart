@@ -5,6 +5,7 @@ import 'package:mpg_achievements_app/components/animation/game_sprite_animation_
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
 import 'package:mpg_achievements_app/core/rendering/textures/game_texture.dart';
 import 'package:mpg_achievements_app/core/rendering/textures/game_texture_batch.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 abstract class AnimatedCharacter extends GameCharacter with HasPaint{
@@ -174,8 +175,8 @@ abstract class AnimatedCharacter extends GameCharacter with HasPaint{
     canvas.save();
     normalCanvas?.save();
 
-    canvas.translate(-animationTicker!.getSprite().srcSize.x / 2, -animationTicker!.getSprite().srcSize.y);
-    normalCanvas?.translate(-animationTicker!.getSprite().srcSize.x / 2, -animationTicker!.getSprite().srcSize.y);
+    canvas.translate(-animationTicker!.getSprite().srcSize.x / 2, -animationTicker!.getSprite().srcSize.y + (tilesize.z/2));
+    normalCanvas?.translate(-animationTicker!.getSprite().srcSize.x / 2, -animationTicker!.getSprite().srcSize.y + (tilesize.z/2));
     
     final Vector2 albedoPosition = animationTicker!.currentFrame.srcPosition; 
     
