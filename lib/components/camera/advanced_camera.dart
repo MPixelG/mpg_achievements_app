@@ -322,13 +322,13 @@ class AdvancedCamera extends CameraComponent with KeyboardHandler { //todo redo 
     if(keysPressed.contains(LogicalKeyboardKey.numpad2)){
       moveBy(Vector2(0, 0), zoom: max(0.1, viewfinder.zoom - 0.1));
     }
-    if(keysPressed.contains(LogicalKeyboardKey.numpad4)){
-      decoupledZoom = !decoupledZoom;
-      print("toggled decoupled cam zoom to $decoupledZoom");
-      if(decoupledZoom){
-        lastZoomBeforeDecoupling = viewfinder.zoom;
-      }
-    }
+    // if(keysPressed.contains(LogicalKeyboardKey.numpad4)){
+    //   decoupledZoom = !decoupledZoom;
+    //   print("toggled decoupled cam zoom to $decoupledZoom");
+    //   if(decoupledZoom){
+    //     lastZoomBeforeDecoupling = viewfinder.zoom;
+    //   }
+    // }
     // if(keysPressed.contains(LogicalKeyboardKey.numpad5)){
     //   decoupledMovement = !decoupledMovement;
     //   print("toggled decoupled cam movement to $decoupledMovement");

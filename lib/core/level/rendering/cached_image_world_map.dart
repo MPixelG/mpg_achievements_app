@@ -4,7 +4,7 @@ import 'package:flame/components.dart';
 
 class CachedImageWorldMap {
   Image image;
-  Vector2 get capturedSize => Vector2(image.width.toDouble(), image.height.toDouble());
+  Vector2 capturedSize;
   double upscaleFactor;
   int extendPixels;
 
@@ -16,6 +16,7 @@ class CachedImageWorldMap {
 
   CachedImageWorldMap({
     required this.image,
+    required this.capturedSize,
     Vector2? camPos,
     this.zoom = 1.0,
     this.upscaleFactor = 1.0,

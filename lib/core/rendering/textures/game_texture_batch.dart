@@ -53,9 +53,8 @@ class GameTextureBatch { //todo caching
       final Image depthSpritesheet = Flame.images.containsKey(customDepthPath) ? Flame.images.fromCache(customDepthPath) : await Flame.images.load(customDepthPath);
       
       _textures[textureName] ??= {};
-      print("added rotation $rotation for animation $textureName");
       _textures[textureName]![rotation] = GameTexture(spritesheet, depthSpritesheet, textureName, rotation, position, size, animationType: _parseAnimationType(animationOptions?['type']!), frames: frames);
-    } //todo
+    }
     
     
     ready = true;

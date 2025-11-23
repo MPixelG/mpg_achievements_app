@@ -6,6 +6,7 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/core/level/generation/chunk_generator.dart';
 import 'package:mpg_achievements_app/core/level/generation/tiled_map_generator.dart';
+import 'package:mpg_achievements_app/util/utils.dart';
 
 import '../rendering/game_tile_map.dart';
 import '../rendering/new_chunk_grid.dart';
@@ -41,6 +42,7 @@ class IsometricTiledComponent extends TiledComponent with KeyboardHandler{ //tod
     // Pre-build the tile cache for efficient rendering later reading data from the Tiled map (every layer every tile)
   }
 
+  double virtualZoom = 1;
   void renderComponentsInTree(
     Canvas canvas,
     List<IsometricRenderable> components,
@@ -48,17 +50,43 @@ class IsometricTiledComponent extends TiledComponent with KeyboardHandler{ //tod
     Vector2 viewportSize,
       double zoom
   ) {
-    chunks.render(canvas, components, position, viewportSize, zoom);
+    chunks.render(canvas, components, position, viewportSize, virtualZoom);
   }
 
   void forceRebuildCache() {}
-
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if(event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.keyF) {
       chunks.rebuild = true;
       return true;
     }
+    if(event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.numpad4) {
+      zoomVelocity+=0.05;
+      print("zoom set to $virtualZoom");
+      return true;
+    }
+    if(event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.numpad5) {
+      zoomVelocity-=0.05;
+      print("zoom set to $virtualZoom");
+      return true;
+    }
     return super.onKeyEvent(event, keysPressed);
+  }
+  
+  double zoomVelocity = 0;
+  double lastZoom = double.negativeInfinity;
+  @override
+  void update(double dt){
+    zoomVelocity *= 0.8;
+    virtualZoom += zoomVelocity;
+    if(abs(lastZoom - virtualZoom) > 0.01) {
+      chunks.rebuild = true;
+      lastZoom = virtualZoom;
+      print("rebuilding!");
+    }
+    if(virtualZoom < 0) {
+      virtualZoom = 0;
+      zoomVelocity = 0.03;
+    }
   }
 }

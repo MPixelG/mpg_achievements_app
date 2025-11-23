@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/extensions.dart';
+import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/core/level/generation/chunk_generator.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
@@ -51,27 +52,31 @@ class ChunkGrid {
 
   static const double viewportExtendPixels = 128;
 
-  bool camOutsideCache(Vector2 camPos, CachedImageWorldMap? cache, Vector2 viewportSize) {
-    if(cache == null) return true;
+  bool camOutsideCache(Vector2 camPos, CachedImageWorldMap? cache, Vector2 viewportSize, double zoom) {
+    if(cache == null || rebuild) {
+      rebuild = false;
+      return true;
+    }
 
-    final Vector2 cacheBR = cache.capturedSize + cache.pos;
     final Vector2 cacheTL = cache.pos;
+    final Vector2 cacheBR = cache.capturedSize + cache.pos;
 
     if(camPos.x < cacheTL.x || camPos.y < cacheTL.y) return true;
-    if(camPos.x + viewportSize.x > cacheBR.x || camPos.y + viewportSize.y > cacheBR.y) return true;
+    if(camPos.x + (viewportSize.x) > cacheBR.x || camPos.y + (viewportSize.y) > cacheBR.y) return true;
 
     return false;
   }
 
-  void tick(Vector2 position, Vector2 viewportSize, List<IsometricRenderable> components) {
+  void tick(Vector2 position, Vector2 viewportSize, List<IsometricRenderable> components, double zoom) {
     components.sort((a, b) => depth(a).compareTo(depth(b)));
 
-    if (camOutsideCache(position, _currentAlbedoCache, viewportSize) ||
+    if (camOutsideCache(position, _currentAlbedoCache, viewportSize, zoom) ||
         _currentAlbedoCache == null) {
       if (!_isRebuildingTerrain) {
         _rebuildTerrainCachesAsync(
             position - Vector2.all(viewportExtendPixels/2),
-            viewportSize + Vector2.all(viewportExtendPixels)
+            viewportSize + Vector2.all(viewportExtendPixels),
+            zoom,
         );
       }
     }
@@ -88,15 +93,22 @@ class ChunkGrid {
       Vector2 viewportSize,
       List<IsometricRenderable> components
       ) {
-    if (components.any((c) => c.dirty)) return true;
 
-    if (components.length != _lastEntityHashes.length) return true;
+    final currentHashes = components
+        .map((c) => c.hashCode)
+        .toList();
 
-    for (int i = 0; i < components.length; i++) {
-      if (components[i].hashCode != _lastEntityHashes[i]) return true;
+    if (currentHashes.length != _lastEntityHashes.length) {
+      return true;
     }
 
-    return false;
+    for (int i = 0; i < currentHashes.length; i++) {
+      if (currentHashes[i] != _lastEntityHashes[i]) {
+        return true;
+      }
+    }
+
+    return components.any((c) => c.dirty);
   }
   
   Vector2 lastCamPos = Vector2.zero();
@@ -145,8 +157,8 @@ class ChunkGrid {
             .toImage(viewportSize.x.toInt(), viewportSize.y.toInt()),
       ]);
 
-      _nextAlbedoCacheEntity = CachedImageWorldMap(camPos: position, image: results[0]);
-      _nextNormalCacheEntity = CachedImageWorldMap(camPos: position, image: results[1]);
+      _nextAlbedoCacheEntity = CachedImageWorldMap(camPos: position, image: results[0], capturedSize: viewportSize);
+      _nextNormalCacheEntity = CachedImageWorldMap(camPos: position, image: results[1], capturedSize: viewportSize);
 
       _currentAlbedoCacheEntity?.dispose();
       _currentNormalCacheEntity?.dispose();
@@ -160,13 +172,15 @@ class ChunkGrid {
       _isRebuildingEntities = false;
     }
   }
-
+  
   Future<void> _rebuildTerrainCachesAsync(
       Vector2 position,
-      Vector2 viewportSize
+      Vector2 viewportSize,
+      double zoom,
       ) async {
     if (_isRebuildingTerrain) return;
     _isRebuildingTerrain = true;
+
 
     final Set<Vector2> visibleChunkCoords = chunksVisibleByCamera(position, viewportSize);
 
@@ -183,9 +197,19 @@ class ChunkGrid {
     final Canvas albedoCanvas = Canvas(albedoRecorder);
     final Canvas normalCanvas = Canvas(normalRecorder);
 
-    final Vector2 posTL = -position;
-    albedoCanvas.translate(posTL.x, posTL.y);
-    normalCanvas.translate(posTL.x, posTL.y);
+    final Vector2 centerOffset = viewportSize / 2;
+    final Vector2 worldCenter = position + centerOffset;
+
+    albedoCanvas.translate(centerOffset.x, centerOffset.y);
+    normalCanvas.translate(centerOffset.x, centerOffset.y);
+
+    albedoCanvas.scale(zoom);
+    normalCanvas.scale(zoom);
+
+    albedoCanvas.translate(-worldCenter.x, -worldCenter.y);
+    normalCanvas.translate(-worldCenter.x, -worldCenter.y);
+
+    albedoCanvas.drawCircle(Offset.zero, 70, Paint()..color = Colors.red);
 
     for (var chunk in chunks.values) {
       final Vector2 chunkPos = Vector2(
@@ -218,8 +242,8 @@ class ChunkGrid {
             .toImage(viewportSize.x.toInt(), viewportSize.y.toInt()),
       ]);
 
-      _nextAlbedoCache = CachedImageWorldMap(camPos: position, image: results[0]);
-      _nextNormalCache = CachedImageWorldMap(camPos: position, image: results[1]);
+      _nextAlbedoCache = CachedImageWorldMap(camPos: position, image: results[0], capturedSize: viewportSize);
+      _nextNormalCache = CachedImageWorldMap(camPos: position, image: results[1], capturedSize: viewportSize);
 
       _currentAlbedoCache?.dispose();
       _currentNormalCache?.dispose();
@@ -241,7 +265,7 @@ class ChunkGrid {
       Vector2 viewportSize,
       double zoom
       ) {
-    tick(position, viewportSize, components);
+    tick(position, viewportSize, components, zoom);
 
     if (_currentNormalCache != null &&
         _currentAlbedoCache != null &&
@@ -255,7 +279,7 @@ class ChunkGrid {
       shader!.setImageSampler(2, _currentAlbedoCacheEntity!.image);
       shader!.setImageSampler(3, _currentNormalCacheEntity!.image);
 
-      final double time = DateTime.now().millisecondsSinceEpoch / 1000;
+      const double time = 20;
       final double lightX = cos(time) * 300;
       final double lightZ = sin(time) * 300;
 
@@ -271,54 +295,24 @@ class ChunkGrid {
           lightZ,
           35,
           0.5,
-          DateTime.now().millisecondsSinceEpoch.toDouble() % 32000000,
+          DateTime.now().millisecondsSinceEpoch.toDouble(),
         ]);
       });
 
       shaderPaint.shader = shader;
+
       canvas.translate(_currentAlbedoCache!.pos.x, _currentAlbedoCache!.pos.y);
       canvas.drawRect((viewportSize + Vector2.all(viewportExtendPixels)).toRect(), shaderPaint);
 
+      canvas.drawRect(
+          (viewportSize + Vector2.all(viewportExtendPixels)).toRect(),
+          Paint()
+            ..color = Colors.red
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2
+      );
+
       canvas.restore();
-    }
-
-    if (_currentNormalCacheEntity != null &&
-        _currentAlbedoCacheEntity != null) {
-      canvas.save();
-      // canvas.drawImage(
-      //     _currentAlbedoCacheEntity!.image,
-      //     (_currentAlbedoCacheEntity!.pos).toOffset(), //a bit of transparency to indicate loading
-      //     Paint()..colorFilter = const ColorFilter.mode(
-      //       Color(0x25FFFFFF),
-      //       BlendMode.modulate,
-      //     )
-      // );
-      canvas.restore();
-    }
-  }
-
-
-  void unloadDistantChunks(Vector2 position, Vector2 size, int maxDistance) {
-    final visibleChunks = chunksVisibleByCamera(position, size);
-    final chunksToRemove = <Vector2>[];
-
-    for (var coord in chunks.keys) {
-      bool isNearVisible = false;
-      for (var visible in visibleChunks) {
-        if ((coord - visible).length <= maxDistance) {
-          isNearVisible = true;
-          break;
-        }
-      }
-      if (!isNearVisible) {
-        chunksToRemove.add(coord);
-      }
-    }
-
-    for (var coord in chunksToRemove) {
-      chunks[coord]?.albedoMap?.dispose();
-      chunks[coord]?.normalAndDepthMap?.dispose();
-      chunks.remove(coord);
     }
   }
 
