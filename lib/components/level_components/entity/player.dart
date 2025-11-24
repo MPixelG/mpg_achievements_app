@@ -202,15 +202,12 @@ class Player extends AnimatedCharacter
 
   ControlActionBundle<Player> buildControlBundle() => ControlActionBundle<Player>({
       //setting physics variables/velocity for game_character movement
-      ControlAction("moveUp", key: "W", run: (parent) => parent.velocity.z--),
-      ControlAction("moveLeft", key: "A", run: (parent) => parent.velocity.x--),
-      ControlAction("moveDown", key: "S", run: (parent) => parent.velocity.z++),
-      ControlAction(
-        "moveRight",
-        key: "D",
-        run: (parent) => parent.velocity.x++,
-      ),
-      ControlAction("jump", key: "Space", run: (parent) => parent.velocity.y++),
+      ControlAction("moveUp", key: LogicalKeyboardKey.keyW, run: (parent) => parent.velocity.z--),
+      ControlAction("moveLeft", key: LogicalKeyboardKey.keyA, run: (parent) => parent.velocity.x--),
+      ControlAction("moveDown", key: LogicalKeyboardKey.keyS, run: (parent) => parent.velocity.z++),
+      ControlAction("moveDown", key: LogicalKeyboardKey.keyD, run: (parent) => parent.velocity.x++),
+      ControlAction("jump", key: LogicalKeyboardKey.space, run: (parent) => parent.velocity.y++),
+      ControlAction("flyDown", key: LogicalKeyboardKey.shiftLeft, run: (parent) => parent.velocity.y--),
     });
 
   //Getters

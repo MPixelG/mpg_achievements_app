@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:flutter/services.dart';
 
 abstract class CharacterController<T extends Component> extends Component{
 
@@ -21,7 +22,7 @@ abstract class CharacterController<T extends Component> extends Component{
 /// controlAction scaffolding for controlling the player
 class ControlAction<T extends Component>{
   String name;
-  String key;
+  LogicalKeyboardKey key;
   void Function(T parent) run;
 
   ControlAction(this.name, {required this.key, required this.run});

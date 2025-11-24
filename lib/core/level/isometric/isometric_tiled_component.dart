@@ -47,10 +47,9 @@ class IsometricTiledComponent extends TiledComponent with KeyboardHandler{ //tod
     Canvas canvas,
     List<IsometricRenderable> components,
     Vector2 position,
-    Vector2 viewportSize,
-      double zoom
+    Vector2 viewportSize
   ) {
-    chunks.render(canvas, components, position, viewportSize, virtualZoom);
+    chunks.render(canvas, components, position, viewportSize/virtualZoom, viewportSize, virtualZoom);
   }
 
   void forceRebuildCache() {}
@@ -70,6 +69,15 @@ class IsometricTiledComponent extends TiledComponent with KeyboardHandler{ //tod
       print("zoom set to $virtualZoom");
       return true;
     }
+    if(event is! KeyUpEvent && event.logicalKey == LogicalKeyboardKey.numpad6) {
+      virtualZoom = 1;
+      return true;
+    }
+
+    if(event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.keyG && keysPressed.contains(LogicalKeyboardKey.f3)) {
+      chunks.debugRender = !chunks.debugRender;
+      return true;
+    }
     return super.onKeyEvent(event, keysPressed);
   }
   
@@ -84,8 +92,8 @@ class IsometricTiledComponent extends TiledComponent with KeyboardHandler{ //tod
       lastZoom = virtualZoom;
       print("rebuilding!");
     }
-    if(virtualZoom < 0) {
-      virtualZoom = 0;
+    if(virtualZoom < 0.1) {
+      virtualZoom = 0.1;
       zoomVelocity = 0.03;
     }
   }

@@ -9,6 +9,7 @@ class CachedImageWorldMap {
   int extendPixels;
 
   Vector2 pos;
+  Vector2 get unscaledPos => pos * zoom;
   double zoom;
 
   double get width => image.width.toDouble();

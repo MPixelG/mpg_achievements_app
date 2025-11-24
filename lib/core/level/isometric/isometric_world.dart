@@ -120,14 +120,19 @@ class IsometricWorld extends GameWorld {
       children.whereType<IsometricRenderable>().toList(),
       CameraComponent.currentCamera!.viewfinder.position - (CameraComponent.currentCamera!.viewport.virtualSize/2),
       CameraComponent.currentCamera!.viewport.virtualSize,
-      CameraComponent.currentCamera!.viewfinder.zoom,
     );
   }
 
   @override
   bool checkCollisionAt(Vector3 gridPos) {
     // Access the 'Collisions' layer from the Tiled map
-    final layer = level.tileMap.map.layers.whereType<TileLayer>().toList().elementAtOrNull(gridPos.y.toInt());
+    
+    
+    final layers = level.tileMap.map.layers.whereType<TileLayer>().toList();
+
+    if(gridPos.y < 0 || gridPos.y > layers.length) return true;
+
+    final layer = layers.elementAtOrNull(gridPos.y.toInt());
     if (layer == null) {
       return false;
     }

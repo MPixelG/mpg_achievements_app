@@ -209,6 +209,47 @@ float perlin3Octaves(vec3 P){
 float lerp(float min, float max, float x){
     return x*(max-min)+min;
 }
+float calcShadows(vec2 uv, vec2 uvEntity){
+    float startHeight = max(texture(depthMap, uv).b, texture(depthMapEntity, uvEntity).b);
+
+    // Konvertiere UV zu Weltkoordinaten
+    vec3 fragPos = vec3(uv * mapSize, startHeight * heightScale);
+
+    // Richtung zur Lichtquelle
+    vec3 toLight = lightPos - fragPos;
+    float maxDist = length(toLight);
+    vec3 rayDir = normalize(vec3(-0.1, -0.2, 0.7));
+
+    // Früh abbrechen wenn Licht unter uns ist
+    if(rayDir.z <= 0.0) return 0.0;
+
+    const int iterations = 400;
+    float stepSize = maxDist / float(iterations);
+
+    for(int i = 1; i < iterations; i++){
+        float dist = float(i) * stepSize;
+        vec3 samplePos = fragPos + rayDir * dist;
+
+        // Zurück zu UV-Koordinaten
+        vec2 sampleUV = samplePos.xy / mapSize;
+        vec2 sampleUVEntity = (samplePos.xy) / entityMapSize;
+
+        // Bounds check
+        if(sampleUV.x < 0.0 || sampleUV.x > 1.0 ||
+        sampleUV.y < 0.0 || sampleUV.y > 1.0) break;
+
+        float terrainHeight = texture(depthMap, sampleUV).b;
+        float entityHeight = texture(depthMapEntity, sampleUVEntity).b;
+        float maxHeight = max(terrainHeight, entityHeight);
+
+        // Wenn etwas den Lichtstrahl blockiert
+        if(maxHeight > samplePos.z + 0.01) {
+            return i / iterations;
+        }
+    }
+
+    return 1.0;
+}
 
 void main() {
     vec2 uv = (FlutterFragCoord().xy) / mapSize;
@@ -219,10 +260,6 @@ void main() {
     vec4 normalPixelEntity = texture(depthMapEntity, uvEntity);
     float pixelHeight = normalPixel.b;
     float pixelHeightEntity = normalPixelEntity.b;
-
-    
-
-
 
 
     if(normalPixel.a == 0 && normalPixelEntity.a == 0) return;
@@ -237,9 +274,6 @@ void main() {
     } else {
         albedoPixel += albedoPixelEntity / 3; // slight glow from entities, even when behind walls
     }
-
-//    fragColor = vec4(normalPixel);
-//    return;
 
 
     float Hleft  = heightInDirection(uv, uvEntity, vec2(-1.0, 0.0));

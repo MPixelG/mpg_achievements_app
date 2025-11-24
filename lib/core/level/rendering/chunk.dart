@@ -279,7 +279,7 @@ class Chunk {
 
       }
 
-      currentRenderable.renderTree(albedoCanvas, normalCanvas, () => calculateNormalPaint(currentRenderable!, overridePaint));
+      currentRenderable.renderTree(albedoCanvas, normalCanvas, () => calculateDepthPaint(currentRenderable!, overridePaint));
     }
     albedoCanvas.restore();
     normalCanvas.restore();

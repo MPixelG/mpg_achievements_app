@@ -20,13 +20,13 @@ class ChunkGrid {
 
   CachedImageWorldMap? _currentAlbedoCache;
   CachedImageWorldMap? _nextAlbedoCache;
-  CachedImageWorldMap? _currentNormalCache;
-  CachedImageWorldMap? _nextNormalCache;
+  CachedImageWorldMap? _currentDepthCache;
+  CachedImageWorldMap? _nextDepthCache;
 
   CachedImageWorldMap? _currentAlbedoCacheEntity;
   CachedImageWorldMap? _nextAlbedoCacheEntity;
-  CachedImageWorldMap? _currentNormalCacheEntity;
-  CachedImageWorldMap? _nextNormalCacheEntity;
+  CachedImageWorldMap? _currentDepthCacheEntity;
+  CachedImageWorldMap? _nextDepthCacheEntity;
 
   List<int> _lastEntityHashes = [];
 
@@ -39,30 +39,16 @@ class ChunkGrid {
     }
   }
 
-  void generateChunksInViewport(Vector2 position, Vector2 size) {
-    final Set<Vector2> visibleChunkCoords = chunksVisibleByCamera(position, size);
-
-    for (var coord in visibleChunkCoords) {
-      if (!chunks.containsKey(coord)) {
-        final Chunk newChunk = generator.generateChunk(coord.x.toInt(), coord.y.toInt());
-        chunks[coord] = newChunk;
-      }
-    }
-  }
-
   static const double viewportExtendPixels = 128;
 
-  bool camOutsideCache(Vector2 camPos, CachedImageWorldMap? cache, Vector2 viewportSize, double zoom) {
-    if(cache == null || rebuild) {
-      rebuild = false;
-      return true;
-    }
+  bool camOutsideCache(Vector2 camPos, CachedImageWorldMap? cache, Vector2 virtualViewportSize, double zoom) {
+    if(cache == null || rebuild) return true;
 
     final Vector2 cacheTL = cache.pos;
-    final Vector2 cacheBR = cache.capturedSize + cache.pos ;
+    final Vector2 cacheBR = cache.capturedSize + cache.pos;
 
     final Vector2 camTL = camPos;
-    final Vector2 camBR = camPos + (viewportSize); //! actual size
+    final Vector2 camBR = camPos + (virtualViewportSize);
     
     if(camTL.x < cacheTL.x || camTL.y < cacheTL.y) return true;
     if(camBR.x > cacheBR.x || camBR.y > cacheBR.y) return true;
@@ -70,33 +56,40 @@ class ChunkGrid {
     return false;
   }
 
-  void tick(Vector2 position, Vector2 viewportSize, Vector2 imageSize, List<IsometricRenderable> components, double zoom) {
+  void tick(Vector2 position, Vector2 virtualViewportSize, Vector2 imageSize, List<IsometricRenderable> components, double zoom) {
     components.sort((a, b) => depth(a).compareTo(depth(b)));
 
-    if (camOutsideCache(position, _currentAlbedoCache, viewportSize, zoom) ||
+    if (camOutsideCache(position, _currentAlbedoCache, imageSize, zoom) ||
         _currentAlbedoCache == null) {
       if (!_isRebuildingTerrain) {
-        _rebuildTerrainCachesAsync(
+        _rebuildTerrainCaches(
             position - Vector2.all(viewportExtendPixels/2),
-            viewportSize + Vector2.all(viewportExtendPixels),
-            viewportSize + Vector2.all(viewportExtendPixels),
+            virtualViewportSize,
+            imageSize + Vector2.all(viewportExtendPixels),
             zoom,
         );
       }
     }
 
-    if (_shouldRebuildEntityCache(position, viewportSize, components)) {
-      if (!_isRebuildingEntities) {
-        _rebuildEntityCachesAsync(position, viewportSize, imageSize, components, zoom);
-      }
+    if (_shouldRebuildEntityCache(position, virtualViewportSize, components)) {
+      _rebuildEntityCachesAsync(
+          position - Vector2.all(viewportExtendPixels/2),
+          virtualViewportSize,
+          imageSize + Vector2.all(viewportExtendPixels),
+          zoom,
+          components
+      );
     }
+    rebuild = false;
   }
 
   bool _shouldRebuildEntityCache(
       Vector2 position,
-      Vector2 viewportSize,
+      Vector2 virtualViewportSize,
       List<IsometricRenderable> components
       ) {
+    if (_isRebuildingEntities) return false;
+    if (rebuild) return true;
 
     final currentHashes = components
         .map((c) => c.hashCode)
@@ -122,177 +115,159 @@ class ChunkGrid {
   Paint shaderPaint = Paint();
   bool shaderInitialized = false;
   bool shaderBeingInitialized = false;
-
-  Future<void> _rebuildEntityCachesAsync(
-      Vector2 position,
-      Vector2 viewportSize,
-      Vector2 imageSize,
-      List<IsometricRenderable> components,
-      double zoom
-      ) async {
-    if (_isRebuildingEntities) return;
-    _isRebuildingEntities = true;
-
-    _lastEntityHashes = components.map((c) => c.hashCode).toList();
-
-    final PictureRecorder albedoRecorder = PictureRecorder();
-    final PictureRecorder normalRecorder = PictureRecorder();
-
-    final Canvas albedoCanvas = Canvas(albedoRecorder);
-    final Canvas normalCanvas = Canvas(normalRecorder);
-
-    final Vector2 centerOffset = viewportSize / 2;
-    final Vector2 worldCenter = -position - centerOffset;
-
-    albedoCanvas.translate(centerOffset.x, centerOffset.y);
-    normalCanvas.translate(centerOffset.x, centerOffset.y);
-
-    albedoCanvas.scale(zoom);
-    normalCanvas.scale(zoom);
-
-    albedoCanvas.translate(worldCenter.x, worldCenter.y);
-    normalCanvas.translate(worldCenter.x, worldCenter.y);
-
-    for (var component in components) {
-      component.renderTree(
-        albedoCanvas,
-        normalCanvas,
-            () => calculateNormalPaint(component, overridePaint),
-      );
-      component.setDirty(false);
-    }
-
-    try {
-      final results = await Future.wait([
-        albedoRecorder
-            .endRecording()
-            .toImage(imageSize.x.toInt(), imageSize.y.toInt()),
-        normalRecorder
-            .endRecording()
-            .toImage(imageSize.x.toInt(), imageSize.y.toInt()),
-      ]);
-
-      _nextAlbedoCacheEntity = CachedImageWorldMap(camPos: position, image: results[0], capturedSize: imageSize, zoom: zoom); //! actual size
-      _nextNormalCacheEntity = CachedImageWorldMap(camPos: position, image: results[1], capturedSize: imageSize, zoom: zoom);
-
-      _currentAlbedoCacheEntity?.dispose();
-      _currentNormalCacheEntity?.dispose();
-
-      _currentAlbedoCacheEntity = _nextAlbedoCacheEntity;
-      _currentNormalCacheEntity = _nextNormalCacheEntity;
-
-    } catch (e) {
-      print("Error rebuilding entity caches: $e");
-    } finally {
-      _isRebuildingEntities = false;
-    }
-  }
   
-  Future<void> _rebuildTerrainCachesAsync(
-      Vector2 position,
-      Vector2 viewportSize,
-      Vector2 imageSize,
-      double zoom,
-      ) async {
-    if (_isRebuildingTerrain) return;
-    _isRebuildingTerrain = true;
-
-
-    final Set<Vector2> visibleChunkCoords = chunksVisibleByCamera(position, viewportSize);
-
-    for (var coord in visibleChunkCoords) {
-      if (!chunks.containsKey(coord)) {
-        final Chunk newChunk = generator.generateChunk(coord.x.toInt(), coord.y.toInt());
-        chunks[coord] = newChunk;
-      }
-    }
-
+  Future<List<CachedImageWorldMap>?> renderToImage(Vector2 position, Vector2 virtualViewportSize, Vector2 imageSize, double zoom, void Function(Canvas albedoCanvas, Canvas depthCanvas) render) async{
     final PictureRecorder albedoRecorder = PictureRecorder();
-    final PictureRecorder normalRecorder = PictureRecorder();
+    final PictureRecorder depthRecorder = PictureRecorder();
 
     final Canvas albedoCanvas = Canvas(albedoRecorder);
-    final Canvas normalCanvas = Canvas(normalRecorder);
-
-    final Vector2 centerOffset = viewportSize / 2;
-    final Vector2 worldCenter = -position - centerOffset;
+    final Canvas depthCanvas = Canvas(depthRecorder);
+    
+    
+    final Vector2 centerOffset = imageSize / 2;
+    final Vector2 worldCenter = position + imageSize/2;
 
     albedoCanvas.translate(centerOffset.x, centerOffset.y);
-    normalCanvas.translate(centerOffset.x, centerOffset.y);
+    depthCanvas.translate(centerOffset.x, centerOffset.y);
 
-    albedoCanvas.scale(zoom);
-    normalCanvas.scale(zoom);
+    albedoCanvas.scale(1 / zoom);
+    depthCanvas.scale(1 / zoom);
 
-    albedoCanvas.translate(worldCenter.x, worldCenter.y);
-    normalCanvas.translate(worldCenter.x, worldCenter.y);
-
-
-    for (var chunk in chunks.values) {
-      final Vector2 chunkPos = Vector2(
-        ((chunk.x - chunk.z) * (Chunk.chunkSize)) * tilesize.x / 2,
-        (chunk.x + chunk.z) * (Chunk.chunkSize) * tilesize.z / 2,
-      );
-      chunkPos.y -= chunk.yHeightUsedPixels;
-
-      final Vector2 drawPos = chunk.albedoWorldTopLeft ?? chunkPos;
-
-      albedoCanvas.save();
-      normalCanvas.save();
-
-      albedoCanvas.translate(drawPos.x, drawPos.y);
-      normalCanvas.translate(drawPos.x, drawPos.y);
-
-      chunk.render(albedoCanvas, normalCanvas);
-
-      albedoCanvas.restore();
-      normalCanvas.restore();
-    }
+    albedoCanvas.translate(-worldCenter.x, -worldCenter.y);
+    depthCanvas.translate(-worldCenter.x, -worldCenter.y);
+    
+    render(albedoCanvas, depthCanvas);
 
     try {
       final results = await Future.wait([
         albedoRecorder
             .endRecording()
             .toImage((imageSize.x).toInt(), (imageSize.y).toInt()),
-        normalRecorder
+        depthRecorder
             .endRecording()
             .toImage(imageSize.x.toInt(), imageSize.y.toInt()),
       ]);
 
-      _nextAlbedoCache = CachedImageWorldMap(camPos: position, image: results[0], capturedSize: imageSize, zoom: zoom);
-      _nextNormalCache = CachedImageWorldMap(camPos: position, image: results[1], capturedSize: imageSize, zoom: zoom);
-
-      _currentAlbedoCache?.dispose();
-      _currentNormalCache?.dispose();
-
-      _currentAlbedoCache = _nextAlbedoCache;
-      _currentNormalCache = _nextNormalCache;
+      final CachedImageWorldMap result1 = CachedImageWorldMap(camPos: position / zoom, image: results[0], capturedSize: imageSize, zoom: zoom);
+      final CachedImageWorldMap result2 = CachedImageWorldMap(camPos: position / zoom, image: results[1], capturedSize: imageSize, zoom: zoom);
+      
+      return [result1, result2];
 
     } catch (e) {
-      print("Error rebuilding terrain caches: $e");
-    } finally {
-      _isRebuildingTerrain = false;
+      print("Error rebuilding caches: $e");
     }
+    return null;
   }
 
+  Future<void> _rebuildEntityCachesAsync(
+      Vector2 position,
+      Vector2 virtualViewportSize,
+      Vector2 imageSize,
+      double zoom,
+      List<IsometricRenderable> components,
+      ) async {
+    if (_isRebuildingEntities) return;
+    _isRebuildingEntities = true;
+    _lastEntityHashes = components.map((c) => c.hashCode).toList();
+
+    renderToImage(position, virtualViewportSize, imageSize, zoom, (albedoCanvas, depthCanvas) {
+      for (var component in components) {
+        component.renderTree(
+          albedoCanvas,
+          depthCanvas,
+              () => calculateDepthPaint(component, overridePaint),
+        );
+        component.setDirty(false);
+      }
+    }).then((results) {
+      _nextAlbedoCacheEntity = results?[0];
+      _nextDepthCacheEntity = results?[1];
+
+      _currentAlbedoCacheEntity?.dispose();
+      _currentDepthCacheEntity?.dispose();
+
+      _currentAlbedoCacheEntity = _nextAlbedoCacheEntity;
+      _currentDepthCacheEntity = _nextDepthCacheEntity;
+      _isRebuildingEntities = false;
+    });
+  }
+  
+  Future<void> generateVisibleChunks(Vector2 position, Vector2 viewportSize) async{
+    final Set<Vector2> visibleChunkCoords = chunksVisibleByCamera(position, viewportSize);
+
+    for (var coord in visibleChunkCoords) {
+      if (!chunks.containsKey(coord)) {
+        generator.generateChunk(coord.x.toInt(), coord.y.toInt()).then((value) => chunks[coord] = value);
+      }
+    }
+  }
+  
+  Future<void> _rebuildTerrainCaches(
+      Vector2 position,
+      Vector2 virtualViewportSize,
+      Vector2 imageSize,
+      double zoom,
+      ) async {
+    if (_isRebuildingTerrain) return;
+    _isRebuildingTerrain = true;
+    generateVisibleChunks(position, virtualViewportSize);
+    
+    renderToImage(position, virtualViewportSize, imageSize, zoom, (albedoCanvas, depthCanvas) {
+      for (var chunk in chunks.values) {
+        final Vector2 chunkPos = Vector2(
+          ((chunk.x - chunk.z) * (Chunk.chunkSize)) * tilesize.x / 2,
+          (chunk.x + chunk.z) * (Chunk.chunkSize) * tilesize.z / 2,
+        );
+        chunkPos.y -= chunk.yHeightUsedPixels;
+
+        final Vector2 drawPos = chunk.albedoWorldTopLeft ?? chunkPos;
+
+        albedoCanvas.save();
+        depthCanvas.save();
+
+        albedoCanvas.translate(drawPos.x, drawPos.y);
+        depthCanvas.translate(drawPos.x, drawPos.y);
+
+        chunk.render(albedoCanvas, depthCanvas);
+
+        albedoCanvas.restore();
+        depthCanvas.restore();
+      }
+    }).then((results) {
+      _nextAlbedoCache = results?[0];
+      _nextDepthCache = results?[1];
+
+      _currentAlbedoCache?.dispose();
+      _currentDepthCache?.dispose();
+
+      _currentAlbedoCache = _nextAlbedoCache;
+      _currentDepthCache = _nextDepthCache;
+      _isRebuildingTerrain = false;
+    });
+  }
+
+  bool debugRender = false;
   void render(
       Canvas canvas,
       List<IsometricRenderable> components,
       Vector2 position,
-      Vector2 viewportSize,
+      Vector2 virtualViewportSize,
+      Vector2 imageSize,
       double zoom
       ) {
-    tick(position, viewportSize, viewportSize, components, zoom);
+    tick(position, virtualViewportSize, imageSize, components, zoom);
 
-    if (_currentNormalCache != null &&
+    if (_currentDepthCache != null &&
         _currentAlbedoCache != null &&
         _currentAlbedoCacheEntity != null &&
-        _currentNormalCacheEntity != null &&
+        _currentDepthCacheEntity != null &&
         shader != null) {
 
       canvas.save();
       shader!.setImageSampler(0, _currentAlbedoCache!.image);
-      shader!.setImageSampler(1, _currentNormalCache!.image);
+      shader!.setImageSampler(1, _currentDepthCache!.image);
       shader!.setImageSampler(2, _currentAlbedoCacheEntity!.image);
-      shader!.setImageSampler(3, _currentNormalCacheEntity!.image);
+      shader!.setImageSampler(3, _currentDepthCacheEntity!.image);
 
       const double time = 20;
       final double lightX = cos(time) * 300;
@@ -304,8 +279,8 @@ class ChunkGrid {
           _currentAlbedoCache!.height,
           _currentAlbedoCacheEntity!.width,
           _currentAlbedoCacheEntity!.height,
-          _currentAlbedoCache!.pos.x*_currentAlbedoCache!.zoom - _currentAlbedoCacheEntity!.pos.x*_currentAlbedoCacheEntity!.zoom,
-          _currentAlbedoCache!.pos.y*_currentAlbedoCache!.zoom - _currentAlbedoCacheEntity!.pos.y*_currentAlbedoCacheEntity!.zoom,
+          _currentAlbedoCache!.pos.x - _currentAlbedoCacheEntity!.pos.x,
+          _currentAlbedoCache!.pos.y - _currentAlbedoCacheEntity!.pos.y,
           lightX,
           lightZ,
           35,
@@ -316,25 +291,27 @@ class ChunkGrid {
 
       shaderPaint.shader = shader;
 
-      canvas.translate(_currentAlbedoCache!.pos.x * _currentAlbedoCache!.zoom, _currentAlbedoCache!.pos.y * _currentAlbedoCache!.zoom);
-      canvas.drawRect((viewportSize + Vector2.all(viewportExtendPixels)).toRect(), shaderPaint);
+      canvas.translate(_currentAlbedoCache!.unscaledPos.x, _currentAlbedoCache!.unscaledPos.y);
+      canvas.drawRect((Vector2.zero()).toPositionedRect(imageSize + Vector2.all(viewportExtendPixels)), shaderPaint);
 
-      canvas.drawRect(
-          (viewportSize + Vector2.all(viewportExtendPixels)).toRect(),
-          Paint()
-            ..color = Colors.red
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 2
-      );
+      if(debugRender) {
+        canvas.drawRect(
+            (Vector2.zero()).toPositionedRect(imageSize + Vector2.all(viewportExtendPixels)),
+            Paint()
+              ..color = Colors.red
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 2
+        );
 
-      canvas.drawRect(
-          (Vector2.all(viewportExtendPixels/2)).toPositionedRect(viewportSize),
-          Paint()
-            ..color = Colors.green
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 2
-      );
-
+        canvas.drawRect(
+            (Vector2.all(viewportExtendPixels / 2)).toPositionedRect(imageSize),
+            Paint()
+              ..color = Colors.green
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 2
+        );
+      }
+      
       canvas.restore();
     }
   }
@@ -390,7 +367,7 @@ class ChunkGrid {
 }
 
 
-Paint calculateNormalPaint(IsometricRenderable renderable, Paint overridePaint) {
+Paint calculateDepthPaint(IsometricRenderable renderable, Paint overridePaint) {
   final double footY = renderable.gridFeetPos.y;
   final double headY = footY + renderable.size.y;
 
