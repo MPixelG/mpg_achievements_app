@@ -209,47 +209,65 @@ float perlin3Octaves(vec3 P){
 float lerp(float min, float max, float x){
     return x*(max-min)+min;
 }
-float calcShadows(vec2 uv, vec2 uvEntity){
-    float startHeight = max(texture(depthMap, uv).b, texture(depthMapEntity, uvEntity).b);
+// --- Robust projected shadow (screen-space raymarch) ---
+float getHeightAtScreen(vec2 screen) {
+    vec2 uv = screen / mapSize;
+    vec2 uvEntity = (screen + entityMapOffset) / entityMapSize;
+    float hTerrain = texture(depthMap, uv).b;
+    float hEntity  = texture(depthMapEntity, uvEntity).b;
+    return max(hTerrain, hEntity);
+}
 
-    // Konvertiere UV zu Weltkoordinaten
-    vec3 fragPos = vec3(uv * mapSize, startHeight * heightScale);
+float computeProjectedShadow(vec2 uv, vec2 uvEntity, vec2 fragScreen, vec3 lightPos) {
+    // STEPS / quality
+    const int STEPS = 64;
+    float eps = 0.001;
 
-    // Richtung zur Lichtquelle
-    vec3 toLight = lightPos - fragPos;
-    float maxDist = length(toLight);
-    vec3 rayDir = normalize(vec3(-0.1, -0.2, 0.7));
+    // Light in screen space (pixel coords)
+    vec2 lightScreen = lightPos.xy * mapSize;
 
-    // Früh abbrechen wenn Licht unter uns ist
-    if(rayDir.z <= 0.0) return 0.0;
+    // if light very close to fragment -> lit
+    float totalDist = length(lightScreen - fragScreen);
+    if (totalDist < 1.0) return 1.0;
 
-    const int iterations = 400;
-    float stepSize = maxDist / float(iterations);
+    // convert heights to same scaled units (apply heightScale)
+    float fragH = getHeightAtScreen(fragScreen) * heightScale;
+    float lightH = lightPos.z * heightScale;
 
-    for(int i = 1; i < iterations; i++){
-        float dist = float(i) * stepSize;
-        vec3 samplePos = fragPos + rayDir * dist;
+    // step vector in screen space
+    vec2 step = (lightScreen - fragScreen) / float(STEPS);
 
-        // Zurück zu UV-Koordinaten
-        vec2 sampleUV = samplePos.xy / mapSize;
-        vec2 sampleUVEntity = (samplePos.xy) / entityMapSize;
+    float shadow = 1.0;
+    // march from fragment towards light (skip i=0)
+    for (int i = 1; i <= STEPS; ++i) {
+        vec2 sampleScreen = fragScreen + step * float(i);
+        float t = float(i) / float(STEPS); // normalized position along ray
 
-        // Bounds check
-        if(sampleUV.x < 0.0 || sampleUV.x > 1.0 ||
-        sampleUV.y < 0.0 || sampleUV.y > 1.0) break;
+        // expected ray height at this sample
+        float rayH = mix(fragH, lightH, t);
 
-        float terrainHeight = texture(depthMap, sampleUV).b;
-        float entityHeight = texture(depthMapEntity, sampleUVEntity).b;
-        float maxHeight = max(terrainHeight, entityHeight);
+        // actual height from maps (also scaled)
+        float sampleH = getHeightAtScreen(sampleScreen) * heightScale;
 
-        // Wenn etwas den Lichtstrahl blockiert
-        if(maxHeight > samplePos.z + 0.01) {
-            return i / iterations;
+        // occlusion check with small bias
+        if (sampleH > rayH + eps) {
+            // soft edge: stronger occluder (higher delta) => darker shadow
+            float occlusion = clamp((sampleH - (rayH + eps)) / (0.02 * heightScale), 0.0, 1.0);
+            // penumbra approx: near the fragment -> sharper, far -> softer
+            float penumbra = smoothstep(0.0, 1.0, t);
+            float localShadow = mix(0.25, 0.6, penumbra); // min ambient in shadow
+            // combine: stronger occlusion reduces intensity more
+            shadow = min(shadow, mix(1.0, localShadow, occlusion));
+            // optionally break early for perf (but breaking loses softer penumbra)
+            // break;
         }
     }
 
-    return 1.0;
+    return clamp(shadow, 0.0, 1.0);
 }
+
+
+
 
 void main() {
     vec2 uv = (FlutterFragCoord().xy) / mapSize;
@@ -263,9 +281,6 @@ void main() {
 
 
     if(normalPixel.a == 0 && normalPixelEntity.a == 0) return;
-
-
-
 
     if(pixelHeightEntity > pixelHeight){
         albedoPixel = albedoPixelEntity + (albedoPixel.a-albedoPixelEntity.a)*albedoPixel;
@@ -306,8 +321,13 @@ void main() {
     float cloudVal = lerp(0.6, 0.9, perlin3Octaves(vec3(uv.x/scale + (time / 22000), uv.y/scale + (time / 22000), time / 30000)));
 
     vec3 lightColor = vec3(1, 0.7, 0.75);
+
+    //vec2 fragScreen = FlutterFragCoord().xy;
+    //float shadowFactor = computeProjectedShadow(uv, uvEntity, fragScreen, lightPos);
+
     vec3 diffuse = lightColor * NdotL * (((pixelHeight) / 5) + 0.75) * clamp(0.5, 1, 1-cloudVal/2);
+
     vec3 color = albedoPixel.rgb * (vec3(0.11, 0.1, 0.1)*2 + diffuse);
-    
+
     fragColor = vec4(color, albedoPixel.a);
 }

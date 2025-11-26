@@ -40,6 +40,7 @@ class ChunkGrid {
   }
 
   static const double viewportExtendPixels = 128;
+  static const double camRegeneratePadding = 32;
 
   bool camOutsideCache(Vector2 camPos, CachedImageWorldMap? cache, Vector2 virtualViewportSize, double zoom) {
     if(cache == null || rebuild) return true;
@@ -47,8 +48,8 @@ class ChunkGrid {
     final Vector2 cacheTL = cache.pos;
     final Vector2 cacheBR = cache.capturedSize + cache.pos;
 
-    final Vector2 camTL = camPos;
-    final Vector2 camBR = camPos + (virtualViewportSize);
+    final Vector2 camTL = camPos - Vector2.all(camRegeneratePadding/2);
+    final Vector2 camBR = camPos + virtualViewportSize + Vector2.all(camRegeneratePadding/2);
     
     if(camTL.x < cacheTL.x || camTL.y < cacheTL.y) return true;
     if(camBR.x > cacheBR.x || camBR.y > cacheBR.y) return true;
@@ -270,8 +271,8 @@ class ChunkGrid {
       shader!.setImageSampler(3, _currentDepthCacheEntity!.image);
 
       const double time = 20;
-      final double lightX = cos(time) * 300;
-      final double lightZ = sin(time) * 300;
+      final double lightX = cos(time) * 1;
+      final double lightZ = sin(time) * 1;
 
       shader!.setFloatUniforms((val) {
         val.setFloats([
@@ -279,16 +280,16 @@ class ChunkGrid {
           _currentAlbedoCache!.height,
           _currentAlbedoCacheEntity!.width,
           _currentAlbedoCacheEntity!.height,
-          _currentAlbedoCache!.pos.x - _currentAlbedoCacheEntity!.pos.x,
-          _currentAlbedoCache!.pos.y - _currentAlbedoCacheEntity!.pos.y,
-          lightX,
-          lightZ,
-          35,
+          _currentAlbedoCache!.unscaledPos.x - _currentAlbedoCacheEntity!.unscaledPos.x,
+          _currentAlbedoCache!.unscaledPos.y - _currentAlbedoCacheEntity!.unscaledPos.y,
+          0.5,
+          2.5,
+          20,
           0.5,
           DateTime.now().millisecondsSinceEpoch.toDouble(),
         ]);
       });
-
+      
       shaderPaint.shader = shader;
 
       canvas.translate(_currentAlbedoCache!.unscaledPos.x, _currentAlbedoCache!.unscaledPos.y);

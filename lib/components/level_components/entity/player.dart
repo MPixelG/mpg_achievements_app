@@ -16,6 +16,7 @@ import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import '../../../state_management/providers/player_state_provider.dart';
 import '../../controllers/control_action_bundle.dart';
+import 'isometric_character_shadow.dart';
 
 //todo implement PlayerStateProvider to manage the player state globally
 //using SpriteAnimationGroupComponent is better for a lot of animations
@@ -63,7 +64,7 @@ class Player extends AnimatedCharacter
       add(controller);
     }
 
-    //add(ShadowComponent());
+    add(ShadowComponent());
     _findGroundBeneath();
 
     return super.onLoad();

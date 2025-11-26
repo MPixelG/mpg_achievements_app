@@ -22,7 +22,6 @@ class ShadowComponent extends IsoPositionComponent {
 
   @override
   void update(double dt) {
-    //anchor = Anchor3D(0, owner.position.z - owner.zGround, 0);
     super.update(dt);
   }
 
@@ -44,6 +43,7 @@ class ShadowComponent extends IsoPositionComponent {
 
     // Draw the oval inside the rectangle
     canvas.drawOval(rect, highlightPaint);
+    normalCanvas!.drawOval(rect, highlightPaint);
     super.render(canvas);
   }
 

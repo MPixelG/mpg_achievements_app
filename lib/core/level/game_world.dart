@@ -259,7 +259,7 @@ abstract class GameWorld extends World
 
   void _loadScrollingBackground() {
     final Layer? backgroundLayer = level.tileMap.getLayer('Level');
-    String backgroundColor = "Gray";
+    String backgroundColor = "Blue";
     if (backgroundLayer != null) {
       backgroundColor = backgroundLayer.properties.getValue('BackgroundColor') ?? "Green";
     }
