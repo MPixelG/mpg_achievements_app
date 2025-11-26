@@ -134,6 +134,7 @@ jobs:
           ADDITIONS: ${{ env.ADDITIONS }}
           DELETIONS: ${{ env.DELETIONS }}
           MESSAGE: ${{ env.COMMIT_MESSAGE }}
+          ATLAS_URL: ${{ secrets.ATLAS_URL }}
         run: |
           escape_keep_newlines() {
             local raw="$1"
@@ -172,7 +173,7 @@ jobs:
           # Send to existing atlas.bot webhook with an empty commit message/description
           payload=$(jq -nc --arg content "$content" --arg description "" '{content:$content, description:$description}')
           
-          curl -s -X POST "https://atlas.bot/api/guilds/1417072674219229307/actions/05652f94-93cf-4515-a2cd-73f1cabe0162/webhook/07b5213c6bac954da52a57918d9b32110b028dd647e51c8536bd5cfcefd6f6c7" \
+          curl -s -X POST "$ATLAS_URL" \
             -H "Authorization: Bot $BOT_TOKEN" \
             -H "Content-Type: application/json" \
             -d "$payload" --ssl-no-revoke || echo "curl failed" >&2
@@ -183,6 +184,7 @@ jobs:
           ADDITIONS: ${{ env.ADDITIONS }}
           DELETIONS: ${{ env.DELETIONS }}
           FILES_CHANGED: ${{ env.FILES_CHANGED }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }} 
         run: |
           escape() {
             printf '%s' "$1" | sed 's/"/\\"/g'
@@ -219,6 +221,6 @@ jobs:
 
           curl -s -H "Content-Type: application/json" \
             -d "$discord_payload" \
-            "https://discord.com/api/webhooks/1421199463225098473/XB2Btsx6IAsS8tVikH7GvaEKaS2sp78paVMYLVtbRMmb-WUWn_j8rmJm_6y_iELZL_PX" \
+            "$DISCORD_WEBHOOK_URL" \
             || echo "discord curl failed" >&2
       
