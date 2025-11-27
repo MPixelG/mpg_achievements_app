@@ -205,7 +205,7 @@ class Player extends AnimatedCharacter
       ControlAction("moveLeft", key: LogicalKeyboardKey.keyA, run: (parent) => parent.velocity.x--),
       ControlAction("moveDown", key: LogicalKeyboardKey.keyS, run: (parent) => parent.velocity.z++),
       ControlAction("moveDown", key: LogicalKeyboardKey.keyD, run: (parent) => parent.velocity.x++),
-      ControlAction("jump", key: LogicalKeyboardKey.space, run: (parent) => parent.velocity.y++),
+      ControlAction("jump", key: LogicalKeyboardKey.space, run: (parent) => parent.velocity.y=10),
       ControlAction("flyDown", key: LogicalKeyboardKey.shiftLeft, run: (parent) => parent.velocity.y--),
     });
 

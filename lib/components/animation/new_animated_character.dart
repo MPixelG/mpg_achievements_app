@@ -6,7 +6,6 @@ import 'package:mpg_achievements_app/components/level_components/entity/game_cha
 import 'package:mpg_achievements_app/core/rendering/textures/game_texture.dart';
 import 'package:mpg_achievements_app/core/rendering/textures/game_texture_batch.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 abstract class AnimatedCharacter extends GameCharacter with HasPaint{
   /// Key with the current playing animation
@@ -185,7 +184,6 @@ abstract class AnimatedCharacter extends GameCharacter with HasPaint{
       normalCanvas!,
       albedoPositionSrc: albedoPosition,
       depthPositionSrc: albedoPosition,
-      depthPosition: toWorldPos(position),
       overridePaintDepth: getNormalPaint!()
     );
     

@@ -54,7 +54,7 @@ mixin HasMovementAnimations on AnimatedCharacter{
     //if we are going to the right and facing left flip us and the other way round
     //if the velocity is less than 2 we don't animate bc the movement is too slow and not noticeable
     //Check if moving
-    if (velocity.length > 4) {
+    if (velocity.xz.length > 4) {
       direction = calculateIsoDirection(velocity);
       nextAnimation = "walk";
       animationTicker?.timeMultiplier = velocity.length * 0.1;

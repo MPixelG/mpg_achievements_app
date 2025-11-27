@@ -98,6 +98,16 @@ void generateSpawningObjectsForLevel(GameWorld gameWorld) {
 }
 
 void generateCollisionsForLevel(GameWorld gameWorld) {
+
+  final Vector2 groundSize2D = gameWorld.level.size;
+  final Vector3 groundSize = Vector3(groundSize2D.x, 1, groundSize2D.y);
+  final ground = CollisionBlock(
+    position: Vector3.zero(),
+    size: groundSize,
+  );
+  gameWorld.add(ground);
+  
+  
   final collisionsLayer = gameWorld.level.tileMap.getLayer<ObjectGroup>(
     'Collisions',
   );

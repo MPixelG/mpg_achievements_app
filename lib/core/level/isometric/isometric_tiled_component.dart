@@ -32,9 +32,9 @@ class IsometricTiledComponent extends TiledComponent with KeyboardHandler{ //tod
     chunks = ChunkGrid(generator: generator);
 
     // //update rebuild every 2 seconds to true for testing
-    // Timer.periodic(const Duration(seconds: 2), (timer) {
-    //   rebuild = true;
-    // });
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      chunks.rebuild = true;
+    });
 
 
 

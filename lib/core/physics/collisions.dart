@@ -26,14 +26,18 @@ mixin HasCollisions
     super.onCollisionEnd(other);
   }
   
+  Vector3 directionTo(Vector3 pos1, Vector3 pos2){
+    final Vector3 diff = pos2-pos1;
+    return diff.normalized();
+  }
+  
   Vector3 lastSafePosition = Vector3.zero();
   bool justGotUnstuck = false;
   @override
   void update(double dt) {
     if(colliding) {
       position.setFrom(lastSafePosition);
-      velocity.setZero();
-      print("colliding!---");
+      velocity.y = 0.6;
     } else if(justGotUnstuck) {
       Future.doWhile(() async {
         await Future.delayed(const Duration(milliseconds: 20), () {

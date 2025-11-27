@@ -12,16 +12,19 @@ class ShadowComponent extends IsoPositionComponent {
   ShadowComponent([int priority = -1]) : super(size: defaultSize) {
     this.priority = priority;
     position = Vector3.zero();
+
   }
 
   @override
   FutureOr<void> onLoad() {
     assert(parent is Player, 'ShadowComponent must be added to an Player');
+    position.y = 0.2;
     return super.onLoad();
   }
 
   @override
   void update(double dt) {
+    position.y = -owner.position.y+1.1;
     super.update(dt);
   }
 
@@ -32,7 +35,7 @@ class ShadowComponent extends IsoPositionComponent {
     final Vector2 shadowSize = Vector2(tilesize.x/1.2, tilesize.z/1.5);
     // Define the four points
     final rect = Rect.fromCenter(
-        center: Offset(0, owner.size.y * 32 - (shadowSize.y / 2)),
+        center: Offset(0, owner.size.y * tilesize.z - (shadowSize.y / 2) - (position.y)*0 + (-10)),
         width: shadowSize.x,
         height: shadowSize.y);
 
@@ -43,7 +46,7 @@ class ShadowComponent extends IsoPositionComponent {
 
     // Draw the oval inside the rectangle
     canvas.drawOval(rect, highlightPaint);
-    normalCanvas!.drawOval(rect, highlightPaint);
+    normalCanvas!.drawOval(rect, getNormalPaint!());
     super.render(canvas);
   }
 

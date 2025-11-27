@@ -40,10 +40,12 @@ abstract class GameCharacter extends IsoPositionComponent
   @override
   void update(double dt){
     //position is updated here and character(Player) moves in the direction assigned by the variables in the player at the moment
+    super.update(dt);
     if(updateMovement) {
-      velocity *= pow(0.05, dt).toDouble();
+      velocity.y -= 0.4;
+      velocity.xz *= pow(0.05, dt).toDouble();
       position += velocity * dt * movementSpeed;
     }
-    super.update(dt);
+
   }
 }

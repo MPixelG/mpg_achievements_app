@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
-import 'package:flame/rendering.dart';
 import 'package:flutter/material.dart' hide Matrix4, TextStyle;
 import 'package:mpg_achievements_app/core/level/isometric/isometric_renderable.dart';
+import 'package:mpg_achievements_app/core/level/rendering/new_chunk_grid.dart';
+import 'package:mpg_achievements_app/core/misc/iso_decorator.dart';
 import 'package:mpg_achievements_app/core/misc/transform3d_decorator.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
@@ -16,7 +17,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
   Transform3D transform;
   Anchor3D _anchor;
 
-  late Decorator decorator;
+  late IsoDecorator decorator;
 
   IsoPositionComponent({
     super.children,
@@ -52,7 +53,7 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
 
   @override
   void renderTree(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
-    decorator.applyChain((p0) {
+    decorator.applyChain((canvas, normalCanvas) {
       final List<Component> allComponents = [
         this, ...children
       ];
@@ -60,25 +61,25 @@ class IsoPositionComponent extends Component with IsometricRenderable implements
       allComponents.sort((a, b) => a.priority.compareTo(b.priority)); //todo sort via depth and override childrenFactory to auto sort children
 
       for (var element in allComponents) {
-        if (element == this && element is IsoPositionComponent) {
-          element.render(canvas, normalCanvas, getNormalPaint);
+        if (element == this) {
+          (element as IsoPositionComponent).render(canvas, normalCanvas, getNormalPaint);
           if (debugMode) {
             renderDebugMode(canvas);
           }
         } else if(element is IsoPositionComponent){
-          element.renderTree(canvas, normalCanvas, getNormalPaint);
+          element.renderTree(canvas, normalCanvas,() => calculateDepthPaint(element, Paint()));
         } else {
           element.renderTree(canvas);
         }
       }
-    }, canvas);
+    }, canvas, normalCanvas);
   }
 
   @override
-  Vector3 get gridFeetPos => positionOfAnchor(Anchor3D.bottomLeftLeft);
+  Vector3 get gridFeetPos => absolutePositionOfAnchor(Anchor3D.bottomLeftLeft);
 
   @override
-  Vector3 get gridHeadPos => positionOfAnchor(Anchor3D.bottomLeftLeft);
+  Vector3 get gridHeadPos => absolutePositionOfAnchor(Anchor3D.bottomLeftLeft);
 
   @override
   Anchor3D get anchor => _anchor;
