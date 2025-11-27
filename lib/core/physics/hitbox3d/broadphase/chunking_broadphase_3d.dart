@@ -111,8 +111,8 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
   Set<Vector3> _getChunksOfHitbox(Hitbox3D hitbox){
     final Set<Vector3> occupiedChunks = {};
 
-    final Vector3 start = hitbox.aabb.min;
-    final Vector3 end = hitbox.aabb.max;
+    final Vector3 start = hitbox.aabb.min - Vector3.all(0.1);
+    final Vector3 end = hitbox.aabb.max + Vector3.all(0.1);
 
 
     final int startX = (start.x / chunkSize).floor();

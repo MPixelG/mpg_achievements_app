@@ -280,14 +280,14 @@ void main() {
     float pixelHeightEntity = normalPixelEntity.b;
 
 
-    if(normalPixel.a == 0 && normalPixelEntity.a == 0) return;
+    //if(normalPixel.a == 0 && normalPixelEntity.a == 0) return;
 
     if(pixelHeightEntity > pixelHeight){
         albedoPixel = albedoPixelEntity + (albedoPixel.a-albedoPixelEntity.a)*albedoPixel;
         normalPixel = normalPixelEntity + (normalPixel.a-normalPixelEntity.a)*normalPixel;
         pixelHeight = pixelHeightEntity + (albedoPixel.a-albedoPixelEntity.a)*pixelHeight;
     } else {
-        albedoPixel += albedoPixelEntity / 3; // slight glow from entities, even when behind walls
+        albedoPixel += albedoPixelEntity * 0.2; // slight glow from entities, even when behind walls
     }
 
 
@@ -317,15 +317,15 @@ void main() {
 
 
     //if(pixelHeight - Hleft < -0.01 || pixelHeight - Hup < -0.01) color.rgb *= 0.8;
-    float scale = 3;
-    float cloudVal = lerp(0.6, 0.9, perlin3Octaves(vec3(uv.x/scale + (time / 22000), uv.y/scale + (time / 22000), time / 30000)));
+    //float scale = 3;
+    //float cloudVal = lerp(0.6, 0.9, perlin3Octaves(vec3(uv.x/scale + (time / 22000), uv.y/scale + (time / 22000), time / 30000)));
 
     vec3 lightColor = vec3(1, 0.7, 0.75);
 
     //vec2 fragScreen = FlutterFragCoord().xy;
     //float shadowFactor = computeProjectedShadow(uv, uvEntity, fragScreen, lightPos);
 
-    vec3 diffuse = lightColor * NdotL * (((pixelHeight) / 5) + 0.75) * clamp(0.5, 1, 1-cloudVal/2);
+    vec3 diffuse = lightColor * NdotL * (((pixelHeight) / 5) + 0.75);
 
     vec3 color = albedoPixel.rgb * (vec3(0.11, 0.1, 0.1)*2 + diffuse);
 

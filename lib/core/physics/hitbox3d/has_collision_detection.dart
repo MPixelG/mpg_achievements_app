@@ -33,8 +33,8 @@ mixin HasCollisionDetection3D<B extends Broadphase3D<ShapeHitbox3D>> on Componen
 
   @override
   void update(double dt) {
-    super.update(dt);
     collisionDetection.run();
+    super.update(dt);
   }
 }
 

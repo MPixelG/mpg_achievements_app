@@ -23,7 +23,9 @@ abstract class GameCharacter extends IsoPositionComponent
     super.key,
   });
 
-  Vector3 velocity = Vector3.zero();
+  Vector3 characterVelocity = Vector3.zero();
+  Vector3 get velocity => characterVelocity;
+  set velocity(Vector3 val) => characterVelocity = val;
   bool updateMovement = true;
   static const double movementSpeed = 0.3;
   static const double jumpSpeed = 3;

@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Level_12.tmx",
+    "activeFile": "Level_9.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -48,22 +48,22 @@
         },
         "Level_11.tmx": {
             "expandedObjectLayers": [
-                8,
-                6
+                6,
+                8
             ],
             "scale": 1.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 630.3333333333333,
-                "y": 585
+                "x": 1024,
+                "y": 512.3333333333333
             }
         },
         "Level_12.tmx": {
             "scale": 1.5,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": 1075.6666666666665,
-                "y": 254.33333333333331
+                "x": 1024,
+                "y": 512.3333333333333
             }
         },
         "Level_2.tmx": {
@@ -140,16 +140,16 @@
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1039,
+                "x": 1024.5,
                 "y": 511.5
             }
         },
         "Level_9.tmx": {
-            "scale": 1,
-            "selectedLayer": 2,
+            "scale": 1.5,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 560,
-                "y": 280.5
+                "x": 529.6666666666666,
+                "y": 380
             }
         },
         "Lever_3.tmx": {
@@ -286,8 +286,8 @@
     "recentFiles": [
         "Level_8.tmx",
         "Level_11.tmx",
-        "Level_9.tmx",
         "Level_12.tmx",
+        "Level_9.tmx",
         "mpg_first_tiledMap.tmx",
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",

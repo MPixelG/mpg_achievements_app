@@ -1,49 +1,53 @@
-import 'dart:async';
-
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
+import 'package:mpg_achievements_app/core/iso_component.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
-
-import 'collision_block.dart';
 
 /// Mixin for adding collision detection behavior to a component.
 /// Requires implementing methods to provide hitbox, position, velocity, etc
 mixin HasCollisions
-    on
-        GameCharacter,
-        CollisionCallbacks,
+    on GameCharacter,
+        IsoCollisionCallbacks,
         HasGameReference<PixelAdventure>{
-  void setDebugNoClipMode(bool val) => _debugNoClipMode = val;
-
-  bool _debugNoClipMode = false;
-
+  set debugNoClipMode(bool val) => _debugNoClipMode = val;
+  bool get debugNoClipMode => _debugNoClipMode;
+  bool _debugNoClipMode = true;
+  
+  bool colliding = false;
   @override
-  FutureOr<void> onLoad() =>
-    // hitbox = IsometricHitbox(Vector2.all(1), Vector3.zero());
-    // hitbox!.position = Vector2(0, 16);
-    //
-    // add(hitbox!);
-    super.onLoad();
-
-  @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is CollisionBlock &&
-        !_debugNoClipMode) {
-      velocity = Vector3.zero();
-      position = lastSafePosition;
-      return;
-    }
+  void onCollision(Set<Vector3> intersectionPoints, IsoPositionComponent other){
+    colliding = true;
     super.onCollision(intersectionPoints, other);
   }
-
+  @override
+  void onCollisionEnd(IsoPositionComponent other){
+    colliding = false;
+    super.onCollisionEnd(other);
+  }
+  
   Vector3 lastSafePosition = Vector3.zero();
+  bool justGotUnstuck = false;
   @override
   void update(double dt) {
-    if (!game.gameWorld.checkCollisionAt(position.clone()
-      ..floor())) {
-      lastSafePosition = position;
-    } else {}
+    if(colliding) {
+      position.setFrom(lastSafePosition);
+      velocity.setZero();
+      print("colliding!---");
+    } else if(justGotUnstuck) {
+      Future.doWhile(() async {
+        await Future.delayed(const Duration(milliseconds: 20), () {
+          if(!colliding){
+            lastSafePosition = position.clone();
+            justGotUnstuck = false;
+          }
+        });
+        return justGotUnstuck;
+      });
+    } else {
+      lastSafePosition = position.clone();
+    }
     super.update(dt);
   }
+
 }

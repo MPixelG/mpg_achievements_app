@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
@@ -11,6 +10,7 @@ import 'package:mpg_achievements_app/components/animation/new_animated_character
 import 'package:mpg_achievements_app/components/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/components/controllers/keyboard_character_controller.dart';
 import 'package:mpg_achievements_app/core/physics/collisions.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:mpg_achievements_app/core/rendering/textures/game_texture_batch.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
@@ -26,10 +26,9 @@ class Player extends AnimatedCharacter
     with
         RiverpodComponentMixin,
         KeyboardHandler,
-        CollisionCallbacks,
+        IsoCollisionCallbacks,
         HasMovementAnimations,
         HasCollisions {
-  bool debugNoClipMode = false;
   bool debugImmortalMode = false;
 
   //we need this local state flag because of the animation and movement logic, it refers to the global state bool gotHit
@@ -114,7 +113,6 @@ class Player extends AnimatedCharacter
     }
     if (keysPressed.contains(LogicalKeyboardKey.keyC)) {
       debugNoClipMode = !debugNoClipMode;
-      setDebugNoClipMode(debugNoClipMode);
     } //press C to toggle noClip mode. lets you fall / walk / fly through walls. better only use it whilst flying (ctrl key)
     if (keysPressed.contains(LogicalKeyboardKey.keyY)) {
       debugImmortalMode = !debugImmortalMode; //press Y to toggle immortality

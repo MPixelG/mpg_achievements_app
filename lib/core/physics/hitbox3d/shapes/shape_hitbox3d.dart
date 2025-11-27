@@ -2,7 +2,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart' hide Vector3;
 import 'package:flutter/cupertino.dart' hide Matrix4;
-import 'package:mpg_achievements_app/components/level_components/entity/player.dart';
 import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/core/math/ray3.dart';
 import 'package:mpg_achievements_app/core/math/transform3d.dart';
@@ -219,16 +218,7 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
     );
 
     _validAabb = true;
-    if(hitboxParent is! Player) {
-      //print("recalculated aabb! expected min: $hitboxMin, expected max: ${hitboxMin + scaledSize}, center: $hitboxCenter, half Extends: $_halfExtents");
-
-      _aabb.setCenterAndHalfExtents(hitboxCenter, _halfExtents);
-
-      //print(" -> aabb: ${_aabb.min} - ${_aabb.max}");
-      //print(" -> parent pos: ${hitboxParent.absolutePosition}");
-    }else {
-      _aabb.setCenterAndHalfExtents(hitboxCenter, _halfExtents);
-    }
+    _aabb.setCenterAndHalfExtents(hitboxCenter, _halfExtents);
 
 
     return _aabb;
@@ -283,7 +273,7 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
   /// Defines whether the [other] component should be able to collide with
   /// this component.
   ///
-  /// If the [hitboxParent] is not `CollisionCallbacks` but `PositionComponent`,
+  /// If the [hitboxParent] is not `IsoCollisionCallbacks` but `IsoPositionComponent`,
   /// there is no [CollisionCallbacks.onComponentTypeCheck] in that component.
   /// As a result, it will always be able to collide with all other types.
   @override

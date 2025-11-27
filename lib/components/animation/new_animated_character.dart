@@ -175,8 +175,8 @@ abstract class AnimatedCharacter extends GameCharacter with HasPaint{
     canvas.save();
     normalCanvas?.save();
 
-    canvas.translate(-animationTicker!.getSprite().srcSize.x / 2, -animationTicker!.getSprite().srcSize.y + (tilesize.z/2));
-    normalCanvas?.translate(-animationTicker!.getSprite().srcSize.x / 2, -animationTicker!.getSprite().srcSize.y + (tilesize.z/2));
+    canvas.translate(-animationTicker!.getSprite().srcSize.x / 2, -animationTicker!.getSprite().srcSize.y + (tilesize.z*0.75));
+    normalCanvas?.translate(-animationTicker!.getSprite().srcSize.x / 2, -animationTicker!.getSprite().srcSize.y + (tilesize.z*0.75));
     
     final Vector2 albedoPosition = animationTicker!.currentFrame.srcPosition; 
     

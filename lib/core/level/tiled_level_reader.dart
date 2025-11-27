@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart' show ObjectGroup, TiledObjectHelpers;
 import 'package:mpg_achievements_app/core/level/tiled_level.dart';
+import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
@@ -110,18 +111,18 @@ void generateCollisionsForLevel(GameWorld gameWorld) {
     for (final collision in collisionsLayer.objects) {
       final Vector2 pos = orthogonalToIsometric(collision.position);
       // get z and zHeight from properties, if not set default to 0 and 16
-      final double yPos = collision.properties.getValue('zPosition') ?? 0;
+      final double yPos = collision.properties.getValue('zPosition') ?? 1;
 
-      final Vector2 scaledSize = collision.size.clone()..divide(tilesize.xy);
-      final Vector2 scaledPos = collision.position;
+      final Vector2 scaledSize = collision.size.clone()..divide(tilesize.xy/2);
+      final Vector2 scaledPos = collision.position.clone()..divide(tilesize.xy/2);
 
       switch (collision.class_) {
         default:
-          /*final block = CollisionBlock(
-            position: Vector3(pos.x, yPos, pos.y),
-            size: Vector3(collision.width / tilesize.x, 1, collision.height / tilesize.y),
-          );*/
-          //gameWorld.add(block);
+          final block = CollisionBlock(
+            position: Vector3(scaledPos.x + 2, yPos, scaledPos.y + 2),
+            size: Vector3(scaledSize.x, 1, scaledSize.y),
+          );
+          gameWorld.add(block);
       }
     }
   }
