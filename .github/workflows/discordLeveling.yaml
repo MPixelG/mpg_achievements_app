@@ -50,14 +50,15 @@ jobs:
           author_name=""
           author_email=""
 
-          for sha in $range; do
+          for ((i=${#commits_array[@]}-1; i>=0; i--)); do
+            sha="${commits_array[$i]}"
             echo "=== Processing commit: $sha ===" >&2
             added=$(git show --numstat --pretty="" "$sha" | awk '$1 ~ /^[0-9]+$/ {sum += $1} END {print sum+0}')
             deleted=$(git show --numstat --pretty="" "$sha" | awk '$2 ~ /^[0-9]+$/ {sum += $2} END {print sum+0}')
             msg=$(git log -1 --pretty=format:'%B' "$sha" | tr -d '\000-\010\013\014\016-\037')
             files=$(git show --numstat --pretty="" "$sha" | awk '{print $3}' | sort -u | wc -l)
             total_files_changed=$((total_files_changed + files))
-            
+          
             echo "Added: $added, Deleted: $deleted" >&2
 
             total_added=$((total_added + added))
