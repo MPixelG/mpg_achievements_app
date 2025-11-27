@@ -1,0 +1,268 @@
+{
+  "id": "container7",
+  "widgetType": "Container",
+  "properties": {
+    "width": 0.1,
+    "height": 0.1,
+    "color": {
+      "_type": "Color",
+      "a": 0.0,
+      "r": 0.0,
+      "g": 0.0,
+      "b": 0.0
+    },
+    "padding": {
+      "left": 0.0,
+      "top": 0.0,
+      "right": 0.0,
+      "bottom": 0.0
+    },
+    "margin": null,
+    "alignment": null
+  },
+  "children": [
+    {
+      "id": "stack1",
+      "widgetType": "Stack",
+      "properties": {},
+      "children": [
+        {
+          "id": "image1",
+          "widgetType": "Image",
+          "properties": {
+            "path": "assets/images/Background/main_menu.png",
+            "width": 1.0,
+            "height": 1.0,
+            "alignment": "Alignment.center"
+          },
+          "children": []
+        },
+        {
+          "id": "container8",
+          "widgetType": "Container",
+          "properties": {
+            "width": 1.0,
+            "height": 1.0,
+            "color": null,
+            "padding": null,
+            "margin": null,
+            "alignment": null
+          },
+          "children": [
+            {
+              "id": "container9",
+              "widgetType": "Container",
+              "properties": {
+                "width": 0.4,
+                "height": 0.5,
+                "color": null,
+                "padding": null,
+                "margin": null,
+                "alignment": null
+              },
+              "children": [
+                {
+                  "id": "column1",
+                  "widgetType": "Column",
+                  "properties": {
+                    "mainAxisSize": "MainAxisSize.max",
+                    "crossAxisAlignment": "CrossAxisAlignment.center",
+                    "mainAxisAlignment": "MainAxisAlignment.spaceAround"
+                  },
+                  "children": [
+                    {
+                      "id": "transform1",
+                      "widgetType": "Transform",
+                      "properties": {
+                        "rotation": 10.0,
+                        "scale": 3.0,
+                        "alignment": "Alignment.topCenter"
+                      },
+                      "children": [
+                        {
+                          "id": "text4",
+                          "widgetType": "Text",
+                          "properties": {
+                            "text": "MPG PIXEL ADVENTURE",
+                            "style": {
+                              "fontSize": 0.01
+                            },
+                            "alignment": null
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "container10",
+                      "widgetType": "Container",
+                      "properties": {
+                        "width": 0.1,
+                        "height": 0.05,
+                        "color": null,
+                        "padding": null,
+                        "margin": null,
+                        "alignment": null
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "container11",
+                      "widgetType": "Container",
+                      "properties": {
+                        "width": 0.24,
+                        "height": 0.05,
+                        "color": null,
+                        "padding": null,
+                        "margin": null,
+                        "alignment": null
+                      },
+                      "children": [
+                        {
+                          "id": "ninepatch_button3",
+                          "widgetType": "NinePatchButton",
+                          "properties": {
+                            "text": "PLAY",
+                            "onPressed": {
+                              "screen": "game",
+                              "actionType": "screenChange"
+                            },
+                            "imageName": "test_button_2"
+                          },
+                          "children": [
+                            {
+                              "id": "fitted_box3",
+                              "widgetType": "FittedBox",
+                              "properties": {
+                                "alignment": "Alignment.center",
+                                "fit": "BoxFit.contain"
+                              },
+                              "children": [
+                                {
+                                  "id": "text5",
+                                  "widgetType": "Text",
+                                  "properties": {
+                                    "text": "PLAY",
+                                    "style": {
+                                      "fontSize": 0.01
+                                    },
+                                    "alignment": null
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "container12",
+                      "widgetType": "Container",
+                      "properties": {
+                        "width": 0.24,
+                        "height": 0.05,
+                        "color": null,
+                        "padding": null,
+                        "margin": null,
+                        "alignment": null
+                      },
+                      "children": [
+                        {
+                          "id": "ninepatch_button4",
+                          "widgetType": "NinePatchButton",
+                          "properties": {
+                            "text": "SETTINGS",
+                            "onPressed": {
+                              "screen": "settings",
+                              "actionType": "screenChange"
+                            },
+                            "imageName": "test_button_2"
+                          },
+                          "children": [
+                            {
+                              "id": "fitted_box4",
+                              "widgetType": "FittedBox",
+                              "properties": {
+                                "alignment": "Alignment.center",
+                                "fit": "BoxFit.contain"
+                              },
+                              "children": [
+                                {
+                                  "id": "text6",
+                                  "widgetType": "Text",
+                                  "properties": {
+                                    "text": "SETTINGS",
+                                    "style": {
+                                      "fontSize": 0.01
+                                    },
+                                    "alignment": null
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "container13",
+                      "widgetType": "Container",
+                      "properties": {
+                        "width": 0.24,
+                        "height": 0.05,
+                        "color": null,
+                        "padding": null,
+                        "margin": null,
+                        "alignment": null
+                      },
+                      "children": [
+                        {
+                          "id": "ninepatch_button5",
+                          "widgetType": "NinePatchButton",
+                          "properties": {
+                            "text": "CREDITS",
+                            "onPressed": {
+                              "screen": "Credits",
+                              "actionType": "screenChange"
+                            },
+                            "imageName": "test_button_2"
+                          },
+                          "children": [
+                            {
+                              "id": "fitted_box5",
+                              "widgetType": "FittedBox",
+                              "properties": {
+                                "alignment": "Alignment.center",
+                                "fit": "BoxFit.contain"
+                              },
+                              "children": [
+                                {
+                                  "id": "text7",
+                                  "widgetType": "Text",
+                                  "properties": {
+                                    "text": "CREDITS",
+                                    "style": {
+                                      "fontSize": 0.01
+                                    },
+                                    "alignment": null
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

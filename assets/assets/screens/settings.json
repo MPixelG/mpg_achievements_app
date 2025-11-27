@@ -1,0 +1,271 @@
+{
+  "id": "container_settings",
+  "widgetType": "Container",
+  "properties": {
+    "width": 0.1,
+    "height": 0.1,
+    "color": {
+      "_type": "Color",
+      "a": 0.0,
+      "r": 0.0,
+      "g": 0.0,
+      "b": 0.0
+    },
+    "padding": {
+      "left": 0.0,
+      "top": 0.0,
+      "right": 0.0,
+      "bottom": 0.0
+    },
+    "alignment": null
+  },
+  "children": [
+    {
+      "id": "stack_settings",
+      "widgetType": "Stack",
+      "properties": {},
+      "children": [
+        {
+          "id": "image_background",
+          "widgetType": "Image",
+          "properties": {
+            "path": "assets/images/Background/main_menu.png",
+            "width": 1.0,
+            "height": 1.0,
+            "alignment": "Alignment.center"
+          },
+          "children": []
+        },
+        {
+          "id": "container_overlay",
+          "widgetType": "Container",
+          "properties": {
+            "width": 1.0,
+            "height": 1.0,
+            "color": null
+          },
+          "children": [
+            {
+              "id": "container_content",
+              "widgetType": "Container",
+              "properties": {
+                "width": 0.5,
+                "height": 0.6,
+                "color": null,
+                "padding": {
+                  "left": 0.05,
+                  "top": 0.05,
+                  "right": 0.05,
+                  "bottom": 0.05
+                },
+                "alignment": "Alignment.topCenter"
+              },
+              "children": [
+                {
+                  "id": "column_settings",
+                  "widgetType": "Column",
+                  "properties": {
+                    "mainAxisSize": "MainAxisSize.max",
+                    "crossAxisAlignment": "CrossAxisAlignment.center",
+                    "mainAxisAlignment": "MainAxisAlignment.spaceAround"
+                  },
+                  "children": [
+                    {
+                      "id": "text_header",
+                      "widgetType": "Text",
+                      "properties": {
+                        "text": "SETTINGS",
+                        "style": {
+                          "fontSize": 0.02,
+                          "color": {
+                            "_type": "Color",
+                            "a": 1.0,
+                            "r": 1.0,
+                            "g": 1.0,
+                            "b": 1.0
+                          }
+                        },
+                        "alignment": "Alignment.center"
+                      },
+                      "children": []
+                    },
+                    {
+                      "id": "container_info",
+                      "widgetType": "Container",
+                      "properties": {
+                        "width": 0.9,
+                        "height": 0.2,
+                        "color": {
+                          "_type": "Color",
+                          "a": 0.3,
+                          "r": 0.0,
+                          "g": 0.0,
+                          "b": 0.0
+                        },
+                        "padding": {
+                          "left": 0.02,
+                          "top": 0.02,
+                          "right": 0.02,
+                          "bottom": 0.02
+                        },
+                        "alignment": "Alignment.center"
+                      },
+                      "children": [
+                        {
+                          "id": "text_info",
+                          "widgetType": "Text",
+                          "properties": {
+                            "text": "Here you can toggle debug mode and switch between isometric and normal movement. Adjust the settings to your preference.",
+                            "style": {
+                              "fontSize": 0.01,
+                              "color": {
+                                "_type": "Color",
+                                "a": 1.0,
+                                "r": 1.0,
+                                "g": 1.0,
+                                "b": 1.0
+                              }
+                            },
+                            "alignment": "Alignment.center"
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "button_debug",
+                      "widgetType": "NinePatchButton",
+                      "properties": {
+                        "text": "Toggle Debug Mode",
+                        "onPressed": {
+                          "actionType": "toggleDebug"
+                        },
+                        "imageName": "test_button_2"
+                      },
+                      "children": [
+                        {
+                          "id": "fitted_box_debug",
+                          "widgetType": "FittedBox",
+                          "properties": {
+                            "alignment": "Alignment.center",
+                            "fit": "BoxFit.contain"
+                          },
+                          "children": [
+                            {
+                              "id": "text_debug",
+                              "widgetType": "Text",
+                              "properties": {
+                                "text": "Toggle Debug Mode",
+                                "style": {
+                                  "fontSize": 0.01,
+                                  "color": {
+                                    "_type": "Color",
+                                    "a": 1.0,
+                                    "r": 1.0,
+                                    "g": 1.0,
+                                    "b": 1.0
+                                  }
+                                },
+                                "alignment": "Alignment.center"
+                              },
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "button_movement",
+                      "widgetType": "NinePatchButton",
+                      "properties": {
+                        "text": "Toggle Isometric",
+                        "onPressed": {
+                          "actionType": "toggleIsometric"
+                        },
+                        "imageName": "test_button_2"
+                      },
+                      "children": [
+                        {
+                          "id": "fitted_box_movement",
+                          "widgetType": "FittedBox",
+                          "properties": {
+                            "alignment": "Alignment.center",
+                            "fit": "BoxFit.contain"
+                          },
+                          "children": [
+                            {
+                              "id": "text_movement",
+                              "widgetType": "Text",
+                              "properties": {
+                                "text": "Toggle Isometric",
+                                "style": {
+                                  "fontSize": 0.01,
+                                  "color": {
+                                    "_type": "Color",
+                                    "a": 1.0,
+                                    "r": 1.0,
+                                    "g": 1.0,
+                                    "b": 1.0
+                                  }
+                                },
+                                "alignment": "Alignment.center"
+                              },
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "id": "button_back",
+                      "widgetType": "NinePatchButton",
+                      "properties": {
+                        "text": "BACK",
+                        "onPressed": {
+                          "screen": "main_menu",
+                          "actionType": "screenChange"
+                        },
+                        "imageName": "test_button_2"
+                      },
+                      "children": [
+                        {
+                          "id": "fitted_box_back",
+                          "widgetType": "FittedBox",
+                          "properties": {
+                            "alignment": "Alignment.center",
+                            "fit": "BoxFit.contain"
+                          },
+                          "children": [
+                            {
+                              "id": "text_back",
+                              "widgetType": "Text",
+                              "properties": {
+                                "text": "BACK",
+                                "style": {
+                                  "fontSize": 0.01,
+                                  "color": {
+                                    "_type": "Color",
+                                    "a": 1.0,
+                                    "r": 1.0,
+                                    "g": 1.0,
+                                    "b": 1.0
+                                  }
+                                },
+                                "alignment": "Alignment.center"
+                              },
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

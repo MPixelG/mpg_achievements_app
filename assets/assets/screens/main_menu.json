@@ -1,0 +1,31 @@
+{
+  "screen_id": "main_menu",
+  "widgets": [
+    {
+      "id": "play_button",
+      "type": "ElevatedButton",
+      "properties": {
+        "width": 200.0,
+        "height": 50.0,
+        "text": "Spiel starten"
+      },
+      "position": {"x": 100, "y": 200},
+      "action": {
+        "type": "start_game"
+      }
+    },
+    {
+      "id": "settings_button",
+      "type": "ElevatedButton",
+      "properties": {
+        "width": 200.0,
+        "height": 50.0,
+        "text": "Einstellungen"
+      },
+      "position": {"x": 100, "y": 270},
+      "action": {
+        "type": "show_settings"
+      }
+    }
+  ]
+}
