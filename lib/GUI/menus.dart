@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,8 @@ import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.d
 import 'package:mpg_achievements_app/components/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/main.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:thermion_flutter/thermion_flutter.dart';
+import 'package:vector_math/vector_math.dart' as v;
 
 import 'json_factory/json_exporter.dart';
 import 'menuCreator/components/dependencyViewer/layout_widget.dart';
@@ -159,8 +163,7 @@ class GameScreen extends StatelessWidget {
               game.overlays.remove("TextOverlay");
             },
           ),
-        'DialogueScreen': (BuildContext context, PixelAdventure game) {
-          return DialogueScreen(
+        'DialogueScreen': (BuildContext context, PixelAdventure game) => DialogueScreen(
             game: game,
             //when Dialogue is finishes screen is removed form map
             onDialogueFinished: () {
@@ -168,8 +171,7 @@ class GameScreen extends StatelessWidget {
             },
             yarnFilePath:
             'assets/yarn/test.yarn', //todo connect to state management and trigger method, make more customizable not static as atm
-          );
-        },
+          ),
       },
     );
 }
@@ -267,3 +269,125 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 }
+
+class Thermion3D extends StatefulWidget {
+  const Thermion3D({super.key, required this.title});
+  final String title;
+
+
+  @override
+  State<Thermion3D> createState() => _Thermion3DState();
+}
+
+class _Thermion3DState extends State<Thermion3D> {
+
+  ThermionViewer? _thermionViewer;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _load();
+    });
+  }
+
+  Future<void> _load() async {
+    if (!mounted) return; // prtection form doucle executiion
+    setState(() {
+      _isLoading = true;
+    });
+
+    // A [ThermionViewer] is the main interface for controlling asset loading,
+    // rendering, camera and lighting.
+    //
+    // When you no longer need a rendering surface, call [dispose] on this instance.
+    //
+    // Only a single instance can be active at a given time; trying to construct
+    // a new instance before the old instance has been disposed will throw an exception.
+    try {
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (!mounted) return;
+      final viewer = await ThermionFlutterPlugin.createViewer();
+
+      if (mounted) {
+        setState(() {
+          _thermionViewer = viewer;
+          _isLoading = false;
+        });
+      } else {
+        await viewer.dispose();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Loading 3D Viewer mistake: $e");
+      }
+    }
+  }
+
+  Widget _loadButton() => Center(
+        child: ElevatedButton(onPressed: _load, child: const Text("Load")));
+
+
+  Future<void> _loadAssets() async {
+    final viewer = _thermionViewer;
+    if (viewer == null) return;
+
+    try {
+      await viewer.loadGltf("assets/3D/cube.glb");
+      await viewer.setRendering(true);
+      _isLoading = false;
+      if (mounted) {
+        setState(() {
+
+        });
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error loading 3D assets: $e");
+      }
+    }
+  }
+
+
+
+  @override
+  void dispose() {
+    _thermionViewer?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children:[
+            if(_thermionViewer != null)
+              Positioned.fill(child: ThermionWidget(viewer: _thermionViewer!),
+              ),
+            if (_isLoading)
+              const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text(
+                      "Loading 3D viewer...",
+                      style: TextStyle(color: Colors.white, fontFamily: "Roboto"),
+                    ),
+                  ],
+                ),
+              ),
+            if (_thermionViewer != null && !_isLoading)
+              Center(
+                child: ElevatedButton(
+                  onPressed: _loadAssets,
+                  child: const Text("Load 3D Scene"),
+                ),
+              ),
+            ],
+          ),
+        );
+   }
+

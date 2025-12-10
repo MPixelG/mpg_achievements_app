@@ -1,8 +1,9 @@
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
-import 'package:flutter/cupertino.dart' hide Image;
+import 'package:flutter/material.dart' hide Image;
 import 'package:mpg_achievements_app/components/animation/game_sprite_animation_ticker.dart';
 import 'package:mpg_achievements_app/components/level_components/entity/game_character.dart';
+import 'package:mpg_achievements_app/core/math/notifying_vector_3.dart';
 import 'package:mpg_achievements_app/core/rendering/textures/game_texture.dart';
 import 'package:mpg_achievements_app/core/rendering/textures/game_texture_batch.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
@@ -247,4 +248,8 @@ abstract class AnimatedCharacter extends GameCharacter with HasPaint{
     current = name;
     return animationTicker!.completed;
   }
+}
+
+extension on NotifyingVector3 {
+  void addListener(void Function() handleAutoResizeState) {}
 }

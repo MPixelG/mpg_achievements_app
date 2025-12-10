@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/core/rendering/textures/game_sprite.dart';
 import 'package:mpg_achievements_app/core/rendering/textures/game_texture.dart';
 

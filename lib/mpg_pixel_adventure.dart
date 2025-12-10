@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flame/components.dart';
+import 'package:flame/components.dart' hide Vector2, Vector3;
 import 'package:flame/events.dart';
-import 'package:flame/extensions.dart';
-import 'package:flame/game.dart';
-import 'package:flame/input.dart';
+import 'package:flame/extensions.dart' hide Vector2, Vector3;
+import 'package:flame/game.dart' hide Vector2;
+import 'package:flame/input.dart' hide Vector2, Vector3;
 import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
@@ -15,6 +15,8 @@ import 'package:mpg_achievements_app/core/iso_component.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detection.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
+import 'package:thermion_flutter/thermion_flutter.dart' hide Vector2, Vector3;
+import 'package:vector_math/vector_math.dart' hide Vector3;
 
 import 'core/level/game_world.dart';
 import 'core/level/isometric/isometric_world.dart';
@@ -29,12 +31,14 @@ class PixelAdventure extends FlameGame
         IsoCollisionCallbacks,
         RiverpodGameMixin {
   static PixelAdventure? _currentInstance;
+  static ThermionViewer? _currentViewer;
 
   static PixelAdventure get currentInstance {
     _currentInstance ??= PixelAdventure();
 
     return _currentInstance!;
   }
+
 
   //Game components
   final Map<String, IsoPositionComponent> npcs = {};

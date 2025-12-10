@@ -49,6 +49,12 @@ dependencies:
   flutter_riverpod: ^2.6.1
   flutter_resizable_container: ^4.2.0
   image: ^4.5.4
+  archive: ^4.0.7
+  thermion_flutter: ^0.3.4
+
+dependency_overrides:
+  archive: ^4.0.7
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -117,6 +123,8 @@ flutter:
     - assets/images/Main Characters/Mage_Aseprite/Mage-Sheet.png
     - assets/images/Main Characters/Mage_Aseprite/Mage-Sheet_depth.png
     - assets/test_batch.json
+    - assets/3D/
+    - assets/3D/cube.glb
 
   shaders:
     - assets/shaders/lighting.frag
