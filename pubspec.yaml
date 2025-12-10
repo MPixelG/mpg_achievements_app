@@ -50,10 +50,14 @@ dependencies:
   flutter_resizable_container: ^4.2.0
   image: ^4.5.4
   archive: ^4.0.7
-  thermion_flutter: ^0.3.4
+  thermion_flutter:
+    path: ../../develop/thermion/thermion_flutter/thermion_flutter
 
 dependency_overrides:
   archive: ^4.0.7
+
+  thermion_dart:
+    path: ../../develop/thermion/thermion_dart
 
 dev_dependencies:
   flutter_test:

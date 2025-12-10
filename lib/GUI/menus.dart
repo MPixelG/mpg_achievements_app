@@ -283,6 +283,7 @@ class _Thermion3DState extends State<Thermion3D> {
 
   ThermionViewer? _thermionViewer;
   bool _isLoading = false;
+  bool _isSceneLoaded = false;
 
   @override
   void initState() {
@@ -333,13 +334,27 @@ class _Thermion3DState extends State<Thermion3D> {
     final viewer = _thermionViewer;
     if (viewer == null) return;
 
+    //show loader immediately
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
-      await viewer.loadGltf("assets/3D/cube.glb");
+
+      await viewer.loadGltf("assets/3D/FlightHelmet.glb");
+      await viewer.loadSkybox('assets/3D/default_env_skybox.ktx');
+      await viewer.loadIbl('assets/3D/default_env_ibl.ktx');
+      final camera = await viewer.getActiveCamera();
+      await camera.lookAt(Vector3(0, 0, 10));
+      await viewer.setPostProcessing(true);
+
+
       await viewer.setRendering(true);
-      _isLoading = false;
+
       if (mounted) {
         setState(() {
-
+          _isLoading = false;
+          _isSceneLoaded = true;
         });
       }
     } catch (e) {
@@ -362,9 +377,11 @@ class _Thermion3DState extends State<Thermion3D> {
         backgroundColor: Colors.transparent,
         body: Stack(
           children:[
+            //layer 1
             if(_thermionViewer != null)
               Positioned.fill(child: ThermionWidget(viewer: _thermionViewer!),
               ),
+            // Layer 2: The Loading Indicator
             if (_isLoading)
               const Center(
                 child: Column(
@@ -379,7 +396,8 @@ class _Thermion3DState extends State<Thermion3D> {
                   ],
                 ),
               ),
-            if (_thermionViewer != null && !_isLoading)
+            // Layer 3: The Load Button
+            if (_thermionViewer != null && !_isLoading && !_isSceneLoaded)
               Center(
                 child: ElevatedButton(
                   onPressed: _loadAssets,
