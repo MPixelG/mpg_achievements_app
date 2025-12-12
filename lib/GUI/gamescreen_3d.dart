@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 
 
@@ -19,6 +20,7 @@ class GameScreen3d extends StatefulWidget {
 class _GameScreen3dState extends State<GameScreen3d> {
 
   ThermionViewer? _thermionViewer;
+  final PixelAdventure _flameGame = PixelAdventure.currentInstance;
   bool _isLoading = false;
   bool _isSceneLoaded = false;
 
@@ -37,10 +39,7 @@ class _GameScreen3dState extends State<GameScreen3d> {
     });
 
 // A [ThermionViewer] is the main interface for controlling asset loading,
-// rendering, camera and lighting.
-//
-// When you no longer need a rendering surface, call [dispose] on this instance.
-//
+// rendering, camera and lighting. todo logic planning and distinction
 // Only a single instance can be active at a given time; trying to construct
 // a new instance before the old instance has been disposed will throw an exception.
     try {
