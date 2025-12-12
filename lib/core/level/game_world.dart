@@ -77,7 +77,7 @@ abstract class GameWorld extends World
     // Add the level to the game world so it gets rendered.
     await add(level);
 
-    _loadScrollingBackground();
+    //_loadScrollingBackground();
 
     generator = POIGenerator(
       this,
