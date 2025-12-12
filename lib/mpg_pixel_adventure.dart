@@ -31,7 +31,7 @@ class PixelAdventure extends FlameGame
         IsoCollisionCallbacks,
         RiverpodGameMixin {
   static PixelAdventure? _currentInstance;
-  static ThermionViewer? _currentViewer;
+  static ThermionViewer? _3DGameViewer;
 
   static PixelAdventure get currentInstance {
     _currentInstance ??= PixelAdventure();
@@ -39,6 +39,10 @@ class PixelAdventure extends FlameGame
     return _currentInstance!;
   }
 
+  void setThermionViewer(ThermionViewer viewer) {
+    _3DGameViewer = viewer;
+    print("🔌 3D Engine linked to Flame Game!");
+  }
 
   //Game components
   final Map<String, IsoPositionComponent> npcs = {};
@@ -79,6 +83,18 @@ class PixelAdventure extends FlameGame
       _FollowCameraComponent(),
     ); //helper class to follow the player after the world and player are loaded
     return super.onLoad();
+  }
+
+
+//todo implement more here, at the moment only placehoilder
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    // Example: Rotate the camera every frame if the viewer is ready
+    // if (_thermionViewer != null) {
+    //    // game logic here
+    // }
   }
 
   ///Joystick Component
@@ -135,4 +151,12 @@ class _FollowCameraComponent extends Component
     // This component's only job is to run once, so we remove it immediately.
     removeFromParent();
   }
+
+
+  ThermionViewer? get thermion => PixelAdventure._3DGameViewer;
+  Color backgroundColor() => const Color(0x00000000);
+
 }
+
+
+
