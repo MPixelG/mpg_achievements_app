@@ -255,6 +255,56 @@
                           ]
                         }
                       ]
+                    },
+                    {
+                      "id": "container14",
+                      "widgetType": "Container",
+                      "properties": {
+                        "width": 0.24,
+                        "height": 0.05,
+                        "color": null,
+                        "padding": null,
+                        "margin": null,
+                        "alignment": null
+                      },
+                      "children": [
+                        {
+                          "id": "ninepatch_button4",
+                          "widgetType": "NinePatchButton",
+                          "properties": {
+                            "text": "TVIEWER3D",
+                            "onPressed": {
+                              "screen": "thermionViewer",
+                              "actionType": "screenChange"
+                            },
+                            "imageName": "test_button_2"
+                          },
+                          "children": [
+                            {
+                              "id": "fitted_box4",
+                              "widgetType": "FittedBox",
+                              "properties": {
+                                "alignment": "Alignment.center",
+                                "fit": "BoxFit.contain"
+                              },
+                              "children": [
+                                {
+                                  "id": "text6",
+                                  "widgetType": "Text",
+                                  "properties": {
+                                    "text": "TVIEWER3D",
+                                    "style": {
+                                      "fontSize": 0.01
+                                    },
+                                    "alignment": null
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ]
                 }

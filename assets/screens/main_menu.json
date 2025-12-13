@@ -26,6 +26,19 @@
       "action": {
         "type": "show_settings"
       }
+    },
+    {
+      "id": "thermionViewer_button",
+      "type": "ElevatedButton",
+      "properties": {
+        "width": 200.0,
+        "height": 50.0,
+        "text": "ThermionViewer starten"
+      },
+      "position": {"x": 100, "y": 340},
+      "action": {
+        "type": "start_viewer"
+      }
     }
   ]
 }

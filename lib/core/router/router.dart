@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mpg_achievements_app/GUI/gamescreen_3d.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:thermion_flutter/thermion_flutter.dart';
 
 import '../../GUI/menuCreator/components/gui_editor.dart';
 import '../../GUI/menus.dart';
@@ -14,6 +16,7 @@ class AppRouter {
     game: PixelAdventure.currentInstance,
   );
   static GuiEditor guiEditor = const GuiEditor();
+  //static ThermionViewer thermionViewer = thermionViewer;
 
   static final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,
@@ -33,12 +36,15 @@ class AppRouter {
         name: "settings", // Settings
         builder: (context, state) => const SettingsScreen(),
       ),
-
       GoRoute(
         path: "/widgetBuilder",
         name: "widgetBuilder",
         builder: (context, state) => guiEditor,
       ),
+      GoRoute(
+  path: "/thermionViewer",
+  name: "thermionViewer",
+  builder: (context,state) => const GameScreen3d(title: "test"),),
     ],
   );
 }

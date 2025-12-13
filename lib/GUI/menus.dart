@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:mpg_achievements_app/components/dialogue_utils/dialogue_screen.d
 import 'package:mpg_achievements_app/components/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/main.dart';
 import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+
 
 import 'json_factory/json_exporter.dart';
 import 'menuCreator/components/dependencyViewer/layout_widget.dart';
@@ -159,8 +162,7 @@ class GameScreen extends StatelessWidget {
               game.overlays.remove("TextOverlay");
             },
           ),
-        'DialogueScreen': (BuildContext context, PixelAdventure game) {
-          return DialogueScreen(
+        'DialogueScreen': (BuildContext context, PixelAdventure game) => DialogueScreen(
             game: game,
             //when Dialogue is finishes screen is removed form map
             onDialogueFinished: () {
@@ -168,8 +170,7 @@ class GameScreen extends StatelessWidget {
             },
             yarnFilePath:
             'assets/yarn/test.yarn', //todo connect to state management and trigger method, make more customizable not static as atm
-          );
-        },
+          ),
       },
     );
 }
@@ -267,3 +268,5 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 }
+
+
