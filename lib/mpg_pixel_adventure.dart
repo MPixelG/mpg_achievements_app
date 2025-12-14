@@ -125,6 +125,10 @@ class PixelAdventure extends FlameGame
       rotationAngle += joystick.relativeDelta.x * 5.0 * dt;
       matrix.rotateY(rotationAngle);
 
+      //low-level FilamentApp is necessary because TViewer is only viewer
+      final int entityID = (helmetAsset as dynamic).entity;
+      FilamentApp.instance?.setTransform(entityID, matrix);
+
       //todo 5 Thermion, later in bridge class
 
       // Example: Rotate the camera every frame if the viewer is ready
