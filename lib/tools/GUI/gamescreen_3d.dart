@@ -16,7 +16,7 @@ class GameScreen3d extends StatefulWidget {
   State<GameScreen3d> createState() => _GameScreen3dState();
 }
 
-class _GameScreen3dState extends State<GameScreen3d> {
+class _GameScreen3dState extends State<GameScreen3d> with WidgetsBindingObserver{
   ThermionViewer? _thermionViewer;
   final PixelAdventure _flameGame = PixelAdventure.currentInstance;
   bool _is3DReady = false;
@@ -26,6 +26,8 @@ class _GameScreen3dState extends State<GameScreen3d> {
   @override
   void initState() {
     super.initState();
+    //Lifecycle des Widgets wird überwacht, wegen potentiellem Bufferüberlauf wenn im Hintergrund
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _load();
     });
@@ -101,13 +103,28 @@ class _GameScreen3dState extends State<GameScreen3d> {
 
   @override
   void dispose() {
+    // Lifecycle Observer entfernen
+    WidgetsBinding.instance.removeObserver(this);
+    _thermionViewer?.setRendering(false);
     _thermionViewer?.dispose();
     super.dispose();
   }
 
+  //handled Lifecyclemanagement z.B. wenn Spiel im Background
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (_thermionViewer == null) return;
+
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      _thermionViewer!.setRendering(false);
+    } else if (state == AppLifecycleState.resumed) {
+      _thermionViewer!.setRendering(true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: Colors.transparent,
+    backgroundColor: Colors.black,
     body: Stack(
       children: [
         //layer 1 -> ThermionViewer

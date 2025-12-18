@@ -116,8 +116,9 @@ class PixelAdventure extends FlameGame
 
       //1 Update our local position state
       helmetPosition.x += joystick.relativeDelta.x * moveSpeed * dt;
-      helmetPosition.y += joystick.relativeDelta.y * moveSpeed *
+      helmetPosition.y += -joystick.relativeDelta.y * moveSpeed *
           dt; // -Y is usually down in 2D, check directions
+
       // 2create empty matrix
       final matrix = v64.Matrix4.identity();
       //3set position
