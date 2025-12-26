@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
-import 'package:mpg_achievements_app/core/level/rendering/chunk.dart';
-import 'package:mpg_achievements_app/core/level/rendering/game_sprite.dart';
+import 'package:mpg_achievements_app/isometric/src/core/level/rendering/chunk.dart';
+import 'package:mpg_achievements_app/isometric/src/core/level/rendering/game_sprite.dart';
 import 'package:mpg_achievements_app/util/tileset_utils.dart';
 
 import '../mpg_pixel_adventure.dart';

@@ -287,7 +287,7 @@ void main() {
         normalPixel = normalPixelEntity + (normalPixel.a-normalPixelEntity.a)*normalPixel;
         pixelHeight = pixelHeightEntity + (albedoPixel.a-albedoPixelEntity.a)*pixelHeight;
     } else {
-        albedoPixel += albedoPixelEntity * 0.2; // slight glow from entities, even when behind walls
+        albedoPixel += albedoPixelEntity * 0.8; // slight glow from entities, even when behind walls
     }
 
 

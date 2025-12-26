@@ -57,7 +57,7 @@ jobs:
             msg=$(git log -1 --pretty=format:'%B' "$sha" | tr -d '\000-\010\013\014\016-\037')
             files=$(git show --numstat --pretty="" "$sha" | awk '{print $3}' | sort -u | wc -l)
             total_files_changed=$((total_files_changed + files))
-            
+          
             echo "Added: $added, Deleted: $deleted" >&2
 
             total_added=$((total_added + added))
@@ -184,7 +184,7 @@ jobs:
           ADDITIONS: ${{ env.ADDITIONS }}
           DELETIONS: ${{ env.DELETIONS }}
           FILES_CHANGED: ${{ env.FILES_CHANGED }}
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }} 
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           escape() {
             printf '%s' "$1" | sed 's/"/\\"/g'
