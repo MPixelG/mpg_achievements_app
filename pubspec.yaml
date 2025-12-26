@@ -52,6 +52,7 @@ dependencies:
   archive: ^4.0.7
   thermion_flutter:
     path: ../../develop/thermion/thermion_flutter/thermion_flutter
+  audioplayers: ^6.5.1
 
 dependency_overrides:
   archive: ^4.0.7
@@ -129,7 +130,7 @@ flutter:
     - assets/test_batch.json
     - assets/3D/
     - assets/3D/cube.glb
-
+    - assets/music/
   shaders:
     - assets/shaders/lighting.frag
     - assets/shaders/srcBlendModeGreater0.frag

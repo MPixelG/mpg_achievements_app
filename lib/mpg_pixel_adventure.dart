@@ -16,7 +16,7 @@ import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detecti
 import 'package:mpg_achievements_app/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 import 'core/level/game_world.dart';
-
+import 'package:mpg_achievements_app/core/music/music_manager.dart';
 
 //DragCallbacks are imported for touch controls
 class PixelAdventure extends FlameGame
@@ -52,6 +52,7 @@ class PixelAdventure extends FlameGame
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
   late String currentLevel = "Level_9";
+  final musicManager = MusicManager();
   //bools for game logic
   //needs to go into the overlay_controller later
   bool showDialogue = false;
@@ -72,7 +73,8 @@ class PixelAdventure extends FlameGame
    // overlays.add('TextOverlay');
    // overlays.add('DialogueScreen');
     addJoystick();
-
+    musicManager.playRandomMusic();
+    musicManager.setVolume(0.4);
     super.onLoad();
     /*Removed for testing 3dThermionViewer, potentially keep the part for later usage in a separate game??
     //all images for the game are loaded into cache when the game start -> could take long at a later stage, but here it is fine for moment being
