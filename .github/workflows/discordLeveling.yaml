@@ -50,8 +50,7 @@ jobs:
           author_name=""
           author_email=""
 
-          for ((i=${#commits_array[@]}-1; i>=0; i--)); do
-            sha="${commits_array[$i]}"
+          for sha in $range; do
             echo "=== Processing commit: $sha ===" >&2
             added=$(git show --numstat --pretty="" "$sha" | awk '$1 ~ /^[0-9]+$/ {sum += $1} END {print sum+0}')
             deleted=$(git show --numstat --pretty="" "$sha" | awk '$2 ~ /^[0-9]+$/ {sum += $2} END {print sum+0}')
@@ -185,7 +184,7 @@ jobs:
           ADDITIONS: ${{ env.ADDITIONS }}
           DELETIONS: ${{ env.DELETIONS }}
           FILES_CHANGED: ${{ env.FILES_CHANGED }}
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }} 
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           escape() {
             printf '%s' "$1" | sed 's/"/\\"/g'

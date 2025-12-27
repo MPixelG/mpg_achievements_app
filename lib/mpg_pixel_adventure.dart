@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
-
+import 'package:vector_math/vector_math_64.dart' as v64;
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart' as fe;
@@ -10,6 +10,8 @@ import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:thermion_flutter/thermion_flutter.dart';
+import 'core/level/game_world.dart';
+import 'package:mpg_achievements_app/core/music/music_manager.dart';
 import 'package:vector_math/vector_math_64.dart' as v64;
 
 import 'isometric/src/components/camera/advanced_camera.dart';
@@ -54,6 +56,7 @@ class PixelAdventure extends FlameGame
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
   late String currentLevel = "Level_9";
+  final musicManager = MusicManager();
   //bools for game logic
   //needs to go into the overlay_controller later
   bool showDialogue = false;
@@ -74,7 +77,8 @@ class PixelAdventure extends FlameGame
    // overlays.add('TextOverlay');
    // overlays.add('DialogueScreen');
     addJoystick();
-
+    musicManager.playRandomMusic();
+    musicManager.setVolume(0.4);
     super.onLoad();
     /*Removed for testing 3dThermionViewer, potentially keep the part for later usage in a separate game??
     //all images for the game are loaded into cache when the game start -> could take long at a later stage, but here it is fine for moment being
