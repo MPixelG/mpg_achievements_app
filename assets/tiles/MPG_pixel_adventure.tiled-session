@@ -9,6 +9,9 @@
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "3D_prototype.tsx": {
+            "scaleInEditor": 1
+        },
         "IndustrialTile_81.png.tsx": {
             "dynamicWrapping": true,
             "scaleInDock": 1.4,
@@ -48,8 +51,8 @@
         },
         "Level_11.tmx": {
             "expandedObjectLayers": [
-                6,
-                8
+                8,
+                6
             ],
             "scale": 1.5,
             "selectedLayer": 1,
@@ -140,7 +143,7 @@
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1024.5,
+                "x": 1039,
                 "y": 511.5
             }
         },
@@ -148,8 +151,8 @@
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 529.6666666666666,
-                "y": 380
+                "x": 727.6666666666666,
+                "y": 386.33333333333326
             }
         },
         "Lever_3.tmx": {
@@ -266,13 +269,13 @@
         }
     },
     "last.externalTilesetPath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/tiles",
-    "last.imagePath": "C:/Users/Julian/Documents/mpg/informatik/achievements_app/mpg_achievements_app/assets/images/Pixel_ArtTop_Down",
-    "map.fixedSize": true,
+    "last.imagePath": "C:/Users/FlorianBoettinger/IdeaProjects/mpg_achievements_app/assets/3D/prototyping_assets/Pieces",
+    "map.fixedSize": false,
     "map.height": 64,
     "map.lastUsedFormat": "tmx",
-    "map.orientation": "2",
-    "map.tileHeight": 16,
-    "map.tileWidth": 32,
+    "map.orientation": "1",
+    "map.tileHeight": 128,
+    "map.tileWidth": 128,
     "map.width": 64,
     "mapScene.enableWorlds": false,
     "openFiles": [
@@ -282,8 +285,9 @@
         "Level_12.tmx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
-    "property.type": "int",
+    "property.type": "string",
     "recentFiles": [
+        "3D_prototype.tsx",
         "Level_8.tmx",
         "Level_11.tmx",
         "Level_12.tmx",
@@ -294,14 +298,13 @@
         "Level_1.tmx",
         "Level_4.tmx",
         "Level_5.tmx",
-        "grass_concrete.tsx",
-        "Level_6.tmx"
+        "grass_concrete.tsx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
-        "height": 16,
-        "width": 32
+        "height": 128,
+        "width": 128
     },
     "tileset.type": 0
 }

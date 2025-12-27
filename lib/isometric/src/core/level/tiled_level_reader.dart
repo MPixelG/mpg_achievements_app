@@ -7,7 +7,6 @@ import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 import 'package:xml/xml.dart';
-
 import '../../components/level_components/checkpoint/checkpoint.dart';
 import '../../components/level_components/collectables.dart';
 import '../../components/level_components/entity/enemy/enemy.dart';
