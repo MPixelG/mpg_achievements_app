@@ -17,7 +17,7 @@ class MusicManager {
 
   Future<void> playRandomMusic() async {
     final random = Random();
-    String randomSong = _playlist[random.nextInt(_playlist.length)];
+    final String randomSong = _playlist[random.nextInt(_playlist.length)];
 
     try {
       await _player.play(AssetSource('music/$randomSong'));

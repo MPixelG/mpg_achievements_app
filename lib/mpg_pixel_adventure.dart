@@ -10,10 +10,8 @@ import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:thermion_flutter/thermion_flutter.dart';
-import 'core/level/game_world.dart';
 import 'package:mpg_achievements_app/core/music/music_manager.dart';
 import 'package:vector_math/vector_math_64.dart' as v64;
-
 import 'isometric/src/components/camera/advanced_camera.dart';
 import 'isometric/src/components/dialogue_utils/conversation_management.dart';
 import 'isometric/src/core/iso_component.dart';
