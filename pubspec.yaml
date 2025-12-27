@@ -50,15 +50,25 @@ dependencies:
   flutter_resizable_container: ^4.2.0
   image: ^4.5.4
   archive: ^4.0.7
-  thermion_flutter:
-    path: ../../develop/thermion/thermion_flutter/thermion_flutter
   audioplayers: ^6.5.1
+
+  thermion_flutter:
+    git:
+      url: https://github.com/nmfisher/thermion.git
+      path: thermion_flutter/thermion_flutter
+      ref: develop
+
+
 
 dependency_overrides:
   archive: ^4.0.7
 
+
   thermion_dart:
-    path: ../../develop/thermion/thermion_dart
+    git:
+      url: https://github.com/nmfisher/thermion.git
+      path: thermion_dart
+      ref: develop
 
 dev_dependencies:
   flutter_test:

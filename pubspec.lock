@@ -624,16 +624,20 @@ packages:
   thermion_dart:
     dependency: "direct overridden"
     description:
-      path: "../../develop/thermion/thermion_dart"
-      relative: true
-    source: path
+      path: thermion_dart
+      ref: develop
+      resolved-ref: "02e7c4e05e57f1fc6faea091fbcd2d1c199ed7e3"
+      url: "https://github.com/nmfisher/thermion.git"
+    source: git
     version: "0.3.4+1"
   thermion_flutter:
     dependency: "direct main"
     description:
-      path: "../../develop/thermion/thermion_flutter/thermion_flutter"
-      relative: true
-    source: path
+      path: "thermion_flutter/thermion_flutter"
+      ref: develop
+      resolved-ref: "02e7c4e05e57f1fc6faea091fbcd2d1c199ed7e3"
+      url: "https://github.com/nmfisher/thermion.git"
+    source: git
     version: "0.3.4"
   tiled:
     dependency: transitive
