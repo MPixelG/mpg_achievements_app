@@ -1,7 +1,8 @@
 import 'dart:typed_data';
-
 import 'package:flame/components.dart';
 import 'package:uuid/uuid.dart';
+
+//networking class todo comments
 
 abstract class Entity {
   late Uuid _id;
