@@ -16,16 +16,20 @@ jobs:
       
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.5'
+          channel: 'beta'
 
       - name: Prepare Flutter
         run: |
-          flutter config --enable-web
+          flutter config --enable-native-assets
         shell: bash
+
+      - name: Install Dependencies
+        run: flutter pub get
 
       - name: Build Web
         run: |
           flutter build web --release --wasm --base-href /mpg_achievements_app/
+          cp web/coi-serviceworker.js build/web/
         shell: bash
 
       - name: Deploy to gh-pages
