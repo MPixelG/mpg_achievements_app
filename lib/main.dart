@@ -2,7 +2,7 @@ import 'package:flame/flame.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/tools/GUI/menuCreator/components/widget_declaration.dart';
 import 'package:mpg_achievements_app/tools/GUI/widgets/nine_patch_widgets.dart';
 
@@ -21,6 +21,8 @@ void main() async {
   //Game then runs in Fullscreen mode and Landscape
   await Flame.device.fullScreen();
   await Flame.device.setLandscape();
+  
+  
   //reference to our class where the game is programmed
   //just helps to not load the game every time you change something in the code only for development
   //later changed to only game when deploying

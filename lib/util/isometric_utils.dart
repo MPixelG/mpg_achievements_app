@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:vector_math/vector_math.dart';
 
-import '../../mpg_pixel_adventure.dart';
+import '../isometric/src/mpg_pixel_adventure.dart';
 
 Vector2 toWorldPos(Vector3 gridPos, [double? levelWidth, Vector3? tileSizeOverride]) {
   final localPoint = Vector2(

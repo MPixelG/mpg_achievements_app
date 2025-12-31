@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mpg_achievements_app/isometric/state_management/models/achievement_data.dart';
+import 'package:mpg_achievements_app/isometric/src/state_management/models/achievement_data.dart';
 
 final achievementProvider = NotifierProvider<AchievementNotifier, AchievementData>(
   AchievementNotifier.new,);

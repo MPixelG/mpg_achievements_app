@@ -4,7 +4,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:mpg_achievements_app/isometric/src/components/particles/particles.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 
 import '../../core/level/game_world.dart';
 import 'entity/player.dart';

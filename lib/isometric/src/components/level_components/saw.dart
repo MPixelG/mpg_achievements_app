@@ -2,7 +2,7 @@ import 'dart:async' show FutureOr;
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 //todo convert to 3d or remove
 @Deprecated("not yet converted to 3d")
 class Saw extends SpriteAnimationComponent

@@ -2,7 +2,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:mpg_achievements_app/isometric/src/components/level_components/entity/game_character.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 
 import '../../../player.dart';
 import 'goal.dart';

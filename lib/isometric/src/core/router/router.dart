@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/tools/GUI/gamescreen_3d.dart';
 import 'package:mpg_achievements_app/tools/GUI/menuCreator/components/gui_editor.dart';
 import 'package:mpg_achievements_app/tools/GUI/menus.dart';

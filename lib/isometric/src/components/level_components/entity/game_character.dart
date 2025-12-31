@@ -5,7 +5,7 @@ import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/isometric/src/core/iso_component.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 
 
 abstract class GameCharacter extends IsoPositionComponent

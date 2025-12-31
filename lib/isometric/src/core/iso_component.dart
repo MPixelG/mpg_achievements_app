@@ -6,7 +6,7 @@ import 'package:mpg_achievements_app/isometric/src/core/level/isometric/isometri
 import 'package:mpg_achievements_app/isometric/src/core/level/rendering/new_chunk_grid.dart';
 import 'package:mpg_achievements_app/isometric/src/core/misc/iso_decorator.dart';
 import 'package:mpg_achievements_app/isometric/src/core/misc/transform3d_decorator.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import 'math/iso_anchor.dart';

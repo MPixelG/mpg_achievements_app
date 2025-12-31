@@ -6,7 +6,7 @@ import 'package:mpg_achievements_app/isometric/src/core/level/rendering/chunk.da
 import 'package:mpg_achievements_app/isometric/src/core/level/rendering/game_sprite.dart';
 import 'package:mpg_achievements_app/util/tileset_utils.dart';
 
-import '../mpg_pixel_adventure.dart';
+import '../isometric/src/mpg_pixel_adventure.dart';
 
 Map<int, GameSprite> textures = {};
 List<int> currentOperations = [];

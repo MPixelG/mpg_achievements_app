@@ -7,7 +7,7 @@ import 'package:mpg_achievements_app/isometric/src/core/math/iso_anchor.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 
 //A positionComponent can have an x, y , width and height, zPosition and zHeight
 class CollisionBlock extends IsoPositionComponent

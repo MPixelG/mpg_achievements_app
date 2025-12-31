@@ -4,7 +4,7 @@ import 'dart:ui';
 
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import '../isometric/isometric_renderable.dart';

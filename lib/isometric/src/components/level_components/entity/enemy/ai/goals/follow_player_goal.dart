@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/isometric/src/components/level_components/entity/player.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import 'move_goal.dart';

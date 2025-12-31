@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 
 class ScrollingBackground extends Component with HasGameReference<PixelAdventure> {
   //Background color is set in Tiled builder for each level in the property backgroundColor

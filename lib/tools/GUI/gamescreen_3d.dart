@@ -2,8 +2,8 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/isometric/src/components/dialogue_utils/dialogue_screen.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/main.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 
 import '../../isometric/src/components/dialogue_utils/text_overlay.dart';

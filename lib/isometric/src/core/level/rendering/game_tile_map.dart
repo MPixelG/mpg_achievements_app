@@ -4,8 +4,8 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/tileset_utils.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
 
 import 'game_sprite.dart';
 

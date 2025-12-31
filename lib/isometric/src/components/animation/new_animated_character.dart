@@ -5,7 +5,7 @@ import 'package:mpg_achievements_app/isometric/src/components/animation/game_spr
 import 'package:mpg_achievements_app/isometric/src/components/level_components/entity/game_character.dart';
 import 'package:mpg_achievements_app/isometric/src/core/rendering/textures/game_texture.dart';
 import 'package:mpg_achievements_app/isometric/src/core/rendering/textures/game_texture_batch.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 
 abstract class AnimatedCharacter extends GameCharacter with HasPaint{
   /// Key with the current playing animation

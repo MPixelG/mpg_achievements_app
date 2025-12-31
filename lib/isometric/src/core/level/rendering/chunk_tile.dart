@@ -2,7 +2,7 @@
 import 'dart:ui';
 
 import 'package:mpg_achievements_app/isometric/src/core/level/isometric/isometric_renderable.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 import 'package:mpg_achievements_app/util/texture_utils.dart';
 import 'package:vector_math/vector_math.dart';

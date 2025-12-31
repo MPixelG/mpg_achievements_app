@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:mpg_achievements_app/isometric/src/core/level/game_world.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 
 import '../pathfinder.dart';
 import 'goal.dart';

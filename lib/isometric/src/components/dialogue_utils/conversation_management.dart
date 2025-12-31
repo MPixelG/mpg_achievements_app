@@ -6,7 +6,7 @@ import 'package:mpg_achievements_app/isometric/src/components/dialogue_utils/spe
 import 'package:mpg_achievements_app/isometric/src/components/dialogue_utils/yarn_creator.dart';
 import 'package:mpg_achievements_app/isometric/src/core/iso_component.dart';
 import 'package:mpg_achievements_app/isometric/src/core/router/router.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 
 class ConversationManager with DialogueView {
   final PixelAdventure game;

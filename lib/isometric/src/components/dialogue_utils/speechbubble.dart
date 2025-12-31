@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jenny/jenny.dart';
 import 'package:mpg_achievements_app/isometric/src/components/dialogue_utils/speechbubble_engine.dart';
 import 'package:mpg_achievements_app/isometric/src/core/iso_component.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 
 class SpeechBubble extends ConsumerStatefulWidget {
   //text to display and position

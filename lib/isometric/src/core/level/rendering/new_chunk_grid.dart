@@ -5,7 +5,7 @@ import 'dart:ui';
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/isometric/src/core/level/generation/chunk_generator.dart';
-import 'package:mpg_achievements_app/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
 import '../isometric/isometric_renderable.dart';

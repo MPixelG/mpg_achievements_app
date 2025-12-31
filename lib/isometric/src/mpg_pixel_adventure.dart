@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'package:vector_math/vector_math_64.dart' as v64;
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart' as fe;
@@ -9,15 +9,16 @@ import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
-import 'package:thermion_flutter/thermion_flutter.dart';
 import 'package:mpg_achievements_app/core/music/music_manager.dart';
+import 'package:thermion_flutter/thermion_flutter.dart';
 import 'package:vector_math/vector_math_64.dart' as v64;
-import 'isometric/src/components/camera/advanced_camera.dart';
-import 'isometric/src/components/dialogue_utils/conversation_management.dart';
-import 'isometric/src/core/iso_component.dart';
-import 'isometric/src/core/level/game_world.dart';
-import 'isometric/src/core/physics/hitbox3d/has_collision_detection.dart';
-import 'isometric/src/core/physics/hitbox3d/iso_collision_callbacks.dart';
+
+import 'components/camera/advanced_camera.dart';
+import 'components/dialogue_utils/conversation_management.dart';
+import 'core/iso_component.dart';
+import 'core/level/game_world.dart';
+import 'core/physics/hitbox3d/has_collision_detection.dart';
+import 'core/physics/hitbox3d/iso_collision_callbacks.dart';
 
 
 //DragCallbacks are imported for touch controls

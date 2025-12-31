@@ -1,0 +1,1 @@
+export 'src/mpg_pixel_adventure.dart';
