@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart' show ObjectGroup, TiledObjectHelpers;
@@ -13,6 +15,7 @@ import '../../components/level_components/collectables.dart';
 import '../../components/level_components/entity/enemy/enemy.dart';
 import '../../components/level_components/saw.dart';
 import 'game_world.dart';
+//todo refactor and integrate in new tiled_level
 
 void generateSpawningObjectsForLevel(GameWorld gameWorld) {
   //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list
@@ -143,8 +146,8 @@ Future<void> parse(String filename) async{
 
   final XmlDocument document = XmlDocument.parse(fileContent);
 
-  final TiledLevel level = TiledLevel.fromXml(document);
-  print('Level width: ${level.width}, height: ${level.height}');
-  print('Number of layers: ${level.layers.length}');
-  print("first layer: ${level.layers[0].name} with width ${level.layers[0].width} and height ${level.layers[0].height}. Data: ${level.layers[0].data}");
+  //final FutureOr<TiledLevel> level = TiledLevel.loadXML(document, filename: '', fileReader: (String path) {  });
+  //print('Level width: ${level.width}, height: ${level.height}');
+  //print('Number of layers: ${level.layers.length}');
+  //print("first layer: ${level.layers[0].name} with width ${level.layers[0].width} and height ${level.layers[0].height}. Data: ${level.layers[0].data}");
 }

@@ -5,6 +5,9 @@ import 'package:mpg_achievements_app/isometric/src/core/level/tiled_layer.dart';
 import 'package:xml/xml.dart';
 import 'package:path/path.dart' as p;
 
+//generic function for reading a file from path
+typedef FileReader = Future<String> Function(String path);
+
 class TiledLevel {
   List<TiledLayer> layers;
   Map<int, LevelTile> tilesetData;
@@ -12,7 +15,7 @@ class TiledLevel {
   TiledLevel({required this.layers, required this.tilesetData});
 
   static FutureOr<TiledLevel> loadXML(XmlDocument document, {
-    required String filename,
+    required String filename, required FileReader fileReader,
   }) async {
     final mapElement = document.getElement('map');
     final String baseDir = p.dirname(filename);
@@ -41,11 +44,15 @@ class TiledLevel {
       if (source != null) {
         //make source directory
         final tsxPath = p.normalize(p.join(baseDir, source));
-        //final tsxContent = XmlDocument.parse(tsxPath);
-        //tilesetRoot = tsxContent.getElement('tileset');
+        //fetch content
+        final tsxContent = await fileReader(tsxPath);
+        tilesetRoot = XmlDocument.parse(tsxContent).getElement('tileset');
       }
 
-      for (final tile in tileset.findElements('tile')) {
+      // Safety check
+      if (tilesetRoot == null) continue;
+
+      for (final tile in tilesetRoot.findElements('tile')) {
         final localId = int.parse(tile.getAttribute('id') ?? '0');
         final globalId = firstGid + localId;
 
@@ -64,7 +71,7 @@ class TiledLevel {
 
         // that contains "assets/models/name.glb"
         final String? modelPath = properties['model_path'];
-
+        //give to tiled_level at the end
         tilesetData[globalId] = LevelTile(
           id: globalId,
           modelPath: modelPath,
@@ -74,10 +81,11 @@ class TiledLevel {
     }
 
     //parse layers
-
+    // layers are provided for level
     final layers = <TiledLayer>[];
+
     for (final layerElement in mapElement.findElements('layer')) {
-      //final layerName = layerElement.getAttribute('name') ?? 'Unnamed Layer';
+      final layerName = layerElement.getAttribute('name') ?? 'Unnamed Layer';
       final tileInstances = <TileInstance>[];
       /*final layerWidth = int.parse(layerElement.getAttribute('width') ?? '0');
       final layerHeight = int.parse(layerElement.getAttribute('height') ?? '0'); -> only if finite map*/
@@ -113,8 +121,8 @@ class TiledLevel {
               if (gid != 0) {
                 //Combine Chunk Offset + local Position
                 tileInstances.add(TileInstance(
-                    chunkX,
-                    chunkY,
+                    chunkX + localCol,
+                    chunkY + localRow,
                     gid));
               }
               localCol++;
@@ -171,13 +179,23 @@ class TiledLevel {
       );
     }
     */
+      //add the layer
+      layers.add(TiledLayer(
+          name: layerName,
+          activeTiles: tileInstances,
+      ));
 
 
 
     }
+    print('layers');
+    print(layers.first);
+    print('tilesetdata');
+    print(tilesetData.entries);
     return TiledLevel(
       layers: layers,
-      tilesetData: {},
+      tilesetData: tilesetData,
     );
+
   }
 }
