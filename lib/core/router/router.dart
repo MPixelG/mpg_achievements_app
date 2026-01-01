@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/tools/GUI/gamescreen_3d.dart';
 import 'package:mpg_achievements_app/tools/GUI/menuCreator/components/gui_editor.dart';
@@ -43,7 +44,7 @@ class AppRouter {
       GoRoute(
         path: "/thermionViewer",
         name: "thermionViewer",
-        builder: (context,state) => const GameScreen3d(title: "test"),
+        builder: (context, state) => const GameScreen3d(title: "test"),
       ),
     ],
   );

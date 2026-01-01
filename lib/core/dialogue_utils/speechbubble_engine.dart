@@ -4,8 +4,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mpg_achievements_app/isometric/src/components/dialogue_utils/speechbubble.dart';
-import 'package:mpg_achievements_app/util/isometric_utils.dart';
+import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble.dart';
 
 class SpeechBubbleState extends ConsumerState<SpeechBubble>
     with TickerProviderStateMixin {
@@ -342,13 +341,11 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
         return const SizedBox.shrink();
       }
 
-      _componentHeight = widget.component.height;
-      _componentWidth = widget.component.width;
-      _bubbleCorrectionOffset = Vector2(0, 100);
+      // _componentHeight = widget.component.height;
+      // _componentWidth = widget.component.width;
+      // _bubbleCorrectionOffset = Vector2(0, 100);
 
-      _bubblePosition = widget.game.cam.localToGlobal(
-        toWorldPos(widget.component.gridHeadPos),
-      );
+      _bubblePosition = widget.component.screenPosTL;
 
       return AnimatedPositioned(
         left: _bubblePosition.x,

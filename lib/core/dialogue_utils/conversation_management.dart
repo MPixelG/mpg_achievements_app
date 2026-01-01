@@ -2,14 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:jenny/jenny.dart';
-import 'package:mpg_achievements_app/isometric/src/components/dialogue_utils/speechbubble.dart';
-import 'package:mpg_achievements_app/isometric/src/components/dialogue_utils/yarn_creator.dart';
-import 'package:mpg_achievements_app/isometric/src/core/iso_component.dart';
-import 'package:mpg_achievements_app/isometric/src/core/router/router.dart';
-import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
+import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_containing_game.dart';
+import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble.dart';
+import 'package:mpg_achievements_app/core/dialogue_utils/yarn_creator.dart';
+
+import '../router/router.dart';
 
 class ConversationManager with DialogueView {
-  final PixelAdventure game;
+  final DialogueContainingGame game;
   // The Jenny engine instance that executes the dialogue logic.
   //A completer that pauses the [DialogueRunner].
   // When `onLineStart` is called, a new completer is created. The runner
@@ -54,7 +55,7 @@ class ConversationManager with DialogueView {
     _isPaused = false;
     _clearAllSpeechBubbles();
     // Helper class to load and parse the .yarn file.
-    final yarnCreator = YarnCreator(
+    final YarnCreator yarnCreator = YarnCreator(
       yarnFilePath, // Use the path from the widget
       commands: {}, // Use the commands from the widget
     );
@@ -97,8 +98,8 @@ class ConversationManager with DialogueView {
     final BuildContext? _ = rootNavigatorKey.currentContext;
 
     final String characterName = line.character?.name ?? 'Character';
-    print("Speaking character:'$characterName'");
-    final IsoPositionComponent? character = _findCharacterByName(characterName);
+    print("Speaking character:'$characterName'");    
+    final DialogueCharacter? character = game.findCharacterByName(characterName);
     print('found character:$character');
 
     if (character == null) {
@@ -150,7 +151,7 @@ class ConversationManager with DialogueView {
 
     // Choices are always presented from the player's perspective.
     const characterName = 'Player';
-    final character = _findCharacterByName(characterName);
+    final character = game.findCharacterByName(characterName);
     print('characterChoice:$character');
 
     if (character == null) {
@@ -198,17 +199,6 @@ class ConversationManager with DialogueView {
     _clearAllSpeechBubbles();
   }
 
-  // Finds a character component in the game world by its name.
-  // This is a crucial link between your dialogue script and game objects.
-  IsoPositionComponent? _findCharacterByName(String name) {
-    // Case-insensitive comparison
-    final String lowerCaseName = name.toLowerCase();
-
-    // You need a way to access your NPCs. This example assumes they are
-    // in a list on your `gameWorld` component.
-    return game.npcs[name];
-  }
-
   // Removes the currently active speech bubble for a specific character.
   void _removeSpeechBubbleFor(String characterName) {
     if (_activeSpeechBubbles.containsKey(characterName)) {
@@ -232,8 +222,8 @@ class ConversationManager with DialogueView {
     if (!_showingScript) return;
 
     _showingScript = true;
-    //pause game
-    game.pauseEngine();
+    //? pause game todo
+    //game.pauseEngine();
 
     await showDialog<void>(
       context: game.buildContext!,
@@ -269,8 +259,8 @@ class ConversationManager with DialogueView {
     );
 
     if (!_showingScript) {
-      // Resume the game engine after the dialog is closed.
-      game.resumeEngine();
+      //? Resume the game engine after the dialog is closed. todo
+      //game.resumeEngine();
     }
   }
 }

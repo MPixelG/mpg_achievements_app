@@ -1,8 +1,9 @@
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/isometric/src/components/dialogue_utils/dialogue_screen.dart';
-import 'package:mpg_achievements_app/isometric/src/components/dialogue_utils/text_overlay.dart';
+import 'package:mpg_achievements_app/core/base_game.dart';
+import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
+import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/main.dart';
 
@@ -144,31 +145,15 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
 }
 
 class GameScreen extends StatelessWidget {
-  final PixelAdventure game;
+  final BaseGame game;
 
   const GameScreen({super.key, required this.game});
 
   @override
-  Widget build(BuildContext context) => RiverpodAwareGameWidget<PixelAdventure>(
+  Widget build(BuildContext context) => RiverpodAwareGameWidget<BaseGame>(
       key: gameWidgetKey,
       game: game,
-      overlayBuilderMap: {
-        'TextOverlay': (BuildContext context, PixelAdventure game) => TextOverlay(
-            game: game,
-            onTextOverlayDone: () {
-              game.overlays.remove("TextOverlay");
-            },
-          ),
-        'DialogueScreen': (BuildContext context, PixelAdventure game) => DialogueScreen(
-            game: game,
-            //when Dialogue is finishes screen is removed form map
-            onDialogueFinished: () {
-              game.overlays.remove('DialogueScreen');
-            },
-            yarnFilePath:
-            'assets/yarn/test.yarn', //todo connect to state management and trigger method, make more customizable not static as atm
-          ),
-      },
+      overlayBuilderMap: game.buildOverlayMap()
     );
 }
 

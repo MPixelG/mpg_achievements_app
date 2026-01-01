@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jenny/jenny.dart';
-import 'package:mpg_achievements_app/isometric/src/components/dialogue_utils/speechbubble_engine.dart';
-import 'package:mpg_achievements_app/isometric/src/core/iso_component.dart';
-import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
+import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_containing_game.dart';
+import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble_engine.dart';
 
 class SpeechBubble extends ConsumerStatefulWidget {
   //text to display and position
   final bool isRapidText;
-  final IsoPositionComponent component; //more generic
+  final DialogueCharacter component; //more generic
   final String text;
-  final PixelAdventure game;
+  final DialogueContainingGame game;
   final DialogueChoice? choices;
 
   //callback

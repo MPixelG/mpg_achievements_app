@@ -57,6 +57,7 @@ dependencies:
       url: https://github.com/nmfisher/thermion.git
       path: thermion_flutter/thermion_flutter
       ref: develop
+  flutter_joystick: ^0.2.2
 
 
 

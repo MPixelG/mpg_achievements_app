@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 
+import '../base_game.dart';
 import 'dialogue_engine.dart';
 
 class DialogueScreen extends ConsumerStatefulWidget {
   final VoidCallback onDialogueFinished;
-  final PixelAdventure game;
+  final BaseGame game;
   final String yarnFilePath;
   final Map<String, Function> commands;
 

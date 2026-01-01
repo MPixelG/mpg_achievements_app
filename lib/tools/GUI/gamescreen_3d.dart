@@ -1,12 +1,10 @@
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/isometric/src/components/dialogue_utils/dialogue_screen.dart';
-import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
+import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/main.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 
-import '../../isometric/src/components/dialogue_utils/text_overlay.dart';
 
 class GameScreen3d extends StatefulWidget {
   const GameScreen3d({super.key, required this.title});
@@ -18,7 +16,7 @@ class GameScreen3d extends StatefulWidget {
 
 class _GameScreen3dState extends State<GameScreen3d> with WidgetsBindingObserver{
   ThermionViewer? _thermionViewer;
-  final PixelAdventure _flameGame = PixelAdventure.currentInstance;
+  final PixelAdventure3D _flameGame = PixelAdventure3D.currentInstance;
   bool _is3DReady = false;
   bool _isLoading = false;
   bool _isSceneLoaded = false;
@@ -156,25 +154,11 @@ class _GameScreen3dState extends State<GameScreen3d> with WidgetsBindingObserver
         //Layer 4 -> FlameGame
         if (_is3DReady)
           Positioned.fill(
-            child: RiverpodAwareGameWidget<PixelAdventure>(
+            child: RiverpodAwareGameWidget<PixelAdventure3D>(
               key: gameWidgetKey, // Good practice
               game: _flameGame,
               // Your existing Overlay mapping
-              overlayBuilderMap: {
-                'TextOverlay': (context, game) => TextOverlay(
-                  game: game,
-                  onTextOverlayDone: () {
-                    game.overlays.remove("TextOverlay");
-                  },
-                ),
-                'DialogueScreen': (context, game) => DialogueScreen(
-                  game: game,
-                  onDialogueFinished: () {
-                    game.overlays.remove('DialogueScreen');
-                  },
-                  yarnFilePath: 'assets/yarn/test.yarn',
-                ),
-              },
+              overlayBuilderMap: _flameGame.buildOverlayMap()
             ),
           ),
       ],
