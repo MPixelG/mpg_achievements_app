@@ -51,8 +51,8 @@
         },
         "Level_11.tmx": {
             "expandedObjectLayers": [
-                8,
-                6
+                6,
+                8
             ],
             "scale": 1.5,
             "selectedLayer": 1,
@@ -65,7 +65,7 @@
             "scale": 1.5,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": 1024.3333333333333,
+                "x": 1024,
                 "y": 512.3333333333333
             }
         },
@@ -149,10 +149,10 @@
         },
         "Level_9.tmx": {
             "scale": 1.5,
-            "selectedLayer": 0,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 925.6666666666666,
-                "y": 392.33333333333326
+                "x": 1123.6666666666665,
+                "y": 398.33333333333326
             }
         },
         "Lever_3.tmx": {
@@ -287,11 +287,11 @@
     "project": "MPG_pixel_adventure.tiled-project",
     "property.type": "string",
     "recentFiles": [
-        "3D_prototype.tsx",
         "Level_8.tmx",
         "Level_11.tmx",
         "Level_12.tmx",
         "Level_9.tmx",
+        "3D_prototype.tsx",
         "mpg_first_tiledMap.tmx",
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",

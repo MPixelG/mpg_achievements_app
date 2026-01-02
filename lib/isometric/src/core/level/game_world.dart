@@ -9,7 +9,7 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/core/router/router.dart';
-import 'package:mpg_achievements_app/isometric/src/core/level/tiled_level_reader.dart';
+import 'package:mpg_achievements_app/isometric/src/core/level/tiled_level_loader.dart';
 import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
@@ -85,9 +85,9 @@ abstract class GameWorld extends World
     await add(generator); // Add the POI generator to the game world
 
     //spawn objects
-    generateSpawningObjectsForLevel(this);
+   // generateSpawningObjectsForLevel(this);
     //add collision objects
-    generateCollisionsForLevel(this);
+  //  generateCollisionsForLevel(this);
 
     // Debug mode off by default
     add(debugOverlays);

@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart' as fe;
+import 'package:flame/flame.dart';
 import 'package:flame/input.dart' hide Vector2, Vector3;
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
@@ -16,10 +17,11 @@ import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/core/music/music_manager.dart';
 import 'package:thermion_flutter/thermion_flutter.dart' hide Vector2, Vector3;
 import 'package:vector_math/vector_math_64.dart' as v64;
-
+import 'package:xml/xml.dart';
 import 'components/camera/advanced_camera.dart';
 import 'core/iso_component.dart';
 import 'core/level/game_world.dart';
+import 'core/level/tiled_level.dart';
 import 'core/physics/hitbox3d/has_collision_detection.dart';
 import 'core/physics/hitbox3d/iso_collision_callbacks.dart';
 
@@ -48,7 +50,6 @@ class PixelAdventure extends BaseGame
 
   void setThermionViewer(ThermionViewer viewer) {
     _3DGameViewer = viewer;
-    print("🔌 3D Engine linked to Flame Game!");
   }
 
   //Game components
@@ -58,7 +59,6 @@ class PixelAdventure extends BaseGame
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
   late String currentLevel = "Level_9";
-  late String levelPath = 'tiles/3D_prototype.tmx';
   final musicManager = MusicManager();
   //bools for game logic
   //needs to go into the overlay_controller later
@@ -79,14 +79,15 @@ class PixelAdventure extends BaseGame
     //add overlays
    // overlays.add('TextOverlay');
    // overlays.add('DialogueScreen');
-    addJoystick();
-    musicManager.playRandomMusic();
-    musicManager.setVolume(0.4);
+    //addJoystick();
+    //musicManager.playRandomMusic();
+    //musicManager.setVolume(0.4);
     //final String tmxContent = await Flame.assets.readFile(levelPath);
     //final XmlDocument xmlDoc = XmlDocument.parse(tmxContent); //fails since the asset file is somehow not published to github, it cant find the file
     //final FutureOr<TiledLevel> levelData = TiledLevel.loadXML(xmlDoc, filename: '3D_prototype.tmx', fileReader: (String path) async => await Flame.assets.readFile(levelPath));
-    //print(levelData.toString());
-    super.onLoad();
+    //print('Level');
+    //print(levelData);
+    //super.onLoad();
     /*Removed for testing 3dThermionViewer, potentially keep the part for later usage in a separate game??
     //all images for the game are loaded into cache when the game start -> could take long at a later stage, but here it is fine for moment being
     await images.loadAllImages();

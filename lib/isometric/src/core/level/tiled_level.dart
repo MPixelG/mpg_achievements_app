@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:mpg_achievements_app/isometric/src/core/level/level_object.dart';
 import 'package:mpg_achievements_app/isometric/src/core/level/tile.dart';
 import 'package:mpg_achievements_app/isometric/src/core/level/tiled_layer.dart';
 import 'package:xml/xml.dart';
@@ -10,16 +11,18 @@ typedef FileReader = Future<String> Function(String path);
 
 class TiledLevel {
   List<TiledLayer> layers;
+  List<LevelObjectLayer> objectLayers;
   Map<int, LevelTile> tilesetData;
 
-  TiledLevel({required this.layers, required this.tilesetData});
+  TiledLevel({required this.layers, required this.objectLayers, required this.tilesetData});
 
-  static FutureOr<TiledLevel> loadXML(XmlDocument document, {
+  static Future<TiledLevel> loadXML(XmlDocument document, {
     required String filename, required FileReader fileReader,
   }) async {
     final mapElement = document.getElement('map');
     final String baseDir = p.dirname(filename);
-    print(mapElement);
+    print('baseDir');
+    print(baseDir);
 
     /*potential switch to factory again if we load everything at the beginning, now Future becaus of tsx. files
   factory TiledLevel.fromXml(XmlDocument document){
@@ -43,7 +46,9 @@ class TiledLevel {
       // Note: If your tileset is an external .tsx source load here
       if (source != null) {
         //make source directory
-        final tsxPath = p.normalize(p.join(baseDir, source));
+        final tsxPath = p.url.join(baseDir, source);
+        print('tsxPath');
+        print(tsxPath);
         //fetch content
         final tsxContent = await fileReader(tsxPath);
         tilesetRoot = XmlDocument.parse(tsxContent).getElement('tileset');
@@ -188,14 +193,52 @@ class TiledLevel {
 
 
     }
-    print('layers');
-    print(layers.first);
-    print('tilesetdata');
-    print(tilesetData.entries);
+    //add null check
+    final objectLayers = <LevelObjectLayer>[];
+    for (final group in mapElement.findElements('object layer')) {
+      final layerName = group.getAttribute('name') ?? 'Objects';
+      final objects = <LevelObject>[];
+
+      for (final obj in group.findElements('object')) {
+        final properties = _parseProperties(obj);
+
+        objects.add(LevelObject(
+          id: int.parse(obj.getAttribute('id') ?? '0'),
+          name: obj.getAttribute('name') ?? '',
+          type: obj.getAttribute('class') ?? obj.getAttribute('type') ?? '',
+          x: double.parse(obj.getAttribute('x') ?? '0'),
+          y: double.parse(obj.getAttribute('y') ?? '0'),
+          width: double.parse(obj.getAttribute('width') ?? '0'),
+          height: double.parse(obj.getAttribute('height') ?? '0'),
+          properties: properties,
+        ));
+      }
+      objectLayers.add(LevelObjectLayer(name: layerName, objects: objects));
+    }
+
     return TiledLevel(
       layers: layers,
       tilesetData: tilesetData,
+      objectLayers: objectLayers,
     );
 
   }
+
+  //extract properties from xml
+  static Map<String, dynamic> _parseProperties(XmlElement element) {
+    final properties = <String, dynamic>{};
+    final propsElement = element.getElement('properties');
+    if (propsElement != null) {
+      for (final prop in propsElement.findElements('property')) {
+        final name = prop.getAttribute('name');
+        final value = prop.getAttribute('value');
+        if (name != null) properties[name] = value;
+      }
+    }
+    return properties;
+  }
+
+  LevelObjectLayer? getObjectLayer(String name) => objectLayers.firstWhere((l) => l.name == name);
+
+
 }
