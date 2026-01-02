@@ -121,47 +121,43 @@ class _GameScreen3dState extends State<GameScreen3d> with WidgetsBindingObserver
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: Colors.black,
-    body: Stack(
-      children: [
-        //layer 1 -> ThermionViewer
-        if (_thermionViewer != null)
-          Positioned.fill(child: ThermionWidget(viewer: _thermionViewer!)),
-        // Layer 2: The Loading Indicator
-        if (_isLoading)
-          const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text(
-                  "Loading 3D viewer...",
-                  style: TextStyle(color: Colors.white, fontFamily: "Roboto"),
-                ),
-              ],
+  Widget build(BuildContext context) {
+    final Scaffold out = Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          //layer 1 -> ThermionViewer
+          if (_thermionViewer != null)
+            Positioned.fill(child: ThermionWidget(viewer: _thermionViewer!)),
+          // Layer 2: The Loading Indicator
+          if (_isLoading)
+            const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text(
+                    "Loading 3D viewer...",
+                    style: TextStyle(color: Colors.white, fontFamily: "Roboto"),
+                  ),
+                ],
+              ),
             ),
-          ),
-        // Layer 3-> The Load Button
-        if (_thermionViewer != null && !_isLoading && !_isSceneLoaded)
-          Center(
-            child: ElevatedButton(
-              onPressed: _loadAssets,
-              child: const Text("Load 3D Scene"),
+          //Layer 3 -> FlameGame
+          if (_is3DReady)
+            Positioned.fill(
+              child: RiverpodAwareGameWidget<PixelAdventure3D>(
+                  key: gameWidgetKey, // Good practice
+                  game: _flameGame,
+                  // Your existing Overlay mapping
+                  overlayBuilderMap: _flameGame.buildOverlayMap()
+              ),
             ),
-          ),
-        //Layer 4 -> FlameGame
-        if (_is3DReady)
-          Positioned.fill(
-            child: RiverpodAwareGameWidget<PixelAdventure3D>(
-              key: gameWidgetKey, // Good practice
-              game: _flameGame,
-              // Your existing Overlay mapping
-              overlayBuilderMap: _flameGame.buildOverlayMap()
-            ),
-          ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+    if(!_isLoading && !_is3DReady) _loadAssets();
+    return out;
+  }
 }

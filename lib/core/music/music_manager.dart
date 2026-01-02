@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:audioplayers/audioplayers.dart';
 
 class MusicManager {
@@ -12,7 +13,9 @@ class MusicManager {
     'deimos.mp3',
     'dinosaur.mp3',
     'rare.mp3',
-    'you_are_truth.mp3'
+    'you_are_truth.mp3',
+    'backgroundMusic.mp3',
+    'peacefulMusic.mp3',
   ];
 
   Future<void> playRandomMusic() async {

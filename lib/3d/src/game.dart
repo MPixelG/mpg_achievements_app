@@ -83,10 +83,6 @@ class PixelAdventure3D extends BaseGame
     //3set position
     matrix.setTranslation(helmetPosition);
 
-    // 4Apply Rotation only x rotation for testing
-    rotationAngle += currentJoystickMoveX * 5.0 * dt;
-    matrix.rotateY(rotationAngle);
-
     //low-level FilamentApp is necessary because TViewer is only viewer
     final int entityID = (helmetAsset as dynamic).entity;
     FilamentApp.instance?.setTransform(entityID, matrix);
