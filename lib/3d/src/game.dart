@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flame/events.dart';
+import 'package:flame/flame.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:mpg_achievements_app/core/base_game.dart';
@@ -12,6 +13,9 @@ import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/has_col
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 import 'package:vector_math/vector_math_64.dart' as v64;
+import 'package:xml/xml.dart';
+
+import '../../isometric/src/core/level/tiled_level.dart';
 
 
 //DragCallbacks are imported for touch controls
@@ -23,6 +27,7 @@ class PixelAdventure3D extends BaseGame
         ScrollDetector,
         IsoCollisionCallbacks{
   static ThermionViewer? _3DGameViewer;
+  late String levelPath = 'tiles/3D_prototype.tmx';
   
   static PixelAdventure3D? _currentInstance;
   
@@ -50,6 +55,12 @@ class PixelAdventure3D extends BaseGame
   FutureOr<void> onLoad() async {
     musicManager.playRandomMusic();
     musicManager.setVolume(0.4);
+    final String tmxContent = await Flame.assets.readFile(levelPath);
+    final XmlDocument xmlDoc = XmlDocument.parse(tmxContent); //fails since the asset file is somehow not published to github, it cant find the file
+    final TiledLevel levelData = await TiledLevel.loadXML(xmlDoc, filename: 'tiles/3D_prototype.tmx', fileReader: (String path) async => await Flame.assets.readFile(path));
+    print('Level');
+    print(levelData.layers.length);
+    print(levelData.tilesetData.keys.toList());
     super.onLoad();
   }
   
