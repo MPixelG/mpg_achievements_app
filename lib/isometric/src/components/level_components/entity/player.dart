@@ -5,17 +5,17 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/core/controllers/character_controller.dart';
+import 'package:mpg_achievements_app/core/controllers/control_action_bundle.dart';
+import 'package:mpg_achievements_app/core/controllers/keyboard_character_controller.dart';
 import 'package:mpg_achievements_app/isometric/src/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/isometric/src/components/animation/new_animated_character.dart';
-import 'package:mpg_achievements_app/isometric/src/components/controllers/character_controller.dart';
-import 'package:mpg_achievements_app/isometric/src/components/controllers/keyboard_character_controller.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/collisions.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:mpg_achievements_app/isometric/src/core/rendering/textures/game_texture_batch.dart';
 import 'package:mpg_achievements_app/isometric/src/state_management/providers/player_state_provider.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
-import '../../controllers/control_action_bundle.dart';
 import 'isometric_character_shadow.dart';
 
 //todo implement PlayerStateProvider to manage the player state globally

@@ -53,8 +53,6 @@ class PixelAdventure3D extends BaseGame
   //FutureOr works same here either returns a Future or <void>
   @override
   FutureOr<void> onLoad() async {
-    musicManager.playRandomMusic();
-    musicManager.setVolume(0.4);
     final String tmxContent = await Flame.assets.readFile(levelPath);
     final XmlDocument xmlDoc = XmlDocument.parse(tmxContent); //fails since the asset file is somehow not published to github, it cant find the file
     final TiledLevel levelData = await TiledLevel.loadXML(xmlDoc, filename: 'tiles/3D_prototype.tmx', fileReader: (String path) async => await Flame.assets.readFile(path));
@@ -105,6 +103,7 @@ class PixelAdventure3D extends BaseGame
     //    // game logic here
     // }
   }
+  
   double currentJoystickMoveX = 0;
   double currentJoystickMoveY = 0;
   void onJoystickMove(StickDragDetails details){

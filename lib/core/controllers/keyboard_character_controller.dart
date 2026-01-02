@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/isometric/src/components/controllers/character_controller.dart';
 
+import 'character_controller.dart';
 import 'control_action_bundle.dart';
 
 class KeyboardCharacterController<T extends Component> extends CharacterController<T> with KeyboardHandler{
