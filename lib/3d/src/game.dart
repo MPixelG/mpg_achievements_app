@@ -9,6 +9,8 @@ import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/core/touch_controls/touch_controls.dart';
+import 'package:mpg_achievements_app/isometric/src/core/level/game_world.dart';
+import 'package:mpg_achievements_app/isometric/src/core/level/tiled_level_loader.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/has_collision_detection.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
@@ -26,22 +28,29 @@ class PixelAdventure3D extends BaseGame
         HasCollisionDetection3D,
         ScrollDetector,
         IsoCollisionCallbacks{
-  static ThermionViewer? _3DGameViewer;
-  late String levelPath = 'tiles/3D_prototype.tmx';
-  
+
+
+  //Singleton
   static PixelAdventure3D? _currentInstance;
-  
   static PixelAdventure3D get currentInstance {
-    _currentInstance ??= PixelAdventure3D();
-    return _currentInstance!;
+  _currentInstance ??= PixelAdventure3D();
+  return _currentInstance!;
   }
 
-
+  //reference to ThermionViewer
+  static ThermionViewer? _3DGameViewer;
   void setThermionViewer(ThermionViewer viewer) {
     _3DGameViewer = viewer;
     print("🔌 3D Engine linked to Flame Game!");
-  }
-  
+    }
+
+  //level attributes
+  TiledLevel? _levelData;
+  late String levelPath = 'tiles/3D_prototype.tmx';
+
+  //gameworld -> purely for logic no visuals
+  //late final GameWorld gameWorld;
+
   //storage for the 3D Object
   dynamic helmetAsset;
   v64.Vector3 helmetPosition = v64.Vector3(0.0, 0.0, -5.0);
@@ -55,10 +64,12 @@ class PixelAdventure3D extends BaseGame
   FutureOr<void> onLoad() async {
     final String tmxContent = await Flame.assets.readFile(levelPath);
     final XmlDocument xmlDoc = XmlDocument.parse(tmxContent); //fails since the asset file is somehow not published to github, it cant find the file
-    final TiledLevel levelData = await TiledLevel.loadXML(xmlDoc, filename: 'tiles/3D_prototype.tmx', fileReader: (String path) async => await Flame.assets.readFile(path));
+    _levelData = await TiledLevel.loadXML(xmlDoc, filename: 'tiles/3D_prototype.tmx', fileReader: (String path) async => await Flame.assets.readFile(path));
     print('Level');
-    print(levelData.layers.length);
-    print(levelData.tilesetData.keys.toList());
+    print(_levelData!.layers.length);
+    print(_levelData!.tilesetData.keys.toList());
+    _trySpawnTest();
+
     super.onLoad();
   }
   
@@ -137,6 +148,9 @@ class PixelAdventure3D extends BaseGame
   @override
   DialogueCharacter? findCharacterByName(String name) => null;
   
-  
+  Future<void> _trySpawnTest() async{
+    final loader = LevelLoader(levelData: _levelData!, tileSize: v64.Vector2(128, 128), viewer: _3DGameViewer!);
+    loader.spawnTiles();
+  }
 }
 ThermionViewer? get thermion => PixelAdventure3D._3DGameViewer;
