@@ -2,15 +2,19 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flutter/cupertino.dart' hide Matrix4;
+import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/3d/src/renderable3d.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/iso_anchor.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/notifying_vector_3.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/transform3d.dart';
+import 'package:thermion_dart/src/filament/src/interface/asset.dart';
 
 
-class PositionComponent3d extends Component implements Renderable3d, Anchor3DProvider, Size3DProvider, Position3DProvider, Scale3DProvider {
+class PositionComponent3d extends Component with HasGameReference<PixelAdventure3D> implements Renderable3d, Anchor3DProvider, Size3DProvider, Position3DProvider, Scale3DProvider  {
   Transform3D transform;
   Anchor3D _anchor;
+  
+  ThermionAsset? _asset;
 
 
   PositionComponent3d({
@@ -28,6 +32,17 @@ class PositionComponent3d extends Component implements Renderable3d, Anchor3DPro
 
     _size.addListener(_onModifiedSizeOrAnchor);
     _onModifiedSizeOrAnchor();
+  }
+  
+  @override
+  FutureOr<void> onLoad() async {
+    await super.onLoad();
+    thermion?.addToScene(_asset!);
+  }
+  
+  @override
+  void onRemove() {
+    thermion?.removeFromScene(_asset!);
   }
 
   @override
@@ -175,6 +190,18 @@ class PositionComponent3d extends Component implements Renderable3d, Anchor3DPro
   void _onModifiedSizeOrAnchor() {
     final Vector3 scaledSize = this.scaledSize;
     transform.offset = -Vector3(_anchor.x * scaledSize.x, _anchor.y * scaledSize.y, _anchor.z * scaledSize.z);
+  }
+
+  @override
+  ThermionAsset? get asset => _asset;
+  
+  set asset(ThermionAsset? newAsset) {
+    //thermion?.removeFromScene(asset!); 
+    //? maybe we need to remove and re-add it to the scene if we change it
+    _asset = newAsset;
+    if(newAsset != null) {
+      //thermion?.addToScene(newAsset);
+    }  
   }
 }
 

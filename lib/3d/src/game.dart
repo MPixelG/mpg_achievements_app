@@ -9,7 +9,6 @@ import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/core/touch_controls/touch_controls.dart';
-import 'package:mpg_achievements_app/isometric/src/core/level/game_world.dart';
 import 'package:mpg_achievements_app/isometric/src/core/level/tiled_level_loader.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/has_collision_detection.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/iso_collision_callbacks.dart';

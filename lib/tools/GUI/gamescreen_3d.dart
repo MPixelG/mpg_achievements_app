@@ -16,7 +16,7 @@ class GameScreen3d extends StatefulWidget {
 
 class _GameScreen3dState extends State<GameScreen3d> with WidgetsBindingObserver{
   ThermionViewer? _thermionViewer;
-  final PixelAdventure3D _flameGame = PixelAdventure3D.currentInstance;
+  PixelAdventure3D get _flameGame => PixelAdventure3D.currentInstance;
   bool _is3DReady = false;
   bool _isLoading = false;
   bool _isSceneLoaded = false;
