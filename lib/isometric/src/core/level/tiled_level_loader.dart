@@ -50,13 +50,9 @@ class LevelLoader {
 
           // 2. Clean up the path (Thermion usually wants paths relative to asset root)
           // e.g. "assets/tiles/block.glb" -> "tiles/block.glb"
-          String modelPath = tileInfo.modelPath!;
-          if (modelPath.startsWith('assets/')) {
-            modelPath = modelPath.substring(7); // Remove 'assets/'
-          } else if (modelPath.startsWith('assets\\')) {
-            modelPath = modelPath.substring(7); // Remove windows style
-            print(modelPath);
-          }
+          final String modelPath = tileInfo.modelPath!;
+          print(modelPath);
+
 
           // 3. Load the model or wrapper into the 3D scene
             final dynamic asset = await viewer.loadGltf(modelPath);

@@ -75,13 +75,29 @@ class _GameScreen3dState extends State<GameScreen3d> with WidgetsBindingObserver
     });
 
     try {
+      const double dist = 20.0;
+      const double zoom = 7.0;
+      const double aspect = 1.0;
+      final Vector3 position = Vector3(dist,dist,dist); //Isometric corner
+      final Vector3 target = Vector3(0,0,0); //Center of level
+
       _flameGame.setThermionViewer(viewer);
       final asset = await viewer.loadGltf("assets/3D/FlightHelmet.glb");
       _flameGame.helmetAsset = asset;
       await viewer.loadSkybox('assets/3D/default_env_skybox.ktx');
       await viewer.loadIbl('assets/3D/default_env_ibl.ktx');
+      //camera settings
       final camera = await viewer.getActiveCamera();
-      await camera.lookAt(Vector3(0, 0, 5));
+      await camera.lookAt(Vector3(0,0,5));
+      /*await camera.setProjection(
+          Projection.Orthographic,
+          -zoom*aspect, //left
+          zoom*aspect,  //right
+          -zoom,        //bottom
+          zoom,         //top
+          0.1, 1000.0   // Near/Far clipping planes
+      );*/
+      //await camera.lookAt(Vector3(0, 0, 5));
       await viewer.setPostProcessing(true);
       await viewer.setRendering(true);
 
