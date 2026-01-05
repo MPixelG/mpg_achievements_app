@@ -75,34 +75,40 @@ class _GameScreen3dState extends State<GameScreen3d> with WidgetsBindingObserver
     });
 
     try {
-      const double dist = 20.0;
-      const double zoom = 7.0;
-      const double aspect = 1.0;
-      final Vector3 position = Vector3(dist,dist,dist); //Isometric corner
+      const double dist = 2.0;
+      const double zoom = 0.1;
+      double aspect = 1.0;
+      final Vector3 position = Vector3(10,10,10); //Isometric corner
       final Vector3 target = Vector3(0,0,0); //Center of level
+      final Vector3 standardYUp = Vector3(0, 1, 0);
 
       _flameGame.setThermionViewer(viewer);
       final asset = await viewer.loadGltf("assets/3D/FlightHelmet.glb");
       _flameGame.helmetAsset = asset;
-      await viewer.loadSkybox('assets/3D/default_env_skybox.ktx');
+      //await viewer.loadSkybox('assets/3D/default_env_skybox.ktx');
       await viewer.loadIbl('assets/3D/default_env_ibl.ktx');
-      //camera settings
+      //camera settings isometric
       final camera = await viewer.getActiveCamera();
-      await camera.lookAt(Vector3(0,0,5));
-      /*await camera.setProjection(
-          Projection.Orthographic,
+      await camera.lookAt(position,focus: target,up: standardYUp);
+      await camera.setProjection(
+          Projection.Perspective,
           -zoom*aspect, //left
           zoom*aspect,  //right
           -zoom,        //bottom
           zoom,         //top
           0.1, 1000.0   // Near/Far clipping planes
-      );*/
-      //await camera.lookAt(Vector3(0, 0, 5));
+      );
       await viewer.setPostProcessing(true);
       await viewer.setRendering(true);
 
       if (mounted) {
         setState(() {
+          // Use the actual widget size if possible, or screen size as fallback to make the shapes look correctly
+          //gets the screen or window size
+          final size = MediaQuery.of(context).size;
+          if (size.height > 0) {
+            aspect = size.width / size.height;
+          }
           _isLoading = false;
           _isSceneLoaded = true;
           _is3DReady = true;

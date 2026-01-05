@@ -64,8 +64,8 @@ class LevelLoader {
             // Tiled X -> 3D X
             // Tiled Y -> 3D Z (Depth)
             // Layer -> 3D Y (Height)
-            final double xPos = tile.x * tileSize.x;
-            final double zPos = tile.y * tileSize.y;
+            final double xPos = tile.x *1.0;
+            final double zPos = tile.y *1.0;
 
             //Create translation Matrix -> is there a better way?
             final matrix = v64.Matrix4.identity();
@@ -73,7 +73,7 @@ class LevelLoader {
 
             //Filament
             FilamentApp.instance?.setTransform(entityID, matrix);
-            print('tile spawn');
+            print('tile spawn at $xPos $zPos');
 
         }
       }
