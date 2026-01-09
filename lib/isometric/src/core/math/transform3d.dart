@@ -1,6 +1,7 @@
 import 'package:flame/geometry.dart' as geometry;
 import 'package:flutter/cupertino.dart' hide Matrix4;
 import 'package:vector_math/vector_math.dart';
+import 'package:vector_math/vector_math_64.dart' as vm64;
 
 import 'notifying_vector_3.dart';
 
@@ -28,7 +29,10 @@ import 'notifying_vector_3.dart';
 /// can subscribe to get notified when individual components of the transform
 /// change: [position], [scale], and [offset] (but not [angle]).
 class Transform3D extends ChangeNotifier {
-  final Matrix4 _transformMatrix;
+  bool transformMatrixSet = false;
+  late final Matrix4 _transformMatrix;
+  bool transformMatrix64Set = false;
+  late final vm64.Matrix4 _transformMatrix64;
   bool _recalculate;
   double _angleRoll;
   double _anglePitch;
@@ -38,8 +42,7 @@ class Transform3D extends ChangeNotifier {
   final NotifyingVector3 _offset;
 
   Transform3D()
-      : _transformMatrix = Matrix4.identity(),
-        _recalculate = true,
+      : _recalculate = true,
         _angleRoll = 0,
         _anglePitch = 0,
         _angleYaw = 0,
@@ -194,17 +197,41 @@ class Transform3D extends ChangeNotifier {
   ///
   /// The returned matrix must not be modified by the user.
   Matrix4 get transformMatrix {
+    if(!transformMatrixSet) {
+      _transformMatrix = Matrix4.identity();
+      transformMatrixSet = true;
+    }
     if (_recalculate) {
-      _transformMatrix.setIdentity();
-      _transformMatrix.translate(_position.x, _position.y, _position.z);
+      _transformMatrix!.setIdentity();
+      _transformMatrix.translateByVector3(_position);
       _transformMatrix.rotateZ(_angleRoll);
       _transformMatrix.rotateY(_angleYaw);
       _transformMatrix.rotateX(_anglePitch);
-      _transformMatrix.scale(_scale.x, _scale.y, _scale.z);
-      _transformMatrix.translate(_offset.x, _offset.y, _offset.z);
+      _transformMatrix.scaleByVector3(_scale);
+      _transformMatrix.translateByVector3(_offset);
       _recalculate = false;
     }
     return _transformMatrix;
+  }
+
+
+  vm64.Matrix4 get transformMatrix64 {
+    if(!transformMatrix64Set) {
+      _transformMatrix64 = vm64.Matrix4.identity();
+      transformMatrix64Set = true;
+    }
+    if(!transformMatrix64Set) _transformMatrix64 = vm64.Matrix4.identity();
+    if (_recalculate) {
+      _transformMatrix64.setIdentity();
+      _transformMatrix64.translateByVector3(vm64.Vector3(_position.x, _position.y, _position.z));
+      _transformMatrix64.rotateZ(_angleRoll);
+      _transformMatrix64.rotateY(_angleYaw);
+      _transformMatrix64.rotateX(_anglePitch);
+      _transformMatrix64.scaleByVector3(vm64.Vector3(_scale.x, _scale.y, _scale.z));
+      _transformMatrix64.translateByVector3(vm64.Vector3(_offset.x, _offset.y, _offset.z));
+      _recalculate = false;
+    }
+    return _transformMatrix64;
   }
 
   /// Transform [point] from local coordinates into the parent coordinate space.

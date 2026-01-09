@@ -1,13 +1,30 @@
 import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
-class Entity extends PositionComponent3d {
-  Entity({required super.size});
+import 'package:thermion_flutter/thermion_flutter.dart';
+abstract class Entity<TState> extends PositionComponent3d {
+  late TState _state = initState();
   
-  void updateClient(double dt){
-    
+  Entity({
+      super.children,
+      super.priority,
+      super.key,
+      super.position,
+      required super.size,
+      super.anchor,
+    });
+  
+  int? get entityId => asset?.entity;
+  
+  void tickClient(double dt) {
+    if (entityId != null) {
+      FilamentApp.instance?.setTransform(entityId!, transform.transformMatrix64);
+    }
   }
   
-  void updateServer(double dt){
-    
-  }
+  ///
+  /// tick method for the content that is managed server-side. You can only update the state server side, so this is the only way of changing values of your entity state
+  /// returns the state of the next frame
   
+  TState? tickServer(double dt) => null;
+  
+  TState initState();
 }

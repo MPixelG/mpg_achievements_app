@@ -23,7 +23,6 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
     super.key,
     Vector3? position,
     required Vector3 size,
-    Vector3? scale,
     Anchor3D? anchor,
   }) : transform = Transform3D(),
         _anchor = anchor ?? Anchor3D.bottomLeftLeft, super() {
