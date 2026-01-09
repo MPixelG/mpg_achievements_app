@@ -9,6 +9,10 @@
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "": {
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
         "3D_prototype.tsx": {
             "scaleInEditor": 1
         },
@@ -287,11 +291,11 @@
     "project": "MPG_pixel_adventure.tiled-project",
     "property.type": "string",
     "recentFiles": [
+        "3D_prototype.tsx",
         "Level_8.tmx",
         "Level_11.tmx",
         "Level_12.tmx",
         "Level_9.tmx",
-        "3D_prototype.tsx",
         "mpg_first_tiledMap.tmx",
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",
@@ -300,11 +304,13 @@
         "Level_5.tmx",
         "grass_concrete.tsx"
     ],
+    "tileset.embedInMap": true,
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
         "height": 128,
         "width": 128
     },
-    "tileset.type": 0
+    "tileset.type": 0,
+    "tileset.useTransparentColor": true
 }

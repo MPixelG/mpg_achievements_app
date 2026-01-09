@@ -195,7 +195,7 @@ class TiledLevel {
     }
     //add null check
     final objectLayers = <LevelObjectLayer>[];
-    for (final group in mapElement.findElements('object layer')) {
+    for (final group in mapElement.findElements('objectgroup')) {
       final layerName = group.getAttribute('name') ?? 'Objects';
       final objects = <LevelObject>[];
 
