@@ -148,8 +148,9 @@ class PixelAdventure3D extends BaseGame
   DialogueCharacter? findCharacterByName(String name) => null;
   
   Future<void> _trySpawnTest() async{
-    final loader = LevelLoader(levelData: _levelData!, tileSize: v64.Vector2(128, 128), viewer: _3DGameViewer!);
+    final loader = LevelLoader(levelData: _levelData!, viewer: _3DGameViewer!);
     loader.spawnTiles();
+    loader.spawnObjects();
   }
 }
 ThermionViewer? get thermion => PixelAdventure3D._3DGameViewer;

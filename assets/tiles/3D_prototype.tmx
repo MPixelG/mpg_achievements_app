@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="65" height="67" tilewidth="128" tileheight="128" infinite="1" nextlayerid="2" nextobjectid="1">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="65" height="67" tilewidth="128" tileheight="128" infinite="1" nextlayerid="3" nextobjectid="3">
  <tileset firstgid="1" source="3D_prototype.tsx"/>
- <layer id="1" name="ground" width="65" height="67">
+ <tileset firstgid="2" name="bee" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="../3D/prototyping_assets/Pieces/Bee_proxy.png" trans="ff00ff" width="128" height="128"/>
+ </tileset>
+ <layer id="1" name="ground" width="65" height="67" locked="1">
   <data encoding="csv">
    <chunk x="0" y="0" width="16" height="16">
 1,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,
@@ -23,4 +26,11 @@
 </chunk>
   </data>
  </layer>
+ <objectgroup id="2" name="Spawnpoints">
+  <object id="1" name="Bee" type="Object" x="392.229" y="263.93" width="106.305" height="106.305">
+   <properties>
+    <property name="model_path" value="assets/3D/prototyping_assets/Pieces/bee.glb"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>

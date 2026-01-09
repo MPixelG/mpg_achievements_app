@@ -78,7 +78,7 @@ class _GameScreen3dState extends State<GameScreen3d> with WidgetsBindingObserver
       const double dist = 2.0;
       const double zoom = 0.1;
       double aspect = 1.0;
-      final Vector3 position = Vector3(10,10,10); //Isometric corner
+      final Vector3 position = Vector3(20,20,20); //Isometric corner
       final Vector3 target = Vector3(0,0,0); //Center of level
       final Vector3 standardYUp = Vector3(0, 1, 0);
 

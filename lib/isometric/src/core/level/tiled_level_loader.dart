@@ -12,28 +12,28 @@ class LevelLoader {
   final PixelAdventure3D game = PixelAdventure3D.currentInstance;
   final ThermionViewer viewer;
   late final TiledLevel levelData;
-  late final Vector2 tileSize;
+  final double tiledPixelSize = 128.0;
   final double gridScale = 2.0;
+
 
   LevelLoader({
     required this.levelData,
-    //for test now tilesize does not matter
-    required this.tileSize,
     required this.viewer,
   });
 
   void init() {
-   // _spawnObjects();
+    // _spawnObjects();
     //spawnTiles();
-
   }
-
 
   //Iterates through tile layers and spawns 3D tile models in Thermion
   Future<void> spawnTiles() async {
-
     // Iterate over all layers
-    for (int layerIndex = 0; layerIndex < levelData.layers.length; layerIndex++) {
+    for (
+      int layerIndex = 0;
+      layerIndex < levelData.layers.length;
+      layerIndex++
+    ) {
       final layer = levelData.layers[layerIndex];
 
       // Calculate a height offset based on the layer index
@@ -47,40 +47,82 @@ class LevelLoader {
         print(tileInfo);
         // Only spawn if we found a valid model path
         if (tileInfo != null && tileInfo.modelPath != null) {
-
           // 2. Clean up the path (Thermion usually wants paths relative to asset root)
           // e.g. "assets/tiles/block.glb" -> "tiles/block.glb"
           final String modelPath = tileInfo.modelPath!;
           print(modelPath);
 
-
           // 3. Load the model or wrapper into the 3D scene
-            final dynamic asset = await viewer.loadGltf(modelPath);
+          final dynamic asset = await viewer.loadGltf(modelPath);
 
-            //extract entity ID
-            final entityID = (asset as dynamic).entity;
+          //extract entity ID
+          final entityID = (asset as dynamic).entity;
 
-            // 4. Position the model
-            // Tiled X -> 3D X
-            // Tiled Y -> 3D Z (Depth)
-            // Layer -> 3D Y (Height)
-            final double xPos = tile.x *1.0;
-            final double zPos = tile.y *1.0;
+          // 4. Position the model
+          // Tiled X -> 3D X
+          // Tiled Y -> 3D Z (Depth)
+          // Layer -> 3D Y (Height)
+          final double xPos = tile.x * 2.0;
+          final double zPos = tile.y * 2.0;
 
-            //Create translation Matrix -> is there a better way?
-            final matrix = v64.Matrix4.identity();
-            matrix.setTranslation(v64.Vector3(xPos,yHeight,zPos));
+          //Create translation Matrix -> is there a better way?
+          final matrix = v64.Matrix4.identity();
+          matrix.setTranslation(v64.Vector3(xPos, yHeight, zPos));
 
-            //Filament
-            FilamentApp.instance?.setTransform(entityID, matrix);
-            print('tile spawn at $xPos $zPos');
-
+          //Filament
+          FilamentApp.instance?.setTransform(entityID, matrix);
+          print('tile spawn at $xPos $zPos');
         }
       }
     }
   }
 
-// ... existing _spawnObjects and _spawnCollisions ...
+  Future<void> spawnObjects() async {
+    // Iterate over all layers
+    for (
+      int layerIndex = 0;
+      layerIndex < levelData.layers.length;
+      layerIndex++
+    ) {
+      final layer = levelData.objectLayers[layerIndex];
+
+      // Calculate a height offset based on the layer index
+      // Layer 0 = 0m height, Layer 1 = 1m height, etc.
+      // Adjust this multiplier based on how tall your blocks are
+      final double yHeight = layerIndex * gridScale;
+
+      for (final object in layer.objects) {
+        //add nullcheck or default model
+        final String modelPath = object.properties['model_path'].toString();
+        print(modelPath);
+
+        // 3. Load the model or wrapper into the 3D scene
+        final dynamic asset = await viewer.loadGltf(modelPath);
+
+        //extract entity ID
+        final entityID = (asset as dynamic).entity;
+
+        // 4. Position the model
+        // Tiled X -> 3D X
+        // Tiled Y -> 3D Z (Depth)
+        // Layer -> 3D Y (Height)
+        final double xPos = object.x.toDouble()/tiledPixelSize;
+        final double zPos = object.y.toDouble()/tiledPixelSize;
+
+        //Create translation Matrix -> is there a better way?
+        final matrix = v64.Matrix4.identity();
+        matrix.setTranslation(
+          v64.Vector3(xPos, yHeight, zPos),
+        );
+
+        //Filament
+        FilamentApp.instance?.setTransform(entityID, matrix);
+        print('object spawn at $xPos $zPos');
+            }
+
+      //todo add logic for different objects
+    }
+  }
 }
 /*
   void _spawnObjects(){
@@ -119,5 +161,3 @@ class LevelLoader {
         default:
       }
     }*/
-
-
