@@ -143,8 +143,6 @@ flutter:
     - assets/3D/cube.glb
     - assets/music/
     - assets/3D/prototyping_assets/Pieces/
-    - assets/3D/default_env_skybox.ktx
-    - assets/3D/default_env_ibl.ktx
   shaders:
     - assets/shaders/lighting.frag
     - assets/shaders/srcBlendModeGreater0.frag

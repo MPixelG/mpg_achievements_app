@@ -5,7 +5,9 @@ import 'package:thermion_flutter/thermion_flutter.dart';
 
 class GameCamera extends Component{
   Camera thermionCamera;
-  
+  Matrix4 modelMatrix;
+
+
   GameCamera(this.thermionCamera, {Matrix4? modelMatrix}) : modelMatrix = modelMatrix ?? Matrix4.identity();
   double time = 0;
   
@@ -16,10 +18,7 @@ class GameCamera extends Component{
     final Vector3 newPos = Vector3(sin(time) * 10, 20, cos(time) * 10);
     setPosition(newPos);
     final Vector3 target = Vector3(0, 0, 0);
-
-    lookAt(newPos, target);
-
-
+    lookAt(newPos, target, distance: sin(time)*20 + 30);
 
     if(matrixUpdated){
       thermionCamera.setTransform(modelMatrix);
@@ -28,10 +27,7 @@ class GameCamera extends Component{
     
     return super.update(dt);
   }
-
-
-  Matrix4 modelMatrix;
-
+  
   void setRotation({double? x, double? y, double? z}) {
     final Matrix4 rotationMatrix = Matrix4.identity();
 
@@ -60,19 +56,24 @@ class GameCamera extends Component{
     matrixUpdated = true;
   }
 
-
-
-  void lookAt(Vector3 position, Vector3 target, [Vector3? up]) {
+  
+  void lookAt(Vector3 position, Vector3 target, {Vector3? up, double? distance}) {
     up ??= Vector3(0, 1, 0);
 
-    // Kamera schaut entlang -Z, also: forward = position - target
     final Vector3 forward = (position - target)..normalize();
     final Vector3 right = up.cross(forward)..normalize();
     final Vector3 realUp = forward.cross(right);
 
+    if (distance != null) {
+      // Richtung vom Ziel zur gewünschten Position
+      final Vector3 dir = (position - target)..normalize();
+      position = target + dir * distance;
+    }
+    
+    
+    
     final Matrix4 m = Matrix4.identity();
 
-    // Basisvektoren in die Matrix schreiben
     m.setEntry(0, 0, right.x);
     m.setEntry(1, 0, right.y);
     m.setEntry(2, 0, right.z);
@@ -88,6 +89,7 @@ class GameCamera extends Component{
     m.setTranslation(position);
 
     modelMatrix = m;
+    
     onMatrixUpdate();
   }
 

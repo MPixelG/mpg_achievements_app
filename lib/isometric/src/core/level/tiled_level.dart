@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:mpg_achievements_app/isometric/src/core/level/level_object.dart';
 import 'package:mpg_achievements_app/isometric/src/core/level/tile.dart';
 import 'package:mpg_achievements_app/isometric/src/core/level/tiled_layer.dart';
-import 'package:xml/xml.dart';
 import 'package:path/path.dart' as p;
+import 'package:xml/xml.dart';
 
 //generic function for reading a file from path
 typedef FileReader = Future<String> Function(String path);
@@ -113,13 +113,17 @@ class TiledLevel {
           for (final row in rows) {
             if (row
                 .trim()
-                .isEmpty) continue;
+                .isEmpty) {
+              continue;
+            }
             final List<String> cols = row.split(',');
             int localCol = 0;
             for (final col in cols) {
               if (col
                   .trim()
-                  .isEmpty) continue;
+                  .isEmpty) {
+                continue;
+              }
 
               final int gid = int.parse(col.trim());
 

@@ -32,5 +32,10 @@
     <property name="model_path" value="assets/3D/prototyping_assets/Pieces/bee.glb"/>
    </properties>
   </object>
+    <object id="1" name="character1" type="Object" x="0" y="0" width="16.305" height="16.305">
+     <properties>
+      <property name="model_path" value="assets/3D/character.glb"/>
+     </properties>
+    </object>
  </objectgroup>
 </map>
