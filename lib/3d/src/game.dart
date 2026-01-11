@@ -5,6 +5,7 @@ import 'package:flame/flame.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:mpg_achievements_app/3d/src/camera.dart';
+import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/core/base_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
@@ -14,7 +15,7 @@ import 'package:mpg_achievements_app/isometric/src/core/level/tiled_level_loader
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/has_collision_detection.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
-import 'package:vector_math/vector_math_64.dart' as v64;
+import 'package:vector_math/vector_math.dart' as v32;
 import 'package:xml/xml.dart';
 
 import '../../isometric/src/core/level/tiled_level.dart';
@@ -53,7 +54,7 @@ class PixelAdventure3D extends BaseGame
 
   //storage for the 3D Object
   dynamic helmetAsset;
-  v64.Vector3 helmetPosition = v64.Vector3(0.0, 0.0, -5.0);
+  Vector3 helmetPosition = Vector3(0.0, 0.0, -5.0);
   double rotationAngle = 0.0;
 
 
@@ -75,6 +76,8 @@ class PixelAdventure3D extends BaseGame
     await _trySpawnTest();
     
     add(GameCamera(await thermion!.getActiveCamera()));
+    
+    add(Player(size: v32.Vector3.all(1)));
     
 
 
@@ -106,7 +109,7 @@ class PixelAdventure3D extends BaseGame
     helmetPosition.y += -currentJoystickMoveY * moveSpeed * dt; // -Y is usually down in 2D, check directions
 
     // 2create empty matrix
-    final matrix = v64.Matrix4.identity();
+    final matrix = Matrix4.identity();
     //3set position
     matrix.setTranslation(helmetPosition);
 
