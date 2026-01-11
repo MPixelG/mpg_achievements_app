@@ -4,6 +4,7 @@ import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:flutter_joystick/flutter_joystick.dart';
+import 'package:mpg_achievements_app/3d/src/camera.dart';
 import 'package:mpg_achievements_app/core/base_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
@@ -64,10 +65,18 @@ class PixelAdventure3D extends BaseGame
     final String tmxContent = await Flame.assets.readFile(levelPath);
     final XmlDocument xmlDoc = XmlDocument.parse(tmxContent); //fails since the asset file is somehow not published to github, it cant find the file
     _levelData = await TiledLevel.loadXML(xmlDoc, filename: 'tiles/3D_prototype.tmx', fileReader: (String path) async => await Flame.assets.readFile(path));
+
+    loadAmbientLighting("assets/3D/default_env_ibl.ktx");
+    setSkybox("assets/3D/default_env_skybox.ktx");
+    
     print('Level');
     print(_levelData!.layers.length);
     print(_levelData!.tilesetData.keys.toList());
-    _trySpawnTest();
+    await _trySpawnTest();
+    
+    add(GameCamera(await thermion!.getActiveCamera()));
+    
+
 
     super.onLoad();
   }
@@ -79,7 +88,7 @@ class PixelAdventure3D extends BaseGame
   }
 
 
-//todo implement more here, at the moment only placehoilder
+//todo implement more here, at the moment only placeholder
   @override
   void update(double dt) {
     super.update(dt);
@@ -94,8 +103,7 @@ class PixelAdventure3D extends BaseGame
 
     //1 Update our local position state
     helmetPosition.x += currentJoystickMoveX * moveSpeed * dt;
-    helmetPosition.y += -currentJoystickMoveY * moveSpeed *
-        dt; // -Y is usually down in 2D, check directions
+    helmetPosition.y += -currentJoystickMoveY * moveSpeed * dt; // -Y is usually down in 2D, check directions
 
     // 2create empty matrix
     final matrix = v64.Matrix4.identity();
@@ -149,8 +157,18 @@ class PixelAdventure3D extends BaseGame
   
   Future<void> _trySpawnTest() async{
     final loader = LevelLoader(levelData: _levelData!, viewer: _3DGameViewer!);
-    loader.spawnTiles();
-    loader.spawnObjects();
+    await loader.spawnTiles();
+    await loader.spawnObjects();
   }
+  
+  Future<void> setSkybox(String skyboxPath) async{
+    await thermion!.loadSkybox(skyboxPath);
+  }
+  Future<void> loadAmbientLighting(String iblPath, [double intensity = 30000]) async{
+    assert(thermion != null, "thermion isn't initialized yet!");
+    await thermion?.loadIbl(iblPath, intensity: intensity);
+    print("loaded lighting");
+  }
+  
 }
 ThermionViewer? get thermion => PixelAdventure3D._3DGameViewer;

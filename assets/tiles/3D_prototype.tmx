@@ -27,7 +27,7 @@
   </data>
  </layer>
  <objectgroup id="2" name="Spawnpoints">
-  <object id="1" name="Bee" type="Object" x="392.229" y="263.93" width="106.305" height="106.305">
+  <object id="1" name="Bee" type="Object" x="0" y="0" width="16.305" height="16.305">
    <properties>
     <property name="model_path" value="assets/3D/prototyping_assets/Pieces/bee.glb"/>
    </properties>

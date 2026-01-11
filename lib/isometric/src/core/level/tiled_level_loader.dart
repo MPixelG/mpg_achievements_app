@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'package:flame/components.dart' hide Vector2;
+
 import 'package:mpg_achievements_app/3d/src/game.dart';
-import 'package:mpg_achievements_app/isometric/src/core/level/level_object.dart';
 import 'package:mpg_achievements_app/isometric/src/core/level/tiled_level.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 import 'package:vector_math/vector_math_64.dart' as v64;
-import 'game_world.dart';
 //todo refactor and integrate in new tiled_level
 
 class LevelLoader {
@@ -54,6 +52,8 @@ class LevelLoader {
 
           // 3. Load the model or wrapper into the 3D scene
           final dynamic asset = await viewer.loadGltf(modelPath);
+          
+          print("loaded!");
 
           //extract entity ID
           final entityID = (asset as dynamic).entity;
