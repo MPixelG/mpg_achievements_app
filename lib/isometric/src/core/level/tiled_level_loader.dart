@@ -1,9 +1,11 @@
 import 'dart:async';
-
 import 'package:mpg_achievements_app/3d/src/game.dart';
+import 'package:mpg_achievements_app/isometric/src/core/level/level_object.dart';
 import 'package:mpg_achievements_app/isometric/src/core/level/tiled_level.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 import 'package:vector_math/vector_math_64.dart' as v64;
+
+import '../../../../3d/src/components/player.dart';
 //todo refactor and integrate in new tiled_level
 
 class LevelLoader {
@@ -49,6 +51,8 @@ class LevelLoader {
           // e.g. "assets/tiles/block.glb" -> "tiles/block.glb"
           final String modelPath = tileInfo.modelPath!;
           print(modelPath);
+
+
 
           // 3. Load the model or wrapper into the 3D scene
           final dynamic asset = await viewer.loadGltf(modelPath);
@@ -96,6 +100,18 @@ class LevelLoader {
         final String modelPath = object.properties['model_path'].toString();
         print(modelPath);
 
+        // 1. Get raw value (could be String, num, or null)
+        final rawOffset = object.properties['y_offset'];
+
+        double objectOffset = 0.0;
+
+        if (rawOffset is num) {
+          objectOffset = rawOffset.toDouble();
+        } else if (rawOffset is String) {
+          objectOffset = double.tryParse(rawOffset) ?? 0.0;
+        }
+        final double finalY = yHeight + objectOffset;
+
         // 3. Load the model or wrapper into the 3D scene
         final dynamic asset = await viewer.loadGltf(modelPath);
 
@@ -108,22 +124,41 @@ class LevelLoader {
         // Layer -> 3D Y (Height)
         final double xPos = object.x.toDouble()/tiledPixelSize;
         final double zPos = object.y.toDouble()/tiledPixelSize;
+        final double yPos = finalY;
 
         //Create translation Matrix -> is there a better way?
         final matrix = v64.Matrix4.identity();
         matrix.setTranslation(
-          v64.Vector3(xPos, yHeight, zPos),
+          v64.Vector3(xPos, yPos, zPos),
         );
 
         //Filament
         FilamentApp.instance?.setTransform(entityID, matrix);
-        print('object spawn at $xPos $zPos');
-            }
+        print('spawn object $entityID at $xPos $zPos $yPos');
+
+        if (object.type == 'Player') {
+          print("Player at");
+
+          final player = Player(
+            position: v64.Vector3(xPos, yPos, zPos),
+            size: Vector3.all(1.0),  // Player size
+            );
+
+          // Add to Flame Game Loop
+          game.add(player);
+
+          // Optional: If you need to track the player in the loader
+          // game.player = player;
+
+        }
+
+      }
 
       //todo add logic for different objects
     }
   }
 }
+
 /*
   void _spawnObjects(){
     //Here were look for all the objects which where added in our Spawnpoints Objectlayer in Level_0.tmx in Tiled and store these objects into a list

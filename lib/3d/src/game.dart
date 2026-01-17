@@ -76,7 +76,7 @@ class PixelAdventure3D extends BaseGame
     
     add(GameCamera(await thermion!.getActiveCamera()));
     
-    add(Player(size: Vector3.all(1)));
+   // add(Player(size: Vector3.all(1)));
     
 
 

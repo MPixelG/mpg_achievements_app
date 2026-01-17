@@ -25,4 +25,5 @@ class LevelObjectLayer {
   final List<LevelObject> objects;
 
   LevelObjectLayer({required this.name, required this.objects});
+
 }

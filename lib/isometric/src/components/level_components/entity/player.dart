@@ -15,7 +15,6 @@ import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/iso_col
 import 'package:mpg_achievements_app/isometric/src/core/rendering/textures/game_texture_batch.dart';
 import 'package:mpg_achievements_app/isometric/src/state_management/providers/player_state_provider.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
-
 import 'isometric_character_shadow.dart';
 
 //todo implement PlayerStateProvider to manage the player state globally

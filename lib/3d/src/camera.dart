@@ -1,8 +1,6 @@
 import 'dart:math';
-
 import 'package:flame/components.dart' hide Matrix4, Vector3;
 import 'package:thermion_flutter/thermion_flutter.dart';
-
 import 'components/position_component_3d.dart';
 
 class GameCamera extends Component{
