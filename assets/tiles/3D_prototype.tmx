@@ -27,15 +27,17 @@
   </data>
  </layer>
  <objectgroup id="2" name="Spawnpoints">
-  <object id="1" name="Bee" type="Object" x="0" y="0" width="16.305" height="16.305">
+  <object id="1" name="Bee" type="Npc" x="54" y="54" width="16.305" height="16.305">
    <properties>
-    <property name="model_path" value="assets/3D/prototyping_assets/Pieces/bee.glb"/>
+    <property name="model_path" value="assets/3D/prototyping_assets/Pieces/bee_small.glb"/>
+    <property name="y_offset" type="float" value="2"/>
    </properties>
   </object>
-    <object id="1" name="character1" type="Object" x="0" y="0" width="16.305" height="16.305">
-     <properties>
-      <property name="model_path" value="assets/3D/character.glb"/>
-     </properties>
-    </object>
+  <object id="1" name="character1" type="Player" x="56.8485" y="568.121" width="16.305" height="16.305">
+   <properties>
+    <property name="model_path" value="assets/3D/character.glb"/>
+    <property name="y_offset" type="float" value="2"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>
