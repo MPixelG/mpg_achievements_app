@@ -19,7 +19,7 @@ class Player extends GameCharacter<PlayerData> {
   PlayerData initState() => PlayerData();
   
   @override
-  void update(double dt) {
+  void tickClient(double dt) {
     position.x = cos(DateTime.now().millisecondsSinceEpoch / 1000) * 20;
     position.z = sin(DateTime.now().millisecondsSinceEpoch / 1000) * 20;
     print("update!");

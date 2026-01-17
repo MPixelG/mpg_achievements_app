@@ -1,8 +1,8 @@
 import 'package:flame/geometry.dart' as geometry;
 import 'package:flutter/cupertino.dart' hide Matrix4;
-import 'package:vector_math/vector_math_64.dart';
+import 'package:vector_math/vector_math.dart';
 
-import 'notifying_vector_3.dart';
+import 'notifying_vector_3_vm32.dart';
 
 /// This class describes a generic 2D transform, which is a combination of
 /// translations, rotations, reflections and scaling. These transforms are
@@ -195,9 +195,26 @@ class Transform3D extends ChangeNotifier {
   /// entity. The matrix is cached and gets recalculated only as necessary.
   ///
   /// The returned matrix must not be modified by the user.
-
-
   Matrix4 get transformMatrix {
+    if(!transformMatrixSet) {
+      _transformMatrix = Matrix4.identity();
+      transformMatrixSet = true;
+    }
+    if (_recalculate) {
+      _transformMatrix!.setIdentity();
+      _transformMatrix.translateByVector3(_position);
+      _transformMatrix.rotateZ(_angleRoll);
+      _transformMatrix.rotateY(_angleYaw);
+      _transformMatrix.rotateX(_anglePitch);
+      _transformMatrix.scaleByVector3(_scale);
+      _transformMatrix.translateByVector3(_offset);
+      _recalculate = false;
+    }
+    return _transformMatrix;
+  }
+
+
+  Matrix4 get transformMatrix64 {
     if(!transformMatrix64Set) {
       _transformMatrix64 = Matrix4.identity();
       transformMatrix64Set = true;
@@ -215,7 +232,7 @@ class Transform3D extends ChangeNotifier {
     }
     return _transformMatrix64;
   }
-  
+
   /// Transform [point] from local coordinates into the parent coordinate space.
   /// Effectively, this function applies the current transform to [point].
   ///
@@ -228,7 +245,22 @@ class Transform3D extends ChangeNotifier {
     final z = m[2] * point.x + m[6] * point.y + m[10] * point.z + m[14];
     return (output?..setValues(x, y, z)) ?? Vector3(x, y, z);
   }
-  
+
+  /// a vector_math_64 implementation of [localToGlobal]
+  /// 
+  /// Transform [point] from local coordinates into the parent coordinate space.
+  /// Effectively, this function applies the current transform to [point].
+  ///
+  /// Use [output] to send in a Vector3 object that will be used to avoid
+  /// creating a new Vector3 object in this method.
+  Vector3 localToGlobal64(Vector3 point, {Vector3? output}) {
+    final m = transformMatrix.storage;
+    final x = m[0] * point.x + m[4] * point.y + m[8] * point.z + m[12];
+    final y = m[1] * point.x + m[5] * point.y + m[9] * point.z + m[13];
+    final z = m[2] * point.x + m[6] * point.y + m[10] * point.z + m[14];
+    return (output?..setValues(x, y, z)) ?? Vector3(x, y, z);
+  }
+
   /// Transform [point] from the global coordinate space into the local
   /// coordinates. Thus, this method performs the inverse of the current
   /// transform.
@@ -240,6 +272,23 @@ class Transform3D extends ChangeNotifier {
   /// creating a new Vector3 object in this method.
   Vector3 globalToLocal(Vector3 point, {Vector3? output}) {
     final inv = Matrix4.copy(transformMatrix)..invert();
+    final v = inv.transform3(point);
+    return (output?..setFrom(v)) ?? v;
+  }
+
+  /// a vector_math_64 implementation of [globalToLocal]
+  /// 
+  /// Transform [point] from the global coordinate space into the local
+  /// coordinates. Thus, this method performs the inverse of the current
+  /// transform.
+  ///
+  /// If the current transform is degenerate due to one of the scale
+  /// factors being 0, then this method will return a zero vector.
+  ///
+  /// Use [output] to send in a Vector3 object that will be used to avoid
+  /// creating a new Vector3 object in this method.
+  Vector3 globalToLocal64(Vector3 point, {Vector3? output}) {
+    final inv = Matrix4.copy(transformMatrix64)..invert();
     final v = inv.transform3(point);
     return (output?..setFrom(v)) ?? v;
   }

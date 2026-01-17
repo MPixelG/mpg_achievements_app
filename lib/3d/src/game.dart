@@ -15,7 +15,6 @@ import 'package:mpg_achievements_app/isometric/src/core/level/tiled_level_loader
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/has_collision_detection.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
-import 'package:vector_math/vector_math.dart' as v32;
 import 'package:xml/xml.dart';
 
 import '../../isometric/src/core/level/tiled_level.dart';
@@ -77,7 +76,7 @@ class PixelAdventure3D extends BaseGame
     
     add(GameCamera(await thermion!.getActiveCamera()));
     
-    add(Player(size: v32.Vector3.all(1)));
+    add(Player(size: Vector3.all(1)));
     
 
 

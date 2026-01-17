@@ -4,7 +4,7 @@ import 'package:flame/components.dart' hide Vector3;
 import 'package:flutter/cupertino.dart' hide Matrix4;
 import 'package:mpg_achievements_app/isometric/src/core/iso_component.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/ray3.dart';
-import 'package:mpg_achievements_app/isometric/src/core/math/transform3d.dart';
+import 'package:mpg_achievements_app/isometric/src/core/math/transform3d_vm32.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/collision_detection_3d.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/has_collision_detection.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/hitbox3d.dart';

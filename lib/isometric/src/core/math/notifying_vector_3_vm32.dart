@@ -2,7 +2,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'package:vector_math/vector_math.dart';
 
 /// Extension of the standard [Vector3] class, implementing the [ChangeNotifier]
 /// functionality. This allows any interested party to be notified when the
@@ -235,5 +235,5 @@ class NotifyingVector3 extends Vector3 with ChangeNotifier {
   }
 
   @override
-  Float64List get storage => super.storage.asUnmodifiableView();
+  Float32List get storage => super.storage.asUnmodifiableView();
 }

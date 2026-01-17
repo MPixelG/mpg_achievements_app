@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flame/components.dart';
+import 'package:flame/components.dart' hide Vector3, Matrix4, Vector2;
 import 'package:flutter/cupertino.dart' hide Matrix4;
 import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/3d/src/renderable3d.dart';
@@ -8,6 +8,7 @@ import 'package:mpg_achievements_app/isometric/src/core/math/iso_anchor.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/notifying_vector_3.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/transform3d.dart';
 import 'package:thermion_dart/src/filament/src/interface/asset.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 
 class PositionComponent3d extends Component with HasGameReference<PixelAdventure3D> implements Renderable3d, Anchor3DProvider, Size3DProvider, Position3DProvider, Scale3DProvider  {

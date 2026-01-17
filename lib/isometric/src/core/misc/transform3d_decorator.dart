@@ -3,7 +3,7 @@ import 'package:flame/extensions.dart';
 import 'package:mpg_achievements_app/isometric/src/core/misc/iso_decorator.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 
-import '../math/transform3d.dart';
+import '../math/transform3d_vm32.dart';
 
 /// [Transform3DDecorator] applies a translation/rotation/scale transform to
 /// the canvas.

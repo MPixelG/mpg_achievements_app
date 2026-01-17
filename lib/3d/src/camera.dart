@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:flame/components.dart' hide Matrix4, Vector3;
 import 'package:thermion_flutter/thermion_flutter.dart';
 
+import 'components/position_component_3d.dart';
+
 class GameCamera extends Component{
   Camera thermionCamera;
   Matrix4 modelMatrix;
-
+  ReadOnlyPosition3DProvider? positionProvider;
 
   GameCamera(this.thermionCamera, {Matrix4? modelMatrix}) : modelMatrix = modelMatrix ?? Matrix4.identity();
   double time = 0;
@@ -17,7 +19,7 @@ class GameCamera extends Component{
 
     final Vector3 newPos = Vector3(sin(time) * 10, 20, cos(time) * 10);
     setPosition(newPos);
-    final Vector3 target = Vector3(0, 0, 0);
+    final Vector3 target = positionProvider!.position;
     lookAt(newPos, target, distance: sin(time)*20 + 30);
 
     if(matrixUpdated){
@@ -26,6 +28,12 @@ class GameCamera extends Component{
     }
     
     return super.update(dt);
+  }
+  
+  void setFollowEntity([ReadOnlyPosition3DProvider? provider]){
+    
+    
+    
   }
   
   void setRotation({double? x, double? y, double? z}) {

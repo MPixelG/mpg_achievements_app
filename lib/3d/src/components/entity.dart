@@ -3,6 +3,8 @@ import 'package:thermion_flutter/thermion_flutter.dart';
 abstract class Entity<TState> extends PositionComponent3d {
   late TState _state;
   
+  TState get currentState => _state; 
+  
   Entity({
       super.children,
       super.priority,
@@ -16,9 +18,20 @@ abstract class Entity<TState> extends PositionComponent3d {
   
   int? get entityId => asset?.entity;
   
+  @override
+  void update(double dt) {
+    tickClient(dt);
+    
+    final TState? nextState = tickServer(dt);
+    if(nextState != null) _state = nextState;
+    
+    super.update(dt);
+  }
+  
+  
   void tickClient(double dt) {
     if (entityId != null) {
-      FilamentApp.instance?.setTransform(entityId!, transform.transformMatrix64);
+      FilamentApp.instance?.setTransform(entityId!, transform.transformMatrix);
     }
   }
   
