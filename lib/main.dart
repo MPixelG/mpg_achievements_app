@@ -3,8 +3,8 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/core/router/router.dart';
-import 'package:mpg_achievements_app/tools/GUI/menuCreator/components/widget_declaration.dart';
-import 'package:mpg_achievements_app/tools/GUI/widgets/nine_patch_widgets.dart';
+import 'package:mpg_achievements_app/GUI/menuCreator/components/widget_declaration.dart';
+import 'package:mpg_achievements_app/GUI/widgets/nine_patch_widgets.dart';
 
 import '3d/src/game.dart';
 //a global key to access the game widget state from outside the RiverPodAwareGameWidget or services that live outside the game, but when Riverpod ref logic is available use the standard way of accessing the game via ref.read(gameProvider)

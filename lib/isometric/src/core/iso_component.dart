@@ -8,7 +8,6 @@ import 'package:mpg_achievements_app/isometric/src/core/misc/iso_decorator.dart'
 import 'package:mpg_achievements_app/isometric/src/core/misc/transform3d_decorator.dart';
 import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
-
 import 'math/iso_anchor.dart';
 import 'math/notifying_vector_3_vm32.dart';
 import 'math/transform3d_vm32.dart';

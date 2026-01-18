@@ -9,7 +9,7 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/core/router/router.dart';
-import 'package:mpg_achievements_app/isometric/src/core/level/tiled_level_loader.dart';
+import 'package:mpg_achievements_app/3d/src/level/tiled_level_loader.dart';
 import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 

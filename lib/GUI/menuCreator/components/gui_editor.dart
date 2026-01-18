@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Matrix4;
 import 'package:flutter/services.dart';
 import 'package:flutter_resizable_container/flutter_resizable_container.dart';
-import 'package:mpg_achievements_app/tools/GUI/menuCreator/components/propertyEditor/option_editor.dart';
-import 'package:mpg_achievements_app/tools/GUI/menuCreator/components/searchBar/widget_search_bar.dart';
-import 'package:mpg_achievements_app/tools/GUI/menuCreator/components/widget_declaration.dart';
+import 'package:mpg_achievements_app/GUI/menuCreator/components/propertyEditor/option_editor.dart';
+import 'package:mpg_achievements_app/GUI/menuCreator/components/searchBar/widget_search_bar.dart';
+import 'package:mpg_achievements_app/GUI/menuCreator/components/widget_declaration.dart';
 
 import '../../json_factory/json_exporter.dart';
 import 'dependencyViewer/display_node.dart';

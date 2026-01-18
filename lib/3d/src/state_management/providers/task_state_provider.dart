@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/task_data.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/models/task_data.dart';
+
 
 
 // Provider global definieren //todo Logik mit Liste?

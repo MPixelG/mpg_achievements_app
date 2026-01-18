@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:mpg_achievements_app/3d/src/game.dart';
-import 'package:mpg_achievements_app/isometric/src/core/level/level_object.dart';
-import 'package:mpg_achievements_app/isometric/src/core/level/tiled_level.dart';
+import 'package:mpg_achievements_app/3d/src/level/level_object.dart';
+import 'package:mpg_achievements_app/3d/src/level/tiled_level.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 import 'package:vector_math/vector_math_64.dart' as v64;
 
-import '../../../../3d/src/components/player.dart';
+import '../components/player.dart';
 //todo refactor and integrate in new tiled_level
 
 class LevelLoader {

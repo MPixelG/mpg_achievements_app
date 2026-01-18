@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:mpg_achievements_app/isometric/src/core/level/level_object.dart';
-import 'package:mpg_achievements_app/isometric/src/core/level/tile.dart';
-import 'package:mpg_achievements_app/isometric/src/core/level/tiled_layer.dart';
+import 'package:mpg_achievements_app/3d/src/level/level_object.dart';
+import 'package:mpg_achievements_app/3d/src/level/tile.dart';
+import 'package:mpg_achievements_app/3d/src/level/tiled_layer.dart';
 import 'package:path/path.dart' as p;
 import 'package:xml/xml.dart';
 

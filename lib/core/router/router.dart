@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mpg_achievements_app/3d/src/game.dart';
+import 'package:mpg_achievements_app/GUI/gamescreen_3d.dart';
+import 'package:mpg_achievements_app/GUI/menuCreator/components/gui_editor.dart';
+import 'package:mpg_achievements_app/GUI/menus.dart';
 import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
-import 'package:mpg_achievements_app/tools/GUI/gamescreen_3d.dart';
-import 'package:mpg_achievements_app/tools/GUI/menuCreator/components/gui_editor.dart';
-import 'package:mpg_achievements_app/tools/GUI/menus.dart';
+
 
 
 // This key will be used to access the NavigatorState of the root router

@@ -1,8 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/tools/GUI/menuCreator/components/propertyEditor/button_action.dart';
+import 'package:mpg_achievements_app/GUI/menuCreator/components/propertyEditor/button_action.dart';
 import 'package:vector_math/vector_math_64.dart' as vm64;
-
 import '../../widgets/nine_patch_button.dart';
 import '../../widgets/nine_patch_widgets.dart';
 import '../options/widget_builder.dart';

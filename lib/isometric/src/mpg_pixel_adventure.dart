@@ -21,7 +21,7 @@ import 'package:xml/xml.dart';
 import 'components/camera/advanced_camera.dart';
 import 'core/iso_component.dart';
 import 'core/level/game_world.dart';
-import 'core/level/tiled_level.dart';
+import '../../3d/src/level/tiled_level.dart';
 import 'core/physics/hitbox3d/has_collision_detection.dart';
 import 'core/physics/hitbox3d/iso_collision_callbacks.dart';
 
