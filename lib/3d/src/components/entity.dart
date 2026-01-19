@@ -2,8 +2,8 @@ import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dar
 import 'package:thermion_flutter/thermion_flutter.dart';
 abstract class Entity<TState> extends PositionComponent3d {
   late TState _state;
-  
-  TState get currentState => _state; 
+  TState get currentState => _state;
+
   
   Entity({
       super.children,
@@ -12,6 +12,7 @@ abstract class Entity<TState> extends PositionComponent3d {
       super.position,
       required super.size,
       super.anchor,
+      ThermionAsset? asset,
     }){
     _state = initState();
   }

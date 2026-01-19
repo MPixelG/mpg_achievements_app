@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:mpg_achievements_app/3d/src/components/game_character.dart';
 import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
 
 class Player extends GameCharacter<PlayerData> {
+
   Player({
     super.children,
     super.priority,
@@ -13,6 +13,7 @@ class Player extends GameCharacter<PlayerData> {
     super.position,
     required super.size,
     super.anchor,
+    super.asset,
   });
 
   @override

@@ -69,13 +69,15 @@ class LevelLoader {
           final double xPos = tile.x * 2.0;
           final double zPos = tile.y * 2.0;
 
+          final position = v64.Vector3(xPos, yHeight, zPos);
+
           //Create translation Matrix -> is there a better way?
           final matrix = v64.Matrix4.identity();
-          matrix.setTranslation(v64.Vector3(xPos, yHeight, zPos));
+          matrix.setTranslation(position);
 
           //Filament
           FilamentApp.instance?.setTransform(entityID, matrix);
-          print('tile spawn at $xPos $zPos');
+          print('tile spawn at $xPos $yHeight $zPos ');
         }
       }
     }
@@ -112,12 +114,6 @@ class LevelLoader {
         }
         final double finalY = yHeight + objectOffset;
 
-        // 3. Load the model or wrapper into the 3D scene
-        final dynamic asset = await viewer.loadGltf(modelPath);
-
-        //extract entity ID
-        final entityID = (asset as dynamic).entity;
-
         // 4. Position the model
         // Tiled X -> 3D X
         // Tiled Y -> 3D Z (Depth)
@@ -125,6 +121,15 @@ class LevelLoader {
         final double xPos = object.x.toDouble()/tiledPixelSize;
         final double zPos = object.y.toDouble()/tiledPixelSize;
         final double yPos = finalY;
+
+        final position = v64.Vector3(xPos,yHeight,zPos);
+
+
+        // 3. Load the model or wrapper into the 3D scene
+        final dynamic asset = await viewer.loadGltf(modelPath);
+
+        //extract entity ID
+        final entityID = (asset as dynamic).entity;
 
         //Create translation Matrix -> is there a better way?
         final matrix = v64.Matrix4.identity();
@@ -141,12 +146,13 @@ class LevelLoader {
 
           final player = Player(
             position: v64.Vector3(xPos, yPos, zPos),
-            size: Vector3.all(1.0),  // Player size
+            size: Vector3.all(1.0), // Player size
+            asset: asset,
             );
+          print(player.position);
 
           // Add to Flame Game Loop
           game.add(player);
-
           // Optional: If you need to track the player in the loader
           // game.player = player;
 

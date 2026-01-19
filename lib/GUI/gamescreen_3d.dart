@@ -83,8 +83,7 @@ class _GameScreen3dState extends State<GameScreen3d> with WidgetsBindingObserver
       final Vector3 standardYUp = Vector3(0, 1, 0);
 
       _flameGame.setThermionViewer(viewer);
-      final asset = await viewer.loadGltf("assets/3D/FlightHelmet.glb");
-      _flameGame.helmetAsset = asset;
+
       //camera settings isometric
       final camera = await viewer.getActiveCamera();
       await camera.lookAt(position,focus: target,up: standardYUp);

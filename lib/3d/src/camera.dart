@@ -1,39 +1,41 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flame/components.dart' hide Matrix4, Vector3;
 import 'package:thermion_flutter/thermion_flutter.dart';
 import 'components/position_component_3d.dart';
 
-class GameCamera extends Component{
+class GameCamera extends Component {
   Camera thermionCamera;
   Matrix4 modelMatrix;
   ReadOnlyPosition3DProvider? positionProvider;
 
-  GameCamera(this.thermionCamera, {Matrix4? modelMatrix}) : modelMatrix = modelMatrix ?? Matrix4.identity();
+  GameCamera(this.thermionCamera, {Matrix4? modelMatrix})
+    : modelMatrix = modelMatrix ?? Matrix4.identity();
   double time = 0;
-  
+
   @override
   Future<void> update(double dt) async {
-    time += dt;
+    if (positionProvider == null) return;
 
+    final Vector3 target = positionProvider!.position;
+
+    time += dt;
     final Vector3 newPos = Vector3(sin(time) * 10, 20, cos(time) * 10);
     setPosition(newPos);
-    final Vector3 target = positionProvider!.position;
-    lookAt(newPos, target, distance: sin(time)*20 + 30);
+    lookAt(newPos, target, distance: sin(time) * 20 + 30);
 
-    if(matrixUpdated){
+    if (matrixUpdated) {
       thermionCamera.setTransform(modelMatrix);
       matrixUpdated = false;
     }
-    
+
     return super.update(dt);
   }
-  
-  void setFollowEntity([ReadOnlyPosition3DProvider? provider]){
-    
-    
-    
+
+  void setFollowEntity([ReadOnlyPosition3DProvider? provider]) {
+    positionProvider = provider;
   }
-  
+
   void setRotation({double? x, double? y, double? z}) {
     final Matrix4 rotationMatrix = Matrix4.identity();
 
@@ -51,19 +53,22 @@ class GameCamera extends Component{
     onMatrixUpdate();
   }
 
-
   void setPosition(Vector3 position) {
     modelMatrix.setTranslation(position);
     onMatrixUpdate();
   }
-  
+
   bool matrixUpdated = false;
-  void onMatrixUpdate(){
+  void onMatrixUpdate() {
     matrixUpdated = true;
   }
 
-  
-  void lookAt(Vector3 position, Vector3 target, {Vector3? up, double? distance}) {
+  void lookAt(
+    Vector3 position,
+    Vector3 target, {
+    Vector3? up,
+    double? distance,
+  }) {
     up ??= Vector3(0, 1, 0);
 
     final Vector3 forward = (position - target)..normalize();
@@ -75,9 +80,7 @@ class GameCamera extends Component{
       final Vector3 dir = (position - target)..normalize();
       position = target + dir * distance;
     }
-    
-    
-    
+
     final Matrix4 m = Matrix4.identity();
 
     m.setEntry(0, 0, right.x);
@@ -95,11 +98,7 @@ class GameCamera extends Component{
     m.setTranslation(position);
 
     modelMatrix = m;
-    
+
     onMatrixUpdate();
   }
-
-
-
-
 }

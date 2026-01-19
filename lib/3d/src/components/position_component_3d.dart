@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flame/components.dart' hide Vector3, Matrix4, Vector2;
 import 'package:flutter/cupertino.dart' hide Matrix4;
 import 'package:mpg_achievements_app/3d/src/game.dart';
@@ -14,7 +13,6 @@ import 'package:vector_math/vector_math_64.dart';
 class PositionComponent3d extends Component with HasGameReference<PixelAdventure3D> implements Renderable3d, Anchor3DProvider, Size3DProvider, Position3DProvider, Scale3DProvider  {
   Transform3D transform;
   Anchor3D _anchor;
-  
   ThermionAsset? _asset;
 
 
@@ -25,6 +23,7 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
     Vector3? position,
     required Vector3 size,
     Anchor3D? anchor,
+    ThermionAsset? asset,
   }) : transform = Transform3D(),
         _anchor = anchor ?? Anchor3D.bottomLeftLeft, super() {
     this.position = position ?? Vector3.zero();
@@ -37,6 +36,7 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
   @override
   FutureOr<void> onLoad() async {
     await super.onLoad();
+
     thermion?.addToScene(_asset!);
   }
   
