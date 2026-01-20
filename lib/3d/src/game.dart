@@ -1,10 +1,10 @@
 import 'dart:async';
-
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:mpg_achievements_app/3d/src/camera.dart';
+import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/core/base_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
@@ -12,7 +12,6 @@ import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/core/touch_controls/touch_controls.dart';
 import 'package:mpg_achievements_app/3d/src/level/tiled_level_loader.dart';
-import 'package:mpg_achievements_app/isometric/src/components/level_components/entity/player.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/has_collision_detection.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
@@ -59,6 +58,17 @@ class PixelAdventure3D extends BaseGame
   //FutureOr works same here either returns a Future or <void>
   @override
   FutureOr<void> onLoad() async {
+
+    //Registering Factories for different types of entities
+    EntityFactory.register('Npc', (Vector3 pos, Vector3 size, Map<String, dynamic> props) => Player(
+          position: pos,
+          size: size,
+          ));
+
+    EntityFactory.register('Player', (Vector3 pos, Vector3 size, Map<String, dynamic> props) => Player(
+          position: pos,
+          size: size,
+          ));
 
     final String tmxContent = await Flame.assets.readFile(levelPath);
     final XmlDocument xmlDoc = XmlDocument.parse(tmxContent); //fails since the asset file is somehow not published to github, it cant find the file

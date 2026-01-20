@@ -2,7 +2,7 @@ import 'package:mpg_achievements_app/3d/src/components/entity.dart'; // Deine En
 import 'package:vector_math/vector_math_64.dart';
 
 // every entity is built with this fuction definition
-typedef EntityBuilder = Entity Function(Vector3 position, Map<String, dynamic> properties);
+typedef EntityBuilder = Entity Function(Vector3 position, Vector3 size, Map<String, dynamic> properties);
 
 class EntityFactory {
 
@@ -15,7 +15,7 @@ class EntityFactory {
   }
 
   // creates an entity according to type
-  static Entity? create(String type, Vector3 position, Map<String, dynamic> properties) {
+  static Entity? create(String type, Vector3 position, Vector3 size, Map<String, dynamic> properties) {
     final builder = _builders[type];
 
     if (builder == null) {
@@ -23,7 +23,7 @@ class EntityFactory {
       return null;
     }
 
-    return builder(position, properties);
+    return builder(position, size, properties);
   }
 
   static void clear() {

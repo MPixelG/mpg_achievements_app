@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'package:mpg_achievements_app/3d/src/game.dart';
-import 'package:mpg_achievements_app/3d/src/level/level_object.dart';
+import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/3d/src/level/tiled_level.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 import 'package:vector_math/vector_math_64.dart' as v64;
-
-import '../components/player.dart';
 //todo refactor and integrate in new tiled_level
 
 class LevelLoader {
@@ -123,12 +121,15 @@ class LevelLoader {
         final double yPos = finalY;
 
         final position = v64.Vector3(xPos,yHeight,zPos);
+        //Object type
+        final String type = object.type ?? 'Player';
+        print(type);
 
 
-        // 3. Load the model or wrapper into the 3D scene
+        // 3. Load the model or wrapper into the 3D scene Loading should be offloaded to specific classes
         final dynamic asset = await viewer.loadGltf(modelPath);
 
-        //extract entity ID
+        //extract entity ID also off loaded to class
         final entityID = (asset as dynamic).entity;
 
         //Create translation Matrix -> is there a better way?
@@ -139,20 +140,25 @@ class LevelLoader {
 
         //Filament
         FilamentApp.instance?.setTransform(entityID, matrix);
-        print('spawn object $entityID at $xPos $zPos $yPos');
+        print('spawn object $entityID at $xPos $yPos $zPos ');
 
-        if (object.type == 'Player') {
-          print("Player at");
+        final component = EntityFactory.create(
+            type,
+            position,
+            Vector3.all(1.0),
+            object.properties
+            );
 
-          final player = Player(
+
+        /*final player = Player(
             position: v64.Vector3(xPos, yPos, zPos),
             size: Vector3.all(1.0), // Player size
             asset: asset,
-            );
-          print(player.position);
+            );*/
+          print(component?.position);
 
           // Add to Flame Game Loop
-          game.add(player);
+          game.add(component!);
           // Optional: If you need to track the player in the loader
           // game.player = player;
 
@@ -163,7 +169,6 @@ class LevelLoader {
       //todo add logic for different objects
     }
   }
-}
 
 /*
   void _spawnObjects(){
