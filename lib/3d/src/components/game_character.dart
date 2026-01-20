@@ -9,5 +9,6 @@ abstract class GameCharacter<TState> extends Entity<TState>{
     required super.size,
     super.anchor,
     super.asset,
+    super.modelPath,
   });
 }

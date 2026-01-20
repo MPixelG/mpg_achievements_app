@@ -1,7 +1,26 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
+import 'package:mpg_achievements_app/isometric/src/components/level_components/checkpoint/checkpoint.dart';
 
-class PlayerProvider extends Notifier<PlayerData> {
+@deprecated
+// A provider that manages the state of the player in the game.
+// It extends Notifier to provide a way to notify listeners about changes in the player's state.
+//Notifier is a class from the Riverpod package that allows you to create a state management solution. New since Riverpod 2.0 before it was StateNotifier
+
+//The global provider for the player state. Always declared outside of any class or function
+// This provider can be accessed from anywhere in the app to get or update the player's state.
+final playerProvider = NotifierProvider<PlayerNotifier, PlayerData>(
+  PlayerNotifier.new,
+);
+
+class PlayerNotifier extends Notifier<PlayerData> {
   @override
-  PlayerData build() => PlayerData();
+  PlayerData build() =>
+      // Initialize the player data with default values.
+  // This method is called when the provider is first created.
+  // You can also fetch initial data from a database or API here.
+  // For this example, we are just returning a PlayerData object with a default character name
+  PlayerData(
+    playerCharacter: 'default',
+  );
 }

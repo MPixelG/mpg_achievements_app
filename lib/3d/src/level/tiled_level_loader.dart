@@ -127,27 +127,28 @@ class LevelLoader {
 
 
         // 3. Load the model or wrapper into the 3D scene Loading should be offloaded to specific classes
-        final dynamic asset = await viewer.loadGltf(modelPath);
+        //final dynamic asset = await viewer.loadGltf(modelPath);
 
         //extract entity ID also off loaded to class
-        final entityID = (asset as dynamic).entity;
+        //final entityID = (asset as dynamic).entity;
 
         //Create translation Matrix -> is there a better way?
-        final matrix = v64.Matrix4.identity();
-        matrix.setTranslation(
-          v64.Vector3(xPos, yPos, zPos),
-        );
+        //final matrix = v64.Matrix4.identity();
+        //matrix.setTranslation(
+        //  v64.Vector3(xPos, yPos, zPos),
+        //);
 
         //Filament
-        FilamentApp.instance?.setTransform(entityID, matrix);
-        print('spawn object $entityID at $xPos $yPos $zPos ');
+        //FilamentApp.instance?.setTransform(entityID, matrix);
+        //print('spawn object $entityID at $xPos $yPos $zPos ');
 
         final component = EntityFactory.create(
             type,
             position,
             Vector3.all(1.0),
-            object.properties
+            object.properties,
             );
+
 
 
         /*final player = Player(

@@ -3,6 +3,7 @@ import 'package:thermion_flutter/thermion_flutter.dart';
 abstract class Entity<TState> extends PositionComponent3d {
   late TState _state;
   TState get currentState => _state;
+  String? modelPath;
 
   
   Entity({
@@ -13,6 +14,7 @@ abstract class Entity<TState> extends PositionComponent3d {
       required super.size,
       super.anchor,
       ThermionAsset? asset,
+      this.modelPath,
     }){
     _state = initState();
   }

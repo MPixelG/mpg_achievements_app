@@ -4,6 +4,7 @@ import 'package:flame/flame.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:mpg_achievements_app/3d/src/camera.dart';
+import 'package:mpg_achievements_app/3d/src/components/npc.dart';
 import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/core/base_game.dart';
@@ -60,15 +61,28 @@ class PixelAdventure3D extends BaseGame
   FutureOr<void> onLoad() async {
 
     //Registering Factories for different types of entities
-    EntityFactory.register('Npc', (Vector3 pos, Vector3 size, Map<String, dynamic> props) => Player(
-          position: pos,
-          size: size,
-          ));
+    EntityFactory.register('Npc', (Vector3 pos, Vector3 size, Map<String, dynamic> props) {
 
-    EntityFactory.register('Player', (Vector3 pos, Vector3 size, Map<String, dynamic> props) => Player(
-          position: pos,
-          size: size,
-          ));
+      final String assetPath = props['model_path'].toString();
+
+      return Npc(
+        position: pos,
+        size: size,
+        modelPath: assetPath
+        ,);
+
+    });
+
+    EntityFactory.register('Player', (Vector3 pos, Vector3 size, Map<String, dynamic> props) {
+
+      final String assetPath = props['model_path'].toString();
+
+      return Player(
+        position: pos,
+        size: size,
+        modelPath: assetPath,
+      );
+    });
 
     final String tmxContent = await Flame.assets.readFile(levelPath);
     final XmlDocument xmlDoc = XmlDocument.parse(tmxContent); //fails since the asset file is somehow not published to github, it cant find the file

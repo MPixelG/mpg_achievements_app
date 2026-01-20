@@ -1,6 +1,6 @@
 import 'package:mpg_achievements_app/isometric/src/components/level_components/checkpoint/checkpoint.dart';
 import 'package:uuid/uuid.dart';
-
+@deprecated
 var uuid = const Uuid();
 
 class PlayerData {

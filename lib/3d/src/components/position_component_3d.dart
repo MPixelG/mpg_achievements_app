@@ -16,6 +16,7 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
   ThermionAsset? _asset;
 
 
+
   PositionComponent3d({
     super.children,
     super.priority,
@@ -24,6 +25,7 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
     required Vector3 size,
     Anchor3D? anchor,
     ThermionAsset? asset,
+    String? modelPath,
   }) : transform = Transform3D(),
         _anchor = anchor ?? Anchor3D.bottomLeftLeft, super() {
     this.position = position ?? Vector3.zero();
