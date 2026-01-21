@@ -1,4 +1,4 @@
-<<character "BubbleMaster" BubbleMaster>>
+<<character "Npc" BubbleMaster>>
 <<character "Player" Player>>
 <<character "UnknownNPC" UnknownNPC>>
 <<declare $knows_variables = false>>

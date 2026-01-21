@@ -135,8 +135,6 @@ class LevelLoader {
             object.properties,
             );
 
-
-
         /*final player = Player(
             position: v64.Vector3(xPos, yPos, zPos),
             size: Vector3.all(1.0), // Player size

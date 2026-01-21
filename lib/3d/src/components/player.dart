@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:mpg_achievements_app/3d/src/components/game_character.dart';
 import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 class Player extends GameCharacter<PlayerData> {
 
@@ -15,6 +16,7 @@ class Player extends GameCharacter<PlayerData> {
     super.anchor,
     super.asset,
     super.modelPath,
+    super.name,
   });
 
   @override
@@ -36,4 +38,5 @@ class Player extends GameCharacter<PlayerData> {
     asset = await thermion?.loadGltf(modelPath!);
     print("asset: ${asset.toString()}");
   }
+
 }

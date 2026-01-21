@@ -4,8 +4,9 @@ import 'package:mpg_achievements_app/3d/src/components/game_character.dart';
 import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/npc_data.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
+import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
 
-class Npc extends GameCharacter<NpcData> {
+class Npc extends GameCharacter<NpcData>{
 
   Npc({
     super.children,
@@ -16,6 +17,7 @@ class Npc extends GameCharacter<NpcData> {
     super.anchor,
     super.asset,
     super.modelPath,
+    super.name,
   });
 
   @override
@@ -27,10 +29,9 @@ class Npc extends GameCharacter<NpcData> {
      super.tickClient(dt);
   }
 
-
   @override
   FutureOr<void> onLoad() async {
-    asset = await thermion?.loadGltf(this.modelPath!);
+    asset = await thermion?.loadGltf(modelPath!);
     print("asset: ${asset.toString()}");
   }
 }

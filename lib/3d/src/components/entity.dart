@@ -37,7 +37,7 @@ abstract class Entity<TState> extends PositionComponent3d {
       FilamentApp.instance?.setTransform(entityId!, transform.transformMatrix);
     }
   }
-  
+
   ///
   /// tick method for the content that is managed server-side. You can only update the state server side, so this is the only way of changing values of your entity state
   /// returns the state of the next frame

@@ -1,14 +1,14 @@
 import 'dart:async' as async;
 import 'dart:async';
-import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble.dart';
+import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 class SpeechBubbleState extends ConsumerState<SpeechBubble>
     with TickerProviderStateMixin {
   //Position reference
-  late Vector3 _bubblePosition;
+  late Vector2 _bubblePosition;
   late double _componentHeight;
   late double _componentWidth;
   late Vector2 _bubbleCorrectionOffset;
@@ -337,7 +337,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       // _componentWidth = widget.component.width;
       // _bubbleCorrectionOffset = Vector2(0, 100);
 
-      _bubblePosition = widget.component.screenPosTL;
+      _bubblePosition = widget.component.worldPosition as Vector2;
 
       return Stack(
         children: [

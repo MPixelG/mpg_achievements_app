@@ -1,5 +1,6 @@
-import 'package:flame/components.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 abstract interface class DialogueCharacter {
-  Vector3 get screenPosTL;
+  Vector3 get worldPosition;
+  String? get characterName;
 }

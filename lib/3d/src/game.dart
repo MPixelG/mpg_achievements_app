@@ -9,6 +9,7 @@ import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/core/base_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
+import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_containing_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
@@ -29,7 +30,9 @@ class PixelAdventure3D extends BaseGame
         DragCallbacks,
         HasCollisionDetection3D,
         ScrollDetector,
-        IsoCollisionCallbacks{
+        IsoCollisionCallbacks,
+        DialogueContainingGame
+{
 
 
   //Singleton
@@ -65,23 +68,28 @@ class PixelAdventure3D extends BaseGame
     EntityFactory.register('Npc', (Vector3 pos, Vector3 size, Map<String, dynamic> props) {
 
       final String assetPath = props['model_path'].toString();
+      final String characterName = props['Name'].toString();
+
 
       return Npc(
         position: pos,
         size: size,
-        modelPath: assetPath
-        ,);
+        modelPath: assetPath,
+        name: characterName ?? 'Npc',
+        );
 
     });
 
     EntityFactory.register('Player', (Vector3 pos, Vector3 size, Map<String, dynamic> props) {
 
       final String assetPath = props['model_path'].toString();
+      final String characterName = props['Name'].toString();
 
       return Player(
         position: pos,
         size: size,
         modelPath: assetPath,
+        name: characterName ?? 'Player',
       );
     });
 
@@ -176,9 +184,11 @@ class PixelAdventure3D extends BaseGame
     )
   };
 
-    // TODO: implement findCharacterByName
+
   @override
-  DialogueCharacter? findCharacterByName(String name) => null;
+  DialogueCharacter? findCharacterByName(String name){
+    // TODO: implement findCharacterByName
+     }
 
   Future<void> _trySpawnTest() async{
     final loader = LevelLoader(levelData: _levelData!, viewer: _3DGameViewer!);
