@@ -4,6 +4,7 @@ abstract class Entity<TState> extends PositionComponent3d {
   late TState _state;
   TState get currentState => _state;
   String? modelPath;
+  String? name;
 
   
   Entity({
@@ -15,6 +16,7 @@ abstract class Entity<TState> extends PositionComponent3d {
       super.anchor,
       ThermionAsset? asset,
       this.modelPath,
+      this.name,
     }){
     _state = initState();
   }

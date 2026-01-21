@@ -1,6 +1,5 @@
 
 import 'package:flame/game.dart';
-
 import 'dialogue_character.dart';
 
 mixin DialogueContainingGame on Game {

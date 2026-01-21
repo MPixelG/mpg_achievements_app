@@ -7,7 +7,7 @@ import 'package:vector_math/vector_math_64.dart';
 
 abstract class GameCharacter<TState> extends Entity<TState> implements DialogueCharacter{
 
-  String? name;
+
 
   GameCharacter({
     super.children,
@@ -18,7 +18,7 @@ abstract class GameCharacter<TState> extends Entity<TState> implements DialogueC
     super.anchor,
     super.asset,
     super.modelPath,
-    this.name,
+    super.name,
   });
 
 
@@ -28,10 +28,8 @@ abstract class GameCharacter<TState> extends Entity<TState> implements DialogueC
     if (asset?.entity != null) {
       // register Thermion-ID (int) -> Entity
       PixelAdventure3D.currentInstance.registerEntity(asset!.entity, this);
-
       print("Registered Entity $name with ID ${asset!.entity}");
     }
-
     return super.onMount();
   }
 

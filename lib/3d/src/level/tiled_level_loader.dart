@@ -4,7 +4,6 @@ import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/3d/src/level/tiled_level.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 import 'package:vector_math/vector_math_64.dart' as v64;
-//todo refactor and integrate in new tiled_level
 
 class LevelLoader {
   final PixelAdventure3D game = PixelAdventure3D.currentInstance;
@@ -97,6 +96,7 @@ class LevelLoader {
 
       for (final object in layer.objects) {
         //add nullcheck or default model
+        final String name = object.name ?? 'Unknown';
         final String modelPath = object.properties['model_path'].toString();
         print(modelPath);
 
@@ -132,6 +132,7 @@ class LevelLoader {
             type,
             position,
             Vector3.all(1.0),
+            name,
             object.properties,
             );
 

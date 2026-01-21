@@ -11,7 +11,6 @@ import 'package:mpg_achievements_app/core/base_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_containing_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
-import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/core/touch_controls/touch_controls.dart';
 import 'package:mpg_achievements_app/3d/src/level/tiled_level_loader.dart';
@@ -44,6 +43,7 @@ class PixelAdventure3D extends BaseGame
 
   //Map for entities
   final Map<int, Entity> entityMap = {};
+  final Map<String, DialogueCharacter> dCharacterMap = {};
 
   //reference to ThermionViewer
   static ThermionViewer? _3DGameViewer;
@@ -65,31 +65,27 @@ class PixelAdventure3D extends BaseGame
   FutureOr<void> onLoad() async {
 
     //Registering factories for different types of entities, they are stored in the _builders-map
-    EntityFactory.register('Npc', (Vector3 pos, Vector3 size, Map<String, dynamic> props) {
+    EntityFactory.register('Npc', (Vector3 pos, Vector3 size, String name, Map<String, dynamic> props) {
 
       final String assetPath = props['model_path'].toString();
-      final String characterName = props['Name'].toString();
-
 
       return Npc(
         position: pos,
         size: size,
+        name: name ?? 'Unknown',
         modelPath: assetPath,
-        name: characterName ?? 'Npc',
         );
 
     });
 
-    EntityFactory.register('Player', (Vector3 pos, Vector3 size, Map<String, dynamic> props) {
+    EntityFactory.register('Player', (Vector3 pos, Vector3 size, String name, Map<String, dynamic> props) {
 
       final String assetPath = props['model_path'].toString();
-      final String characterName = props['Name'].toString();
-
-      return Player(
+            return Player(
         position: pos,
         size: size,
         modelPath: assetPath,
-        name: characterName ?? 'Player',
+        name: name ?? 'Unknown',
       );
     });
 
@@ -187,7 +183,8 @@ class PixelAdventure3D extends BaseGame
 
   @override
   DialogueCharacter? findCharacterByName(String name){
-    // TODO: implement findCharacterByName
+    final DialogueCharacter? dCharacter = dCharacterMap[name];
+    return dCharacter;
      }
 
   Future<void> _trySpawnTest() async{
@@ -207,6 +204,10 @@ class PixelAdventure3D extends BaseGame
 
   void registerEntity(int id, Entity entity) {
     entityMap[id] = entity;
+    if (entity.name != null) {
+      dCharacterMap[entity.name!] = entity as DialogueCharacter;
+      print(dCharacterMap.keys);
+      }
   }
 
   @override
