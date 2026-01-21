@@ -10,6 +10,7 @@ import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/core/base_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
+import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/core/touch_controls/touch_controls.dart';
 import 'package:mpg_achievements_app/3d/src/level/tiled_level_loader.dart';
@@ -60,7 +61,7 @@ class PixelAdventure3D extends BaseGame
   @override
   FutureOr<void> onLoad() async {
 
-    //Registering Factories for different types of entities
+    //Registering factories for different types of entities, they are stored in the _builders-map
     EntityFactory.register('Npc', (Vector3 pos, Vector3 size, Map<String, dynamic> props) {
 
       final String assetPath = props['model_path'].toString();
@@ -84,18 +85,19 @@ class PixelAdventure3D extends BaseGame
       );
     });
 
+    //
     final String tmxContent = await Flame.assets.readFile(levelPath);
     final XmlDocument xmlDoc = XmlDocument.parse(tmxContent); //fails since the asset file is somehow not published to github, it cant find the file
     _levelData = await TiledLevel.loadXML(xmlDoc, filename: 'tiles/3D_prototype.tmx', fileReader: (String path) async => await Flame.assets.readFile(path));
     loadAmbientLighting("assets/3D/default_env_ibl.ktx");
     setSkybox("assets/3D/default_env_skybox.ktx");
-    
+
    await _trySpawnTest();
    add(GameCamera(await thermion!.getActiveCamera()));
-    
+
    super.onLoad();
   }
-  
+
   @override
   void onMount() {
     overlays.toggle('touchControls');
@@ -113,7 +115,7 @@ class PixelAdventure3D extends BaseGame
     //Joystick X (Left/Right) to 3D X (Left/Right)
 
     if (currentJoystickMoveX == 0 && currentJoystickMoveY == 0) return;
-  
+
     const moveSpeed = 5.0; // Meters per second
 /*
     //1 Update our local position state
@@ -136,7 +138,7 @@ class PixelAdventure3D extends BaseGame
     //    // game logic here
     // }
   }
-  
+
   double currentJoystickMoveX = 0;
   double currentJoystickMoveY = 0;
   void onJoystickMove(StickDragDetails details){
@@ -161,6 +163,14 @@ class PixelAdventure3D extends BaseGame
       yarnFilePath:
       'assets/yarn/test.yarn', //todo connect to state management and trigger method, make more customizable not static as atm
     ),
+    /*
+    'SpeechBubble': (BuildContext context, BaseGame game) => SpeechBubble(
+        component: game.currentEntity etc.,
+        text: displayedText,
+        game: game,
+    onComplete: () {game.overlays.remove('SpeechBubble');
+    },
+    ),*/
     'touchControls': (BuildContext context, BaseGame game) => TouchControls(
         onJoystickMove: (game as PixelAdventure3D).onJoystickMove,
     )
@@ -169,13 +179,13 @@ class PixelAdventure3D extends BaseGame
     // TODO: implement findCharacterByName
   @override
   DialogueCharacter? findCharacterByName(String name) => null;
-  
+
   Future<void> _trySpawnTest() async{
     final loader = LevelLoader(levelData: _levelData!, viewer: _3DGameViewer!);
     await loader.spawnTiles();
     await loader.spawnObjects();
   }
-  
+
   Future<void> setSkybox(String skyboxPath) async{
     await thermion!.loadSkybox(skyboxPath);
   }
@@ -198,6 +208,6 @@ class PixelAdventure3D extends BaseGame
   Entity? getEntityById(int id) => entityMap[id];
 
 
-  
+
 }
 ThermionViewer? get thermion => PixelAdventure3D._3DGameViewer;

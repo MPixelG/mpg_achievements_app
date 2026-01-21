@@ -14,12 +14,13 @@ class EntityFactory {
     _builders[type] = builder;
   }
 
-  // creates an entity according to type
+  // creates an entity according to type and constructor plan which was stored in the game class, these blueprint are stored in the _builders-map
+  //with the register method
   static Entity? create(String type, Vector3 position, Vector3 size, Map<String, dynamic> properties) {
     final builder = _builders[type];
 
     if (builder == null) {
-      print("Type unknoiwn");
+      print("Type unknown");
       return null;
     }
 

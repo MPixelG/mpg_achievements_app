@@ -120,28 +120,14 @@ class LevelLoader {
         final double zPos = object.y.toDouble()/tiledPixelSize;
         final double yPos = finalY;
 
-        final position = v64.Vector3(xPos,yHeight,zPos);
+        final position = v64.Vector3(xPos,yPos,zPos);
         //Object type
         final String type = object.type ?? 'Player';
         print(type);
 
+        print('spawn object type at $xPos $yPos $zPos ');
 
-        // 3. Load the model or wrapper into the 3D scene Loading should be offloaded to specific classes
-        //final dynamic asset = await viewer.loadGltf(modelPath);
-
-        //extract entity ID also off loaded to class
-        //final entityID = (asset as dynamic).entity;
-
-        //Create translation Matrix -> is there a better way?
-        //final matrix = v64.Matrix4.identity();
-        //matrix.setTranslation(
-        //  v64.Vector3(xPos, yPos, zPos),
-        //);
-
-        //Filament
-        //FilamentApp.instance?.setTransform(entityID, matrix);
-        //print('spawn object $entityID at $xPos $yPos $zPos ');
-
+        //Entity Factory looks at the
         final component = EntityFactory.create(
             type,
             position,

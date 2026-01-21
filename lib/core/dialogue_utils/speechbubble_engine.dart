@@ -1,6 +1,5 @@
 import 'dart:async' as async;
 import 'dart:async';
-
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +8,7 @@ import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble.dart';
 class SpeechBubbleState extends ConsumerState<SpeechBubble>
     with TickerProviderStateMixin {
   //Position reference
-  late Vector2 _bubblePosition;
+  late Vector3 _bubblePosition;
   late double _componentHeight;
   late double _componentWidth;
   late Vector2 _bubbleCorrectionOffset;
@@ -38,9 +37,9 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late final Duration showDuration = const Duration(seconds: 30);
   late final Duration dismissDuration = const Duration(seconds: 1);
   bool _autoDismiss =
-  true; // Automatically dismiss the speech bubble after a certain duration
+      true; // Automatically dismiss the speech bubble after a certain duration
   bool autoStart =
-  true; // Automatically start the speech bubble animation when the widget is built
+      true; // Automatically start the speech bubble animation when the widget is built
 
   //styling
   late final Color textColor = Colors.black;
@@ -248,7 +247,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     });
   }
 
-
   void _onTypingComplete() {
     if (!mounted) return;
 
@@ -264,21 +262,15 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     // Rapid Text: sofort auto-dismiss mit kurzer Wartezeit
     if (widget.isRapidText) {
       _dismissTimer?.cancel();
-      _dismissTimer = async.Timer(
-        const Duration(milliseconds: 800),
-            () {
-          _dismissSpeechBubble();
-        },
-      );
+      _dismissTimer = async.Timer(const Duration(milliseconds: 800), () {
+        _dismissSpeechBubble();
+      });
     } else if (_autoDismiss && !_isChoiceBubble) {
       // Optional: Notfall-Timeout für normale Texte
       _dismissTimer?.cancel();
-      _dismissTimer = async.Timer(
-        const Duration(seconds: 60),
-            () {
-          _dismissSpeechBubble();
-        },
-      );
+      _dismissTimer = async.Timer(const Duration(seconds: 60), () {
+        _dismissSpeechBubble();
+      });
     }
   }
 
@@ -347,59 +339,71 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
       _bubblePosition = widget.component.screenPosTL;
 
-      return AnimatedPositioned(
-        left: _bubblePosition.x,
-        top: _bubblePosition.y - _bubbleCorrectionOffset.y,
-        duration: const Duration(milliseconds: 100),
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: ScaleTransition(
-            scale: _scaleAnimation,
-            child: GestureDetector(
-              onTap: _onBubbleTapped,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  // Wrapper für die Breiten-Anpassung
-                  _fixedBubbleWidth != null
-                      ? SizedBox(
-                    width: _fixedBubbleWidth,
-                    child: _buildBubbleContent(),
-                  )
-                      : _buildBubbleContent(),
+      return Stack(
+        children: [
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 100),
+            left: _bubblePosition.x,
+            top: _bubblePosition.y - _bubbleCorrectionOffset.y,
+            // (-0.5) shifts it left by 50% of its own width (Centers it)
+            // (-1.0) shifts it up by 100% of its own height (Sits on top
+            child: FractionalTranslation(
+              translation: const Offset(-0.5, -1.0),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: GestureDetector(
+                      onTap: _onBubbleTapped,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          // Wrapper für die Breiten-Anpassung
+                          _fixedBubbleWidth != null
+                              ? SizedBox(
+                                  width: _fixedBubbleWidth,
+                                  child: _buildBubbleContent(),
+                                )
+                              : _buildBubbleContent(),
 
-                  // Tail (Sprechblase-Pfeil)
-                  Positioned(
-                    left: 15,
-                    bottom: -tailHeight,
-                    child: CustomPaint(
-                      size: const Size(tailWidth, tailHeight),
-                      painter: SpeechBubbleTailPainter(
-                        bubbleColor: Colors.white,
-                        borderColor: borderColor,
-                        borderWidth: borderWidth,
+                          // Tail (Sprechblase-Pfeil)
+                          Positioned(
+                            left: 15,
+                            bottom: -tailHeight,
+                            child: CustomPaint(
+                              size: const Size(tailWidth, tailHeight),
+                              painter: SpeechBubbleTailPainter(
+                                bubbleColor: Colors.white,
+                                borderColor: borderColor,
+                                borderWidth: borderWidth,
+                              ),
+                            ),
+                          ),
+
+                          // Click Icon - absolut positioniert, beeinflusst Layout NICHT
+                          if (_isTypingComplete &&
+                              !_isChoiceBubble &&
+                              !widget.isRapidText)
+                            Positioned(
+                              right: 8,
+                              bottom: 8,
+                              child: Icon(
+                                Icons.touch_app,
+                                size: 14,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                   ),
-
-                  // Click Icon - absolut positioniert, beeinflusst Layout NICHT
-                  if (_isTypingComplete &&
-                      !_isChoiceBubble &&
-                      !widget.isRapidText)
-                    Positioned(
-                      right: 8,
-                      bottom: 8,
-                      child: Icon(
-                        Icons.touch_app,
-                        size: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
+        ],
       );
     } catch (e, stackTrace) {
       print("!!!!!!!! UNHANDLED ERROR IN SPEECHBUBBLE BUILD !!!!!!!");
@@ -412,77 +416,69 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
   // Hilfsmethode für den Bubble-Inhalt
   Widget _buildBubbleContent() => Container(
-      constraints: const BoxConstraints(
-        maxWidth: 400,
-        minWidth: 100,
-      ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12.0,
-        vertical: 10.0,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(128),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (widget.text.isNotEmpty || _displayedText.isNotEmpty)
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: maxScrollableHeight,
-              ),
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                child: Text(
-                  _displayedText,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontFamily: 'gameFont',
-                    height: 1.4,
-                  ),
+    constraints: const BoxConstraints(maxWidth: 400, minWidth: 100),
+    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withAlpha(128),
+          blurRadius: 10,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (widget.text.isNotEmpty || _displayedText.isNotEmpty)
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: maxScrollableHeight),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Text(
+                _displayedText,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontFamily: 'gameFont',
+                  height: 1.4,
                 ),
               ),
             ),
+          ),
 
-          // Choices (falls vorhanden)
-          if (_isChoiceBubble) ...[
-            const SizedBox(height: 12.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: widget.choices!.options.map((option) {
-                final optionIndex = widget.choices!.options.indexOf(option);
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2.0),
-                  child: ElevatedButton(
-                    onPressed: option.isAvailable
-                        ? () => widget.onChoiceSelected?.call(optionIndex)
-                        : null,
-                    child: Text(
-                      option.text,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontFamily: 'gameFont',
-                      ),
+        // Choices (falls vorhanden)
+        if (_isChoiceBubble) ...[
+          const SizedBox(height: 12.0),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: widget.choices!.options.map((option) {
+              final optionIndex = widget.choices!.options.indexOf(option);
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2.0),
+                child: ElevatedButton(
+                  onPressed: option.isAvailable
+                      ? () => widget.onChoiceSelected?.call(optionIndex)
+                      : null,
+                  child: Text(
+                    option.text,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontFamily: 'gameFont',
                     ),
                   ),
-                );
-              }).toList(),
-            ),
-          ],
+                ),
+              );
+            }).toList(),
+          ),
         ],
-      ),
-    );
+      ],
+    ),
+  );
 }
 
 //Tail Widget for Speech Bubble
@@ -507,7 +503,8 @@ class SpeechBubbleTailPainter extends CustomPainter {
 
     final borderPaint = Paint()
       ..color = borderColor
-      ..style = PaintingStyle.stroke // Set the border color and style
+      ..style = PaintingStyle
+          .stroke // Set the border color and style
       ..strokeWidth = borderWidth; // Set the border width
     // Create a Path object to define the shape of the triangle.
 

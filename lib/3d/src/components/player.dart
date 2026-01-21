@@ -19,7 +19,9 @@ class Player extends GameCharacter<PlayerData> {
 
   @override
   PlayerData initState() => PlayerData();
-  
+
+  //update is called in the superclass entity first which then calls the tickClient method in the player, the player updates it's postition
+  //then the entity class calls it's own tickClient()-method which updates the position of the player
   @override
   void tickClient(double dt) {
     position.x = cos(DateTime.now().millisecondsSinceEpoch / 1000) * 20;
@@ -31,7 +33,7 @@ class Player extends GameCharacter<PlayerData> {
   
   @override
   FutureOr<void> onLoad() async {
-    asset = await thermion?.loadGltf(this.modelPath!);
+    asset = await thermion?.loadGltf(modelPath!);
     print("asset: ${asset.toString()}");
   }
 }
