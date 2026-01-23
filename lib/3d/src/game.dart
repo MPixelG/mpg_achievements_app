@@ -1,4 +1,6 @@
 import 'dart:async';
+
+import 'package:flame/camera.dart';
 import 'package:flame/events.dart' hide PointerMoveEvent;
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image, KeyEvent;
@@ -8,20 +10,18 @@ import 'package:mpg_achievements_app/3d/src/camera.dart';
 import 'package:mpg_achievements_app/3d/src/components/npc.dart';
 import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
+import 'package:mpg_achievements_app/3d/src/level/tiled_level_loader.dart';
 import 'package:mpg_achievements_app/core/base_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/conversation_management.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_containing_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
-import 'package:mpg_achievements_app/core/router/router.dart';
 import 'package:mpg_achievements_app/core/touch_controls/touch_controls.dart';
-import 'package:mpg_achievements_app/3d/src/level/tiled_level_loader.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/has_collision_detection.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:thermion_flutter/thermion_flutter.dart' hide KeyEvent;
 import 'package:xml/xml.dart';
-import '../../util/utils.dart';
+
 import 'components/entity.dart';
 import 'level/tiled_level.dart';
 
@@ -33,8 +33,19 @@ class PixelAdventure3D extends BaseGame
         DragCallbacks,
         HasCollisionDetection3D,
         ScrollDetector,
-        IsoCollisionCallbacks,
         DialogueContainingGame {
+  
+  @override
+  @Deprecated("This camera is only for 2D!")
+  CameraComponent get camera;
+
+  @override
+  @Deprecated("This camera is only for 2D!")
+  set camera(CameraComponent newCamera);
+  
+  late GameCamera camera3D; 
+  
+  late Player player;
 
 
   //Singleton
@@ -112,6 +123,8 @@ class PixelAdventure3D extends BaseGame
     //get Camera
     _gameCamera = GameCamera(await thermion!.getActiveCamera());
     add(_gameCamera!);
+    //_gameCamera?.setFollowEntity(player);
+    //add(Player(size: Vector3.all(1)));
 
     super.onLoad();
   }
@@ -210,7 +223,7 @@ class PixelAdventure3D extends BaseGame
           'assets/yarn/speechbubble_test.yarn');
     }
 
-    //overlaydebug
+    //overlay debug
     if (keysPressed.contains(LogicalKeyboardKey.keyO)) {
       final registeredOverlays = overlays.registeredOverlays;
       print('--- Overlay Status ---');

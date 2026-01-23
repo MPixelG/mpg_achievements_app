@@ -1,20 +1,17 @@
 import 'dart:async';
+
 import 'package:flame/components.dart' hide Vector3, Matrix4, Vector2;
 import 'package:flutter/cupertino.dart' hide Matrix4;
 import 'package:mpg_achievements_app/3d/src/game.dart';
-import 'package:mpg_achievements_app/3d/src/renderable3d.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/iso_anchor.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/notifying_vector_3.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/transform3d.dart';
-import 'package:thermion_dart/src/filament/src/interface/asset.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'package:thermion_flutter/thermion_flutter.dart';
 
 
-class PositionComponent3d extends Component with HasGameReference<PixelAdventure3D> implements Renderable3d, Anchor3DProvider, Size3DProvider, Position3DProvider, Scale3DProvider  {
+class PositionComponent3d extends Component with HasGameReference<PixelAdventure3D> implements Anchor3DProvider, Size3DProvider, Position3DProvider, Scale3DProvider {
   Transform3D transform;
   Anchor3D _anchor;
-  ThermionAsset? _asset;
-
 
 
   PositionComponent3d({
@@ -24,8 +21,6 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
     Vector3? position,
     required Vector3 size,
     Anchor3D? anchor,
-    ThermionAsset? asset,
-    String? modelPath,
   }) : transform = Transform3D(),
         _anchor = anchor ?? Anchor3D.bottomLeftLeft, super() {
     this.position = position ?? Vector3.zero();
@@ -33,18 +28,6 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
 
     _size.addListener(_onModifiedSizeOrAnchor);
     _onModifiedSizeOrAnchor();
-  }
-  
-  @override
-  FutureOr<void> onLoad() async {
-    await super.onLoad();
-
-    thermion?.addToScene(_asset!);
-  }
-  
-  @override
-  void onRemove() {
-    thermion?.removeFromScene(_asset!);
   }
 
   @override
@@ -194,17 +177,7 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
     transform.offset = -Vector3(_anchor.x * scaledSize.x, _anchor.y * scaledSize.y, _anchor.z * scaledSize.z);
   }
 
-  @override
-  ThermionAsset? get asset => _asset;
-  
-  set asset(ThermionAsset? newAsset) {
-    //thermion?.removeFromScene(asset!); 
-    //? maybe we need to remove and re-add it to the scene if we change it
-    _asset = newAsset;
-    if(newAsset != null) {
-      //thermion?.addToScene(newAsset);
-    }  
-  }
+
 }
 
 abstract class Position3DProvider implements ReadOnlyPosition3DProvider{

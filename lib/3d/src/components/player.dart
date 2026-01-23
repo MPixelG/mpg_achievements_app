@@ -1,9 +1,7 @@
-import 'dart:async';
 import 'dart:math';
+
 import 'package:mpg_achievements_app/3d/src/components/game_character.dart';
-import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
-import 'package:vector_math/vector_math_64.dart';
 
 class Player extends GameCharacter<PlayerData> {
 
@@ -14,8 +12,7 @@ class Player extends GameCharacter<PlayerData> {
     super.position,
     required super.size,
     super.anchor,
-    super.asset,
-    super.modelPath,
+    super.modelPath = "assets/3D/character.glb",
     super.name,
   });
 
@@ -26,17 +23,8 @@ class Player extends GameCharacter<PlayerData> {
   //then the entity class calls it's own tickClient()-method which updates the position of the player
   @override
   void tickClient(double dt) {
-    position.x = cos(DateTime.now().millisecondsSinceEpoch / 1000) * 20;
-    position.z = sin(DateTime.now().millisecondsSinceEpoch / 1000) * 20;
-    print("update!");
+    position.x = cos(DateTime.now().millisecondsSinceEpoch / 1000) * 10;
+    position.z = sin(DateTime.now().millisecondsSinceEpoch / 1000) * 10;
     super.tickClient(dt);
   }
-  
-  
-  @override
-  FutureOr<void> onLoad() async {
-    asset = await thermion?.loadGltf(modelPath!);
-    print("asset: ${asset.toString()}");
-  }
-
 }

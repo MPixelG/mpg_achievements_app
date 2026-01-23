@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:math';
+
 import 'package:flame/components.dart' hide Matrix4, Vector3;
 import 'package:thermion_flutter/thermion_flutter.dart';
+
 import 'components/position_component_3d.dart';
 
 class GameCamera extends Component {
@@ -15,14 +17,14 @@ class GameCamera extends Component {
 
   @override
   Future<void> update(double dt) async {
-    if (positionProvider == null) return;
+    if (positionProvider == null) return super.update(dt);
 
     final Vector3 target = positionProvider!.position;
 
     time += dt;
-    final Vector3 newPos = Vector3(sin(time) * 10, 20, cos(time) * 10);
+    final Vector3 newPos = Vector3(0, 5, 0);
     setPosition(newPos);
-    lookAt(newPos, target, distance: sin(time) * 20 + 30);
+    lookAt(newPos, target, distance: sin(time) * 0 + 10);
 
     if (matrixUpdated) {
       thermionCamera.setTransform(modelMatrix);
@@ -76,7 +78,6 @@ class GameCamera extends Component {
     final Vector3 realUp = forward.cross(right);
 
     if (distance != null) {
-      // Richtung vom Ziel zur gewünschten Position
       final Vector3 dir = (position - target)..normalize();
       position = target + dir * distance;
     }

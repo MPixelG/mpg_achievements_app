@@ -1,4 +1,6 @@
 import 'dart:async';
+
+import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/3d/src/level/tiled_level.dart';
@@ -146,8 +148,10 @@ class LevelLoader {
           // Add to Flame Game Loop
           game.add(component!);
           // Optional: If you need to track the player in the loader
-          // game.player = player;
-
+          if(component is Player) {
+            print("player set!");
+            game.player = component;
+          }
         }
 
       }
