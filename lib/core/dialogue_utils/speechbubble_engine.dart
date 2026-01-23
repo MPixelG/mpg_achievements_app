@@ -1,6 +1,7 @@
 import 'dart:async' as async;
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
@@ -11,7 +12,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late Vector2 _bubblePosition;
   late double _componentHeight;
   late double _componentWidth;
-  late Vector2 _bubbleCorrectionOffset;
+  final Vector2 _bubbleCorrectionOffset = Vector2(40,40);
 
   // Scroll Controller für Autoscroll
   late ScrollController _scrollController;
@@ -27,9 +28,10 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   // Saves Bubblewidth when theres a line break
   double? _fixedBubbleWidth;
 
-  //Timers
+  //Timers, tickers, um mit Thermion zu synchronisieren
   async.Timer? _typingTimer;
   async.Timer? _dismissTimer;
+  late final Ticker _ticker;
 
   //Configuration of Widget and Animations
   //Duration between character appearing and text displaying
@@ -114,6 +116,11 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       begin: 1.0,
       end: 0.0,
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.linear));
+
+    _ticker = createTicker((elapsed) {
+      _updateBubblePosition();
+    });
+    _ticker.start();
 
     //Use WidgetsBinding to ensure the widget is fully built before starting the animation
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -337,7 +344,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       // _componentWidth = widget.component.width;
       // _bubbleCorrectionOffset = Vector2(0, 100);
 
-      _bubblePosition = widget.component.worldPosition as Vector2;
 
       return Stack(
         children: [
@@ -479,6 +485,21 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       ],
     ),
   );
+
+  void _updateBubblePosition() {
+
+    if (!_isSpeechBubbleVisible || !mounted) return;
+
+    // get Vector3 worldpos
+    final worldPos = widget.component.worldPosition;
+
+    //convert
+
+    //_bubblePosition = widget.game.convertLocalToGlobalCoordinate(worldPos.y,worldPos.y));
+
+
+
+  }
 }
 
 //Tail Widget for Speech Bubble

@@ -1,5 +1,4 @@
-
-import 'package:vector_math/vector_math.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 extension VectorComparing on Vector3 {
   int compareTo(Vector3 gridPos) => (distanceTo(

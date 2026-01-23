@@ -5,10 +5,10 @@
 
 import 'dart:io';
 import 'dart:ui' as ui;
-
-import 'package:flame/components.dart';
+import 'package:flame/components.dart' hide Vector2, Vector3, Matrix4, Vector4;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart' hide Matrix4;
+import 'package:vector_math/vector_math_64.dart';
 
 
 //A simple utility function that returns the absolute (positive) value of a number.
@@ -199,6 +199,48 @@ Future<File> saveImage(ui.Image image, String filename) async {
     ))!.buffer.asInt8List(),
     flush: true,
   );
+}
+
+
+
+/// Konvertiert eine 3D-Position im Weltraum in ein 2D Screen-Offset.
+/// Gibt null zurück, wenn der Punkt hinter der Kamera liegt.
+ui.Offset? worldToScreen({
+  required Vector3 worldPosition,
+  required Matrix4 viewMatrix,
+  required Matrix4 projectionMatrix,
+  required ui.Size screenSize,
+}) {
+  // combine view and projection Matrix. Viewmatrix is the position of the camera (atm 20,20,20) and projetionMatrix is the lens of the camera (Field of View)
+  final Matrix4 viewProjection = projectionMatrix * viewMatrix;
+
+  // create a Vector4 w = 1.0 otherwise camrea would not be considered in calculation because of calculation rules
+  final Vector4 worldPos4 = Vector4(worldPosition.x, worldPosition.y, worldPosition.z, 1.0);
+
+  // clipSpace is calcualted = where is the point really in space, if w < 0 the point is behind the camera
+  final Vector4 clipSpacePos = viewProjection.transform(worldPos4);
+
+  if (clipSpacePos.w <= 0) {
+    return null;
+  }
+
+  /*The Principle: To create perspective (making distant objects appear smaller),
+  we divide the x and y coordinates by the depth ($w$).A tree at $x=100$ in the far distance (large $w$) is divided by a large number
+  -> the resulting $x$ is small.A tree at $x=100$ right in front of you (small $w$) is divided by a small number
+  -> the resulting $x$ remains large.The Result (NDC): After this division, all visible points lie within a cube ranging from -1.0 to +1.0.
+  This is called Normalized Device Coordinates. Anything outside this range is not on the screen.*/
+  final Vector3 ndc = Vector3(
+    clipSpacePos.x / clipSpacePos.w,
+    clipSpacePos.y / clipSpacePos.w,
+    clipSpacePos.z / clipSpacePos.w,
+  );
+
+  // conversion to screen coordiantes
+  // Y needs to be inverted,because in Flutter (0,0) is up left
+  final double screenX = (ndc.x + 1.0) / 2.0 * screenSize.width;
+  final double screenY = (1.0 - ndc.y) / 2.0 * screenSize.height;
+
+  return ui.Offset(screenX, screenY);
 }
 
 //Check OS for Joystick support

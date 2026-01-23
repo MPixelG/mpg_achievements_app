@@ -12,7 +12,6 @@ class SpeechBubble extends ConsumerStatefulWidget {
   final String text;
   final DialogueContainingGame game;
   final DialogueChoice? choices;
-
   //callback
   final VoidCallback? onComplete;
   final VoidCallback? onDismiss;
