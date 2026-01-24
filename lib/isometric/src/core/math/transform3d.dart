@@ -29,7 +29,6 @@ import 'notifying_vector_3.dart';
 /// change: [position], [scale], and [offset] (but not [angle]).
 class Transform3D extends ChangeNotifier {
   bool transformMatrixSet = false;
-  late final Matrix4 _transformMatrix;
   bool transformMatrix64Set = false;
   late final Matrix4 _transformMatrix64;
   bool _recalculate;
@@ -195,8 +194,6 @@ class Transform3D extends ChangeNotifier {
   /// entity. The matrix is cached and gets recalculated only as necessary.
   ///
   /// The returned matrix must not be modified by the user.
-
-
   Matrix4 get transformMatrix {
     if(!transformMatrix64Set) {
       _transformMatrix64 = Matrix4.identity();

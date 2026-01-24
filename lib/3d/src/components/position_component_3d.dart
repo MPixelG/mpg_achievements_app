@@ -8,8 +8,7 @@ import 'package:mpg_achievements_app/isometric/src/core/math/notifying_vector_3.
 import 'package:mpg_achievements_app/isometric/src/core/math/transform3d.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 
-
-class PositionComponent3d extends Component with HasGameReference<PixelAdventure3D> implements Anchor3DProvider, Size3DProvider, Position3DProvider, Scale3DProvider {
+class PositionComponent3d extends Component with HasGameReference<PixelAdventure3D> implements Anchor3DProvider, Size3DProvider, Position3DProvider, Scale3DProvider, Rotation3DProvider {
   Transform3D transform;
   Anchor3D _anchor;
 
@@ -84,6 +83,10 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
   set scale(Vector3 newScale) {
     transform.scale.setFrom(newScale);
   }
+  
+  
+  
+  
 
   @override
   Vector3 get position => transform.position;
@@ -177,6 +180,40 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
     transform.offset = -Vector3(_anchor.x * scaledSize.x, _anchor.y * scaledSize.y, _anchor.z * scaledSize.z);
   }
 
+  @override
+  double get rotationX => transform.angleRoll;
+
+  @override
+  double get rotationY => transform.anglePitch;
+
+  @override
+  double get rotationZ => transform.angleYaw;
+
+
+  @override
+  set rotationX(double newRotationX) => transform.angleRoll = newRotationX;
+  @override
+  set rotationY(double newRotationY) => transform.anglePitch = newRotationY;
+  @override
+  set rotationZ(double newRotationZ) => transform.angleYaw = newRotationZ;
+  
+
+  void setRotation({double? x, double? y, double? z}) {
+    final Matrix4 rotationMatrix = Matrix4.identity();
+
+    if (y != null) {
+      rotationMatrix.multiply(Matrix4.rotationY(y));
+    }
+    if (x != null) {
+      rotationMatrix.multiply(Matrix4.rotationX(x));
+    }
+    if (z != null) {
+      rotationMatrix.multiply(Matrix4.rotationZ(z));
+    }
+
+    transformMatrix.setRotation(rotationMatrix.getRotation());
+  }
+
 
 }
 
@@ -189,10 +226,14 @@ abstract class Size3DProvider implements ReadOnlySize3DProvider{
 abstract class Scale3DProvider implements ReadOnlyScale3DProvider{
   set scale(Vector3 newScale);
 }
-
 abstract class Anchor3DProvider {
   set anchor(Anchor3D newAnchor);
   Anchor3D get anchor;
+}
+abstract class Rotation3DProvider implements ReadOnlyRotation3DProvider{
+  set rotationX(double newRotationX);
+  set rotationY(double newRotationY);
+  set rotationZ(double newRotationZ);
 }
 
 abstract class ReadOnlySize3DProvider{
@@ -203,4 +244,9 @@ abstract class ReadOnlyPosition3DProvider{
 }
 abstract class ReadOnlyScale3DProvider{
   Vector3 get scale;
+}
+abstract class ReadOnlyRotation3DProvider{
+  double get rotationX;
+  double get rotationY;
+  double get rotationZ;
 }

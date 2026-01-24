@@ -50,7 +50,5 @@ abstract class Entity<TState> extends PositionComponent3d with ThermionAssetCont
   TState initState();
 
 
-
-
   
 }

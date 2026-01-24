@@ -25,6 +25,7 @@ class Player extends GameCharacter<PlayerData> {
   void tickClient(double dt) {
     position.x = cos(DateTime.now().millisecondsSinceEpoch / 1000) * 10;
     position.z = sin(DateTime.now().millisecondsSinceEpoch / 1000) * 10;
+    rotationY = sin(DateTime.now().millisecondsSinceEpoch / 1000) * 10; //lol
     super.tickClient(dt);
   }
 }
