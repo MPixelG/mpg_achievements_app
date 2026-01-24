@@ -104,7 +104,7 @@ class PixelAdventure3D extends BaseGame
       return Player(
         position: pos,
         size: size,
-        modelPath: assetPath,
+
         name: name ?? 'Unknown',
       );
     });
@@ -123,7 +123,7 @@ class PixelAdventure3D extends BaseGame
     //get Camera
     _gameCamera = GameCamera(await thermion!.getActiveCamera());
     add(_gameCamera!);
-    //_gameCamera?.setFollowEntity(player);
+    _gameCamera?.setFollowEntity(player);
     //add(Player(size: Vector3.all(1)));
 
     super.onLoad();

@@ -26,7 +26,7 @@ abstract class GameCharacter<TState> extends Entity<TState> implements DialogueC
     // register Thermion-ID (int) -> Entity
     PixelAdventure3D.currentInstance.registerEntity(asset.entity, this);
     print("Registered Entity $name with ID ${asset.entity}");
-      return super.onMount();
+    return super.onMount();
   }
 
   @override

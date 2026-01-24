@@ -143,6 +143,8 @@ flutter:
     - assets/3D/cube.glb
     - assets/music/
     - assets/3D/prototyping_assets/Pieces/
+    - assets/3D/character/
+    - assets/3D/character/character_animated_v1.glb
   shaders:
     - assets/shaders/lighting.frag
     - assets/shaders/srcBlendModeGreater0.frag
