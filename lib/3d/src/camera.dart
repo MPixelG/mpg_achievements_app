@@ -70,7 +70,7 @@ class GameCamera extends Component {
     }
 
     targetLookAtPosition = targetEntityPosition + Vector3(0, lookAtHeight, 0);
-    targetCameraPosition = targetEntityPosition +
+    targetCameraPosition = targetEntityPosition -
         (cameraDirection * cameraDistance) +
         Vector3(0, cameraHeight, 0);
 

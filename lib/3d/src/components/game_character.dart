@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:mpg_achievements_app/3d/src/components/entity.dart';
 import 'package:mpg_achievements_app/3d/src/game.dart';
@@ -6,6 +7,8 @@ import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart
 import 'package:vector_math/vector_math_64.dart';
 
 abstract class GameCharacter<TState> extends Entity<TState> implements DialogueCharacter{
+  Vector3 velocity = Vector3.zero();
+  static const double deceleration = 0.1; 
   
   GameCharacter({
     super.children,
@@ -18,8 +21,13 @@ abstract class GameCharacter<TState> extends Entity<TState> implements DialogueC
     super.name,
   });
   
+  @override
+  void tickClient(double dt) {
+    position += velocity;
+    velocity *= pow(deceleration, dt).toDouble();
+    super.tickClient(dt);
+  }
   
-
 
   @override
   FutureOr<void> onMount() {

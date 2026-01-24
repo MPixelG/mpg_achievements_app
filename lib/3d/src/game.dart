@@ -43,8 +43,6 @@ class PixelAdventure3D extends BaseGame
   @Deprecated("This camera is only for 2D!")
   set camera(CameraComponent newCamera);
   
-  late GameCamera camera3D; 
-  
   late Player player;
 
 
@@ -63,7 +61,7 @@ class PixelAdventure3D extends BaseGame
   //reference to ThermionViewer
   static late ThermionViewer? _3DGameViewer;
   //reference to camera
-  static late GameCamera? _gameCamera;
+  late GameCamera? camera3D;
 
   void setThermionViewer(ThermionViewer viewer) {
     _3DGameViewer = viewer;
@@ -121,9 +119,9 @@ class PixelAdventure3D extends BaseGame
 
     await _trySpawnTest();
     //get Camera
-    _gameCamera = GameCamera(await thermion!.getActiveCamera());
-    add(_gameCamera!);
-    _gameCamera?.setFollowEntity(player);
+    camera3D = GameCamera(await thermion!.getActiveCamera());
+    add(camera3D!);
+    camera3D?.setFollowEntity(player);
     //add(Player(size: Vector3.all(1)));
 
     super.onLoad();
