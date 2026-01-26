@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble.dart';
+import 'package:mpg_achievements_app/util/utils.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 class SpeechBubbleState extends ConsumerState<SpeechBubble>
@@ -344,7 +345,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       // _componentWidth = widget.component.width;
       // _bubbleCorrectionOffset = Vector2(0, 100);
 
-
       return Stack(
         children: [
           AnimatedPositioned(
@@ -489,14 +489,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   void _updateBubblePosition() {
 
     if (!_isSpeechBubbleVisible || !mounted) return;
-
-    // get Vector3 worldpos
-    final worldPos = widget.component.worldPosition;
-
-    //convert
-
-    //_bubblePosition = widget.game.convertLocalToGlobalCoordinate(worldPos.y,worldPos.y));
-
 
 
   }

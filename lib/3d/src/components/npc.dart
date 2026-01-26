@@ -1,7 +1,8 @@
-import 'package:mpg_achievements_app/3d/src/components/game_character.dart';
+import 'package:mpg_achievements_app/3d/src/components/animated_game_character.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/npc_data.dart';
 
-class Npc extends GameCharacter<NpcData>{
+
+class Npc extends AnimatedGameCharacter<NpcData>{
 
   Npc({
     super.children,
@@ -10,7 +11,7 @@ class Npc extends GameCharacter<NpcData>{
     super.position,
     required super.size,
     super.anchor,
-    super.modelPath = "assets/3D/character.glb",
+    super.modelPath = "assets/3D/small_bee.glb",
     super.name,
   });
 
@@ -19,6 +20,8 @@ class Npc extends GameCharacter<NpcData>{
 
   @override
   void tickClient(double dt) {
+
+    game.getTransformNotifier(entityId).updateTransform(position, newRotY: rotationZ);
     //todo implement
      super.tickClient(dt);
   }

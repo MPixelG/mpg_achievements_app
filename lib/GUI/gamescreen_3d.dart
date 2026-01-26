@@ -1,22 +1,24 @@
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/3d/src/game.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
 import 'package:mpg_achievements_app/main.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 
 
-class GameScreen3d extends StatefulWidget {
+class GameScreen3d extends ConsumerStatefulWidget {
   const GameScreen3d({super.key, required this.title});
   final String title;
 
   @override
-  State<GameScreen3d> createState() => _GameScreen3dState();
+  ConsumerState<GameScreen3d> createState() => _GameScreen3dState();
 }
 
-class _GameScreen3dState extends State<GameScreen3d> with WidgetsBindingObserver{
+class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBindingObserver{
   ThermionViewer? _thermionViewer;
-  PixelAdventure3D get _flameGame => PixelAdventure3D.currentInstance;
+  late PixelAdventure3D _flameGameInstance;
   bool _is3DReady = false;
   bool _isLoading = false;
   bool _isSceneLoaded = false;
@@ -82,7 +84,12 @@ class _GameScreen3dState extends State<GameScreen3d> with WidgetsBindingObserver
       final Vector3 target = Vector3(0,0,0); //Center of level
       final Vector3 standardYUp = Vector3(0, 1, 0);
 
-      _flameGame.setThermionViewer(viewer);
+      final game = PixelAdventure3D(
+        getTransformNotifier: (id) => ref.read(entityTransformProvider(id)),
+      );
+
+      game.setThermionViewer(viewer);
+      _flameGameInstance = game;
 
       //camera settings isometric
       final camera = await viewer.getActiveCamera();
@@ -168,9 +175,9 @@ class _GameScreen3dState extends State<GameScreen3d> with WidgetsBindingObserver
             Positioned.fill(
               child: RiverpodAwareGameWidget<PixelAdventure3D>(
                   key: gameWidgetKey, // Good practice
-                  game: _flameGame,
+                  game: _flameGameInstance,
                   // Your existing Overlay mapping
-                  overlayBuilderMap: _flameGame.buildOverlayMap()
+                  overlayBuilderMap: _flameGameInstance.buildOverlayMap()
               ),
             ),
         ],

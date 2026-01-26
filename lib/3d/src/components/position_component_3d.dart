@@ -83,10 +83,6 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
   set scale(Vector3 newScale) {
     transform.scale.setFrom(newScale);
   }
-  
-  
-  
-  
 
   @override
   Vector3 get position => transform.position;

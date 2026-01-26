@@ -11,6 +11,7 @@ import 'package:mpg_achievements_app/3d/src/components/npc.dart';
 import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/3d/src/level/tiled_level_loader.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
 import 'package:mpg_achievements_app/core/base_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/conversation_management.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
@@ -49,14 +50,19 @@ class PixelAdventure3D extends BaseGame
   //Singleton
   static PixelAdventure3D? _currentInstance;
 
-  static PixelAdventure3D get currentInstance {
-    _currentInstance ??= PixelAdventure3D();
-    return _currentInstance!;
+  static PixelAdventure3D get currentInstance => _currentInstance!;
+
+  PixelAdventure3D({
+    required this.getTransformNotifier
+      }) {
+    //sigleton only set when game was initialised
+    _currentInstance = this;
   }
 
   //Map for entities
   final Map<int, Entity> entityMap = {};
   final Map<String, DialogueCharacter> dCharacterMap = {};
+  final TransformNotifierAccessor getTransformNotifier;
 
   //reference to ThermionViewer
   static late ThermionViewer? _3DGameViewer;
@@ -83,6 +89,7 @@ class PixelAdventure3D extends BaseGame
   //FutureOr works same here either returns a Future or <void>
   @override
   FutureOr<void> onLoad() async {
+
     //Registering factories for different types of entities, they are stored in the _builders-map
     EntityFactory.register('Npc', (Vector3 pos, Vector3 size, String name,
         Map<String, dynamic> props) {
