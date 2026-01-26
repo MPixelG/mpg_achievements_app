@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/3d/src/camera.dart';
+import 'package:mpg_achievements_app/3d/src/camera/camera.dart';
 import 'package:mpg_achievements_app/3d/src/components/animated_game_character.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
 import 'package:mpg_achievements_app/core/controllers/character_controller.dart';

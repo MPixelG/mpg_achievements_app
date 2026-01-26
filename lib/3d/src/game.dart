@@ -6,7 +6,7 @@ import 'package:flame/flame.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image, KeyEvent;
 import 'package:flutter/services.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
-import 'package:mpg_achievements_app/3d/src/camera.dart';
+import 'package:mpg_achievements_app/3d/src/camera/camera.dart';
 import 'package:mpg_achievements_app/3d/src/components/npc.dart';
 import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';

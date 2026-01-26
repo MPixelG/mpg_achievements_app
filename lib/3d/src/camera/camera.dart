@@ -2,102 +2,36 @@ import 'dart:async';
 
 import 'package:flame/components.dart' hide Matrix4, Vector3;
 import 'package:flutter/cupertino.dart';
-import 'package:mpg_achievements_app/core/math/lerping.dart';
+import 'package:mpg_achievements_app/3d/src/camera/movement_modes/base_camera_mode.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 
-import 'components/position_component_3d.dart';
+import '../components/position_component_3d.dart';
 
 class GameCamera extends Component {
   Camera thermionCamera;
   Matrix4 modelMatrix;
   
   CameraFollowable? target;
-  
-  
   CameraRotationAxisMode rotationAxisMode;
-
-  Vector3? initialCameraPosition;
-  Vector3? initialRotation;
   
-  Vector3? targetCameraPosition;
-  Vector3? targetRotation;
-  
-  double initialGivenMoveTime = 0;
-  double initialGivenRotationTime = 0;
-  
-  double moveTimeLeft = 0;
-  double rotationTimeLeft = 0;
-  
-  AnimationStyle? _style;
+  CameraFollowMode? followMode;
   
   GameCamera(this.thermionCamera, {Matrix4? modelMatrix})
       : modelMatrix = modelMatrix ?? Matrix4.identity(),
-        targetCameraPosition = Vector3(0, 2, 5),
-        targetRotation = Vector3(0, 1.5, 0),
         rotationAxisMode = const CameraRotationAxisMode();
-  
-  
-  void moveTo(Vector3 givenPosition, {
-    AnimationStyle? style,
-    double time = 1,
-  }) {
-    initialCameraPosition = position;
-    targetCameraPosition = givenPosition.clone();
-    initialGivenMoveTime = time;
-    moveTimeLeft = initialGivenMoveTime;
-    _style = style ?? _style ?? const AnimationStyle(curve: Curves.easeIn);
-  }
-
-  void moveStep(double dt){
-    if(moveTimeLeft <= 0){
-      moveTimeLeft = 0;
-      if(targetCameraPosition != null) setPosition(targetCameraPosition!);
-      return;
-    }
-    moveTimeLeft -= dt;
-    
-    if(initialCameraPosition == null || targetCameraPosition == null) return;
-    
-    final double progress = 1 - (moveTimeLeft / initialGivenMoveTime).clamp(0, 1);
-    final double lerpedProgress = _style!.curve!.transform(progress);
-    
-    final Vector3 lerpedVector = lerp(initialCameraPosition!, targetCameraPosition!, lerpedProgress);
-    
-    setPosition(lerpedVector);
-  }
-
-  void rotationStep(double dt){
-    if(rotationTimeLeft <= 0){
-      rotationTimeLeft = 0;
-      if(targetRotation != null) {
-        setRotation(
-          x: rotationAxisMode.x ? targetRotation!.x : null,
-          y: rotationAxisMode.y ? targetRotation!.y : null,
-          z: rotationAxisMode.z ? targetRotation!.z : null,
-        );
-      }
-      return;
-    }
-    
-    
-
-    rotationTimeLeft -= dt;
-  }
-  
-  
 
   @override
   Future<void> update(double dt) async {
-    if (target == null) return super.update(dt);
-    moveStep(dt);
-    rotationStep(dt);
+    if (target == null || followMode == null) return super.update(dt);
     
-    if(target != null && (targetCameraPosition == null || targetCameraPosition!.distanceTo(target!.position) > .1)){
-      moveTo(target!.position);
-    }
-    
+    followMode!.step(dt);
     updateMatrix();
+    
     return super.update(dt);
+  }
+  
+  void setFollowMode(CameraFollowMode mode){
+    followMode = mode;
   }
   
   void updateMatrix(){
