@@ -2,7 +2,9 @@ import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dar
 import 'package:mpg_achievements_app/3d/src/components/thermion_asset_container.dart';
 import 'package:mpg_achievements_app/3d/src/renderable3d.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
-abstract class Entity<TState> extends PositionComponent3d with ThermionAssetContainer implements Renderable3d {
+
+import '../camera.dart';
+abstract class Entity<TState> extends PositionComponent3d with ThermionAssetContainer, CameraFollowable implements Renderable3d {
   late TState _state;
   TState get currentState => _state;
   @override

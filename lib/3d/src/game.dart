@@ -121,7 +121,7 @@ class PixelAdventure3D extends BaseGame
     //get Camera
     camera3D = GameCamera(await thermion!.getActiveCamera());
     add(camera3D!);
-    camera3D?.setFollowEntity(player);
+    //camera3D?.setFollowEntity(player as CameraFollowable);
     //add(Player(size: Vector3.all(1)));
 
     super.onLoad();

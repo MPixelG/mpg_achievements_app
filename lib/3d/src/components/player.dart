@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/3d/src/camera.dart';
 import 'package:mpg_achievements_app/3d/src/components/animated_game_character.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
 import 'package:mpg_achievements_app/core/controllers/character_controller.dart';
@@ -110,15 +111,18 @@ class Player extends AnimatedGameCharacter<PlayerData> {
 
     moveInput.normalize();
 
-    final cam = game.camera3D;
-    final double camYaw = getYawFromRotation(cam!.modelMatrix.getRotation());
+    final GameCamera cam = game.camera3D!;
+    final double camYaw = getYawFromRotation(cam.modelMatrix.getRotation());
+
+    game.camera3D!.rotateZ(moveInput.x * movementSpeed);
+    print("rotation: ${cam.modelMatrix.getRotation()}, move input x: ${moveInput.x}");
 
     velocity.x +=
-        (moveInput.x * cos(camYaw) - moveInput.z * sin(camYaw)) *
+        (-moveInput.z * sin(camYaw)) *
             movementSpeed;
 
     velocity.z +=
-        (moveInput.x * sin(camYaw) + moveInput.z * cos(camYaw)) *
+        (moveInput.z * cos(camYaw)) *
             movementSpeed;
 
     moveInput.setZero();

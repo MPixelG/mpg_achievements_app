@@ -8,7 +8,7 @@ import 'package:vector_math/vector_math_64.dart';
 
 abstract class GameCharacter<TState> extends Entity<TState> implements DialogueCharacter{
   Vector3 velocity = Vector3.zero();
-  static const double deceleration = 0.1; 
+  static const double deceleration = 0.001; 
   
   GameCharacter({
     super.children,

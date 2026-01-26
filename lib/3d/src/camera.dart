@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flame/components.dart' hide Matrix4, Vector3;
+import 'package:flutter/cupertino.dart';
+import 'package:mpg_achievements_app/core/math/lerping.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 
 import 'components/position_component_3d.dart';
@@ -9,133 +10,105 @@ import 'components/position_component_3d.dart';
 class GameCamera extends Component {
   Camera thermionCamera;
   Matrix4 modelMatrix;
-  ReadOnlyPosition3DProvider? positionProvider;
-  double cameraDistance = 5.0;
-  double cameraHeight = 2.0;
-  double lookAtHeight = 1.5;
+  
+  CameraFollowable? target;
+  
+  
+  CameraRotationAxisMode rotationAxisMode;
 
-  double positionLerpSpeed = 5.0;
-  double rotationLerpSpeed = 8.0;
-  double minMovementThreshold = 0.05;
-
-  Vector3 currentPosition;
-  Vector3 currentLookAt;
-  Vector3 targetCameraPosition;
-  Vector3 targetLookAtPosition;
-
-  Vector3? lastTargetPosition;
-  Vector3? smoothedTargetDirection;
-
+  Vector3? initialCameraPosition;
+  Vector3? initialRotation;
+  
+  Vector3? targetCameraPosition;
+  Vector3? targetRotation;
+  
+  double initialGivenMoveTime = 0;
+  double initialGivenRotationTime = 0;
+  
+  double moveTimeLeft = 0;
+  double rotationTimeLeft = 0;
+  
+  AnimationStyle? _style;
+  
   GameCamera(this.thermionCamera, {Matrix4? modelMatrix})
       : modelMatrix = modelMatrix ?? Matrix4.identity(),
-        currentPosition = Vector3(0, 2, 5),
-        currentLookAt = Vector3(0, 1.5, 0),
         targetCameraPosition = Vector3(0, 2, 5),
-        targetLookAtPosition = Vector3(0, 1.5, 0);
+        targetRotation = Vector3(0, 1.5, 0),
+        rotationAxisMode = const CameraRotationAxisMode();
+  
+  
+  void moveTo(Vector3 givenPosition, {
+    AnimationStyle? style,
+    double time = 1,
+  }) {
+    initialCameraPosition = position;
+    targetCameraPosition = givenPosition.clone();
+    initialGivenMoveTime = time;
+    moveTimeLeft = initialGivenMoveTime;
+    _style = style ?? _style ?? const AnimationStyle(curve: Curves.easeIn);
+  }
+
+  void moveStep(double dt){
+    if(moveTimeLeft <= 0){
+      moveTimeLeft = 0;
+      if(targetCameraPosition != null) setPosition(targetCameraPosition!);
+      return;
+    }
+    moveTimeLeft -= dt;
+    
+    if(initialCameraPosition == null || targetCameraPosition == null) return;
+    
+    final double progress = 1 - (moveTimeLeft / initialGivenMoveTime).clamp(0, 1);
+    final double lerpedProgress = _style!.curve!.transform(progress);
+    
+    final Vector3 lerpedVector = lerp(initialCameraPosition!, targetCameraPosition!, lerpedProgress);
+    
+    setPosition(lerpedVector);
+  }
+
+  void rotationStep(double dt){
+    if(rotationTimeLeft <= 0){
+      rotationTimeLeft = 0;
+      if(targetRotation != null) {
+        setRotation(
+          x: rotationAxisMode.x ? targetRotation!.x : null,
+          y: rotationAxisMode.y ? targetRotation!.y : null,
+          z: rotationAxisMode.z ? targetRotation!.z : null,
+        );
+      }
+      return;
+    }
+    
+    
+
+    rotationTimeLeft -= dt;
+  }
+  
+  
 
   @override
   Future<void> update(double dt) async {
-    if (positionProvider == null) return super.update(dt);
-
-    final Vector3 targetEntityPosition = positionProvider!.position;
-
-    Vector3? movementDirection;
-    if (lastTargetPosition != null) {
-      movementDirection = targetEntityPosition - lastTargetPosition!;
-
-      if (movementDirection.length < minMovementThreshold) {
-        movementDirection = null;
-      }
+    if (target == null) return super.update(dt);
+    moveStep(dt);
+    rotationStep(dt);
+    
+    if(target != null && (targetCameraPosition == null || targetCameraPosition!.distanceTo(target!.position) > .1)){
+      moveTo(target!.position);
     }
-
-    Vector3 cameraDirection;
-    if (movementDirection != null && movementDirection.length > 0) {
-      final Vector3 newDirection = movementDirection.clone()..normalize();
-
-      if (smoothedTargetDirection != null) {
-        smoothedTargetDirection = _slerpVectors(
-          smoothedTargetDirection!,
-          newDirection,
-          dt * rotationLerpSpeed,
-        );
-      } else {
-        smoothedTargetDirection = newDirection;
-      }
-
-      cameraDirection = smoothedTargetDirection!;
-    } else if (smoothedTargetDirection != null) {
-      cameraDirection = smoothedTargetDirection!;
-    } else {
-      cameraDirection = Vector3(0, 0, -1);
-    }
-
-    targetLookAtPosition = targetEntityPosition + Vector3(0, lookAtHeight, 0);
-    targetCameraPosition = targetEntityPosition -
-        (cameraDirection * cameraDistance) +
-        Vector3(0, cameraHeight, 0);
-
-    currentLookAt = _lerpVector3(
-      currentLookAt,
-      targetLookAtPosition,
-      dt * positionLerpSpeed,
-    );
-
-    currentPosition = _lerpVector3(
-      currentPosition,
-      targetCameraPosition,
-      dt * positionLerpSpeed,
-    );
-
-    lookAt(currentPosition, currentLookAt);
-
+    
+    updateMatrix();
+    return super.update(dt);
+  }
+  
+  void updateMatrix(){
     if (matrixUpdated) {
       thermionCamera.setTransform(modelMatrix);
       matrixUpdated = false;
     }
-
-    lastTargetPosition = targetEntityPosition.clone();
-    return super.update(dt);
   }
 
-  Vector3 _lerpVector3(Vector3 start, Vector3 end, double t) {
-    t = t.clamp(0.0, 1.0);
-    return start + (end - start) * t;
-  }
-
-  Vector3 _slerpVectors(Vector3 start, Vector3 end, double t) {
-    t = t.clamp(0.0, 1.0);
-
-    final double dot = start.dot(end).clamp(-1.0, 1.0);
-    final double theta = math.acos(dot) * t;
-
-    if (theta.abs() < 0.001) {
-      return _lerpVector3(start, end, t);
-    }
-
-    final Vector3 relative = (end - start * dot)..normalize();
-    return (start * math.cos(theta)) + (relative * math.sin(theta));
-  }
-
-  void setFollowEntity([ReadOnlyPosition3DProvider? provider]) {
-    positionProvider = provider;
-    if (provider != null) {
-      lastTargetPosition = null;
-      smoothedTargetDirection = null;
-    }
-  }
-
-  void setCameraSettings({
-    double? distance,
-    double? height,
-    double? lookAtHeight,
-    double? positionSmoothing,
-    double? rotationSmoothing,
-  }) {
-    if (distance != null) cameraDistance = distance;
-    if (height != null) cameraHeight = height;
-    if (lookAtHeight != null) this.lookAtHeight = lookAtHeight;
-    if (positionSmoothing != null) positionLerpSpeed = positionSmoothing;
-    if (rotationSmoothing != null) rotationLerpSpeed = rotationSmoothing;
+  void setFollowEntity([CameraFollowable? provider]) {
+    target = provider;
   }
 
   void setRotation({double? x, double? y, double? z}) {
@@ -154,11 +127,18 @@ class GameCamera extends Component {
     modelMatrix.setRotation(rotationMatrix.getRotation());
     onMatrixUpdate();
   }
+  
+  void rotateZ(double val) {
+    modelMatrix.rotateZ(val);
+    onMatrixUpdate();
+  }
 
   void setPosition(Vector3 position) {
     modelMatrix.setTranslation(position);
     onMatrixUpdate();
   }
+  
+  Vector3 get position => modelMatrix.getTranslation();
 
   bool matrixUpdated = false;
   void onMatrixUpdate() {
@@ -203,3 +183,13 @@ class GameCamera extends Component {
     onMatrixUpdate();
   }
 }
+
+@immutable
+class CameraRotationAxisMode {
+  final bool x;
+  final bool y;
+  final bool z;
+  const CameraRotationAxisMode({this.x = false, this.y = false, this.z = true});
+}
+
+mixin CameraFollowable on ReadOnlyPosition3DProvider, ReadOnlyRotation3DProvider{}
