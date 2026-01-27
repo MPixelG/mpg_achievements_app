@@ -107,7 +107,7 @@ class Player extends AnimatedGameCharacter<PlayerData> {
         ),
       });
 
-
+  static const double cameraMoveSpeed = 0.03;
   void applyCameraRelativeMovement() {
     if (moveInput.length2 == 0) return;
 
@@ -117,7 +117,7 @@ class Player extends AnimatedGameCharacter<PlayerData> {
     final double camYaw = getYawFromRotation(cam.modelMatrix.getRotation());
 
     //game.camera3D!.rotateZ(moveInput.x * movementSpeed);
-    rotationZ += moveInput.x * movementSpeed;
+    rotationZ += moveInput.x * cameraMoveSpeed;
 
     velocity.x +=
         (-moveInput.z * sin(camYaw)) *

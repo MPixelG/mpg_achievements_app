@@ -132,9 +132,6 @@ class PixelAdventure3D extends BaseGame
     add(camera3D!);
 
     final followMode = LockedFollowMode(camera3D!);
-    followMode.distance = 5.0;
-    followMode.height = 2.0;
-    followMode.rotationSpeed = 3.0;
     camera3D!.setFollowMode(followMode);
     camera3D!.setFollowEntity(player);
     

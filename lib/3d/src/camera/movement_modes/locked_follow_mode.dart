@@ -13,8 +13,9 @@ class LockedFollowMode extends CameraFollowMode {
 
   double xRotation = -0.3;
   double targetXRotation = -0.3;
-
-  double rotationSpeed = 5.0;
+  
+  double currentRotationSpeedX = 0;
+  double currentRotationSpeedY = 0;
 
   double height = 2.0;
 
@@ -31,7 +32,7 @@ class LockedFollowMode extends CameraFollowMode {
     currentTargetedPos = target!.position;
 
     if (followTargetRotation && target != null) {
-      targetXRotation = -target!.rotationZ + 0.5;
+      targetXRotation = -target!.rotationZ - radians(90);
     }
 
     if ((targetYRotation - yRotation).abs() > 0.001) {
@@ -43,23 +44,15 @@ class LockedFollowMode extends CameraFollowMode {
         rotationDelta += 2 * math.pi;
       }
 
-      final double maxRotation = rotationSpeed * dt;
-      if (rotationDelta.abs() < maxRotation) {
-        yRotation = targetYRotation;
-      } else {
-        yRotation += rotationDelta.sign * maxRotation;
-      }
+      currentRotationSpeedY = (rotationDelta / 1.05) * dt;
+      yRotation += currentRotationSpeedY;
     }
 
     if ((targetXRotation - xRotation).abs() > 0.001) {
       final double rotationDelta = targetXRotation - xRotation;
 
-      final double maxRotation = rotationSpeed * dt;
-      if (rotationDelta.abs() < maxRotation) {
-        xRotation = targetXRotation;
-      } else {
-        xRotation += rotationDelta.sign * maxRotation;
-      }
+      currentRotationSpeedX = (rotationDelta * 1.5) * dt;
+      xRotation += currentRotationSpeedX;
     }
 
     updateCameraPosition();
@@ -73,8 +66,8 @@ class LockedFollowMode extends CameraFollowMode {
     final double horizontalDistance = distance * math.cos(xRotation);
 
     final double x = horizontalDistance * math.cos(yRotation);
-    final double y = horizontalDistance * math.sin(yRotation);
-    final double z = distance * math.sin(xRotation) + height;
+    final double y = horizontalDistance * math.sin(yRotation) + height;
+    final double z = distance * math.sin(xRotation);
  
     final Vector3 offset = Vector3(x, y, z);
     final Vector3 cameraPos = targetPos + offset;
