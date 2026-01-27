@@ -21,7 +21,7 @@ class SlidingCameraMode extends CameraFollowMode {
   SlidingCameraMode(super.camera);
   
   @override
-  void moveTo(Vector3 givenPosition, double time, {AnimationStyle? style}) {
+  void moveTo(Vector3 givenPosition, {double time = 1, AnimationStyle? style}) {
     initialCameraPosition = position;
     targetCameraPosition = givenPosition.clone();
     initialGivenMoveTime = time;
@@ -30,7 +30,7 @@ class SlidingCameraMode extends CameraFollowMode {
   }
 
   @override
-  void rotateTo(Vector3 givenRotation, double time, {AnimationStyle? style}) {
+  void rotateTo(Vector3 givenRotation, {double time = 1, AnimationStyle? style}) {
     //todo
   }
 
@@ -39,7 +39,7 @@ class SlidingCameraMode extends CameraFollowMode {
     moveStep(dt);
     rotationStep(dt);
     if(target != null && (targetCameraPosition == null || targetCameraPosition!.distanceTo(target!.position) > .1)){
-      moveTo(target!.position, 1);
+      moveTo(target!.position, time: 1);
     }
   }
   

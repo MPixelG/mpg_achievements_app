@@ -5,8 +5,6 @@ import 'package:vector_math/vector_math_64.dart';
 
 abstract class CameraFollowMode {
   GameCamera camera;
-  void moveTo(Vector3 pos, double time);
-  void rotateTo(Vector3 rotation, double time);
   void step(double dt);
   CameraFollowMode(this.camera);
 

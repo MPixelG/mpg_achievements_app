@@ -14,9 +14,9 @@ typedef TransformNotifierAccessor = EntityTransformNotifier Function(int? entity
 class EntityTransformNotifier extends ChangeNotifier {
   //track position and rotation
   final Vector3 position = Vector3.zero();
-  double rotationY = 0;
+  double rotationZ = 0;
 
-  void updateTransform(Vector3 newPos, {double? newRotY}) {
+  void updateTransform(Vector3 newPos, {double? newRotZ}) {
     bool hasChanged = false;
 
     // position check if there is a new postion, then update
@@ -26,8 +26,8 @@ class EntityTransformNotifier extends ChangeNotifier {
     }
 
     // rotation check
-    if (newRotY != null && (rotationY - newRotY).abs() > 0.01) {
-      rotationY = newRotY;
+    if (newRotZ != null && (rotationZ - newRotZ).abs() > 0.01) {
+      rotationZ = newRotZ;
       hasChanged = true;
     }
 

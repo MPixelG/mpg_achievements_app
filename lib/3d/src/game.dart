@@ -7,6 +7,7 @@ import 'package:flutter/material.dart' hide AnimationStyle, Image, KeyEvent;
 import 'package:flutter/services.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:mpg_achievements_app/3d/src/camera/camera.dart';
+import 'package:mpg_achievements_app/3d/src/camera/movement_modes/locked_follow_mode.dart';
 import 'package:mpg_achievements_app/3d/src/components/npc.dart';
 import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
@@ -126,9 +127,17 @@ class PixelAdventure3D extends BaseGame
 
     await _trySpawnTest();
     //get Camera
-    camera3D = GameCamera(await thermion!.getActiveCamera());
+    camera3D = GameCamera<LockedFollowMode>(await thermion!.getActiveCamera());
+    camera3D!.setPosition(Vector3(0, 2, 0));
     add(camera3D!);
-    //camera3D?.setFollowEntity(player as CameraFollowable);
+
+    final followMode = LockedFollowMode(camera3D!);
+    followMode.distance = 5.0;
+    followMode.height = 2.0;
+    followMode.rotationSpeed = 3.0;
+    camera3D!.setFollowMode(followMode);
+    camera3D!.setFollowEntity(player);
+    
     //add(Player(size: Vector3.all(1)));
 
     super.onLoad();

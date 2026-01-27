@@ -1,21 +1,21 @@
 import 'dart:async';
 
-import 'package:flame/components.dart' hide Matrix4, Vector3;
+import 'package:flame/components.dart' hide Matrix4, Vector3, Matrix3;
 import 'package:flutter/cupertino.dart';
 import 'package:mpg_achievements_app/3d/src/camera/movement_modes/base_camera_mode.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 
 import '../components/position_component_3d.dart';
 
-class GameCamera extends Component {
+class GameCamera<FollowMode extends CameraFollowMode> extends Component {
   Camera thermionCamera;
   Matrix4 modelMatrix;
-  
+
   CameraFollowable? target;
   CameraRotationAxisMode rotationAxisMode;
-  
-  CameraFollowMode? followMode;
-  
+
+  FollowMode? followMode;
+
   GameCamera(this.thermionCamera, {Matrix4? modelMatrix})
       : modelMatrix = modelMatrix ?? Matrix4.identity(),
         rotationAxisMode = const CameraRotationAxisMode();
@@ -23,17 +23,18 @@ class GameCamera extends Component {
   @override
   Future<void> update(double dt) async {
     if (target == null || followMode == null) return super.update(dt);
-    
-    followMode!.step(dt);
     updateMatrix();
-    
+
+    followMode!.step(dt);
+
+    updateMatrix();
     return super.update(dt);
   }
-  
-  void setFollowMode(CameraFollowMode mode){
+
+  void setFollowMode(FollowMode mode){
     followMode = mode;
   }
-  
+
   void updateMatrix(){
     if (matrixUpdated) {
       thermionCamera.setTransform(modelMatrix);
@@ -61,29 +62,25 @@ class GameCamera extends Component {
     modelMatrix.setRotation(rotationMatrix.getRotation());
     onMatrixUpdate();
   }
-  
-  void rotateZ(double val) {
-    modelMatrix.rotateZ(val);
-    onMatrixUpdate();
-  }
 
   void setPosition(Vector3 position) {
     modelMatrix.setTranslation(position);
     onMatrixUpdate();
   }
-  
+
   Vector3 get position => modelMatrix.getTranslation();
 
   bool matrixUpdated = false;
   void onMatrixUpdate() {
     matrixUpdated = true;
   }
-
+  
   void lookAt(
       Vector3 position,
       Vector3 target, {
         Vector3? up,
         double? distance,
+        bool preserveZRotation = true,
       }) {
     up ??= Vector3(0, 1, 0);
 
@@ -126,4 +123,4 @@ class CameraRotationAxisMode {
   const CameraRotationAxisMode({this.x = false, this.y = false, this.z = true});
 }
 
-mixin CameraFollowable on ReadOnlyPosition3DProvider, ReadOnlyRotation3DProvider{}
+mixin CameraFollowable on ReadOnlyPosition3DProvider, ReadOnlyRotation3DProvider {}

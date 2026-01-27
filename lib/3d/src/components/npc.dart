@@ -21,7 +21,7 @@ class Npc extends AnimatedGameCharacter<NpcData>{
   @override
   void tickClient(double dt) {
 
-    game.getTransformNotifier(entityId).updateTransform(position, newRotY: rotationZ);
+    game.getTransformNotifier(entityId).updateTransform(position, newRotZ: rotationZ);
     //todo implement
      super.tickClient(dt);
   }

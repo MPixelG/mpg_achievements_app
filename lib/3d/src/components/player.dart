@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/3d/src/camera/camera.dart';
 import 'package:mpg_achievements_app/3d/src/components/animated_game_character.dart';
-import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
 import 'package:mpg_achievements_app/core/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/core/controllers/control_action_bundle.dart';
@@ -35,9 +34,10 @@ class Player extends AnimatedGameCharacter<PlayerData> {
   //then the entity class calls it's own tickClient()-method which updates the position of the player
   @override
   void tickClient(double dt) {
-    game.getTransformNotifier(entityId).updateTransform(position, newRotY: rotationZ);
+    game.getTransformNotifier(entityId).updateTransform(position, newRotZ: rotationZ);
     applyCameraRelativeMovement();
-    updateDirection();
+    //updateDirection();
+    print("direction: $rotationZ");
     
     
     //rotationZ = atan2(vz, vx) + pi / 2; // oder -pi/2
@@ -116,8 +116,8 @@ class Player extends AnimatedGameCharacter<PlayerData> {
     final GameCamera cam = game.camera3D!;
     final double camYaw = getYawFromRotation(cam.modelMatrix.getRotation());
 
-    game.camera3D!.rotateZ(moveInput.x * movementSpeed);
-    print("rotation: ${cam.modelMatrix.getRotation()}, move input x: ${moveInput.x}");
+    //game.camera3D!.rotateZ(moveInput.x * movementSpeed);
+    rotationZ += moveInput.x * movementSpeed;
 
     velocity.x +=
         (-moveInput.z * sin(camYaw)) *
