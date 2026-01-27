@@ -35,10 +35,8 @@ class Player extends AnimatedGameCharacter<PlayerData> {
   @override
   void tickClient(double dt) {
     game.getTransformNotifier(entityId).updateTransform(position, newRotZ: rotationZ);
-    applyCameraRelativeMovement();
+    applyCameraRelativeMovement(dt);
     //updateDirection();
-    print("direction: $rotationZ");
-    
     
     //rotationZ = atan2(vz, vx) + pi / 2; // oder -pi/2
     super.tickClient(dt);
@@ -108,26 +106,26 @@ class Player extends AnimatedGameCharacter<PlayerData> {
       });
 
   static const double cameraMoveSpeed = 0.03;
-  void applyCameraRelativeMovement() {
+  void applyCameraRelativeMovement(double dt) {
     if (moveInput.length2 == 0) return;
 
-    moveInput.normalize();
+    //moveInput.normalize();
 
     final GameCamera cam = game.camera3D!;
     final double camYaw = getYawFromRotation(cam.modelMatrix.getRotation());
-
-    //game.camera3D!.rotateZ(moveInput.x * movementSpeed);
+    print("$rotationZ cam: $camYaw, move: $moveInput"); 
+    
     rotationZ += moveInput.x * cameraMoveSpeed;
 
     velocity.x +=
-        (-moveInput.z * sin(camYaw)) *
+        (-moveInput.z * sin(-rotationZ)) *
             movementSpeed;
 
     velocity.z +=
-        (moveInput.z * cos(camYaw)) *
+        (moveInput.z * cos(-rotationZ)) *
             movementSpeed;
 
-    moveInput.setZero();
+    //moveInput.scale(pow(1.1, dt).toDouble()); // epilepsy warning
   }
 
   double getYawFromRotation(Matrix3 r) {

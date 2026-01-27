@@ -51,7 +51,7 @@ class LockedFollowMode extends CameraFollowMode {
     if ((targetXRotation - xRotation).abs() > 0.001) {
       final double rotationDelta = targetXRotation - xRotation;
 
-      currentRotationSpeedX = (rotationDelta * 1.5) * dt;
+      currentRotationSpeedX = (rotationDelta * 2) * dt;
       xRotation += currentRotationSpeedX;
     }
 
