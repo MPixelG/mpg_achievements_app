@@ -13,7 +13,8 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late Vector2 _bubblePosition = Vector2.zero();
   late double _componentHeight;
   late double _componentWidth;
-  final Vector2 _bubbleCorrectionOffset = Vector2(40, 40);
+  //final Vector2 _bubbleCorrectionOffset = Vector2(40, 40);
+  int currentChangeCounter = -1;
 
   // Scroll Controller für Autoscroll
   late ScrollController _scrollController;
@@ -33,6 +34,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   async.Timer? _typingTimer;
   async.Timer? _dismissTimer;
   late final Ticker _ticker;
+
 
   //Configuration of Widget and Animations
   //Duration between character appearing and text displaying
@@ -344,7 +346,15 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     final providerId = widget.component.entityId;
     final notifier = ref.read(entityTransformProvider(providerId));
 
-    //Ask the ganme to convert the position
+    //if there is no change in postion return
+    if (currentChangeCounter == notifier.changeCount) {
+      return
+      ;
+    }
+
+    currentChangeCounter = notifier.changeCount;
+
+    //Ask the game to convert the position
     final Vector3? screenPos = (await widget.game.calculateBubblePosition(
         notifier.position));
 
@@ -376,7 +386,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
           AnimatedPositioned(
             duration: const Duration(milliseconds: 100),
             left: _bubblePosition.x,
-            top: _bubblePosition.y - _bubbleCorrectionOffset.y,
+            top: _bubblePosition.y,
             // (-0.5) shifts it left by 50% of its own width (Centers it)
             // (-1.0) shifts it up by 100% of its own height (Sits on top
             child: FractionalTranslation(

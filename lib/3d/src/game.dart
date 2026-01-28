@@ -50,9 +50,7 @@ class PixelAdventure3D extends BaseGame
 
   //Singleton
   static PixelAdventure3D? _currentInstance;
-
   static PixelAdventure3D get currentInstance => _currentInstance!;
-
   PixelAdventure3D({
     required this.getTransformNotifier
       }) {
@@ -63,7 +61,7 @@ class PixelAdventure3D extends BaseGame
   //Map for entities
   final Map<int, Entity> entityMap = {};
   final Map<String, DialogueCharacter> dCharacterMap = {};
-  final TransformNotifierAccessor getTransformNotifier;
+
 
   //reference to ThermionViewer
   static late ThermionViewer? _3DGameViewer;
@@ -76,6 +74,8 @@ class PixelAdventure3D extends BaseGame
 
   //Managers and stuff for speechBubble
   late final ConversationManager conversationManager;
+  final TransformNotifierAccessor getTransformNotifier;
+  late final bool bubblePositionChanged = false;
 
   //level attributes
   TiledLevel? _levelData;
@@ -125,6 +125,7 @@ class PixelAdventure3D extends BaseGame
     setSkybox("assets/3D/default_env_skybox.ktx");
 
     await _trySpawnTest();
+
     //get Camera
     camera3D = GameCamera<LockedFollowMode>(await thermion!.getActiveCamera());
     camera3D!.setPosition(Vector3(0, 2, 0));
@@ -133,8 +134,6 @@ class PixelAdventure3D extends BaseGame
     final followMode = LockedFollowMode(camera3D!);
     camera3D!.setFollowMode(followMode);
     camera3D!.setFollowEntity(player);
-    
-    //add(Player(size: Vector3.all(1)));
 
     super.onLoad();
   }
@@ -147,42 +146,14 @@ class PixelAdventure3D extends BaseGame
   }
 
 
-//todo implement more here, at the moment only placeholder
   @override
   void update(double dt) {
     super.update(dt);
     if (_3DGameViewer == null) return;
-
     //Joystick Y (Up/Down) to 3D Y (Up/Down)
     //Joystick X (Left/Right) to 3D X (Left/Right)
-
     if (currentJoystickMoveX == 0 && currentJoystickMoveY == 0) return;
-
-    const moveSpeed = 5.0; // Meters per second
-
-
-   /*
-    //1 Update our local position state
-    .x += currentJoystickMoveX * moveSpeed * dt;
-    helmetPosition.y += -currentJoystickMoveY * moveSpeed * dt; // -Y is usually down in 2D, check directions
-
-    // 2create empty matrix
-    final matrix = Matrix4.identity();
-    //3set position
-    matrix.setTranslation(PixelAdventure3D.currentInstance.);
-        .setTransform(entityID, matrix);
-    //low-level FilamentApp is necessary because TViewer is only viewer
-    final int entityID = (helmetAsset as dynamic).entity;
-    FilamentApp.instance?*/
-
-    //todo 5 Thermion, later in bridge class
-
-    // Example: Rotate the camera every frame if the viewer is ready
-    // if (_thermionViewer != null) {
-    //    // game logic here
-    // }
   }
-
   double currentJoystickMoveX = 0;
   double currentJoystickMoveY = 0;
 
