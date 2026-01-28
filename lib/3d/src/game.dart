@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flame/camera.dart';
 import 'package:flame/events.dart' hide PointerMoveEvent;
 import 'package:flame/flame.dart';
@@ -21,11 +20,12 @@ import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/core/touch_controls/touch_controls.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/has_collision_detection.dart';
-import 'package:thermion_flutter/thermion_flutter.dart' hide KeyEvent;
+import 'package:mpg_achievements_app/util/utils.dart';
+import 'package:thermion_flutter/thermion_flutter.dart' hide KeyEvent, Vector3;
 import 'package:xml/xml.dart';
-
 import 'components/entity.dart';
 import 'level/tiled_level.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 
 //DragCallbacks are imported for touch controls
@@ -36,7 +36,7 @@ class PixelAdventure3D extends BaseGame
         HasCollisionDetection3D,
         ScrollDetector,
         DialogueContainingGame {
-  
+
   @override
   @Deprecated("This camera is only for 2D!")
   CameraComponent get camera;
@@ -44,7 +44,7 @@ class PixelAdventure3D extends BaseGame
   @override
   @Deprecated("This camera is only for 2D!")
   set camera(CameraComponent newCamera);
-  
+
   late Player player;
 
 
@@ -76,7 +76,6 @@ class PixelAdventure3D extends BaseGame
 
   //Managers and stuff for speechBubble
   late final ConversationManager conversationManager;
-  final ValueNotifier<Offset?> speechBubblePos = ValueNotifier(null);
 
   //level attributes
   TiledLevel? _levelData;
@@ -294,6 +293,14 @@ class PixelAdventure3D extends BaseGame
       dCharacterMap[entity.name!] = entity as DialogueCharacter;
       print(dCharacterMap.keys);
     }
+  }
+  @override
+  Future<Vector3?> calculateBubblePosition(Vector3? position) async {
+    final size = Size(this.size.x, this.size.y);
+   final Vector3? bubblePosition =  worldToScreen(worldPosition: position!, viewMatrix: await camera3D!.thermionCamera.getViewMatrix(), projectionMatrix:await camera3D!.thermionCamera.getProjectionMatrix(), screenSize: size);
+
+  return bubblePosition;
+
   }
 
   @override

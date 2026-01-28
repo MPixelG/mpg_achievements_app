@@ -214,6 +214,12 @@ class PixelAdventure extends BaseGame
     ),
   };
 
+  @override
+  Future<v64.Vector3?> calculateBubblePosition(v64.Vector3? position) {
+    // TODO: implement calculateBubblePosition
+    throw UnimplementedError();
+  }
+
 }
 
 fe.Vector3 get tilesize =>

@@ -100,6 +100,7 @@ class ConversationManager with DialogueView {
     final String characterName = line.character?.name ?? 'Character';
     print("Speaking character:'$characterName'");    
     final DialogueCharacter? character = game.findCharacterByName(characterName);
+    final characterId = character!.entityId;
     print('found character:$character');
 
     if (character == null) {

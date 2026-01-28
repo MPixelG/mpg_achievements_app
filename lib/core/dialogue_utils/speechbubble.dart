@@ -8,7 +8,7 @@ import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble_engine.dar
 class SpeechBubble extends ConsumerStatefulWidget {
   //text to display and position
   final bool isRapidText;
-  final DialogueCharacter component; //more generic
+  final DialogueCharacter component;//more generic
   final String text;
   final DialogueContainingGame game;
   final DialogueChoice? choices;

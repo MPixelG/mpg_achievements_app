@@ -205,7 +205,7 @@ Future<File> saveImage(ui.Image image, String filename) async {
 
 /// Konvertiert eine 3D-Position im Weltraum in ein 2D Screen-Offset.
 /// Gibt null zurück, wenn der Punkt hinter der Kamera liegt.
-ui.Offset? worldToScreen({
+Vector3? worldToScreen({
   required Vector3 worldPosition,
   required Matrix4 viewMatrix,
   required Matrix4 projectionMatrix,
@@ -223,8 +223,7 @@ ui.Offset? worldToScreen({
   if (clipSpacePos.w <= 0) {
     return null;
   }
-
-  /*The Principle: To create perspective (making distant objects appear smaller),
+   /*The Principle: To create perspective (making distant objects appear smaller),
   we divide the x and y coordinates by the depth ($w$).A tree at $x=100$ in the far distance (large $w$) is divided by a large number
   -> the resulting $x$ is small.A tree at $x=100$ right in front of you (small $w$) is divided by a small number
   -> the resulting $x$ remains large.The Result (NDC): After this division, all visible points lie within a cube ranging from -1.0 to +1.0.
@@ -239,8 +238,9 @@ ui.Offset? worldToScreen({
   // Y needs to be inverted,because in Flutter (0,0) is up left
   final double screenX = (ndc.x + 1.0) / 2.0 * screenSize.width;
   final double screenY = (1.0 - ndc.y) / 2.0 * screenSize.height;
+  final double z = worldPosition.z;
 
-  return ui.Offset(screenX, screenY);
+  return Vector3(screenX, screenY, z);
 }
 
 //Check OS for Joystick support

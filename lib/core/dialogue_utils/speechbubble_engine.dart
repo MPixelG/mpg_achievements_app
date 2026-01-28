@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble.dart';
-import 'package:mpg_achievements_app/util/utils.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 class SpeechBubbleState extends ConsumerState<SpeechBubble>
@@ -13,7 +13,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late Vector2 _bubblePosition;
   late double _componentHeight;
   late double _componentWidth;
-  final Vector2 _bubbleCorrectionOffset = Vector2(40,40);
+  final Vector2 _bubbleCorrectionOffset = Vector2(40, 40);
 
   // Scroll Controller für Autoscroll
   late ScrollController _scrollController;
@@ -40,9 +40,9 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late final Duration showDuration = const Duration(seconds: 30);
   late final Duration dismissDuration = const Duration(seconds: 1);
   bool _autoDismiss =
-      true; // Automatically dismiss the speech bubble after a certain duration
+  true; // Automatically dismiss the speech bubble after a certain duration
   bool autoStart =
-      true; // Automatically start the speech bubble animation when the widget is built
+  true; // Automatically start the speech bubble animation when the widget is built
 
   //styling
   late final Color textColor = Colors.black;
@@ -333,6 +333,26 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     }
   }
 
+  void _updateBubblePosition() async {
+    if (!_isSpeechBubbleVisible || !mounted) return;
+
+    //Get 3D World Position from Riverpod (Source of Truth)
+    final providerId = widget.component.entityId;
+    final notifier = ref.read(entityTransformProvider(providerId));
+
+    //Ask the GAME to convert it (Separation of Concerns)
+    final Vector3? screenPos = (await widget.game.calculateBubblePosition(
+        notifier.position));
+
+    if (!mounted) return;
+
+    // 3. Update UI
+    setState(() {
+      _bubblePosition = screenPos!.xy;
+    });
+  }
+
+
   // UI Building
   @override
   Widget build(BuildContext context) {
@@ -369,9 +389,9 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
                           // Wrapper für die Breiten-Anpassung
                           _fixedBubbleWidth != null
                               ? SizedBox(
-                                  width: _fixedBubbleWidth,
-                                  child: _buildBubbleContent(),
-                                )
+                            width: _fixedBubbleWidth,
+                            child: _buildBubbleContent(),
+                          )
                               : _buildBubbleContent(),
 
                           // Tail (Sprechblase-Pfeil)
@@ -421,77 +441,72 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   }
 
   // Hilfsmethode für den Bubble-Inhalt
-  Widget _buildBubbleContent() => Container(
-    constraints: const BoxConstraints(maxWidth: 400, minWidth: 100),
-    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12.0),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withAlpha(128),
-          blurRadius: 10,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.text.isNotEmpty || _displayedText.isNotEmpty)
-          ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: maxScrollableHeight),
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: Text(
-                _displayedText,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontFamily: 'gameFont',
-                  height: 1.4,
-                ),
-              ),
+  Widget _buildBubbleContent() =>
+      Container(
+        constraints: const BoxConstraints(maxWidth: 400, minWidth: 100),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(128),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
             ),
-          ),
-
-        // Choices (falls vorhanden)
-        if (_isChoiceBubble) ...[
-          const SizedBox(height: 12.0),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: widget.choices!.options.map((option) {
-              final optionIndex = widget.choices!.options.indexOf(option);
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2.0),
-                child: ElevatedButton(
-                  onPressed: option.isAvailable
-                      ? () => widget.onChoiceSelected?.call(optionIndex)
-                      : null,
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (widget.text.isNotEmpty || _displayedText.isNotEmpty)
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: maxScrollableHeight),
+                child: SingleChildScrollView(
+                  controller: _scrollController,
                   child: Text(
-                    option.text,
+                    _displayedText,
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 14,
                       fontFamily: 'gameFont',
+                      height: 1.4,
                     ),
                   ),
                 ),
-              );
-            }).toList(),
-          ),
-        ],
-      ],
-    ),
-  );
+              ),
 
-  void _updateBubblePosition() {
+            // Choices (falls vorhanden)
+            if (_isChoiceBubble) ...[
+              const SizedBox(height: 12.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: widget.choices!.options.map((option) {
+                  final optionIndex = widget.choices!.options.indexOf(option);
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2.0),
+                    child: ElevatedButton(
+                      onPressed: option.isAvailable
+                          ? () => widget.onChoiceSelected?.call(optionIndex)
+                          : null,
+                      child: Text(
+                        option.text,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontFamily: 'gameFont',
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ],
+        ),
+      );
 
-    if (!_isSpeechBubbleVisible || !mounted) return;
-
-
-  }
 }
 
 //Tail Widget for Speech Bubble

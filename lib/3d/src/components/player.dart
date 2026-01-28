@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/3d/src/camera/camera.dart';
 import 'package:mpg_achievements_app/3d/src/components/animated_game_character.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
 import 'package:mpg_achievements_app/core/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/core/controllers/control_action_bundle.dart';
@@ -113,8 +114,8 @@ class Player extends AnimatedGameCharacter<PlayerData> {
 
     final GameCamera cam = game.camera3D!;
     final double camYaw = getYawFromRotation(cam.modelMatrix.getRotation());
-    print("$rotationZ cam: $camYaw, move: $moveInput"); 
-    
+    print("$rotationZ cam: $camYaw, move: $moveInput");
+
     rotationZ += moveInput.x * cameraMoveSpeed;
 
     velocity.x +=
