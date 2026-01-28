@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:jenny/jenny.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';

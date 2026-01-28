@@ -10,7 +10,7 @@ import 'package:vector_math/vector_math_64.dart' hide Colors;
 class SpeechBubbleState extends ConsumerState<SpeechBubble>
     with TickerProviderStateMixin {
   //Position reference
-  late Vector2 _bubblePosition;
+  late Vector2 _bubblePosition = Vector2.zero();
   late double _componentHeight;
   late double _componentWidth;
   final Vector2 _bubbleCorrectionOffset = Vector2(40, 40);
@@ -26,7 +26,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   bool _isTypingComplete = false;
   bool _isSpeechBubbleVisible = false;
 
-  // Saves Bubblewidth when theres a line break
+  // Saves bubbleWidth when theres a line break
   double? _fixedBubbleWidth;
 
   //Timers, tickers, um mit Thermion zu synchronisieren
@@ -118,10 +118,12 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       end: 0.0,
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.linear));
 
+    //ticker does update the bubbleposition
     _ticker = createTicker((elapsed) {
       _updateBubblePosition();
     });
     _ticker.start();
+
 
     //Use WidgetsBinding to ensure the widget is fully built before starting the animation
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -188,6 +190,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     _fadeController.dispose();
     _typingTimer?.cancel();
     _dismissTimer?.cancel();
+    _ticker.dispose();
     super.dispose();
   }
 
@@ -336,13 +339,16 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   void _updateBubblePosition() async {
     if (!_isSpeechBubbleVisible || !mounted) return;
 
-    //Get 3D World Position from Riverpod (Source of Truth)
+    //Get 3D World Position from Riverpod entityTransformProvider
+    //we also need the id to make sure that position comes form different entities
     final providerId = widget.component.entityId;
     final notifier = ref.read(entityTransformProvider(providerId));
 
-    //Ask the GAME to convert it (Separation of Concerns)
+    //Ask the ganme to convert the position
     final Vector3? screenPos = (await widget.game.calculateBubblePosition(
         notifier.position));
+
+    print('calculated bubblepos: $screenPos');
 
     if (!mounted) return;
 
