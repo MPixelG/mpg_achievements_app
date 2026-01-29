@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flame/components.dart' show KeyboardHandler;
 import 'package:flutter/services.dart';
+import 'package:mpg_achievements_app/3d/src/chunking/chunk.dart';
 import 'package:mpg_achievements_app/3d/src/components/animated_game_character.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
 import 'package:mpg_achievements_app/core/controllers/character_controller.dart';
@@ -88,6 +89,8 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
       add(controller);
     }
     
+    Chunk.onLoad();
+    
     
     print("animations: ${await getAnimationNames()}");
     return;
@@ -172,17 +175,6 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if(event is! KeyDownEvent) return super.onKeyEvent(event, keysPressed);
-    if(event.logicalKey.keyLabel == "G") {
-      playAnimation("walking", loop: true);
-    } else if(event.logicalKey.keyLabel == "H") {
-      //playAnimation("idle", loop: true);
-      stopAnimation("walking");
-    } else {
-      print(event.logicalKey.keyLabel);
-    }    
     return super.onKeyEvent(event, keysPressed);
   }
-
-
-
 }
