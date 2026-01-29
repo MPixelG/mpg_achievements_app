@@ -31,6 +31,7 @@ class ConversationManager with DialogueView {
   // When `true`close conversation
   final bool _isConversationFinished = false;
   late bool _showingScript = false;
+  bool _isDialogueRunning = false;
   bool _isPaused = false; // Flag für Pause-Status
   // Tracks the currently active speech bubble overlay key for each character.
   // This allows us to remove the correct bubble when a character speaks again.
@@ -50,7 +51,12 @@ class ConversationManager with DialogueView {
 
   // Starts a new conversation from a given Yarn script.
   Future<void> startConversation(String yarnFilePath) async {
+    if (_isDialogueRunning) {
+      return;
+    }
+
     // Clear any bubbles from a previous conversation
+    _isDialogueRunning = true;
     _isPaused = false;
     _clearAllSpeechBubbles();
     // Helper class to load and parse the .yarn file.
@@ -70,9 +76,15 @@ class ConversationManager with DialogueView {
       yarnProject: _project!,
       dialogueViews: [this],
     );
-
-    // Start the dialogue from the node named 'Start'.
-    unawaited(_dialogueRunner!.startDialogue('Start'));
+    try {
+      // Start the dialogue from the node named 'Start'.
+      await _dialogueRunner!.startDialogue('Start');
+    } catch (e) {
+      print(e);
+    } finally {
+      _isDialogueRunning = false;
+      _dialogueRunner = null;
+    }
   }
 
   // Neue Methode für Interaction Break
@@ -97,8 +109,10 @@ class ConversationManager with DialogueView {
     final BuildContext? _ = rootNavigatorKey.currentContext;
 
     final String characterName = line.character?.name ?? 'Character';
-    print("Speaking character:'$characterName'");    
-    final DialogueCharacter? character = game.findCharacterByName(characterName);
+    print("Speaking character:'$characterName'");
+    final DialogueCharacter? character = game.findCharacterByName(
+      characterName,
+    );
     final characterId = character!.entityId;
     print('found character:$character');
 
@@ -121,7 +135,7 @@ class ConversationManager with DialogueView {
 
     game.overlays.addEntry(
       overlayKey,
-          (_, game) => SpeechBubble(
+      (_, game) => SpeechBubble(
         component: character,
         text: line.text,
         game: this.game,
@@ -172,7 +186,7 @@ class ConversationManager with DialogueView {
 
     game.overlays.addEntry(
       overlayKey,
-          (_, game) => SpeechBubble(
+      (_, game) => SpeechBubble(
         key: ValueKey(overlayKey),
         game: this.game,
         component: character,
@@ -197,6 +211,10 @@ class ConversationManager with DialogueView {
   void onDialogueFinish() {
     print("Dialogue has finished.");
     _clearAllSpeechBubbles();
+    _isDialogueRunning = false; // safetyy
+    if (!(_lineCompleter?.isCompleted ?? true)) {
+      _lineCompleter?.complete();
+    }
   }
 
   // Removes the currently active speech bubble for a specific character.

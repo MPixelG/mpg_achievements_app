@@ -1,6 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
-import 'package:vector_math/vector_math.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 /// Represents a relative position inside some 2D object with a rectangular
 /// size or bounding box.

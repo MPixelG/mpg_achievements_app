@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:mpg_achievements_app/3d/src/components/entity.dart';
 import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
