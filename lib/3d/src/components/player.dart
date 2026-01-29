@@ -1,17 +1,18 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flame/components.dart' show KeyboardHandler;
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/3d/src/camera/camera.dart';
 import 'package:mpg_achievements_app/3d/src/components/animated_game_character.dart';
-import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
 import 'package:mpg_achievements_app/core/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/core/controllers/control_action_bundle.dart';
 import 'package:mpg_achievements_app/core/controllers/keyboard_character_controller.dart';
+import 'package:mpg_achievements_app/util/utils.dart';
 import 'package:vector_math/vector_math_64.dart';
 
-class Player extends AnimatedGameCharacter<PlayerData> {
+class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
   late KeyboardCharacterController<Player> controller;
   final Vector3 moveInput = Vector3.zero();
 
@@ -36,9 +37,24 @@ class Player extends AnimatedGameCharacter<PlayerData> {
   @override
   void tickClient(double dt) {
     game.getTransformNotifier(entityId).updateTransform(position, newRotZ: rotationZ);
+
+    if(abs(moveInput.z) > 0.2 * dt){
+      playAnimation("walking", loop: true);
+      print("tick");
+    } else {
+      playAnimation("idle", loop: true);
+      //stopAnimation("walking");
+    }
+    
+    
     applyCameraRelativeMovement(dt);
     //updateDirection();
-    
+
+
+
+
+
+
     //rotationZ = atan2(vz, vx) + pi / 2; // oder -pi/2
     super.tickClient(dt);
   }
@@ -72,7 +88,6 @@ class Player extends AnimatedGameCharacter<PlayerData> {
     
     
     print("animations: ${await getAnimationNames()}");
-    playAnimation("walking", loop: true);
     return;
   }
   
@@ -110,7 +125,7 @@ class Player extends AnimatedGameCharacter<PlayerData> {
   void applyCameraRelativeMovement(double dt) {
     if (moveInput.length2 == 0) return;
 
-    //moveInput.normalize();
+    moveInput.normalize();
 
     final GameCamera cam = game.camera3D!;
     final double camYaw = getYawFromRotation(cam.modelMatrix.getRotation());
@@ -125,8 +140,9 @@ class Player extends AnimatedGameCharacter<PlayerData> {
     velocity.z +=
         (moveInput.z * cos(-rotationZ)) *
             movementSpeed;
-
+    
     //moveInput.scale(pow(1.1, dt).toDouble()); // epilepsy warning
+    moveInput.setZero();
   }
 
   double getYawFromRotation(Matrix3 r) {
@@ -153,6 +169,20 @@ class Player extends AnimatedGameCharacter<PlayerData> {
 
     velocity.x += (localDir.x * cosYaw - localDir.z * sinYaw) * speed;
     velocity.z += (localDir.x * sinYaw + localDir.z * cosYaw) * speed;
+  }
+  
+  @override
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    if(event is! KeyDownEvent) return super.onKeyEvent(event, keysPressed);
+    if(event.logicalKey.keyLabel == "G") {
+      playAnimation("walking", loop: true);
+    } else if(event.logicalKey.keyLabel == "H") {
+      //playAnimation("idle", loop: true);
+      stopAnimation("walking");
+    } else {
+      print(event.logicalKey.keyLabel);
+    }    
+    return super.onKeyEvent(event, keysPressed);
   }
 
 
