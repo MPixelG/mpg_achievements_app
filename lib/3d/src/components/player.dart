@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:flame/components.dart' show KeyboardHandler;
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/3d/src/camera/camera.dart';
 import 'package:mpg_achievements_app/3d/src/components/animated_game_character.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
 import 'package:mpg_achievements_app/core/controllers/character_controller.dart';
@@ -39,14 +38,17 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
     game.getTransformNotifier(entityId).updateTransform(position, newRotZ: rotationZ);
 
     if(abs(moveInput.z) > 0.2 * dt){
-      playAnimation("walking", loop: true);
-      print("tick");
+      playAnimation("walking", loop: true, speed: moveInput.z.isNegative ? 10 : 1);
+    } else if(moveInput.x > 0.2) {
+      playAnimation("turnLeft", playAmount: 0.8);
+    }else if(moveInput.x < -0.2) {
+      playAnimation("turnRight", playAmount: 0.8);
     } else {
       playAnimation("idle", loop: true);
       //stopAnimation("walking");
     }
-    
-    
+
+
     applyCameraRelativeMovement(dt);
     //updateDirection();
 
@@ -117,7 +119,7 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
         ControlAction(
           "jump",
           key: LogicalKeyboardKey.space,
-          run: (p) => p.velocity.y = 10,
+          run: (p) => p.velocity.y = 1,
         ),
       });
 
@@ -126,10 +128,6 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
     if (moveInput.length2 == 0) return;
 
     moveInput.normalize();
-
-    final GameCamera cam = game.camera3D!;
-    final double camYaw = getYawFromRotation(cam.modelMatrix.getRotation());
-    print("$rotationZ cam: $camYaw, move: $moveInput");
 
     rotationZ += moveInput.x * cameraMoveSpeed;
 
