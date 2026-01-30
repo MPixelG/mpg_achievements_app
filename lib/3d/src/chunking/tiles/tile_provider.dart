@@ -60,9 +60,20 @@ class TileProvider {
     
     final Geometry geometry = Geometry(Float32List.fromList(jsonVertices), jsonIndices, normals: Float32List.fromList(jsonNormals));
     shapes[shape] = geometry;
+    _currentActiveShapeProcesses.remove(shape);
     return geometry;
   }
-
+  
+  static Future<MaterialInstance> getMaterialInstance(String name) async {
+    final MaterialInstance? cacheResult = materials[name];
+    if(cacheResult != null) return cacheResult;
+    final Future<MaterialInstance> createdMaterialFuture = createMaterialFromJson(name);
+    _currentActiveMaterialInstanceProcesses[name] = createdMaterialFuture;
+    createdMaterialFuture.then((_){_currentActiveMaterialInstanceProcesses.remove(name);});
+    return await createdMaterialFuture;
+  }
+  
+  static final Map<String, Future<MaterialInstance>> _currentActiveMaterialInstanceProcesses = {};
   static Future<MaterialInstance> createMaterialFromJson(String materialName) async {
     final Map<String, dynamic> materialJson = await Flame.assets.readJson("assets/3D/materials/$materialName.json");
     
@@ -98,7 +109,7 @@ class TileProvider {
       Object() => throw UnimplementedError(),
       null => throw UnimplementedError(),
     };
-
+    
     return FilamentApp.instance!.createUbershaderMaterialInstance(
       hasBaseColorTexture: hasBaseColorTexture,
       hasNormalTexture: hasNormalTexture,
