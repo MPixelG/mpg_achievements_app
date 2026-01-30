@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flame/camera.dart';
 import 'package:flame/events.dart' hide PointerMoveEvent;
 import 'package:flame/flame.dart';
@@ -12,6 +13,7 @@ import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/3d/src/level/tiled_level_loader.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
+import 'package:mpg_achievements_app/3d/src/tools/editor/editor_overlay.dart';
 import 'package:mpg_achievements_app/core/base_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/conversation_management.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
@@ -22,10 +24,11 @@ import 'package:mpg_achievements_app/core/touch_controls/touch_controls.dart';
 import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/has_collision_detection.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 import 'package:thermion_flutter/thermion_flutter.dart' hide KeyEvent, Vector3;
+import 'package:vector_math/vector_math_64.dart';
 import 'package:xml/xml.dart';
+
 import 'components/entity.dart';
 import 'level/tiled_level.dart';
-import 'package:vector_math/vector_math_64.dart';
 
 
 //DragCallbacks are imported for touch controls
@@ -185,7 +188,9 @@ class PixelAdventure3D extends BaseGame
         'touchControls': (BuildContext context, BaseGame game) =>
             TouchControls(
               onJoystickMove: (game as PixelAdventure3D).onJoystickMove,
-            )
+            ),
+        'editor': (BuildContext context, BaseGame game) =>
+            const Editor3DOverlay()
       };
 
 
@@ -194,7 +199,8 @@ class PixelAdventure3D extends BaseGame
       Set<LogicalKeyboardKey> keysPressed) {
 
     if (keysPressed.contains(LogicalKeyboardKey.f3)) { //toggle debug mode
-
+      overlays.toggle('editor');
+      print("toggled editor visibility to ${overlays.isActive("editor")}");
     }
 
     // Debug test for SpeechBubble

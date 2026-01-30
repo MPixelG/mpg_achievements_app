@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:flame/components.dart' show KeyboardHandler;
 import 'package:flutter/services.dart';
-import 'package:mpg_achievements_app/3d/src/chunking/chunk/chunk.dart';
 import 'package:mpg_achievements_app/3d/src/components/animated_game_character.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
 import 'package:mpg_achievements_app/core/controllers/character_controller.dart';
@@ -89,9 +88,6 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
       controller = KeyboardCharacterController<Player>(buildControlBundle());
       add(controller);
     }
-    
-    Chunk.onLoad();
-    
     
     print("animations: ${await getAnimationNames()}");
     return;

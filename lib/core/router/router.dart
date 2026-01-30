@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mpg_achievements_app/3d/src/tools/editor/editor_overlay.dart';
 import 'package:mpg_achievements_app/GUI/gamescreen_3d.dart';
 import 'package:mpg_achievements_app/GUI/menuCreator/components/gui_editor.dart';
 import 'package:mpg_achievements_app/GUI/menus.dart';
@@ -16,7 +17,7 @@ class AppRouter {
     game: PixelAdventure.currentInstance,
   );
   static GuiEditor guiEditor = const GuiEditor();
-  //static ThermionViewer thermionViewer = thermionViewer;
+  static Editor3DOverlay editor = const Editor3DOverlay();
 
   static final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,

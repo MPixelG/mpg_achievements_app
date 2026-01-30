@@ -3,21 +3,15 @@ import 'package:mpg_achievements_app/3d/src/chunking/tiles/tile.dart';
 
 class TileGrid {
   List<List<List<Tile?>>>? _tileGridData;
+  final int size;
   
-  void initTiles(int width, int height,{int depth=-1}){
-    for(int x=0;x<width-1;x++){
-      for(int y=0;y<width-1;y++){
-        for(int z=0;z<width-1;z++){
-          
-        }
-      }
-    }
-  }
+  TileGrid([this.size = 16]);
   
   void setTileAt(Vector3 pos, Tile tile){
     final int x = pos.x.toInt();
     final int y = pos.y.toInt();
     final int z = pos.z.toInt();
+    if(x > size-1 || y > size-1 || z > size-1) return;
     setSafe<List<List<Tile?>>>(_tileGridData, x, [], []);
     setSafe<List<Tile?>>(_tileGridData![x], y, [], []);
     setSafe<Tile?>(_tileGridData![x][y], z, tile, null);
@@ -27,6 +21,8 @@ class TileGrid {
     final int x = pos.x.toInt();
     final int y = pos.y.toInt();
     final int z = pos.z.toInt();
+    
+    if(x > size-1 || y > size-1 || z > size-1) return null;
     
     if(_tileGridData == null ||
       _tileGridData!.length < x ||
