@@ -220,8 +220,8 @@ Vector3? worldToScreen({
   // clipSpace is calcualted = where is the point really in space, if w < 0 the point is behind the camera
   final Vector4 clipSpacePos = viewProjection.transform(worldPos4);
 
-  if (clipSpacePos.w <= 0) {
-    return null;
+ if (clipSpacePos.w <= 0) {
+    return Vector3(0,0,0);
   }
    /*The Principle: To create perspective (making distant objects appear smaller),
   we divide the x and y coordinates by the depth ($w$).A tree at $x=100$ in the far distance (large $w$) is divided by a large number
@@ -234,13 +234,18 @@ Vector3? worldToScreen({
     clipSpacePos.z / clipSpacePos.w,
   );
 
+  //check if bubble is out of frustrum
+  if(ndc.x < -1.1 || ndc.x > 1.1 || ndc.y < -1.1 || ndc.y > 1.1) {
+    return null; //point is out of view
+  }
+
   // conversion to screen coordiantes
   // Y needs to be inverted,because in Flutter (0,0) is up left
   final double screenX = (ndc.x + 1.0) / 2.0 * screenSize.width;
   final double screenY = (1.0 - ndc.y) / 2.0 * screenSize.height;
-  final double z = worldPosition.z;
 
-  return Vector3(screenX, screenY, z);
+
+  return Vector3(screenX, screenY, ndc.z);
 }
 
 //Check OS for Joystick support

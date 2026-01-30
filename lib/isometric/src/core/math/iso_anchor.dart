@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:vector_math/vector_math_64.dart';
 
@@ -67,26 +69,31 @@ class Anchor3D {
   /// Take your position [position] that is on this Anchor3D and give back what
   /// that position it would be on in Anchor3D [otherAnchor3D] with a size of
   /// [size].
-  Vector2 toOtherAnchor3DPosition(
-      Vector2 position,
+  Vector3 toOtherAnchor3DPosition(
+      Vector3 position,
       Anchor3D otherAnchor3D,
-      Vector2 size, {
-        Vector2? out,
+      Vector3 size, {
+        Vector3? out,
       }) {
+    //if otherAnchor is same as new anchor do nothing
     if (this == otherAnchor3D) {
       return position;
     } else {
-      return (out ?? Vector2.zero())
-        ..setValues(otherAnchor3D.x - x, otherAnchor3D.y - y)
-        ..multiply(size)
-        ..add(position);
+      //relative calculation: position + (new Anchor - old Anchor)*size so that object is not changed in space when changin ANCHOIR
+      //no new object is created but the old is changed
+      return (out ?? Vector3.zero())
+        ..setValues(
+          position.x + (otherAnchor3D.x - x) * size.x,
+          position.y + (otherAnchor3D.y - y) * size.y,
+          position.z + (otherAnchor3D.z - z) * size.z,);
+
     }
   }
 
   /// Returns a string representation of this Anchor3D.
   ///
   /// This should only be used for serialization purposes.
-  String get name => _valueNames[this] ?? 'Anchor3D($x, $y)';
+  String get name => _valueNames[this] ?? 'Anchor3D($x, $y, $z)';
 
   /// Returns a string representation of this Anchor3D.
   ///
@@ -136,7 +143,7 @@ class Anchor3D {
       final regexp = RegExp(r'^\Anchor3D\(([^,]+), ([^\)]+)\)');
       final matches = regexp.firstMatch(name)?.groups([1, 2]);
       assert(
-      matches != null && matches.length == 2,
+      matches != null && matches.length == 3,
       'Bad Anchor3D format: $name',
       );
       return Anchor3D(double.parse(matches![0]!), double.parse(matches[1]!), double.parse(matches[2]!));

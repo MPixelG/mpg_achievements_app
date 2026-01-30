@@ -48,8 +48,8 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
   @override
   void renderTree(Canvas canvas){}
 
-  Vector3 get gridFeetPos => absolutePositionOfAnchor(Anchor3D.bottomLeftLeft);
-  Vector3 get gridHeadPos => absolutePositionOfAnchor(Anchor3D.bottomLeftLeft);
+  Vector3 get gridFeetPos => absolutePositionOfAnchor(Anchor3D.bottomCenter);
+  Vector3 get gridHeadPos => absolutePositionOfAnchor(Anchor3D.topCenter);
 
   @override
   Anchor3D get anchor => _anchor;

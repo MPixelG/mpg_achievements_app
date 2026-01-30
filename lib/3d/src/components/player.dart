@@ -37,7 +37,7 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
   //then the entity class calls it's own tickClient()-method which updates the position of the player
   @override
   void tickClient(double dt) {
-    game.getTransformNotifier(entityId).updateTransform(positionOfAnchor(Anchor3D.topLeftLeft), newRotZ: rotationZ);
+    game.getTransformNotifier(entityId).updateTransform(positionOfAnchor(Anchor3D.topCenter), newRotZ: rotationZ);
 
     if(abs(moveInput.z) > 0.2 * dt){
       playAnimation("walking", loop: true, reverse: moveInput.z.isNegative);
