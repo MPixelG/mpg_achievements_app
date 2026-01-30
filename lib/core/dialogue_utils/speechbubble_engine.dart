@@ -35,16 +35,15 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   async.Timer? _dismissTimer;
   late final Ticker _ticker;
 
-
   //Configuration of Widget and Animations
   //Duration between character appearing and text displaying
   late final Duration typingSpeed = const Duration(milliseconds: 20);
   late final Duration showDuration = const Duration(seconds: 30);
   late final Duration dismissDuration = const Duration(seconds: 1);
   bool _autoDismiss =
-  true; // Automatically dismiss the speech bubble after a certain duration
+      true; // Automatically dismiss the speech bubble after a certain duration
   bool autoStart =
-  true; // Automatically start the speech bubble animation when the widget is built
+      true; // Automatically start the speech bubble animation when the widget is built
 
   //styling
   late final Color textColor = Colors.black;
@@ -125,7 +124,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       _updateBubblePosition();
     });
     _ticker.start();
-
 
     //Use WidgetsBinding to ensure the widget is fully built before starting the animation
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -348,15 +346,15 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
     //if there is no change in postion return
     if (currentChangeCounter == notifier.changeCount) {
-      return
-      ;
+      return;
     }
 
     currentChangeCounter = notifier.changeCount;
 
     //Ask the game to convert the position
     final Vector3? screenPos = (await widget.game.calculateBubblePosition(
-        notifier.position));
+      notifier.position,
+    ));
 
     print('calculated bubblepos: $screenPos');
 
@@ -368,7 +366,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     });
   }
 
-
   // UI Building
   @override
   Widget build(BuildContext context) {
@@ -376,7 +373,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
       if (!_isSpeechBubbleVisible) {
         return const SizedBox.shrink();
       }
-
       // _componentHeight = widget.component.height;
       // _componentWidth = widget.component.width;
       // _bubbleCorrectionOffset = Vector2(0, 100);
@@ -390,7 +386,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
             // (-0.5) shifts it left by 50% of its own width (Centers it)
             // (-1.0) shifts it up by 100% of its own height (Sits on top
             child: FractionalTranslation(
-              translation: const Offset(0,0),
+              translation: const Offset(-0.5, -1.0),
               child: Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 child: FadeTransition(
@@ -399,21 +395,38 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
                     scale: _scaleAnimation,
                     child: GestureDetector(
                       onTap: _onBubbleTapped,
-                      child: Stack(
-                        clipBehavior: Clip.none,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Wrapper für die Breiten-Anpassung
-                          _fixedBubbleWidth != null
-                              ? SizedBox(
-                            width: _fixedBubbleWidth,
-                            child: _buildBubbleContent(),
-                          )
-                              : _buildBubbleContent(),
+                          Stack(
+                            children: [
+                              // Wrapper für die Breiten-Anpassung
+                              _fixedBubbleWidth != null
+                                  ? SizedBox(
+                                      width: _fixedBubbleWidth,
+                                      child: _buildBubbleContent(),
+                                    )
+                                  : _buildBubbleContent(),
+
+                              // Click Icon - absolut positioniert, beeinflusst Layout NICHT
+                              if (_isTypingComplete &&
+                                  !_isChoiceBubble &&
+                                  !widget.isRapidText)
+                                Positioned(
+                                  right: 8,
+                                  bottom: 8,
+                                  child: Icon(
+                                    Icons.touch_app,
+                                    size: 14,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                            ],
+                          ),
 
                           // Tail (Sprechblase-Pfeil)
-                          Positioned(
-                            left: 15,
-                            bottom: -tailHeight,
+                          Transform.translate(
+                            offset: Offset(0, -borderWidth),
                             child: CustomPaint(
                               size: const Size(tailWidth, tailHeight),
                               painter: SpeechBubbleTailPainter(
@@ -423,20 +436,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
                               ),
                             ),
                           ),
-
-                          // Click Icon - absolut positioniert, beeinflusst Layout NICHT
-                          if (_isTypingComplete &&
-                              !_isChoiceBubble &&
-                              !widget.isRapidText)
-                            Positioned(
-                              right: 8,
-                              bottom: 8,
-                              child: Icon(
-                                Icons.touch_app,
-                                size: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
                         ],
                       ),
                     ),
@@ -457,72 +456,70 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   }
 
   // Hilfsmethode für den Bubble-Inhalt
-  Widget _buildBubbleContent() =>
-      Container(
-        constraints: const BoxConstraints(maxWidth: 400, minWidth: 100),
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(128),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
+  Widget _buildBubbleContent() => Container(
+    constraints: const BoxConstraints(maxWidth: 400, minWidth: 100),
+    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withAlpha(128),
+          blurRadius: 10,
+          offset: const Offset(0, 2),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (widget.text.isNotEmpty || _displayedText.isNotEmpty)
-              ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: maxScrollableHeight),
-                child: SingleChildScrollView(
-                  controller: _scrollController,
+      ],
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (widget.text.isNotEmpty || _displayedText.isNotEmpty)
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: maxScrollableHeight),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Text(
+                _displayedText,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontFamily: 'gameFont',
+                  height: 1.4,
+                ),
+              ),
+            ),
+          ),
+
+        // Choices (falls vorhanden)
+        if (_isChoiceBubble) ...[
+          const SizedBox(height: 12.0),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: widget.choices!.options.map((option) {
+              final optionIndex = widget.choices!.options.indexOf(option);
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2.0),
+                child: ElevatedButton(
+                  onPressed: option.isAvailable
+                      ? () => widget.onChoiceSelected?.call(optionIndex)
+                      : null,
                   child: Text(
-                    _displayedText,
+                    option.text,
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 14,
                       fontFamily: 'gameFont',
-                      height: 1.4,
                     ),
                   ),
                 ),
-              ),
-
-            // Choices (falls vorhanden)
-            if (_isChoiceBubble) ...[
-              const SizedBox(height: 12.0),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: widget.choices!.options.map((option) {
-                  final optionIndex = widget.choices!.options.indexOf(option);
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2.0),
-                    child: ElevatedButton(
-                      onPressed: option.isAvailable
-                          ? () => widget.onChoiceSelected?.call(optionIndex)
-                          : null,
-                      child: Text(
-                        option.text,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
-                          fontFamily: 'gameFont',
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ],
-        ),
-      );
-
+              );
+            }).toList(),
+          ),
+        ],
+      ],
+    ),
+  );
 }
 
 //Tail Widget for Speech Bubble
@@ -549,8 +546,8 @@ class SpeechBubbleTailPainter extends CustomPainter {
       ..color = borderColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = borderWidth
-    ..strokeCap = StrokeCap.round
-    ..strokeJoin = StrokeJoin.round; // smooth out sharp tip
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round; // smooth out sharp tip
     // Create a Path object to define the shape of the triangle.
 
     final path = Path();
@@ -558,15 +555,19 @@ class SpeechBubbleTailPainter extends CustomPainter {
     // Curve to the bottom tip (width/2, height)
     // The control point is slightly inward to create a concave curve
     path.quadraticBezierTo(
-        size.width * 0.35, 0, // Control point (keeps the top wider)
-        size.width / 2, size.height // Destination (The Tip)
+      size.width * 0.35,
+      0, // Control point (keeps the top wider)
+      size.width / 2,
+      size.height, // Destination (The Tip)
     );
 
     final Path fillPath = Path.from(path)..close();
     // Curve back to Top-Right
     path.quadraticBezierTo(
-        size.width * 0.65, 0, // Control point
-        size.width, 0 // Destination
+      size.width * 0.65,
+      0, // Control point
+      size.width,
+      0, // Destination
     );
     // Draw the path on the canvas.
     canvas.save();
