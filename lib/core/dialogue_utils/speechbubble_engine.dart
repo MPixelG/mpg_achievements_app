@@ -73,7 +73,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   static const double tailWidth = 20.0;
   static const double tailHeight = 15.0;
   final Color borderColor = Colors.black; // Color of the tail border
-  final double borderWidth = 1.0; // Width of the tail border
+  final double borderWidth = 0.2; // Width of the tail border
 
   //controls scaling-in
   late AnimationController _scaleController;
@@ -390,7 +390,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
             // (-0.5) shifts it left by 50% of its own width (Centers it)
             // (-1.0) shifts it up by 100% of its own height (Sits on top
             child: FractionalTranslation(
-              translation: const Offset(-0.5, -1.0),
+              translation: const Offset(0,0),
               child: Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 child: FadeTransition(
@@ -547,22 +547,32 @@ class SpeechBubbleTailPainter extends CustomPainter {
 
     final borderPaint = Paint()
       ..color = borderColor
-      ..style = PaintingStyle
-          .stroke // Set the border color and style
-      ..strokeWidth = borderWidth; // Set the border width
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = borderWidth
+    ..strokeCap = StrokeCap.round
+    ..strokeJoin = StrokeJoin.round; // smooth out sharp tip
     // Create a Path object to define the shape of the triangle.
 
     final path = Path();
     path.moveTo(0, 0); // Start at the top-left of the painter's area
-    path.lineTo(
-      size.width / 2,
-      size.height,
-    ); // Draw a line to the bottom-center point
-    path.lineTo(size.width, 0); // Draw a line to the top-right
-    path.close(); // Close the path to form a solid triangle
+    // Curve to the bottom tip (width/2, height)
+    // The control point is slightly inward to create a concave curve
+    path.quadraticBezierTo(
+        size.width * 0.35, 0, // Control point (keeps the top wider)
+        size.width / 2, size.height // Destination (The Tip)
+    );
 
+    final Path fillPath = Path.from(path)..close();
+    // Curve back to Top-Right
+    path.quadraticBezierTo(
+        size.width * 0.65, 0, // Control point
+        size.width, 0 // Destination
+    );
     // Draw the path on the canvas.
+    canvas.save();
+    canvas.translate(0, -1);
     canvas.drawPath(path, fillPaint);
+    canvas.restore();
     canvas.drawPath(path, borderPaint); // Draw the border of the tail
   }
 
