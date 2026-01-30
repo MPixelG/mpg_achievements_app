@@ -9,7 +9,9 @@ class Tile {
   Tile(String shape, String texture, this.position) {
     initAsset(shape, texture); //todo add check until asset isnt null anymore
   }
+  
+  
   void initAsset(String shape, String texture) async {
-    asset = await TileProvider.getAssetOfTileType(TileData(shape, texture));
+    asset = await (await TileProvider.getParentAssetOfTileType(TileData(shape, texture))).provideTileAsset();
   }
 }

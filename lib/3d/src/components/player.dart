@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+
 import 'package:flame/components.dart' show KeyboardHandler;
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/3d/src/chunking/chunk.dart';
@@ -39,7 +40,7 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
     game.getTransformNotifier(entityId).updateTransform(positionOfAnchor(Anchor3D.topLeftLeft), newRotZ: rotationZ);
 
     if(abs(moveInput.z) > 0.2 * dt){
-      playAnimation("walking", loop: true, speed: moveInput.z.isNegative ? 10 : 1);
+      playAnimation("walking", loop: true, reverse: moveInput.z.isNegative);
     } else if(moveInput.x > 0.2) {
       playAnimation("turnLeft", playAmount: 0.8);
     }else if(moveInput.x < -0.2) {
@@ -175,6 +176,7 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if(event is! KeyDownEvent) return super.onKeyEvent(event, keysPressed);
+    if(event.logicalKey.keyLabel == "G") playAnimation("turn180");
     return super.onKeyEvent(event, keysPressed);
   }
 }

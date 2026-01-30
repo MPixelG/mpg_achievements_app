@@ -4,5 +4,5 @@ class ParentTile {
   ThermionAsset asset;
   ParentTile(this.asset);
   
-  Future<ThermionAsset> provideTile() => asset.createInstance();
+  Future<ThermionAsset> provideTileAsset() => asset.createInstance();
 }

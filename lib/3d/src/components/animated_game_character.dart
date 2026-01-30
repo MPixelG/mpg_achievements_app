@@ -19,7 +19,7 @@ abstract class AnimatedGameCharacter<TState> extends GameCharacter<TState> {
     currentAnimation = name;
     await asset.playGltfAnimationByName(name, loop: loop, replaceActive: replaceActive, reverse: reverse, speed: speed, crossfade: crossfade);
     if(!loop) {
-      assert(playAmount < 1 && playAmount >= 0, "playAmount must be within the bounds of 0 and 1! currently it is $playAmount");
+      assert(playAmount <= 1 && playAmount >= 0, "playAmount must be within the bounds of 0 and 1! currently it is $playAmount");
       await Future.delayed(Duration(milliseconds: (await asset.getGltfAnimationDuration((await asset.getGltfAnimationNames()).indexOf(name)) * 1000 * playAmount).toInt()));
       if(currentAnimation == name) currentAnimation = "";
     }
