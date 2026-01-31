@@ -1,15 +1,14 @@
 import 'package:flutter/cupertino.dart';
 
-//Registry for registering different window types. 
+//Registry for registering different window types.
 class WindowTypeRegistry {
   static final Map<String, WindowTypeDefinition> _types = {}; //the different stored window types.
 
   ///registers a new window type
-  static void register(String id, WindowTypeDefinition definition) { 
+  static void register(String id, WindowTypeDefinition definition) {
     _types[id] = definition;
   }
 
-  
   static WindowTypeDefinition? get(String id) => _types[id];
 
   static List<String> getAllIds() => _types.keys.toList();
@@ -28,7 +27,7 @@ class WindowTypeDefinition {
   const WindowTypeDefinition({required this.id, required this.title, required this.builder, this.icon, this.headerColor});
 }
 
-///a specific instance of a Window type. 
+///a specific instance of a Window type.
 class WindowConfig {
   final String title;
   final Widget child;
@@ -62,7 +61,7 @@ class WindowConfig {
 
     return WindowConfig.fromType(typeId ?? title);
   }
-  
+
   @override
   String toString() => "[Config for $title (id: $typeId) with child widget: ${child.runtimeType}";
 }

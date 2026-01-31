@@ -22,7 +22,8 @@ class EditorController {
         direction: Axis.horizontal,
         children: [
           WindowLeaf(
-            config: WindowConfig.create( //here we can create different window types.
+            config: WindowConfig.create(
+              //here we can create different window types.
               title: "colored container",
               child: Container(color: Colors.primaries.random()),
             ),
@@ -30,7 +31,7 @@ class EditorController {
           WindowLeaf(
             config: WindowConfig.create(
               title: "button",
-              child: ElevatedButton(onPressed: () {  }, child: null),
+              child: ElevatedButton(onPressed: () {}, child: null),
             ),
           ),
         ],
@@ -40,5 +41,6 @@ class EditorController {
 }
 
 final Map<String, EditorController> _controllers = {};
+
 ///returns an editor controller for a given id. if there isn't one yet, it gets created
 EditorController getEditorController(String id) => _controllers[id] ??= EditorController();

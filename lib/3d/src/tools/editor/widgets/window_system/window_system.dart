@@ -19,12 +19,14 @@ class WindowManager extends StatelessWidget {
         config: node.config,
         node: node,
         onSwap: (newConfig) {
-          controller.replaceNode(node, WindowLeaf(config: newConfig)); // connecting the swap logic to the widget. 
+          controller.replaceNode(node, WindowLeaf(config: newConfig)); // connecting the swap logic to the widget.
         },
-        onDrop: (draggedNode, draggedConfig) { //and the drop logic too
+        onDrop: (draggedNode, draggedConfig) {
+          //and the drop logic too
           controller._swapNodes(draggedNode, node);
         },
-        onSplit: (direction) { //on split we replace the node with a split variant with the old version as a child
+        onSplit: (direction) {
+          //on split we replace the node with a split variant with the old version as a child
           controller.replaceNode(
             node,
             WindowSplit(
@@ -39,40 +41,38 @@ class WindowManager extends StatelessWidget {
       );
     }
 
-    if (node is WindowSplit) { //for the split windows we just use a resizable container with the children as Resizable Child Objects. this way you can resize your windows
-      print("original proportions: ${node.proportions} of node ${node.hashCode}");
-      
-      final proportions = node.proportions ??
-          List.filled(node.children.length, 1.0 / node.children.length);
-      
-      
+    if (node is WindowSplit) {
+      //for the split windows we just use a resizable container with the children as Resizable Child Objects. this way you can resize your windows
+      final proportions = node.proportions ?? List.filled(node.children.length, 1.0 / node.children.length);
+
       final ResizableController controller = ResizableController();
       final ResizableContainer container = ResizableContainer(
         direction: node.direction,
-        children: List.generate(node.children.length, (index) => ResizableChild(
+        children: List.generate(
+          node.children.length,
+          (index) => ResizableChild(
             size: ResizableSize.ratio(proportions[index]),
             child: _buildNode(node.children[index]),
-          )),
+            divider: const ResizableDivider(thickness: 8),
+          ),
+        ),
         controller: controller,
       );
-      print("new container! ratios: ${controller.ratios}, ratios set: $proportions, node proportions: ${node.proportions}");
       controller.addListener(() => onResizeContainer(container, node));
-      
+
       return container;
     }
 
     return const SizedBox.shrink(); //for every other case (that shouldn't occur) we just use a sized box that is shrunk to fit in that space
   }
-  
-  
-  void onResizeContainer(ResizableContainer container, WindowSplit node){
+
+  void onResizeContainer(ResizableContainer container, WindowSplit node) {
     for (var element in container.children) {
-      if(element.child is WindowPane) (element.child as WindowPane).updateHeaderWidth();
+      if (element.child is WindowPane) (element.child as WindowPane).updateHeaderWidth();
     }
-    final double? firstRatio = container.controller?.ratios.first; 
-    if(firstRatio != 0.0 && firstRatio != 0.5) {
+    final double? firstRatio = container.controller?.ratios.first;
+    if (firstRatio != 0.0 && firstRatio != 0.5) {
       node.proportions!.setRange(0, container.controller!.ratios.length, container.controller!.ratios);
-      print("resize, ratios: ${node.proportions}");
     }
   }
 }
@@ -83,7 +83,7 @@ class WindowManagerController extends ChangeNotifier {
 
   WindowManagerController(this.rootNode);
 
-  ///replaces a given node with another given node. Uses recursion 
+  ///replaces a given node with another given node. Uses recursion
   void replaceNode(WindowNode oldNode, WindowNode newNode) {
     rootNode = _replaceInTree(rootNode, oldNode, newNode);
     notifyListeners();
@@ -94,7 +94,11 @@ class WindowManagerController extends ChangeNotifier {
     if (current == target) return replacement;
 
     if (current is WindowSplit) {
-      return WindowSplit(direction: current.direction, proportions: current.proportions, children: current.children.map((c) => _replaceInTree(c, target, replacement)).toList());
+      return WindowSplit(
+        direction: current.direction,
+        proportions: current.proportions,
+        children: current.children.map((c) => _replaceInTree(c, target, replacement)).toList(),
+      );
     }
 
     return current;
@@ -110,19 +114,24 @@ class WindowManagerController extends ChangeNotifier {
     if (node1 is WindowLeaf) config1 = node1.config; //get the configs of the window nodes if they are leaf nodes
     if (node2 is WindowLeaf) config2 = node2.config;
 
-    if (config1 != null && config2 != null) { //if one of the nodes wasn't a leaf node we dont swap
+    if (config1 != null && config2 != null) {
+      //if one of the nodes wasn't a leaf node we dont swap
       rootNode = _swapInTree(rootNode, node1, node2, config1, config2);
       notifyListeners();
     }
   }
-  
+
   ///recursive helper function for swapping 2 nodes
   WindowNode _swapInTree(WindowNode current, WindowNode target1, WindowNode target2, WindowConfig config1, WindowConfig config2) {
     if (current == target1) return WindowLeaf(config: config2);
     if (current == target2) return WindowLeaf(config: config1);
 
     if (current is WindowSplit) {
-      return WindowSplit(direction: current.direction, proportions: current.proportions, children: current.children.map((c) => _swapInTree(c, target1, target2, config1, config2)).toList());
+      return WindowSplit(
+        direction: current.direction,
+        proportions: current.proportions,
+        children: current.children.map((c) => _swapInTree(c, target1, target2, config1, config2)).toList(),
+      );
     }
 
     return current;

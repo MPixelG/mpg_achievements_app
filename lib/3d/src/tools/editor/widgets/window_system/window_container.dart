@@ -11,6 +11,7 @@ class DragData {
 }
 
 const Uuid _uuid = Uuid();
+
 ///the window pane is the widget implementation of the [WindowLeaf] class, which only contains the logic. this is a wrapper for the child widget which also contains the drag n drop and swap logic.
 class WindowPane extends StatefulWidget {
   final WindowConfig config; //the config of the shown content. contains data such as the title, the child widget, menu bar color, icon, etc.
@@ -20,8 +21,8 @@ class WindowPane extends StatefulWidget {
   final Function(Axis)? onSplit; // function that gets called when the window requests to get split.
 
   WindowPane({required this.config, required this.node, this.onSwap, this.onDrop, this.onSplit}) : super(key: GlobalObjectKey(_uuid.v4()));
-  
-  void updateHeaderWidth(){
+
+  void updateHeaderWidth() {
     ((key as GlobalObjectKey<State<StatefulWidget>>).currentState as _WindowPaneState?)?._updateHeaderWidth();
   }
 
@@ -34,13 +35,14 @@ class _WindowPaneState extends State<WindowPane> {
   bool _isHoveringHeader = false; //if the header is currently being hovered over
   final GlobalKey _headerKey = GlobalKey(); // the key of the header
   double _headerWidth = 200; // the width of the header
-  
+
   ///updates the header width so that the width of the header is correct when dragged
   void _updateHeaderWidth() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final RenderBox? renderBox = _headerKey.currentContext?.findRenderObject() as RenderBox?;
       if (renderBox != null && mounted) {
-        setState(() { //set the state to apply the update
+        setState(() {
+          //set the state to apply the update
           _headerWidth = renderBox.size.width;
         });
       }
@@ -75,15 +77,42 @@ class _WindowPaneState extends State<WindowPane> {
       items: [
         const PopupMenuItem(
           value: "change_type",
-          child: Row(children: [Icon(Icons.swap_horiz, size: 18), SizedBox(width: 8), Text("Change window type", style: TextStyle(color: Colors.white60, fontSize: 13, fontWeight: FontWeight.w500),)]),
+          child: Row(
+            children: [
+              Icon(Icons.swap_horiz, size: 18, color: Colors.white60),
+              SizedBox(width: 8),
+              Text(
+                "Change window type",
+                style: TextStyle(color: Colors.white60, fontSize: 13, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
         ),
         const PopupMenuItem(
           value: "split_horizontally",
-          child: Row(children: [Icon(Icons.horizontal_split, size: 18), SizedBox(width: 8), Text("Split horizontally", style: TextStyle(color: Colors.white60, fontSize: 13, fontWeight: FontWeight.w500),)]),
+          child: Row(
+            children: [
+              Icon(Icons.horizontal_split, size: 18, color: Colors.white60),
+              SizedBox(width: 8),
+              Text(
+                "Split horizontally",
+                style: TextStyle(color: Colors.white60, fontSize: 13, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
         ),
         const PopupMenuItem(
           value: "split_vertically",
-          child: Row(children: [Icon(Icons.vertical_split, size: 18), SizedBox(width: 8), Text("Split vertically", style: TextStyle(color: Colors.white60, fontSize: 13, fontWeight: FontWeight.w500),)]),
+          child: Row(
+            children: [
+              Icon(Icons.vertical_split, size: 18, color: Colors.white60),
+              SizedBox(width: 8),
+              Text(
+                "Split vertically",
+                style: TextStyle(color: Colors.white60, fontSize: 13, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
         ),
       ],
     ).then((value) {
@@ -96,7 +125,7 @@ class _WindowPaneState extends State<WindowPane> {
       }
     });
   }
-  
+
   ///shows the window type selection menu
   void _showTypeSelector(BuildContext context) {
     final types = WindowTypeRegistry.getAll();
@@ -140,30 +169,38 @@ class _WindowPaneState extends State<WindowPane> {
   @override
   Widget build(BuildContext context) => DragTarget<DragData>(
     onWillAcceptWithDetails: (details) => true,
-    onAcceptWithDetails: (details) { // replace the node the node got dragged on to with the current one
+    onAcceptWithDetails: (details) {
+      // replace the node the node got dragged on to with the current one
       if (widget.onSwap != null) {
-        print("swapping!");
         widget.onDrop!(details.data.node, details.data.config);
       }
     },
-    builder: (dragContext, candidateData, rejectedData) { //builder for the window
+    builder: (dragContext, candidateData, rejectedData) {
+      //builder for the window
       final isHovering = candidateData.isNotEmpty;
 
       return Container(
-        decoration: BoxDecoration( // header decoration
+        decoration: BoxDecoration(
+          // header decoration
           border: Border.all(color: isHovering ? Colors.blue : Colors.grey.shade800, width: isHovering ? 2 : 1),
           color: const Color(0xFF1E1E1E),
         ),
-        child: Column( //collum so that theres a header at the top and the content below
+        child: Column(
+          //collum so that theres a header at the top and the content below
           children: [
-            MouseRegion( //mouse region to detect hovering
+            MouseRegion(
+              //mouse region to detect hovering
               onEnter: (_) => setState(() => _isHoveringHeader = true),
               onExit: (_) => setState(() => _isHoveringHeader = false),
-              child: GestureDetector( //and gestureDetector to detect clicking
-                onTapDown: (details) => _showWindowMenu(dragContext, details.globalPosition), //on click we show the window option menu (split, change type, etc.)
-                child: Draggable<DragData>( //draggable so that it can be dragged
+              child: GestureDetector(
+                //and gestureDetector to detect clicking
+                onTapDown: (details) => _showWindowMenu(dragContext, details.globalPosition),
+                //on click we show the window option menu (split, change type, etc.)
+                child: Draggable<DragData>(
+                  //draggable so that it can be dragged
                   data: DragData(node: widget.node, config: widget.config), //the data that gets sent to the drag target when it gets dropped
-                  feedback: Material( //material for some design stuff
+                  feedback: Material(
+                    //material for some design stuff
                     elevation: 8,
                     child: Container(
                       width: _headerWidth,
@@ -172,7 +209,8 @@ class _WindowPaneState extends State<WindowPane> {
                       child: Row(
                         children: [
                           const SizedBox(width: 8),
-                          if (widget.config.icon != null) ...[Icon(widget.config.icon, size: 16, color: Colors.grey.shade400), const SizedBox(width: 6)], //show the icon
+                          if (widget.config.icon != null) ...[Icon(widget.config.icon, size: 16, color: Colors.grey.shade400), const SizedBox(width: 6)],
+                          //show the icon
                           Expanded(
                             child: Text(
                               widget.config.title, //show the title of the window
@@ -184,7 +222,8 @@ class _WindowPaneState extends State<WindowPane> {
                       ),
                     ),
                   ),
-                  childWhenDragging: Container( // the building of the widget that gets shown when the menu bar gets dragged (basically the same widget)
+                  childWhenDragging: Container(
+                    // the building of the widget that gets shown when the menu bar gets dragged (basically the same widget)
                     key: _headerKey,
                     height: 32,
                     decoration: BoxDecoration(color: (widget.config.headerColor ?? const Color(0xFF2D2D30)).withAlpha(127)),
@@ -251,33 +290,15 @@ class WindowSplit extends WindowNode {
   final List<WindowNode> children;
   late List<double>? proportions;
 
-  WindowSplit({
-    required this.direction,
-    required this.children,
-    this.proportions,
-  }){
+  WindowSplit({required this.direction, required this.children, this.proportions}) {
     proportions ??= List.filled(children.length, 1.0 / children.length);
   }
 
-  factory WindowSplit.equal({
-    required Axis direction,
-    required List<WindowNode> children,
-  }) {
+  factory WindowSplit.equal({required Axis direction, required List<WindowNode> children}) {
     final equalProportion = 1.0 / children.length;
-    return WindowSplit(
-      direction: direction,
-      children: children,
-      proportions: List.filled(children.length, equalProportion),
-    );
+    return WindowSplit(direction: direction, children: children, proportions: List.filled(children.length, equalProportion));
   }
 
-  WindowSplit copyWith({
-    Axis? direction,
-    List<WindowNode>? children,
-    List<double>? proportions,
-  }) => WindowSplit(
-      direction: direction ?? this.direction,
-      children: children ?? this.children,
-      proportions: proportions ?? this.proportions,
-    );
+  WindowSplit copyWith({Axis? direction, List<WindowNode>? children, List<double>? proportions}) =>
+      WindowSplit(direction: direction ?? this.direction, children: children ?? this.children, proportions: proportions ?? this.proportions);
 }
