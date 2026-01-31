@@ -3,6 +3,8 @@ import 'package:flutter_resizable_container/flutter_resizable_container.dart';
 import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/window_system/window_container.dart';
 import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/window_system/window_type_registry.dart';
 
+import 'logic_nodes.dart';
+
 ///manager class for window panels
 class WindowManager extends StatelessWidget {
   final WindowManagerController controller;

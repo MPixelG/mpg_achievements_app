@@ -64,4 +64,11 @@ class WindowConfig {
 
   @override
   String toString() => "[Config for $title (id: $typeId) with child widget: ${child.runtimeType}";
+  
+  String toJson() => """
+    {
+      "id": $typeId,
+      "custom_data": []
+    }
+  """; //todo add custom_data
 }

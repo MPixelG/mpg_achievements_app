@@ -1,6 +1,6 @@
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/window_system/window_container.dart';
+import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/window_system/logic_nodes.dart';
 import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/window_system/window_system.dart';
 import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/window_system/window_type_registry.dart';
 

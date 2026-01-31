@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/window_system/window_type_registry.dart';
 import 'package:uuid/uuid.dart';
 
+import 'logic_nodes.dart';
+
 ///data of the swapped node and config of that node
 class DragData {
   final WindowNode node;
@@ -276,29 +278,3 @@ class _WindowPaneState extends State<WindowPane> {
   );
 }
 
-abstract class WindowNode {}
-
-///a leaf node of the window system logic. contains the config of the child widget that will get shown via the [WindowPane] class
-class WindowLeaf extends WindowNode {
-  final WindowConfig config;
-
-  WindowLeaf({required this.config});
-}
-
-class WindowSplit extends WindowNode {
-  final Axis direction;
-  final List<WindowNode> children;
-  late List<double>? proportions;
-
-  WindowSplit({required this.direction, required this.children, this.proportions}) {
-    proportions ??= List.filled(children.length, 1.0 / children.length);
-  }
-
-  factory WindowSplit.equal({required Axis direction, required List<WindowNode> children}) {
-    final equalProportion = 1.0 / children.length;
-    return WindowSplit(direction: direction, children: children, proportions: List.filled(children.length, equalProportion));
-  }
-
-  WindowSplit copyWith({Axis? direction, List<WindowNode>? children, List<double>? proportions}) =>
-      WindowSplit(direction: direction ?? this.direction, children: children ?? this.children, proportions: proportions ?? this.proportions);
-}
