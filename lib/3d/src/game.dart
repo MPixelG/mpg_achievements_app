@@ -164,7 +164,7 @@ class PixelAdventure3D extends BaseGame
     currentJoystickMoveX = details.x;
     currentJoystickMoveY = details.y;
   }
-
+  
   @override
   Map<String, Widget Function(BuildContext, BaseGame)>? buildOverlayMap() =>
       {
@@ -189,8 +189,7 @@ class PixelAdventure3D extends BaseGame
             TouchControls(
               onJoystickMove: (game as PixelAdventure3D).onJoystickMove,
             ),
-        'editor': (BuildContext context, BaseGame game) =>
-            const Editor3DOverlay()
+        'editor': (BuildContext context, BaseGame game) => const Editor3DOverlay(id: "main")
       };
 
 
