@@ -56,7 +56,7 @@ WindowNode loadNodeFromJson(Map<String, dynamic> json) {
   final String? type = json["windowType"];
   assert(type != null, "invalid json format!");
   if (type == "windowLeaf") {
-    return WindowLeaf(config: WindowConfig.fromType(json["config"]));
+    return WindowLeaf(config: WindowConfig.fromType(json["config"]["id"]));
   } else if (type == "windowSplit") {
     return WindowSplit(
       direction: getAxisOfString(json["direction"]),

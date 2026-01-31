@@ -9,7 +9,7 @@ class EditorMenuBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SizedBox(
     width: MediaQuery.widthOf(context),
-    height: MediaQuery.heightOf(context),
+    height: 32,
     child: Align(
       alignment: AlignmentGeometry.topCenter,
       child: MenuBar(

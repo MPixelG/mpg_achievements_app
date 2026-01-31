@@ -1,8 +1,8 @@
-import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/menuBar/menu_bar.dart';
+import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/menuBar/menu_bar_button.dart';
 import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/window_system/logic_nodes.dart';
 import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/window_system/window_system.dart';
-import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/window_system/window_type_registry.dart';
 
 ///Editor overlay with Window System
 class Editor3DOverlay extends StatelessWidget {
@@ -11,31 +11,50 @@ class Editor3DOverlay extends StatelessWidget {
   const Editor3DOverlay({required this.id, super.key});
 
   @override
-  Widget build(BuildContext context) => getEditorController(id).windowManager; //uses the window manager of the controller as the widget to show. this way we dont cache widgets directly and dont use states either
+  Widget build(BuildContext context) => Column(
+    children: [
+      const EditorMenuBar(
+        menuBarButtons: [
+          MenuBarButton(child: Text("test1")),
+          MenuBarButton(child: Text("test2")),
+          MenuBarButton(child: Text("test3")),
+        ],
+      ),
+      SizedBox(width: MediaQuery.widthOf(context), height: MediaQuery.heightOf(context) - 33, child: getEditorController(id).windowManager),
+    ],
+  ); //uses the window manager of the controller as the widget to show. this way we dont cache widgets directly and dont use states either
 }
 
 //the EditorController class. Acts basically as a state for the Editor Overlay. we cant use a state because otherwise the state would get deleted when we hide the Overlay
 class EditorController {
   final WindowManager windowManager = WindowManager(
     controller: WindowManagerController(
-      WindowSplit(
-        direction: Axis.horizontal,
-        children: [
-          WindowLeaf(
-            config: WindowConfig.create(
-              //here we can create different window types.
-              title: "colored container",
-              child: Container(color: Colors.primaries.random()),
-            ),
-          ),
-          WindowLeaf(
-            config: WindowConfig.create(
-              title: "button",
-              child: ElevatedButton(onPressed: () {}, child: null),
-            ),
-          ),
+      loadNodeFromJson({
+        "windowType": "windowSplit",
+        "proportions": [0.25, 0.75],
+        "direction": "horizontal",
+        "children": [
+          {
+            "windowType": "windowLeaf",
+            "config": {"id": "test1"},
+          },
+          {
+            "windowType": "windowSplit",
+            "proportions": [0.5, 0.5],
+            "direction": "vertical",
+            "children": [
+              {
+                "windowType": "windowLeaf",
+                "config": {"id": "test1"},
+              },
+              {
+                "windowType": "windowLeaf",
+                "config": {"id": "test2"},
+              },
+            ],
+          },
         ],
-      ),
+      }),
     ),
   );
 }
