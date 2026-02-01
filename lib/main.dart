@@ -2,15 +2,15 @@ import 'package:flame/flame.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mpg_achievements_app/core/router/router.dart';
 import 'package:mpg_achievements_app/GUI/menuCreator/components/widget_declaration.dart';
 import 'package:mpg_achievements_app/GUI/widgets/nine_patch_widgets.dart';
+import 'package:mpg_achievements_app/core/router/router.dart';
 
 import '3d/src/game.dart';
+
 //a global key to access the game widget state from outside the RiverPodAwareGameWidget or services that live outside the game, but when Riverpod ref logic is available use the standard way of accessing the game via ref.read(gameProvider)
 // because our game is of type game you would normally not need a type specifier, but here the RiverpodAwareGameWidget needs it to know which game it is dealing with
-final GlobalKey<RiverpodAwareGameWidgetState<PixelAdventure3D>> gameWidgetKey =
-    GlobalKey<RiverpodAwareGameWidgetState<PixelAdventure3D>>();
+final GlobalKey<RiverpodAwareGameWidgetState<PixelAdventure3D>> gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState<PixelAdventure3D>>();
 
 // must be async because device loads fullScreen and setsLandscape and then at last the joystick
 void main() async {
@@ -20,8 +20,7 @@ void main() async {
   //Game then runs in Fullscreen mode and Landscape
   await Flame.device.fullScreen();
   await Flame.device.setLandscape();
-  
-  
+
   //reference to our class where the game is programmed
   //just helps to not load the game every time you change something in the code only for development
   //later changed to only game when deploying
@@ -37,7 +36,28 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-      routerConfig: AppRouter.router,
-      debugShowCheckedModeBanner: false,
-    );
+    routerConfig: AppRouter.router,
+    debugShowCheckedModeBanner: false,
+    theme: ThemeData(primaryColor: Colors.black87, primaryTextTheme: whiteTextTheme, textTheme: whiteTextTheme, textButtonTheme: textButtonThemeData, useSystemColors: true, colorScheme: const ColorScheme.dark(primary: Colors.white60)),
+  );
 }
+
+const TextButtonThemeData textButtonThemeData = TextButtonThemeData(style: ButtonStyle(textStyle: WidgetStatePropertyAll(whiteTextStyle)));
+const TextTheme whiteTextTheme = TextTheme(
+  titleSmall: whiteTextStyle,
+  labelSmall: whiteTextStyle,
+  titleMedium: whiteTextStyle,
+  bodyMedium: whiteTextStyle,
+  displayMedium: whiteTextStyle,
+  headlineMedium: whiteTextStyle,
+  labelMedium: whiteTextStyle,
+  bodySmall: whiteTextStyle,
+  displaySmall: whiteTextStyle,
+  headlineSmall: whiteTextStyle,
+  bodyLarge: whiteTextStyle,
+  displayLarge: whiteTextStyle,
+  headlineLarge: whiteTextStyle,
+  labelLarge: whiteTextStyle,
+  titleLarge: whiteTextStyle,
+);
+const TextStyle whiteTextStyle = TextStyle(color: Colors.white, decorationColor: Colors.white);

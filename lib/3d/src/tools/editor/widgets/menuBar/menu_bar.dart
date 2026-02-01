@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
 
-import 'menu_bar_button.dart';
-
 class EditorMenuBar extends StatelessWidget {
-  final List<MenuBarButton> menuBarButtons;
-  const EditorMenuBar({super.key, required this.menuBarButtons});
+  final List<Widget> menuBarObjects;
+
+  const EditorMenuBar({super.key, required this.menuBarObjects});
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: MediaQuery.widthOf(context),
-    height: 32,
-    child: Align(
-      alignment: AlignmentGeometry.topCenter,
-      child: MenuBar(
-        style: MenuStyle(
-          padding: const WidgetStatePropertyAll(EdgeInsets.fromLTRB(0, 0, 0, 3)),
-          fixedSize: WidgetStatePropertyAll(Size.fromWidth(MediaQuery.widthOf(context))),
-          elevation: const WidgetStatePropertyAll(0),
-          visualDensity: VisualDensity.compact,
-          shape: WidgetStatePropertyAll(BeveledRectangleBorder(borderRadius: BorderRadiusGeometry.circular(2))),
-          backgroundColor: WidgetStatePropertyAll(Colors.black38.withAlpha(160)),
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.topCenter,
+    child: MenuBar(
+      style: MenuStyle(
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.fromLTRB(8, 4, 8, 4),
         ),
-        children: menuBarButtons,
+        fixedSize: WidgetStatePropertyAll(
+          Size.fromWidth(MediaQuery.of(context).size.width),
+        ),
+        elevation: const WidgetStatePropertyAll(0),
+        visualDensity: VisualDensity.compact,
+        shape: WidgetStatePropertyAll(
+          BeveledRectangleBorder(
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        backgroundColor: WidgetStatePropertyAll(
+          Colors.black38.withAlpha(220),
+        ),
       ),
+      children: menuBarObjects,
     ),
   );
 }
