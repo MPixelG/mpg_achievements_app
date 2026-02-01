@@ -8,6 +8,7 @@ class DropdownMenuButton extends StatefulWidget {
   final IconData? icon;
   final VoidCallback? onChildDropdownChanged;
   final Function(bool)? onDropdownStateChanged;
+  final Function() onTap;
 
   const DropdownMenuButton({
     super.key,
@@ -17,6 +18,7 @@ class DropdownMenuButton extends StatefulWidget {
     this.icon,
     this.onChildDropdownChanged,
     this.onDropdownStateChanged,
+    required this.onTap,
   });
 
   @override
@@ -65,8 +67,6 @@ class _DropdownMenuButtonState extends State<DropdownMenuButton> {
   }
 
   void _updateOverlay() {
-    final wasOpen = _overlayEntry != null;
-
     if (_shouldShowDropdown) {
       if (_overlayEntry == null) {
         _overlayEntry = _createOverlayEntry();
@@ -85,9 +85,7 @@ class _DropdownMenuButtonState extends State<DropdownMenuButton> {
         link: _layerLink,
         targetAnchor: widget.isNested ? Alignment.topRight : Alignment.bottomLeft,
         followerAnchor: widget.isNested ? Alignment.topLeft : Alignment.topLeft,
-        offset: widget.isNested
-            ? const Offset(-2, 0)
-            : const Offset(0, 0),
+        offset: widget.isNested ? const Offset(-2, 0) : const Offset(0, 0),
         child: MouseRegion(
           onEnter: (_) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -106,7 +104,7 @@ class _DropdownMenuButtonState extends State<DropdownMenuButton> {
                 setState(() {
                   _isDropdownHovered = false;
                 });
-                Future.delayed(const Duration(milliseconds: 10), () {
+                Future.delayed(const Duration(milliseconds: 100), () {
                   if (mounted) {
                     _updateOverlay();
                     widget.onChildDropdownChanged?.call();
@@ -120,9 +118,7 @@ class _DropdownMenuButtonState extends State<DropdownMenuButton> {
             color: Colors.black87.withAlpha(230),
             borderRadius: BorderRadius.circular(4),
             child: Container(
-              margin: widget.isNested
-                  ? const EdgeInsets.only(left: 0)
-                  : const EdgeInsets.only(top: 2),
+              margin: widget.isNested ? const EdgeInsets.only() : const EdgeInsets.only(top: 2),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: Colors.white10),
@@ -149,6 +145,7 @@ class _DropdownMenuButtonState extends State<DropdownMenuButton> {
         icon: child.icon,
         onChildDropdownChanged: widget.onChildDropdownChanged,
         onDropdownStateChanged: _onChildDropdownStateChanged,
+        onTap: child.onTap,
       );
     }
     return child;
@@ -184,27 +181,21 @@ class _DropdownMenuButtonState extends State<DropdownMenuButton> {
           }
         });
       },
-      child: widget.isNested
-          ? _buildNestedMenuItem()
-          : _buildMainMenuItem(),
+      child: widget.isNested ? _buildNestedMenuItem() : _buildMainMenuItem(),
     ),
   );
-  
-  
 
   Widget _buildMainMenuItem() => MenuBarButton(
     onPressed: () {
       setState(() {
         _isHovered = !_isHovered;
+        widget.onTap();
       });
       _updateOverlay();
     },
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: Text(
-        widget.label,
-        style: const TextStyle(color: Colors.white70),
-      ),
+      child: Text(widget.label, style: const TextStyle(color: Colors.white70)),
     ),
   );
 
@@ -212,32 +203,21 @@ class _DropdownMenuButtonState extends State<DropdownMenuButton> {
     onTap: () {
       setState(() {
         _isHovered = !_isHovered;
+        widget.onTap();
       });
       _updateOverlay();
     },
     child: Container(
-      color: _isHovered || _isDropdownHovered || _hasActiveChild
-          ? Colors.white12
-          : Colors.transparent,
+      color: _isHovered || _isDropdownHovered || _hasActiveChild ? Colors.white12 : Colors.transparent,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Row(
         children: [
-          if (widget.icon != null) ...[
-            Icon(widget.icon, size: 18, color: Colors.white70),
-            const SizedBox(width: 12),
-          ],
+          if (widget.icon != null) ...[Icon(widget.icon, size: 18, color: Colors.white70), const SizedBox(width: 12)],
           Expanded(
-            child: Text(
-              widget.label,
-              style: const TextStyle(color: Colors.white70, fontSize: 14),
-            ),
+            child: Text(widget.label, style: const TextStyle(color: Colors.white70, fontSize: 14)),
           ),
           const SizedBox(width: 8),
-          const Icon(
-            Icons.arrow_right,
-            size: 18,
-            color: Colors.white54,
-          ),
+          const Icon(Icons.arrow_right, size: 18, color: Colors.white54),
         ],
       ),
     ),
