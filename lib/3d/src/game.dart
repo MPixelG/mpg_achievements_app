@@ -12,6 +12,7 @@ import 'package:mpg_achievements_app/3d/src/components/npc.dart';
 import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/3d/src/level/tiled_level_loader.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/camera_position_provider.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
 import 'package:mpg_achievements_app/3d/src/tools/editor/editor_overlay.dart';
 import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/menuBar/menu_action.dart';
@@ -58,8 +59,8 @@ class PixelAdventure3D extends BaseGame
   static PixelAdventure3D? _currentInstance;
   static PixelAdventure3D get currentInstance => _currentInstance!;
   PixelAdventure3D({
-    required this.getTransformNotifier
-      }) {
+    required this.getTransformNotifier, required this.getCameraTransformNotifier
+    }) {
     //sigleton only set when game was initialised
     _currentInstance = this;
   }
@@ -81,7 +82,8 @@ class PixelAdventure3D extends BaseGame
   //Managers and stuff for speechBubble
   late final ConversationManager conversationManager;
   final TransformNotifierAccessor getTransformNotifier;
-  late final bool bubblePositionChanged = false;
+  final CameraNotifierAccessor getCameraTransformNotifier;
+
 
   //level attributes
   TiledLevel? _levelData;
@@ -291,6 +293,15 @@ class PixelAdventure3D extends BaseGame
    final Vector3? bubblePosition =  worldToScreen(worldPosition: position!, viewMatrix: await camera3D!.thermionCamera.getViewMatrix(), projectionMatrix:await camera3D!.thermionCamera.getProjectionMatrix(), screenSize: size);
 
   return bubblePosition;
+
+  }
+
+  @override
+  Future<Vector3?> clampedBubblePosition(Vector3? position) async {
+    final size = Size(this.size.x, this.size.y);
+    final Vector3 arrowPosition =  getClampedScreenPos(worldPosition: position!, viewMatrix: await camera3D!.thermionCamera.getViewMatrix(), projectionMatrix: await camera3D!.thermionCamera.getProjectionMatrix(), screenSize: size);
+
+    return arrowPosition;
 
   }
 

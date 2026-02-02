@@ -27,8 +27,11 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   bool _isTypingComplete = false;
   bool _isSpeechBubbleVisible = false;
 
-  // Saves bubbleWidth when theres a line break
+  // content and postitioning
   double? _fixedBubbleWidth;
+  bool _isOffScreen = false;
+  double _arrowAngle = 0.0;
+  Vector2 _clampedPosition = Vector2.zero();
 
   //Timers, tickers, um mit Thermion zu synchronisieren
   async.Timer? _typingTimer;
@@ -355,14 +358,21 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     final Vector3? screenPos = (await widget.game.calculateBubblePosition(
       notifier.position,
     ));
-
     print('calculated bubblepos: $screenPos');
+    if(screenPos == null){
+      _isOffScreen = true;
+      final Vector3? result  = await widget.game.clampedBubblePosition(notifier.position);
+      _clampedPosition = result!.xy;
+      _arrowAngle = result.length;
+
+    }
 
     if (!mounted) return;
 
     // 3. Update UI
-    setState(() {
+    setState((){
       _bubblePosition = screenPos!.xy;
+
     });
   }
 
@@ -379,15 +389,25 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
       return Stack(
         children: [
+          Positioned(
+            top: 40,
+            right: 20,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.black, size: 30),
+              onPressed: () => _dismissSpeechBubble()// Oder widget.onDismiss call
+            ),
+          ),
           AnimatedPositioned(
             duration: const Duration(milliseconds: 100),
-            left: _bubblePosition.x,
-            top: _bubblePosition.y,
+            left: _isOffScreen ? _clampedPosition.x : _bubblePosition.x,
+            top: _isOffScreen ? _clampedPosition.y : _bubblePosition.y,
             // (-0.5) shifts it left by 50% of its own width (Centers it)
             // (-1.0) shifts it up by 100% of its own height (Sits on top
             child: FractionalTranslation(
               translation: const Offset(-0.5, -1.0),
-              child: Container(
+              child: _isOffScreen
+                  ? _buildOffScreenArrow(_arrowAngle)
+                  : Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 child: FadeTransition(
                   opacity: _fadeAnimation,
@@ -521,6 +541,16 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     ),
   );
 }
+
+Widget _buildOffScreenArrow(double arrowAngle) => Transform.rotate(
+    angle: arrowAngle,
+    child: const Icon(
+      Icons.navigation, // arrow icon
+      color: Colors.white,
+      size: 40,
+      shadows: [Shadow(blurRadius: 10)],
+    ),
+  );
 
 //Tail Widget for Speech Bubble
 // A custom painter to draw a triangular tail for the speech bubble.

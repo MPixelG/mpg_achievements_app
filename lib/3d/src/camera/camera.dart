@@ -1,15 +1,16 @@
 import 'dart:async';
-
 import 'package:flame/components.dart' hide Matrix4, Vector3, Matrix3;
 import 'package:flutter/cupertino.dart';
 import 'package:mpg_achievements_app/3d/src/camera/movement_modes/base_camera_mode.dart';
+import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
-
 import '../components/position_component_3d.dart';
 
-class GameCamera<FollowMode extends CameraFollowMode> extends Component {
+class GameCamera<FollowMode extends CameraFollowMode> extends Component with HasGameReference<PixelAdventure3D>{
   Camera thermionCamera;
   Matrix4 modelMatrix;
+
+
 
   CameraFollowable? target;
   CameraRotationAxisMode rotationAxisMode;
@@ -20,14 +21,21 @@ class GameCamera<FollowMode extends CameraFollowMode> extends Component {
       : modelMatrix = modelMatrix ?? Matrix4.identity(),
         rotationAxisMode = const CameraRotationAxisMode();
 
+
+
+
   @override
   Future<void> update(double dt) async {
     if (target == null || followMode == null) return super.update(dt);
-    updateMatrix();
 
     followMode!.step(dt);
-
     updateMatrix();
+
+    final currentPos = modelMatrix.getTranslation();
+
+    final currentViewMatrix = Matrix4.copy(modelMatrix)..invert();
+    //get camera position change updates to flutter widgets
+    game.getCameraTransformNotifier().updateFromCamera(newPos: currentPos, newViewMatrix: currentViewMatrix);
     return super.update(dt);
   }
 
@@ -39,7 +47,7 @@ class GameCamera<FollowMode extends CameraFollowMode> extends Component {
     if (matrixUpdated) {
       thermionCamera.setTransform(modelMatrix);
       matrixUpdated = false;
-    }
+          }
   }
 
   void setFollowEntity([CameraFollowable? provider]) {
