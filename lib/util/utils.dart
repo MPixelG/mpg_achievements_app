@@ -221,7 +221,7 @@ Vector3? worldToScreen({
   final Vector4 clipSpacePos = viewProjection.transform(worldPos4);
 
  if (clipSpacePos.w <= 0) {
-    return Vector3(0,0,0);
+    return null;
   }
    /*The Principle: To create perspective (making distant objects appear smaller),
   we divide the x and y coordinates by the depth ($w$).A tree at $x=100$ in the far distance (large $w$) is divided by a large number
@@ -247,6 +247,41 @@ Vector3? worldToScreen({
 
   return Vector3(screenX, screenY, ndc.z);
 }
+
+
+Vector3 getClampedScreenPos({
+  required Vector3 worldPosition,
+  required Matrix4 viewMatrix,
+  required Matrix4 projectionMatrix,
+  required Size screenSize,
+}) {
+  final Matrix4 viewProjection = projectionMatrix * viewMatrix;
+  final Vector4 clipSpacePos = viewProjection.transform(Vector4(worldPosition.x, worldPosition.y, worldPosition.z, 1.0));
+
+  double ndcX = clipSpacePos.x / clipSpacePos.w;
+  double ndcY = clipSpacePos.y / clipSpacePos.w;
+
+  //if behind camera just invert coordinates
+  if (clipSpacePos.w <= 0) {
+    ndcX = -ndcX;
+    ndcY = -ndcY;
+  }
+
+  // Clamping: we bring ndc-values to screenborder
+  // +padding
+  const double margin = 0.9;
+  if (ndcX.abs() > margin || ndcY.abs() > margin) {
+    final double scale = margin / (ndcX.abs() > ndcY.abs() ? ndcX.abs() : ndcY.abs());
+    ndcX *= scale;
+    ndcY *= scale;
+  }
+
+  final double screenX = (ndcX + 1.0) / 2.0 * screenSize.width;
+  final double screenY = (1.0 - ndcY) / 2.0 * screenSize.height;
+
+  return Vector3(screenX, screenY, clipSpacePos.w);
+}
+
 
 //Check OS for Joystick support
 

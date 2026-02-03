@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/3d/src/game.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/camera_position_provider.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
 import 'package:mpg_achievements_app/main.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
@@ -86,6 +87,7 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
 
       final game = PixelAdventure3D(
         getTransformNotifier: (id) => ref.read(entityTransformProvider(id)),
+        getCameraTransformNotifier: () => ref.read(cameraTransformProvider),
       );
 
       game.setThermionViewer(viewer);

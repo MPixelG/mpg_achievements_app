@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/camera_position_provider.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
@@ -14,7 +15,8 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late double _componentHeight;
   late double _componentWidth;
   //final Vector2 _bubbleCorrectionOffset = Vector2(40, 40);
-  int currentChangeCounter = -1;
+  int currentEntityChangeCounter = -1;
+
 
   // Scroll Controller für Autoscroll
   late ScrollController _scrollController;
@@ -27,8 +29,11 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   bool _isTypingComplete = false;
   bool _isSpeechBubbleVisible = false;
 
-  // Saves bubbleWidth when theres a line break
+  // content and postitioning
   double? _fixedBubbleWidth;
+  bool _isOffScreen = false;
+  double _arrowAngle = 0.0;
+  Vector2 _clampedPosition = Vector2.zero();
 
   //Timers, tickers, um mit Thermion zu synchronisieren
   async.Timer? _typingTimer;
@@ -89,6 +94,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
   //choices?
   bool get _isChoiceBubble => widget.choices != null;
+  get result => null;
 
   @override
   void initState() {
@@ -342,28 +348,55 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     //Get 3D World Position from Riverpod entityTransformProvider
     //we also need the id to make sure that position comes form different entities
     final providerId = widget.component.entityId;
-    final notifier = ref.read(entityTransformProvider(providerId));
-
+    final entityNotifier = ref.read(entityTransformProvider(providerId));
+    final cameraNotifier = ref.read(cameraTransformProvider);
     //if there is no change in postion return
-    if (currentChangeCounter == notifier.changeCount) {
+    if (currentEntityChangeCounter == entityNotifier.changeCount && !cameraNotifier.hasChanged) {
       return;
     }
 
-    currentChangeCounter = notifier.changeCount;
+    currentEntityChangeCounter = entityNotifier.changeCount;
 
     //Ask the game to convert the position
     final Vector3? screenPos = (await widget.game.calculateBubblePosition(
-      notifier.position,
+      entityNotifier.position,
     ));
-
     print('calculated bubblepos: $screenPos');
 
     if (!mounted) return;
 
-    // 3. Update UI
-    setState(() {
-      _bubblePosition = screenPos!.xy;
-    });
+    if(screenPos != null){
+
+      setState((){
+        _isOffScreen = false;
+        _bubblePosition = screenPos!.xy;
+
+      });} else {
+
+      final Vector3? clampedResult  = await widget.game.clampedBubblePosition(entityNotifier.position);
+
+
+      if(clampedResult != null){
+
+        setState(() {
+          _isOffScreen = true;
+          _clampedPosition = clampedResult.xy;
+          _arrowAngle = clampedResult.z; //todo calcvualte angle
+
+        });
+
+
+
+
+
+
+      }
+
+    }
+
+
+
+
   }
 
   // UI Building
@@ -379,15 +412,25 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
       return Stack(
         children: [
+          Positioned(
+            top: 40,
+            right: 20,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.black, size: 30),
+              onPressed: () => _dismissSpeechBubble()// Oder widget.onDismiss call
+            ),
+          ),
           AnimatedPositioned(
             duration: const Duration(milliseconds: 100),
-            left: _bubblePosition.x,
-            top: _bubblePosition.y,
+            left: _isOffScreen ? _clampedPosition.x : _bubblePosition.x,
+            top: _isOffScreen ? _clampedPosition.y : _bubblePosition.y,
             // (-0.5) shifts it left by 50% of its own width (Centers it)
             // (-1.0) shifts it up by 100% of its own height (Sits on top
             child: FractionalTranslation(
               translation: const Offset(-0.5, -1.0),
-              child: Container(
+              child: _isOffScreen
+                  ? _buildOffScreenArrow(_arrowAngle)
+                  : Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 child: FadeTransition(
                   opacity: _fadeAnimation,
@@ -521,6 +564,16 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     ),
   );
 }
+
+Widget _buildOffScreenArrow(double arrowAngle) => Transform.rotate(
+    angle: arrowAngle,
+    child: const Icon(
+      Icons.navigation, // arrow icon
+      color: Colors.white,
+      size: 40,
+      shadows: [Shadow(blurRadius: 10)],
+    ),
+  );
 
 //Tail Widget for Speech Bubble
 // A custom painter to draw a triangular tail for the speech bubble.

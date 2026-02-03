@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:flame/components.dart' show KeyboardHandler;
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/3d/src/components/animated_game_character.dart';
@@ -36,7 +35,7 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
   //then the entity class calls it's own tickClient()-method which updates the position of the player
   @override
   void tickClient(double dt) {
-    game.getTransformNotifier(entityId).updateTransform(positionOfAnchor(Anchor3D.topCenter), newRotZ: rotationZ);
+    game.getTransformNotifier(entityId).updateTransform(positionOfAnchor(Anchor3D.topCenter) + Vector3(0,size.y/2,0), newRotZ: rotationZ);
 
     if(abs(moveInput.z) > 0.2 * dt){
       playAnimation("walking", loop: true, reverse: moveInput.z.isNegative);

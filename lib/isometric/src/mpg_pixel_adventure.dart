@@ -220,6 +220,12 @@ class PixelAdventure extends BaseGame
     throw UnimplementedError();
   }
 
+  @override
+  Future<v64.Vector3?> clampedBubblePosition(v64.Vector3? position) {
+    // TODO: implement clampedBubblePosition
+    throw UnimplementedError();
+  }
+
 }
 
 fe.Vector3 get tilesize =>

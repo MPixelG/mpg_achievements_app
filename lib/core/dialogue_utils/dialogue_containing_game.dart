@@ -11,5 +11,6 @@ mixin DialogueContainingGame on Game {
   // This is a crucial link between your dialogue script and game objects.
   DialogueCharacter? findCharacterByName(String name);
   Future<Vector3?> calculateBubblePosition(Vector3? position);
+  Future<Vector3?> clampedBubblePosition(Vector3? position);
 
 }
