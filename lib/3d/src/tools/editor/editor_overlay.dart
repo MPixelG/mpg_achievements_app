@@ -13,10 +13,10 @@ class Editor3DOverlay extends StatelessWidget {
   Widget build(BuildContext context) => Stack(
     children: [
       Positioned(
-        top: 32,
-        child: SizedBox(width: MediaQuery.widthOf(context), height: MediaQuery.heightOf(context) - 33, child: getEditorController(id).windowManager),
+        top: 16,
+        child: SizedBox(width: MediaQuery.widthOf(context), height: MediaQuery.heightOf(context) - 17, child: getEditorController(id).windowManager),
       ),
-      const EditorMenuBarTest(),
+      const EditorMenuBar(),
     ],
   ); //uses the window manager of the controller as the widget to show. this way we dont cache widgets directly and dont use states either
 }
@@ -58,25 +58,3 @@ class EditorController {
 final Map<String, EditorController> _controllers = {};
 
 EditorController getEditorController(String id) => _controllers[id] ??= EditorController();
-
-///test menu bar (by claude lol)
-class EditorMenuBarTest extends StatelessWidget {
-  const EditorMenuBarTest({super.key});
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    body: Stack(
-      children: [
-        Container(
-          color: Colors.grey[900],
-          child: const Center(
-            child: Text('Editor Content', style: TextStyle(color: Colors.white)),
-          ),
-        ),
-        const EditorMenuBar(),
-      ],
-    ),
-  );
-
-
-}

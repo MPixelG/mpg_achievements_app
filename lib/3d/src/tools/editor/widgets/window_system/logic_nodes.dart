@@ -52,7 +52,7 @@ class WindowSplit extends WindowNode {
   """;
 }
 
-WindowNode loadNodeFromJson(Map<String, dynamic> json) {
+WindowNode loadNodeFromJson(Map<String, dynamic> json) {  
   final String? type = json["windowType"];
   assert(type != null, "invalid json format!");
   if (type == "windowLeaf") {
@@ -73,3 +73,5 @@ Axis getAxisOfString(String name) => switch (name) {
   "vertical" => Axis.vertical,
   String() => throw UnimplementedError(),
 };
+
+

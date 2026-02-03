@@ -11,7 +11,7 @@ class EditorMenuBar extends StatelessWidget {
     child: MenuBar(
       style: MenuStyle(
         padding: const WidgetStatePropertyAll(EdgeInsets.fromLTRB(8, 4, 8, 4)),
-        fixedSize: WidgetStatePropertyAll(Size.fromWidth(MediaQuery.of(context).size.width)),
+        fixedSize: WidgetStatePropertyAll(Size(MediaQuery.of(context).size.width, 16)),
         elevation: const WidgetStatePropertyAll(0),
         visualDensity: VisualDensity.compact,
         shape: WidgetStatePropertyAll(BeveledRectangleBorder(borderRadius: BorderRadius.circular(2))),

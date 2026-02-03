@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 //Registry for registering different window types.
 class WindowTypeRegistry {
@@ -71,4 +71,10 @@ class WindowConfig {
       "custom_data": []
     }
   """; //todo add custom_data
+}
+
+
+void registerDebugEditorWindowTypes(){
+  WindowTypeRegistry.register("test1", WindowTypeDefinition(id: "test1", title: "test 1 (green)", builder: () => Container(color: Colors.green)));
+  WindowTypeRegistry.register("test2", WindowTypeDefinition(id: "test2", title: "test 2 (blue)", builder: () => Container(color: Colors.blue)));
 }

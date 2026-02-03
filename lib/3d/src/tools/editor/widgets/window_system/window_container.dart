@@ -214,10 +214,13 @@ class _WindowPaneState extends State<WindowPane> {
                           if (widget.config.icon != null) ...[Icon(widget.config.icon, size: 16, color: Colors.grey.shade400), const SizedBox(width: 6)],
                           //show the icon
                           Expanded(
-                            child: Text(
-                              widget.config.title, //show the title of the window
-                              style: TextStyle(color: Colors.grey.shade300, fontSize: 13, fontWeight: FontWeight.w500),
-                              overflow: TextOverflow.ellipsis,
+                            child: Material( //use a material so that the font of the text isnt changed by the default material (
+                              type: MaterialType.transparency,
+                              child: Text(
+                                widget.config.title, //show the title of the window
+                                style: TextStyle(color: Colors.grey.shade300, fontSize: 13, fontWeight: FontWeight.w500),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
                         ],
@@ -234,9 +237,13 @@ class _WindowPaneState extends State<WindowPane> {
                         const SizedBox(width: 8),
                         if (widget.config.icon != null) ...[Icon(widget.config.icon, size: 16, color: Colors.grey.shade600), const SizedBox(width: 6)],
                         Expanded(
-                          child: Text(
-                            widget.config.title,
-                            style: TextStyle(color: Colors.grey.shade600, fontSize: 13, fontWeight: FontWeight.w500),
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: Text(
+                              widget.config.title, //show the title of the window
+                              style: TextStyle(color: Colors.grey.shade300, fontSize: 13, fontWeight: FontWeight.w500),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ),
                         Icon(Icons.arrow_drop_down, size: 20, color: Colors.grey.shade600),
@@ -257,9 +264,13 @@ class _WindowPaneState extends State<WindowPane> {
                         const SizedBox(width: 8),
                         if (widget.config.icon != null) ...[Icon(widget.config.icon, size: 16, color: Colors.grey.shade400), const SizedBox(width: 6)],
                         Expanded(
-                          child: Text(
-                            widget.config.title,
-                            style: TextStyle(color: Colors.grey.shade300, fontSize: 13, fontWeight: FontWeight.w500),
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: Text(
+                              widget.config.title, //show the title of the window
+                              style: TextStyle(color: Colors.grey.shade300, fontSize: 13, fontWeight: FontWeight.w500),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ),
                         Icon(Icons.arrow_drop_down, size: 20, color: Colors.grey.shade400),
@@ -277,4 +288,3 @@ class _WindowPaneState extends State<WindowPane> {
     },
   );
 }
-

@@ -39,6 +39,19 @@
       "action": {
         "type": "start_viewer"
       }
+    },
+    {
+      "id": "debug_editor_button",
+      "type": "ElevatedButton",
+      "properties": {
+        "width": 200.0,
+        "height": 50.0,
+        "text": "Debug Editor"
+      },
+      "position": {"x": 100, "y": 340},
+      "action": {
+        "type": "start_editor"
+      }
     }
   ]
 }

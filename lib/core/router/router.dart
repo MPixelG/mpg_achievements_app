@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mpg_achievements_app/3d/src/tools/editor/editor_overlay.dart';
 import 'package:mpg_achievements_app/GUI/gamescreen_3d.dart';
 import 'package:mpg_achievements_app/GUI/menuCreator/components/gui_editor.dart';
 import 'package:mpg_achievements_app/GUI/menus.dart';
@@ -44,6 +45,11 @@ class AppRouter {
         path: "/thermionViewer",
         name: "thermionViewer",
         builder: (context, state) => const GameScreen3d(title: "test"),
+      ),
+      GoRoute(
+        path: "/debugEditor",
+        name: "debugEditor",
+        builder: (context, state) => const Editor3DOverlay(id: "main"),
       ),
     ],
   );

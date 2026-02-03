@@ -13,10 +13,6 @@ import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/3d/src/level/tiled_level_loader.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
-import 'package:mpg_achievements_app/3d/src/tools/editor/editor_overlay.dart';
-import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/menuBar/menu_action.dart';
-import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/menuBar/menu_action_registry.dart';
-import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/window_system/window_type_registry.dart';
 import 'package:mpg_achievements_app/core/base_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/conversation_management.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
@@ -141,17 +137,6 @@ class PixelAdventure3D extends BaseGame
     camera3D!.setFollowMode(followMode);
     camera3D!.setFollowEntity(player);
     
-    WindowTypeRegistry.register("test1", WindowTypeDefinition(id: "test1", title: "test 1 (green)", builder: () => Container(color: Colors.green)));
-    WindowTypeRegistry.register("test2", WindowTypeDefinition(id: "test2", title: "test 2 (blue)", builder: () => Container(color: Colors.blue)));
-    MenuActionRegistry.register(MenuAction(path: "file", displayName: "File", action: () {}));
-    MenuActionRegistry.register(MenuAction(path: "file/save", displayName: "Save", action: () {}));
-    MenuActionRegistry.register(MenuAction(path: "file/save_as", displayName: "Save As", action: () {}));
-    MenuActionRegistry.register(MenuAction(path: "file/save_as/json", displayName: "JSON", action: () {}));
-    MenuActionRegistry.register(MenuAction(path: "file/save_as/png", displayName: "PNG", action: () {}));
-    MenuActionRegistry.register(MenuAction(path: "file/save_as/bf", displayName: "BF", action: () {}));
-    MenuActionRegistry.register(MenuAction(path: "file/open", displayName: "Open", action: () {}));
-    MenuActionRegistry.register(MenuAction(path: "view", displayName: "View", action: () {}));
-    MenuActionRegistry.register(MenuAction(path: "view/fullscreen", displayName: "Fullscreen", action: () {}));
 
     super.onLoad();
   }
@@ -203,8 +188,7 @@ class PixelAdventure3D extends BaseGame
         'touchControls': (BuildContext context, BaseGame game) =>
             TouchControls(
               onJoystickMove: (game as PixelAdventure3D).onJoystickMove,
-            ),
-        'editor': (BuildContext context, BaseGame game) => const Editor3DOverlay(id: "main")
+            )
       };
 
 

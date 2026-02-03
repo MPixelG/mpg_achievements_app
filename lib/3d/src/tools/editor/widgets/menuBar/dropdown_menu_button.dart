@@ -32,7 +32,9 @@ class _DropdownMenuButtonState extends State<DropdownMenuButton> {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
 
-  bool get _shouldShowDropdown => _isHovered || _isDropdownHovered || _hasActiveChild;
+  bool get _shouldShowDropdown => (_isHovered || _isDropdownHovered || _hasActiveChild) && !dropdownEmpty;
+  
+  bool get dropdownEmpty => widget.dropdownWidgets.isEmpty;
 
   @override
   void dispose() {
@@ -85,7 +87,7 @@ class _DropdownMenuButtonState extends State<DropdownMenuButton> {
         link: _layerLink,
         targetAnchor: widget.isNested ? Alignment.topRight : Alignment.bottomLeft,
         followerAnchor: widget.isNested ? Alignment.topLeft : Alignment.topLeft,
-        offset: widget.isNested ? const Offset(-2, 0) : const Offset(0, 0),
+        offset: widget.isNested ? const Offset(-2, 0) : const Offset(0, -10),
         child: MouseRegion(
           onEnter: (_) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -209,7 +211,7 @@ class _DropdownMenuButtonState extends State<DropdownMenuButton> {
     },
     child: Container(
       color: _isHovered || _isDropdownHovered || _hasActiveChild ? Colors.white12 : Colors.transparent,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       child: Row(
         children: [
           if (widget.icon != null) ...[Icon(widget.icon, size: 18, color: Colors.white70), const SizedBox(width: 12)],

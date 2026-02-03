@@ -13,17 +13,12 @@ class MenuActionRegistry {
   static MenuAction? getAction(String name) => actions.where((element) => element.displayName == name).firstOrNull;
 
   static MenuAction? getActionAt(String path) => actions.where((element) => element.path == path).firstOrNull;
-
   static String? getActionPath(String name) => actions.where((element) => element.displayName == name).firstOrNull?.path;
-
   static IconData? getActionIcon(String name) => actions.where((element) => element.displayName == name).firstOrNull?.icon;
-
+  
   static Iterable<MenuActionNode>? rootNodes;
-
   static List<Widget> getAllAsMenuBarItems() {
-    print("actions: $actions");
     rootNodes ??= getRootNodes();
-    print("root: $rootNodes");
     return [
       for (MenuActionNode value in rootNodes!)
         DropdownMenuButton(
@@ -49,4 +44,31 @@ class MenuActionRegistry {
   static Iterable<MenuActionNode> getRootNodes() => MenuActionRegistry.getActionsAt("").map((e) => MenuActionNode.fromPath(e.path, actions));
 
   static Iterable<MenuAction> getActionsAt(String path) => actions.where((element) => element.path.lastIndexOf("/") == path.lastIndexOf("/"));
+  
+  static void updateNodes(){
+    
+  }
+  static MenuActionNode updateNodesRecursively(MenuActionNode current){
+    if(current.dirty) {
+      current = MenuActionNode.fromPath(current.path, actions);
+    }
+    current.children.setAll(0, current.children.map((e) => updateNodesRecursively(e)));
+    return current;
+  }
+}
+
+
+void registerMenuActions() {
+
+
+  MenuActionRegistry.register(MenuAction(path: "file", displayName: "File", action: () {}));
+  MenuActionRegistry.register(MenuAction(path: "file/save", displayName: "Save", action: () {}));
+  MenuActionRegistry.register(MenuAction(path: "file/save_as", displayName: "Save As", action: () {}));
+  MenuActionRegistry.register(MenuAction(path: "file/save_as/json", displayName: "JSON", action: () {}));
+  MenuActionRegistry.register(MenuAction(path: "file/save_as/png", displayName: "PNG", action: () {}));
+  MenuActionRegistry.register(MenuAction(path: "file/save_as/bf", displayName: "BF", action: () {}));
+  MenuActionRegistry.register(MenuAction(path: "file/open", displayName: "Open", action: () {}));
+  MenuActionRegistry.register(MenuAction(path: "view", displayName: "View", action: () {}));
+  MenuActionRegistry.register(MenuAction(path: "view/fullscreen", displayName: "Fullscreen", action: () {}));
+
 }

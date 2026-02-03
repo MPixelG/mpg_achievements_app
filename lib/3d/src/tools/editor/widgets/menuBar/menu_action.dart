@@ -13,14 +13,15 @@ class MenuAction {
 }
 class MenuActionNode {
   late final String name;
+  late final String path;
   late final IconData? icon;
   late final List<MenuActionNode> children;
   late final void Function() action;
   bool dirty = false;
 
-  MenuActionNode({required this.name, this.icon, required this.children, required this.action});
+  MenuActionNode({required this.name, this.icon, required this.children, required this.action, required this.path});
 
-  MenuActionNode.fromPath(String path, Iterable<MenuAction> actions) {
+  MenuActionNode.fromPath(this.path, Iterable<MenuAction> actions) {
     final Iterable<MenuAction> open = actions.where((element) => element.path.startsWith(path));
     final Iterable<MenuAction> openWithoutSelf = open.where((element) => element.path != path);
 
