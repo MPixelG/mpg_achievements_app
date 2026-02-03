@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/camera_position_provider.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/speechbubble.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
@@ -14,7 +15,8 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   late double _componentHeight;
   late double _componentWidth;
   //final Vector2 _bubbleCorrectionOffset = Vector2(40, 40);
-  int currentChangeCounter = -1;
+  int currentEntityChangeCounter = -1;
+
 
   // Scroll Controller für Autoscroll
   late ScrollController _scrollController;
@@ -92,6 +94,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
   //choices?
   bool get _isChoiceBubble => widget.choices != null;
+  get result => null;
 
   @override
   void initState() {
@@ -345,35 +348,55 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     //Get 3D World Position from Riverpod entityTransformProvider
     //we also need the id to make sure that position comes form different entities
     final providerId = widget.component.entityId;
-    final notifier = ref.read(entityTransformProvider(providerId));
-
+    final entityNotifier = ref.read(entityTransformProvider(providerId));
+    final cameraNotifier = ref.read(cameraTransformProvider);
     //if there is no change in postion return
-    if (currentChangeCounter == notifier.changeCount) {
+    if (currentEntityChangeCounter == entityNotifier.changeCount && !cameraNotifier.hasChanged) {
       return;
     }
 
-    currentChangeCounter = notifier.changeCount;
+    currentEntityChangeCounter = entityNotifier.changeCount;
 
     //Ask the game to convert the position
     final Vector3? screenPos = (await widget.game.calculateBubblePosition(
-      notifier.position,
+      entityNotifier.position,
     ));
     print('calculated bubblepos: $screenPos');
-    if(screenPos == null){
-      _isOffScreen = true;
-      final Vector3? result  = await widget.game.clampedBubblePosition(notifier.position);
-      _clampedPosition = result!.xy;
-      _arrowAngle = result.length;
-
-    }
 
     if (!mounted) return;
 
-    // 3. Update UI
-    setState((){
-      _bubblePosition = screenPos!.xy;
+    if(screenPos != null){
 
-    });
+      setState((){
+        _isOffScreen = false;
+        _bubblePosition = screenPos!.xy;
+
+      });} else {
+
+      final Vector3? clampedResult  = await widget.game.clampedBubblePosition(entityNotifier.position);
+
+
+      if(clampedResult != null){
+
+        setState(() {
+          _isOffScreen = true;
+          _clampedPosition = clampedResult.xy;
+          _arrowAngle = clampedResult.z; //todo calcvualte angle
+
+        });
+
+
+
+
+
+
+      }
+
+    }
+
+
+
+
   }
 
   // UI Building

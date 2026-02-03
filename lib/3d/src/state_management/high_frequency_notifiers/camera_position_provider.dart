@@ -22,8 +22,8 @@ class CameraTransformNotifier extends ChangeNotifier {
   }) {
     final bool shifted = position.distanceToSquared(newPos) > 0.0001;
 
-    // Wir prüfen, ob sich die Matrix signifikant verändert hat.
-    // Ein Vergleich der 16 Werte der Matrix ist oft sicherer als nur Euler-Winkel.
+    // we check if Matrix changes significantly
+    // check all 16 values of the matrix and compare -> better way?
     final bool rotated = !_matrixEquals(_viewMatrix, newViewMatrix);
 
     if (shifted || rotated) {
