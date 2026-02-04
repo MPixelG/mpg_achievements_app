@@ -30,8 +30,12 @@ class CameraTransformNotifier extends ChangeNotifier {
       _position.setFrom(newPos);
       _viewMatrix.setFrom(newViewMatrix);
       _changeCount++;
-      notifyListeners();
-    }
+      print("Camercc:$_changeCount");
+      //no collision bewtween UI rebuild and Notifier update
+      Future.microtask(() {
+        notifyListeners();
+      });
+     }
   }
 
   // compare matrix
@@ -39,7 +43,7 @@ class CameraTransformNotifier extends ChangeNotifier {
     final storageA = a.storage;
     final storageB = b.storage;
     for (int i = 0; i < 16; i++) {
-      if ((storageA[i] - storageB[i]).abs() > 0.001) return false;
+      if ((storageA[i] - storageB[i]).abs() > 0.0001) return false;
     }
     return true;
   }

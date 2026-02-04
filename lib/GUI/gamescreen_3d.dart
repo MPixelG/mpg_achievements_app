@@ -142,9 +142,16 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
     if (_thermionViewer == null) return;
 
     if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      print("Stop game, Flame-, and Thermion-Engine...");
+      if (_flameGameInstance.isAttached) {
+        _flameGameInstance.pauseEngine();
+      }
       _thermionViewer!.setRendering(false);
     } else if (state == AppLifecycleState.resumed) {
-      _thermionViewer!.setRendering(true);
+      print("Resume game, Flame- and Thermion-Engine...");
+      if(_flameGameInstance.isAttached && _thermionViewer != null) {
+        _flameGameInstance.resumeEngine();
+        _thermionViewer!.setRendering(true);}
     }
   }
 

@@ -36,8 +36,10 @@ class EntityTransformNotifier extends ChangeNotifier {
     //if changes happened notify the listeners
     if (hasChanged) {
       changeCount++;
-      notifyListeners();
-                }
+      Future.microtask(() {
+        notifyListeners();
+      });
+                      }
   }
 }
 

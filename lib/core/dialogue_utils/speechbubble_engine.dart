@@ -1,4 +1,3 @@
-import 'dart:async' as async;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -12,10 +11,10 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     with TickerProviderStateMixin {
   //Position reference
   late Vector2 _bubblePosition = Vector2.zero();
-  late double _componentHeight;
-  late double _componentWidth;
+
   //final Vector2 _bubbleCorrectionOffset = Vector2(40, 40);
   int currentEntityChangeCounter = -1;
+  int currentCameraChangeCounter = -1;
 
 
   // Scroll Controller für Autoscroll
@@ -36,8 +35,8 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   Vector2 _clampedPosition = Vector2.zero();
 
   //Timers, tickers, um mit Thermion zu synchronisieren
-  async.Timer? _typingTimer;
-  async.Timer? _dismissTimer;
+  Timer? _typingTimer;
+  Timer? _dismissTimer;
   late final Ticker _ticker;
 
   //Configuration of Widget and Animations
@@ -94,7 +93,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
   //choices?
   bool get _isChoiceBubble => widget.choices != null;
-  get result => null;
 
   @override
   void initState() {
@@ -142,10 +140,14 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
   @override
   void didUpdateWidget(SpeechBubble oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (!mounted) return;
     // If the parent widget rebuilt with different content for us...
     if (widget.text != oldWidget.text || widget.choices != oldWidget.choices) {
       //we must do a full restart to ensure the state is clean.
-      Future.microtask(() => restartSpeechBubble());
+      // Use scheduleMicrotask for better timing
+      scheduleMicrotask(() {
+        if (mounted) restartSpeechBubble();
+      });
     }
   }
 
@@ -196,6 +198,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     _fadeController.dispose();
     _typingTimer?.cancel();
     _dismissTimer?.cancel();
+    _ticker.stop();
     _ticker.dispose();
     super.dispose();
   }
@@ -233,7 +236,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     final calculatedWidth = textPainter.width + 24; // +24 für padding
     _fixedBubbleWidth = calculatedWidth.clamp(100.0, 400.0);
 
-    _typingTimer = async.Timer.periodic(typingSpeed, (timer) {
+    _typingTimer = Timer.periodic(typingSpeed, (timer) {
       if (!mounted) {
         timer.cancel();
         return;
@@ -279,13 +282,13 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     // Rapid Text: sofort auto-dismiss mit kurzer Wartezeit
     if (widget.isRapidText) {
       _dismissTimer?.cancel();
-      _dismissTimer = async.Timer(const Duration(milliseconds: 800), () {
+      _dismissTimer = Timer(const Duration(milliseconds: 800), () {
         _dismissSpeechBubble();
       });
     } else if (_autoDismiss && !_isChoiceBubble) {
       // Optional: Notfall-Timeout für normale Texte
       _dismissTimer?.cancel();
-      _dismissTimer = async.Timer(const Duration(seconds: 60), () {
+      _dismissTimer = Timer(const Duration(seconds: 60), () {
         _dismissSpeechBubble();
       });
     }
@@ -351,11 +354,12 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     final entityNotifier = ref.read(entityTransformProvider(providerId));
     final cameraNotifier = ref.read(cameraTransformProvider);
     //if there is no change in postion return
-    if (currentEntityChangeCounter == entityNotifier.changeCount && !cameraNotifier.hasChanged) {
+    if (currentEntityChangeCounter == entityNotifier.changeCount && currentCameraChangeCounter == cameraNotifier.changeCount ) {
       return;
     }
-
+    print("bubbleChangeCount:$currentCameraChangeCounter");
     currentEntityChangeCounter = entityNotifier.changeCount;
+    currentCameraChangeCounter = cameraNotifier.changeCount;
 
     //Ask the game to convert the position
     final Vector3? screenPos = (await widget.game.calculateBubblePosition(
@@ -369,7 +373,7 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
 
       setState((){
         _isOffScreen = false;
-        _bubblePosition = screenPos!.xy;
+        _bubblePosition = screenPos.xy;
 
       });} else {
 

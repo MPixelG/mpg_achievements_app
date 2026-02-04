@@ -4,6 +4,7 @@
 //hitbox is defined in player.dart, here we need to update our borders for our collision
 
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flame/components.dart' hide Vector2, Vector3, Matrix4, Vector4;
 import 'package:flutter/foundation.dart';
@@ -244,7 +245,7 @@ Vector3? worldToScreen({
   final double screenX = (ndc.x + 1.0) / 2.0 * screenSize.width;
   final double screenY = (1.0 - ndc.y) / 2.0 * screenSize.height;
 
-
+ //ndc.z returns how far away the bubble is from the camera with the help of character coordinates
   return Vector3(screenX, screenY, ndc.z);
 }
 
@@ -266,6 +267,8 @@ Vector3 getClampedScreenPos({
     ndcX = -ndcX;
     ndcY = -ndcY;
   }
+  //calculate angle from 4-quadrant tangens, ndc values range from -1 to 1
+  final double angle = atan2(ndcY, ndcX);
 
   // Clamping: we bring ndc-values to screenborder
   // +padding
@@ -279,7 +282,7 @@ Vector3 getClampedScreenPos({
   final double screenX = (ndcX + 1.0) / 2.0 * screenSize.width;
   final double screenY = (1.0 - ndcY) / 2.0 * screenSize.height;
 
-  return Vector3(screenX, screenY, clipSpacePos.w);
+  return Vector3(screenX, screenY, angle);
 }
 
 
