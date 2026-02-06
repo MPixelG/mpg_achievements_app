@@ -1,5 +1,5 @@
-import 'package:mpg_achievements_app/isometric/src/core/math/line3d.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'package:flame/extensions.dart';
+import 'package:mpg_achievements_app/isometric/src/core/math/line3d_32.dart';
 
 /// A [LineSegment] represent a segment of an infinitely long line, it is the
 /// segment between the [from] and [to] vectors (inclusive).

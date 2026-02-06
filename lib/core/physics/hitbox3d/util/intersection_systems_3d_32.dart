@@ -1,7 +1,8 @@
-import 'package:vector_math/vector_math_64.dart';
+import 'package:flame/components.dart';
+import 'package:vector_math/vector_math.dart';
 
-import '../shapes/rectangle_hitbox3d.dart';
-import '../shapes/shape_component_3d.dart';
+import '../shapes/rectangle_hitbox3d_32.dart';
+import '../shapes/shape_component_3d_32.dart';
 
 
 abstract class Intersections3D<

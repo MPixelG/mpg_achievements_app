@@ -1,9 +1,11 @@
-import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
-import 'package:mpg_achievements_app/isometric/src/core/math/ray3.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d_32.dart';
+import 'package:mpg_achievements_app/isometric/src/core/math/ray3_32.dart';
+import 'package:mpg_achievements_app/util/render_utils.dart';
 
-import '../util/raycasting_3d.dart';
-import 'rectangle_shape_component.dart';
+import '../util/raycasting_3d_32.dart';
+import 'rectangle_shape_component_32.dart';
 
 class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
   RectangleHitbox3D({
@@ -24,6 +26,13 @@ class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
 
   @override
   String toString()=> "RH3D(${aabb.min} - ${aabb.max})";
+
+  @override
+  void renderDebugMode(Canvas canvas, [Canvas? normalCanvas, Paint Function()? getNormalPaint]) {
+    super.render(canvas);
+    final Vector3 size = aabb.max - aabb.min;
+    drawIsometricBox(canvas, Vector3.zero(), Vector3(size.x, size.y, size.z));
+  }
 
 
   Set<Vector3> rectIntersections(RectangleHitbox3D other) {

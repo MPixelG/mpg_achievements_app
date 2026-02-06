@@ -1,10 +1,10 @@
 
 import 'package:flame/collisions.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'package:flame/components.dart';
 
-import '../hitbox3d.dart';
-import '../misc/aabb_listener.dart';
-import 'broadphase_3d.dart';
+import '../hitbox3d_32.dart';
+import '../misc/aabb_listener_32.dart';
+import 'broadphase_3d_32.dart';
 
 class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implements HitboxAabb3Listener<T>{
   ChunkingBroadphase3D();

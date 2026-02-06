@@ -1,6 +1,6 @@
 
-import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/ray3.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 import '../hitbox3d.dart';
 

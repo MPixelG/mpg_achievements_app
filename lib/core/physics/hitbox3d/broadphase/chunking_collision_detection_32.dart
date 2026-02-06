@@ -1,13 +1,13 @@
 import 'dart:math' as math;
 
-import 'package:mpg_achievements_app/isometric/src/core/math/ray3.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'package:flame/components.dart';
+import 'package:mpg_achievements_app/isometric/src/core/math/ray3_32.dart';
 
-import '../collision_detection_3d.dart';
-import '../shapes/shape_hitbox3d.dart';
-import '../util/raycasting_3d.dart';
-import 'broadphase_3d.dart';
-import 'chunking_broadphase_3d.dart';
+import '../collision_detection_3d_32.dart';
+import '../shapes/shape_hitbox3d_32.dart';
+import '../util/raycasting_3d_32.dart';
+import 'broadphase_3d_32.dart';
+import 'chunking_broadphase_3d_32.dart';
 
 class ChunkingCollisionDetection3D<B extends Broadphase3D<ShapeHitbox3D>>
     extends CollisionDetection3D<ShapeHitbox3D, B> {

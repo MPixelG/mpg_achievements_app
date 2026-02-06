@@ -1,10 +1,9 @@
 import 'dart:math';
 
-import 'package:flame/extensions.dart' show DoubleExtension;
+import 'package:flame/extensions.dart';
 import 'package:flame/geometry.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:mpg_achievements_app/isometric/src/core/math/line_segment_3d.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'package:mpg_achievements_app/isometric/src/core/math/line_segment_3d_32.dart';
 
 /// A ray in 3D space.
 ///
@@ -87,7 +86,7 @@ class Ray3 {
 
   /// Gives the point at a certain length along the ray.
   Vector3 point(double length, {Vector3? out}) => ((out?..setFrom(origin)) ?? origin.clone())
-    ..addScaled(direction, length);
+      ..addScaled(direction, length);
 
   static final Vector3 _edge1 = Vector3.zero();
   static final Vector3 _edge2 = Vector3.zero();

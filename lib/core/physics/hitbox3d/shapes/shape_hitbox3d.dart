@@ -1,19 +1,18 @@
 
 import 'package:flame/collisions.dart';
-import 'package:flame/components.dart' hide Vector3;
+import 'package:flame/components.dart' hide Vector3, Aabb3;
 import 'package:flutter/cupertino.dart' hide Matrix4;
 import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_component_3d.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/ray3.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/transform3d.dart';
+import 'package:vector_math/vector_math_64.dart' show Vector3, Aabb3;
 
-import 'package:vector_math/vector_math.dart' show Vector3;
-
+import '../collision_callbacks3D.dart';
 import '../collision_detection_3d.dart';
 import '../has_collision_detection.dart';
 import '../hitbox3d.dart';
-import '../iso_collision_callbacks.dart';
 import '../misc/aabb_listener.dart';
 import '../util/composite_hitbox_3d.dart';
 import '../util/intersection_systems_3d.dart' as intersection_system;
@@ -257,6 +256,8 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
       );
     }
   }
+  
+  
 
   @override
   @mustCallSuper
@@ -279,7 +280,7 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
   /// As a result, it will always be able to collide with all other types.
   @override
   @mustCallSuper
-  bool onComponentTypeCheck(IsoPositionComponent other) {
+  bool onComponentTypeCheck(PositionComponent3d other) {
     final otherHitboxParent = (other as ShapeHitbox3D).hitboxParent;
 
     final thisCanCollideWithOther =

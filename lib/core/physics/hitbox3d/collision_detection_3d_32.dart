@@ -1,7 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/util/raycasting_3d_32.dart';
-import 'package:mpg_achievements_app/isometric/src/core/math/ray3.dart';
+import 'package:mpg_achievements_app/isometric/src/core/math/ray3_32.dart';
 
 import 'broadphase/broadphase_3d_32.dart';
 import 'hitbox3d_32.dart';

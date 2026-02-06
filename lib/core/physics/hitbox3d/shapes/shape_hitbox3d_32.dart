@@ -1,22 +1,20 @@
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart' hide Vector3;
 import 'package:flutter/cupertino.dart' hide Matrix4;
-import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_component_3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_hitbox3d_32.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_component_3d_32.dart';
 import 'package:mpg_achievements_app/isometric/src/core/iso_component.dart';
-import 'package:mpg_achievements_app/isometric/src/core/math/ray3.dart';
+import 'package:mpg_achievements_app/isometric/src/core/math/ray3_32.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/transform3d_vm32.dart';
-
 import 'package:vector_math/vector_math.dart' show Vector3;
 
 import '../collision_detection_3d_32.dart';
-import '../has_collision_detection.dart';
+import '../has_collision_detection_32.dart';
 import '../hitbox3d_32.dart';
 import '../iso_collision_callbacks.dart';
 import '../misc/aabb_listener_32.dart';
 import '../util/composite_hitbox_3d.dart';
-import '../util/intersection_systems_3d.dart' as intersection_system;
+import '../util/intersection_systems_3d_32.dart' as intersection_system;
 import '../util/raycasting_3d_32.dart';
 
 /// A [ShapeHitbox3D] turns a [ShapeComponent3D] into a [Hitbox3D].

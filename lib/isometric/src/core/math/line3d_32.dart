@@ -1,7 +1,6 @@
 import 'dart:math';
 
-import 'package:vector_math/vector_math_64.dart';
-
+import 'package:flame/components.dart';
 
 /// An infinite line in the 3D Cartesian space lying on the z=0 plane, represented in the form
 /// of ax + by = c.

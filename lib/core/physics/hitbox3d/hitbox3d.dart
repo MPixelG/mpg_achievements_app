@@ -1,11 +1,10 @@
 import 'dart:ui';
 
+import 'package:vector_math/vector_math_64.dart';
 import 'package:flame/collisions.dart';
-import 'package:flame/components.dart' hide Vector3;
 import 'package:flutter/cupertino.dart';
-import 'package:vector_math/vector_math_64.dart' show Vector3;
 
-import 'iso_collision_callbacks.dart';
+import 'collision_callbacks3D.dart';
 import 'misc/aabb_listener.dart';
 
 abstract class Hitbox3D<T extends Hitbox3D<T>> implements GenericIsoCollisionCallbacks<T> {
@@ -45,7 +44,7 @@ abstract class Hitbox3D<T extends Hitbox3D<T>> implements GenericIsoCollisionCal
 
   /// This should be a cheaper calculation than comparing the exact boundaries
   /// if the exact calculation is expensive.
-  /// This method could for example check two [Rect]s or [Aabb2]s against each
+  /// This method could for example check two [Rect]s or [Aabb3]s against each
   /// other.
   bool possiblyIntersects(T other);
 }
