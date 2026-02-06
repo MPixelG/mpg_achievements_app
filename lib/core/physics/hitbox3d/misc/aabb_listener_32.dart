@@ -1,5 +1,6 @@
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/hitbox3d.dart';
+import '../hitbox3d_32.dart';
 
 abstract interface class HitboxAabb3Listener<T extends Hitbox3D<T>> {
   void onAabbChange(T hitbox);
 }
+

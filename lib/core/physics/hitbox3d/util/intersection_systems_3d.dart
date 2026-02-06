@@ -1,7 +1,8 @@
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/shapes/shape_component_3d.dart';
 import 'package:vector_math/vector_math.dart';
+
+import '../shapes/rectangle_hitbox3d.dart';
+import '../shapes/shape_component_3d.dart';
 
 
 abstract class Intersections3D<

@@ -1,5 +1,6 @@
 import 'package:flame/collisions.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/hitbox3d.dart';
+
+import '../hitbox3d.dart';
 
 /// This pool is used to not create unnecessary [CollisionProspect] objects
 /// during collision detection, but to re-use the ones that have already been

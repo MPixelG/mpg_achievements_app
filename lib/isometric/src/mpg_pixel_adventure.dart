@@ -15,6 +15,8 @@ import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_containing_gam
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/core/music/music_manager.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detection.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:thermion_flutter/thermion_flutter.dart' hide Vector2, Vector3;
 import 'package:vector_math/vector_math_64.dart' as v64;
 import 'package:xml/xml.dart';
@@ -22,8 +24,7 @@ import 'components/camera/advanced_camera.dart';
 import 'core/iso_component.dart';
 import 'core/level/game_world.dart';
 import '../../3d/src/level/tiled_level.dart';
-import 'core/physics/hitbox3d/has_collision_detection.dart';
-import 'core/physics/hitbox3d/iso_collision_callbacks.dart';
+
 
 
 //DragCallbacks are imported for touch controls

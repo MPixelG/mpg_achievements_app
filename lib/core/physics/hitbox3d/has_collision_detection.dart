@@ -1,12 +1,12 @@
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/hitbox3d.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
 
 import 'broadphase/broadphase_3d.dart';
 import 'broadphase/chunking_collision_detection.dart';
 import 'collision_detection_3d.dart';
+import 'hitbox3d.dart';
 
 /// Keeps track of all the [ShapeHitbox3D]s in the component's tree and initiates
 /// collision detection every tick.

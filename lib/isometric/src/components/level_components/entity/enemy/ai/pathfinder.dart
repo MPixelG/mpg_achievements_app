@@ -6,13 +6,14 @@ import 'package:flame/geometry.dart';
 import 'package:flame_tiled/flame_tiled.dart' hide Chunk;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/util/raycasting_3d.dart';
 import 'package:mpg_achievements_app/isometric/src/components/level_components/entity/enemy/ai/tile_grid.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/util/raycasting_3d.dart';
 import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 
 import '../../../../../core/level/game_world.dart';
 import '../../../../../core/level/isometric/isometric_world.dart';
-import '../../../../../core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
+
 import 'isometric_tile_grid.dart';
 
 enum PathfindingAction { walk, jump, fall, climbUp, climbDown }

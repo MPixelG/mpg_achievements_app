@@ -1,8 +1,10 @@
 import 'package:flame/components.dart';
+import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
 import 'package:mpg_achievements_app/isometric/src/components/level_components/entity/game_character.dart';
 import 'package:mpg_achievements_app/isometric/src/core/iso_component.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/iso_collision_callbacks.dart';
 import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
+
+import 'hitbox3d/iso_collision_callbacks.dart';
 
 /// Mixin for adding collision detection behavior to a component.
 /// Requires implementing methods to provide hitbox, position, velocity, etc

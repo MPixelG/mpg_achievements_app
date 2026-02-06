@@ -1,9 +1,10 @@
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/broadphase/broadphase_3d.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/hitbox3d.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/misc/aabb_listener.dart';
+
+import '../hitbox3d.dart';
+import '../misc/aabb_listener.dart';
+import 'broadphase_3d.dart';
 
 class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implements HitboxAabb3Listener<T>{
   ChunkingBroadphase3D();

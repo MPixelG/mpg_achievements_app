@@ -1,6 +1,7 @@
 
 import 'package:flame/collisions.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/hitbox3d.dart';
+
+import '../hitbox3d.dart';
 
 /// The [Broadphase3D] class is used to make collision detection more efficient
 /// by doing a rough estimation of which hitboxes that can collide before their

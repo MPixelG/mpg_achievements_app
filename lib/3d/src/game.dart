@@ -20,8 +20,8 @@ import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_containing_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detection.dart';
 import 'package:mpg_achievements_app/core/touch_controls/touch_controls.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/has_collision_detection.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 import 'package:thermion_flutter/thermion_flutter.dart' hide KeyEvent, Vector3;
 import 'package:vector_math/vector_math_64.dart' hide Colors;

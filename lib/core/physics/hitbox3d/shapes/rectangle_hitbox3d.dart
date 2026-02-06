@@ -1,10 +1,10 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/ray3.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/shapes/rectangle_shape_component.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
-import 'package:mpg_achievements_app/isometric/src/core/physics/hitbox3d/util/raycasting_3d.dart';
 import 'package:mpg_achievements_app/util/render_utils.dart';
+import 'rectangle_shape_component.dart';
+import '../util/raycasting_3d.dart';
 
 class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
   RectangleHitbox3D({
