@@ -9,7 +9,6 @@ import 'package:mpg_achievements_app/3d/src/state_management/providers/game_stat
 import 'package:mpg_achievements_app/main.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 
-
 class GameScreen3d extends ConsumerStatefulWidget {
   const GameScreen3d({super.key, required this.title});
   final String title;
@@ -18,14 +17,14 @@ class GameScreen3d extends ConsumerStatefulWidget {
   ConsumerState<GameScreen3d> createState() => _GameScreen3dState();
 }
 
-class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBindingObserver{
+class _GameScreen3dState extends ConsumerState<GameScreen3d>
+    with WidgetsBindingObserver {
   ThermionViewer? _thermionViewer;
   late PixelAdventure3D _flameGameInstance;
   bool _is3DReady = false;
   bool _isLoading = false;
   bool _isSceneLoaded = false;
   //gets the screen or window size
-
 
   @override
   void initState() {
@@ -35,7 +34,6 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _load();
     });
-
   }
 
   Future<void> _load() async {
@@ -85,8 +83,8 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
       const double dist = 2.0;
       const double zoom = 0.1;
       double aspect = 1.0;
-      final Vector3 position = Vector3(15,15,15); //Isometric corner
-      final Vector3 target = Vector3(0,0,0); //Center of level
+      final Vector3 position = Vector3(15, 15, 15); //Isometric corner
+      final Vector3 target = Vector3(0, 0, 0); //Center of level
       final Vector3 standardYUp = Vector3(0, 1, 0);
 
       final game = PixelAdventure3D(
@@ -99,14 +97,15 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
 
       //camera settings isometric
       final camera = await viewer.getActiveCamera();
-      await camera.lookAt(position,focus: target,up: standardYUp);
+      await camera.lookAt(position, focus: target, up: standardYUp);
       await camera.setProjection(
-          Projection.Perspective,
-          -zoom*aspect, //left
-          zoom*aspect,  //right
-          -zoom,        //bottom
-          zoom,         //top
-          0.1, 1000.0   // Near/Far clipping planes
+        Projection.Perspective,
+        -zoom * aspect, //left
+        zoom * aspect, //right
+        -zoom, //bottom
+        zoom, //top
+        0.1,
+        1000.0, // Near/Far clipping planes
       );
       await viewer.setPostProcessing(true);
       await viewer.setRendering(true);
@@ -114,7 +113,7 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
       if (mounted) {
         setState(() {
           // Use the actual widget size if possible, or screen size as fallback to make the shapes look correctly
-         if (size.height > 0) {
+          if (size.height > 0) {
             aspect = size.width / size.height;
           }
           _isLoading = false;
@@ -146,7 +145,8 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
     //store in game_data
     ref.read(gameProvider.notifier).updateSize(size);
 
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
       print("Stop game, Flame-, and Thermion-Engine...");
       if (_flameGameInstance.isAttached) {
         _flameGameInstance.pauseEngine();
@@ -154,9 +154,10 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
       _thermionViewer!.setRendering(false);
     } else if (state == AppLifecycleState.resumed) {
       print("Resume game, Flame- and Thermion-Engine...");
-      if(_flameGameInstance.isAttached && _thermionViewer != null) {
+      if (_flameGameInstance.isAttached && _thermionViewer != null) {
         _flameGameInstance.resumeEngine();
-        _thermionViewer!.setRendering(true);}
+        _thermionViewer!.setRendering(true);
+      }
     }
   }
 
@@ -188,20 +189,18 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
           if (_is3DReady)
             Positioned.fill(
               child: RiverpodAwareGameWidget<PixelAdventure3D>(
-                  key: gameWidgetKey, // Good practice
-                  game: _flameGameInstance,
-                  // Your existing Overlay mapping
-                  overlayBuilderMap: _flameGameInstance.buildOverlayMap()
+                key: gameWidgetKey, // Good practice
+                game: _flameGameInstance,
+                // Your existing Overlay mapping
+                overlayBuilderMap: _flameGameInstance.buildOverlayMap(),
               ),
             ),
         ],
       ),
     );
-    if(!_isLoading && !_is3DReady) _loadAssets();
+    if (!_isLoading && !_is3DReady) _loadAssets();
     return out;
   }
 
   Size get size => MediaQuery.of(context).size;
 }
-
-

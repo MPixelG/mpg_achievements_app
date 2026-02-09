@@ -16,11 +16,10 @@ class GameData {
     required this.size,
   }) : id = id ?? uuid.v4(); // Generate a unique ID if not provided;
 
-
   GameData copyWith({
     String? id, // ID is optional here, as it should not change after creation
     required Size? size,
-   }) => GameData(
+  }) => GameData(
     id: id ?? this.id,
     // ID should not change, so we keep the current one if not provided
     size: size ?? this.size,
