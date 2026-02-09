@@ -1,14 +1,17 @@
 import 'dart:async';
 
 import 'package:flame/components.dart' hide Vector3, Matrix4, Vector2;
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/cupertino.dart' hide Matrix4;
 import 'package:mpg_achievements_app/3d/src/game.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/providers/game_state_provider.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/iso_anchor.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/notifying_vector_3.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/transform3d.dart';
+import 'package:mpg_achievements_app/util/utils.dart';
 import 'package:vector_math/vector_math_64.dart';
 
-class PositionComponent3d extends Component with HasGameReference<PixelAdventure3D> implements Anchor3DProvider, Size3DProvider, Position3DProvider, Scale3DProvider, Rotation3DProvider {
+class PositionComponent3d extends Component with HasGameReference<PixelAdventure3D>, RiverpodComponentMixin implements Anchor3DProvider, Size3DProvider, Position3DProvider, Scale3DProvider, Rotation3DProvider {
   Transform3D transform;
   Anchor3D _anchor;
 
@@ -87,7 +90,8 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
   @override
   Vector3 get position => transform.position;
 
-  Vector2 get screenPos => throw UnimplementedError("screenPos is not yet implemented!"); //todo
+  Future<Vector3?> get screenPos async => worldToScreen(worldPosition: position, viewMatrix: await game.camera3D!.thermionCamera.getViewMatrix(), projectionMatrix: await game.camera3D!.thermionCamera.getProjectionMatrix(), screenSize: ref.read(gameProvider).size
+  ); //todo make generic getter for size in game
 
   double get x => position.x;
   set x(double newX) => position = Vector3(newX, position.y, position.z);

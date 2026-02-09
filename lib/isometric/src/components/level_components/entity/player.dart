@@ -13,7 +13,7 @@ import 'package:mpg_achievements_app/core/physics/hitbox3d/iso_collision_callbac
 import 'package:mpg_achievements_app/isometric/src/components/animation/animation_manager.dart';
 import 'package:mpg_achievements_app/isometric/src/components/animation/new_animated_character.dart';
 import 'package:mpg_achievements_app/isometric/src/core/rendering/textures/game_texture_batch.dart';
-import 'package:mpg_achievements_app/3d/src/state_management/providers/player_state_provider.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/providers/entity/player_state_provider.dart';
 import 'package:mpg_achievements_app/util/isometric_utils.dart';
 import 'isometric_character_shadow.dart';
 

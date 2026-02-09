@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flame/camera.dart';
 import 'package:flame/events.dart' hide PointerMoveEvent;
 import 'package:flame/flame.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image, KeyEvent;
 import 'package:flutter/services.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
@@ -14,6 +15,7 @@ import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/3d/src/level/tiled_level_loader.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/camera_position_provider.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/providers/game_state_provider.dart';
 import 'package:mpg_achievements_app/core/base_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/conversation_management.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
@@ -38,7 +40,9 @@ class PixelAdventure3D extends BaseGame
         DragCallbacks,
         HasCollisionDetection3D,
         ScrollDetector,
-        DialogueContainingGame {
+        DialogueContainingGame,
+        RiverpodGameMixin
+                {
 
   @override
   @Deprecated("This camera is only for 2D!")
@@ -85,6 +89,7 @@ class PixelAdventure3D extends BaseGame
   TiledLevel? _levelData;
   late String levelPath = 'tiles/3D_prototype.tmx';
 
+
   //gameworld -> purely for logic no visuals
   //late final GameWorld gameWorld;
 
@@ -128,25 +133,29 @@ class PixelAdventure3D extends BaseGame
     loadAmbientLighting("assets/3D/default_env_ibl.ktx");
     setSkybox("assets/3D/default_env_skybox.ktx");
 
-    await _trySpawnTest();
+
 
     //get Camera
     camera3D = GameCamera<LockedFollowMode>(await thermion!.getActiveCamera());
     camera3D!.setPosition(Vector3(0, 2, 0));
     add(camera3D!);
 
+    //spawn entities
+    await _trySpawnTest();
+
     final followMode = LockedFollowMode(camera3D!);
     camera3D!.setFollowMode(followMode);
     camera3D!.setFollowEntity(player);
-    
 
-    super.onLoad();
+
+   super.onLoad();
   }
 
   @override
   void onMount() {
     conversationManager = ConversationManager(game: this);
     overlays.toggle('touchControls');
+
     super.onMount();
   }
 
@@ -273,8 +282,7 @@ class PixelAdventure3D extends BaseGame
   }
   @override
   Future<Vector3?> calculateBubblePosition(Vector3? position) async {
-    final size = Size(this.size.x, this.size.y);
-   final Vector3? bubblePosition =  worldToScreen(worldPosition: position!, viewMatrix: await camera3D!.thermionCamera.getViewMatrix(), projectionMatrix:await camera3D!.thermionCamera.getProjectionMatrix(), screenSize: size);
+    final Vector3? bubblePosition =  worldToScreen(worldPosition: position!, viewMatrix: await camera3D!.thermionCamera.getViewMatrix(), projectionMatrix:await camera3D!.thermionCamera.getProjectionMatrix(), screenSize: ref.read(gameProvider).size );
 
   return bubblePosition;
 
@@ -282,8 +290,7 @@ class PixelAdventure3D extends BaseGame
 
   @override
   Future<Vector3?> clampedBubblePosition(Vector3? position) async {
-    final size = Size(this.size.x, this.size.y);
-    final Vector3 arrowPosition =  getClampedScreenPos(worldPosition: position!, viewMatrix: await camera3D!.thermionCamera.getViewMatrix(), projectionMatrix: await camera3D!.thermionCamera.getProjectionMatrix(), screenSize: size);
+     final Vector3 arrowPosition =  getClampedScreenPos(worldPosition: position!, viewMatrix: await camera3D!.thermionCamera.getViewMatrix(), projectionMatrix: await camera3D!.thermionCamera.getProjectionMatrix(), screenSize: ref.read(gameProvider).size);
 
     return arrowPosition;
 

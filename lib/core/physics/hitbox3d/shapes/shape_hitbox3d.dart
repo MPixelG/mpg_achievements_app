@@ -1,7 +1,7 @@
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart' hide Vector3, Aabb3;
-import 'package:flutter/cupertino.dart' hide Matrix4;
+import 'package:flutter/material.dart' hide Matrix4;
 import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_component_3d.dart';

@@ -8,8 +8,7 @@ import 'package:mpg_achievements_app/core/music/music_manager.dart';
 //DragCallbacks are imported for touch controls
 abstract class BaseGame extends FlameGame
     with
-        DialogueContainingGame,
-        RiverpodGameMixin {
+        DialogueContainingGame {
 
   @override
   Color backgroundColor() => const Color(0x00000000);

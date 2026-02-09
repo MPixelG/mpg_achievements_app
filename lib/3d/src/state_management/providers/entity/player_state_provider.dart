@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
 import 'package:mpg_achievements_app/isometric/src/components/level_components/checkpoint/checkpoint.dart';
-import '../models/player_data.dart';
-
+//todo new system with tickClient tickServer etc. method/update needs update only serves as UI update class
 // A provider that manages the state of the player in the game.
 // It extends Notifier to provide a way to notify listeners about changes in the player's state.
 //Notifier is a class from the Riverpod package that allows you to create a state management solution. New since Riverpod 2.0 before it was StateNotifier

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/camera_position_provider.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/high_frequency_notifiers/entity_position_notifier.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/providers/game_state_provider.dart';
 import 'package:mpg_achievements_app/main.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 
@@ -23,6 +24,8 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
   bool _is3DReady = false;
   bool _isLoading = false;
   bool _isSceneLoaded = false;
+  //gets the screen or window size
+
 
   @override
   void initState() {
@@ -32,6 +35,7 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _load();
     });
+
   }
 
   Future<void> _load() async {
@@ -110,9 +114,7 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
       if (mounted) {
         setState(() {
           // Use the actual widget size if possible, or screen size as fallback to make the shapes look correctly
-          //gets the screen or window size
-          final size = MediaQuery.of(context).size;
-          if (size.height > 0) {
+         if (size.height > 0) {
             aspect = size.width / size.height;
           }
           _isLoading = false;
@@ -140,6 +142,9 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (_thermionViewer == null) return;
+
+    //store in game_data
+    ref.read(gameProvider.notifier).updateSize(size);
 
     if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
       print("Stop game, Flame-, and Thermion-Engine...");
@@ -195,4 +200,8 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d> with WidgetsBinding
     if(!_isLoading && !_is3DReady) _loadAssets();
     return out;
   }
+
+  Size get size => MediaQuery.of(context).size;
 }
+
+

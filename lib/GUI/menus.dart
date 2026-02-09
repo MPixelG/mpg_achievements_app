@@ -2,9 +2,6 @@ import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/core/base_game.dart';
-import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
-import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
-import 'package:mpg_achievements_app/isometric/src/mpg_pixel_adventure.dart';
 import 'package:mpg_achievements_app/main.dart';
 
 import 'json_factory/json_exporter.dart';

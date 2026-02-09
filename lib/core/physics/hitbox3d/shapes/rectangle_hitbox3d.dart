@@ -1,3 +1,4 @@
+import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/ray3.dart';
 import 'package:vector_math/vector_math_64.dart';
@@ -15,8 +16,19 @@ class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
 
   @override
   void fillParent() {
-    //todo create fill parent function
-  }
+    //if no parent available return
+      if (parent is! PositionComponent3d) {
+
+      return;
+    }
+    final parentComponent = parent as PositionComponent3d;
+    //set size of parent component
+    size.setFrom(parentComponent.size);
+    //set position of hitbox relative to parent
+    position.setZero();
+    //set anchor ot parent anchor
+    anchor = parentComponent.anchor;
+    }
 
   @override
   RaycastResult3D<ShapeHitbox3D>? rayIntersection(Ray3 ray, {RaycastResult3D<ShapeHitbox3D>? out}) =>
@@ -74,5 +86,13 @@ class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
         thisMax.y > otherMin.y &&
         thisMin.z < otherMax.z &&
         thisMax.z > otherMin.z;
+  }
+
+  @override
+  void onMount() {
+    super.onMount();
+    if (size.length == 0 || size == Vector3.zero()) {
+      fillParent();
+    }
   }
 }

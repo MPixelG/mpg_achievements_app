@@ -2,7 +2,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:mpg_achievements_app/isometric/src/components/animation/new_animated_character.dart';
-import 'package:mpg_achievements_app/3d/src/state_management/providers/player_state_provider.dart';
+import 'package:mpg_achievements_app/3d/src/state_management/providers/entity/player_state_provider.dart';
 
 import '../../../core/level/game_world.dart';
 import '../../../core/math/iso_anchor.dart';
