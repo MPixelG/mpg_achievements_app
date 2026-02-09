@@ -17,8 +17,7 @@ class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
   @override
   void fillParent() {
     //if no parent available return
-      if (parent is! PositionComponent3d) {
-
+    if (parent is! PositionComponent3d) {
       return;
     }
     final parentComponent = parent as PositionComponent3d;
@@ -28,15 +27,16 @@ class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
     position.setZero();
     //set anchor ot parent anchor
     anchor = parentComponent.anchor;
-    }
+  }
 
   @override
-  RaycastResult3D<ShapeHitbox3D>? rayIntersection(Ray3 ray, {RaycastResult3D<ShapeHitbox3D>? out}) =>
-    null; //todo implement ray intersections of rects. see flames RectangleHitbox for example in 2d
+  RaycastResult3D<ShapeHitbox3D>? rayIntersection(
+    Ray3 ray, {
+    RaycastResult3D<ShapeHitbox3D>? out,
+  }) => null; //todo implement ray intersections of rects. see flames RectangleHitbox for example in 2d
 
   @override
-  String toString()=> "RH3D(${aabb.min} - ${aabb.max})";
-
+  String toString() => "RH3D(${aabb.min} - ${aabb.max})";
 
   Set<Vector3> rectIntersections(RectangleHitbox3D other) {
     final intersectionPoints = <Vector3>{};
@@ -78,7 +78,6 @@ class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
     final thisMax = aabb.max;
     final otherMin = other.aabb.min;
     final otherMax = other.aabb.max;
-
 
     return thisMin.x < otherMax.x &&
         thisMax.x > otherMin.x &&
