@@ -17,10 +17,18 @@ class EntityTransformNotifier extends ChangeNotifier {
   //there to check if there has been change
   late int changeCount = 0;
   double rotationZ = 0;
+  bool isInitialized = false;
 
 
   void updateTransform(Vector3 newPos, {double? newRotZ}) {
     bool hasChanged = false;
+
+    if (!isInitialized) {
+      isInitialized = true;
+      position.setFrom(newPos);
+      hasChanged = true;
+      // Force a notify on first update
+    }
     // position check if there is a new postion, then update
     if (position.distanceToSquared(newPos) > 0.001) {
       position.setFrom(newPos);

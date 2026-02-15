@@ -4,18 +4,19 @@
  <tileset firstgid="2" name="bee" tilewidth="128" tileheight="128" tilecount="1" columns="1">
   <image source="../3D/prototyping_assets/Pieces/Bee_proxy.png" trans="ff00ff" width="128" height="128"/>
  </tileset>
+ <tileset firstgid="3" source="ground_tile.tsx"/>
  <layer id="1" name="ground" width="65" height="67" locked="1">
   <data encoding="csv">
    <chunk x="0" y="0" width="16" height="16">
-1,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
-1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+1,1,1,1,3,3,3,3,3,3,0,0,0,0,0,0,
+1,1,1,1,3,3,3,3,3,3,0,0,0,0,0,0,
 1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -27,13 +28,13 @@
   </data>
  </layer>
  <objectgroup id="2" name="Spawnpoints">
-  <object id="1" name="Npc" type="Npc" x="54" y="54" width="16.305" height="16.305">
+  <object id="1" name="Npc" type="Npc" x="572.182" y="314.606" width="16.305" height="16.305">
    <properties>
     <property name="model_path" value="assets/3D/prototyping_assets/Pieces/bee_small.glb"/>
     <property name="y_offset" type="float" value="1"/>
    </properties>
   </object>
-  <object id="1" name="Player" type="Player" x="-346.377" y="324.353" width="16.305" height="16.305">
+  <object id="1" name="Player" type="Player" x="50.5927" y="315.262" width="16.305" height="16.305">
    <properties>
     <property name="model_path" value="assets/3D/character.glb"/>
     <property name="y_offset" type="float" value="1"/>

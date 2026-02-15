@@ -14,11 +14,11 @@
             "scaleInEditor": 1
         },
         "3D_prototype.tmx": {
-            "scale": 0.5456,
+            "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 65.06598240469214,
-                "y": 576.4296187683285
+                "x": 401.5151515151515,
+                "y": 592.4242424242424
             }
         },
         "3D_prototype.tmx#bee": {
@@ -213,6 +213,10 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "ground_tile.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "industrialObjects.tsx": {
             "dynamicWrapping": true,
             "scaleInDock": 1.4
@@ -300,25 +304,26 @@
         "Level_9.tmx",
         "Level_12.tmx",
         "3D_prototype.tmx",
+        "ground_tile.tsx",
         "3D_prototype.tsx"
     ],
     "project": "MPG_pixel_adventure.tiled-project",
-    "property.type": "float",
+    "property.type": "string",
     "recentFiles": [
         "Level_8.tmx",
         "Level_11.tmx",
         "Level_9.tmx",
         "Level_12.tmx",
         "3D_prototype.tsx",
+        "ground_tile.tsx",
         "3D_prototype.tmx",
         "mpg_first_tiledMap.tmx",
         "MPG_pixel_adventure.tsx",
         "Level_2.tmx",
         "Level_1.tmx",
-        "Level_4.tmx",
-        "Level_5.tmx"
+        "Level_4.tmx"
     ],
-    "tileset.embedInMap": true,
+    "tileset.embedInMap": false,
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

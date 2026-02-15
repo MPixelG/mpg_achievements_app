@@ -353,7 +353,12 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
     final providerId = widget.component.entityId;
     final entityNotifier = ref.read(entityTransformProvider(providerId));
     final cameraNotifier = ref.read(cameraTransformProvider);
-    //if there is no change in postion return
+
+    //don't draw until initialised
+    if (!entityNotifier.isInitialized) {
+      return;
+    }
+
     if (currentEntityChangeCounter == entityNotifier.changeCount && currentCameraChangeCounter == cameraNotifier.changeCount ) {
       return;
     }

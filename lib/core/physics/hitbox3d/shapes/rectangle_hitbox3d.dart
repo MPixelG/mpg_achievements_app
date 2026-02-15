@@ -1,12 +1,13 @@
 import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/util/viewer_debug_capabilities.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/ray3.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 import '../util/raycasting_3d.dart';
 import 'rectangle_shape_component.dart';
 
-class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
+class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D, ThermionDebugVisual {
   RectangleHitbox3D({
     required super.size,
     super.position,
@@ -85,6 +86,13 @@ class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D {
         thisMax.y > otherMin.y &&
         thisMin.z < otherMax.z &&
         thisMax.z > otherMin.z;
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    // Synchronisiere den grünen Kasten mit der Hitbox
+    updateDebugVisual(dt);
   }
 
   @override
