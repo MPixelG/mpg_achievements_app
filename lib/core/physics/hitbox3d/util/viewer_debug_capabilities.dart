@@ -6,6 +6,7 @@ import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dar
 mixin ThermionDebugVisual on PositionComponent3d {
   ThermionAsset? _debugAsset;
   ThermionViewer? _viewer;
+  double get modelScale => 0.01;
 
 
   // activate debug visuals
@@ -15,9 +16,12 @@ mixin ThermionDebugVisual on PositionComponent3d {
 
     //(Wireframe Box)
     // Box relative to Anchor (0,0,0) of component,
-    final w = width;
-    final h = height;
-    final d = depth;
+    final w = size.x;
+    final h = size.y;
+    final d = size.z;
+
+    print("debug:");
+    print(size);
 
     // 8 edges of box with Anchor-Offset
     final vertices = Float32List.fromList([
@@ -64,6 +68,15 @@ mixin ThermionDebugVisual on PositionComponent3d {
 
   }
 
+//refrsh after resize
+  Future<void> refreshDebugVisual() async {
+    if (_viewer == null) return;
+
+    disableDebugVisual();
+
+    await enableDebugVisual(_viewer!);
+  }
+
   // remove
   void disableDebugVisual() {
     if (_debugAsset != null && _viewer != null) {
@@ -72,4 +85,7 @@ mixin ThermionDebugVisual on PositionComponent3d {
     }
     _debugAsset = null;
   }
+
+
+
 }

@@ -37,7 +37,6 @@ abstract class GameCharacter<TState> extends Entity<TState>
     print("Hitbox");
     print(hitbox.id);
     print(hitbox.size);
-    print(hitbox.screenPos);
     hitbox.enableDebugVisual(thermion!);
     return super.onLoad();
   }

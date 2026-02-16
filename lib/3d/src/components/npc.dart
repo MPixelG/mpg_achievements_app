@@ -17,6 +17,9 @@ class Npc extends AnimatedGameCharacter<NpcData>{
   });
 
   @override
+  double get modelScale => 0.0005;
+
+  @override
   NpcData initState() => NpcData();
 
   @override
