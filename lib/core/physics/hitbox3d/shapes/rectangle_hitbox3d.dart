@@ -91,7 +91,7 @@ class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D, Ther
   @override
   void update(double dt) {
     super.update(dt);
-    // Synchronisiere den grünen Kasten mit der Hitbox
+    // update position according to parent
     updateDebugVisual(dt);
   }
 
