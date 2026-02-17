@@ -12,7 +12,7 @@ class Npc extends AnimatedGameCharacter<NpcData>{
     super.position,
     required super.size,
     super.anchor,
-    super.modelPath = "assets/3D/small_bee.glb",
+    required super.modelPath,
     super.name,
   });
 

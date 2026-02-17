@@ -8,7 +8,6 @@ import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_componen
 import 'package:mpg_achievements_app/isometric/src/core/math/ray3.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/transform3d.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3, Aabb3;
-
 import '../collision_callbacks3D.dart';
 import '../collision_detection_3d.dart';
 import '../has_collision_detection.dart';
@@ -231,10 +230,10 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
   @mustCallSuper
   void onCollision(Set<Vector3> intersectionPoints, ShapeHitbox3D other) {
     onCollisionCallback?.call(intersectionPoints, other);
-    if (hitboxParent is IsoCollisionCallbacks &&
+    if (hitboxParent is CollisionCallbacks3D &&
         triggersParentCollision &&
         other.triggersParentCollision) {
-      (hitboxParent as IsoCollisionCallbacks).onCollision(
+      (hitboxParent as CollisionCallbacks3D).onCollision(
         intersectionPoints,
         other.hitboxParent,
       );
@@ -247,10 +246,10 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
   void onCollisionStart(Set<Vector3> intersectionPoints, ShapeHitbox3D other) {
     activeCollisions.add(other);
     onCollisionStartCallback?.call(intersectionPoints, other);
-    if (hitboxParent is IsoCollisionCallbacks &&
+    if (hitboxParent is CollisionCallbacks3D &&
         triggersParentCollision &&
         other.triggersParentCollision) {
-      (hitboxParent as IsoCollisionCallbacks).onCollisionStart(
+      (hitboxParent as CollisionCallbacks3D).onCollisionStart(
         intersectionPoints,
         other.hitboxParent,
       );
@@ -264,10 +263,10 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
   void onCollisionEnd(ShapeHitbox3D other) {
     activeCollisions.remove(other);
     onCollisionEndCallback?.call(other);
-    if (hitboxParent is IsoCollisionCallbacks &&
+    if (hitboxParent is CollisionCallbacks3D &&
         triggersParentCollision &&
         other.triggersParentCollision) {
-      (hitboxParent as IsoCollisionCallbacks).onCollisionEnd(other.hitboxParent);
+      (hitboxParent as CollisionCallbacks3D).onCollisionEnd(other.hitboxParent);
     }
   }
 
@@ -284,14 +283,14 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
     final otherHitboxParent = (other as ShapeHitbox3D).hitboxParent;
 
     final thisCanCollideWithOther =
-        (hitboxParent is! IsoCollisionCallbacks) ||
-            (hitboxParent as IsoCollisionCallbacks).onComponentTypeCheck(
+        (hitboxParent is! CollisionCallbacks3D) ||
+            (hitboxParent as CollisionCallbacks3D).onComponentTypeCheck(
               otherHitboxParent,
             );
 
     final otherCanCollideWithThis =
-        (otherHitboxParent is! IsoCollisionCallbacks) ||
-            (otherHitboxParent as IsoCollisionCallbacks).onComponentTypeCheck(
+        (otherHitboxParent is! CollisionCallbacks3D) ||
+            (otherHitboxParent as CollisionCallbacks3D).onComponentTypeCheck(
               hitboxParent,
             );
 
@@ -299,13 +298,13 @@ mixin ShapeHitbox3D on ShapeComponent3D implements Hitbox3D<ShapeHitbox3D> {
   }
 
   @override
-  IsoCollisionCallback<ShapeHitbox3D>? onCollisionCallback;
+  CollisionCallback3D<ShapeHitbox3D>? onCollisionCallback;
 
   @override
-  IsoCollisionCallback<ShapeHitbox3D>? onCollisionStartCallback;
+  CollisionCallback3D<ShapeHitbox3D>? onCollisionStartCallback;
 
   @override
-  IsoCollisionEndCallback<ShapeHitbox3D>? onCollisionEndCallback;
+  CollisionEndCallback3D<ShapeHitbox3D>? onCollisionEndCallback;
 
   /// A unique ID for this [Hitbox3D].
   @override

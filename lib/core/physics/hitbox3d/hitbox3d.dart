@@ -1,13 +1,11 @@
 import 'dart:ui';
-
 import 'package:vector_math/vector_math_64.dart';
 import 'package:flame/collisions.dart';
-import 'package:flutter/cupertino.dart';
-
+import 'package:flutter/material.dart';
 import 'collision_callbacks3D.dart';
 import 'misc/aabb_listener.dart';
 
-abstract class Hitbox3D<T extends Hitbox3D<T>> implements GenericIsoCollisionCallbacks<T> {
+abstract class Hitbox3D<T extends Hitbox3D<T>> with GenericCollisionCallbacks3D<T> {
 
   /// Whether the hitbox should:
   ///   * [CollisionType.active] - actively collide with other hitboxes.

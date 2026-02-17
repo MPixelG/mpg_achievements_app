@@ -2,7 +2,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
-
 import 'broadphase/broadphase_3d.dart';
 import 'broadphase/chunking_collision_detection.dart';
 import 'collision_detection_3d.dart';
@@ -14,26 +13,35 @@ import 'hitbox3d.dart';
 /// Hitboxes are only part of the collision detection performed by its closest
 /// parent with the [HasCollisionDetection3D] mixin, if there are multiple nested
 /// classes that has [HasCollisionDetection3D].
-mixin HasCollisionDetection3D<B extends Broadphase3D<ShapeHitbox3D>> on Component {
-  late CollisionDetection3D<ShapeHitbox3D, B> _collisionDetection;
 
-  CollisionDetection3D<ShapeHitbox3D, B> get collisionDetection {
+//add mixin to game class for implementation
+mixin HasCollisionDetection3D on Component {
+  late CollisionDetection3D<ShapeHitbox3D, Broadphase3D<ShapeHitbox3D>> _collisionDetection;
+  bool _isInitialized = false;
+
+  CollisionDetection3D<ShapeHitbox3D, Broadphase3D<ShapeHitbox3D>> get collisionDetection {
     if (!_isInitialized) {
-      _collisionDetection = ChunkingCollisionDetection3D() as CollisionDetection3D<ShapeHitbox3D, B>;
+      // Initialize the specific implementation here
+      _collisionDetection = ChunkingCollisionDetection3D();
       _isInitialized = true;
     }
     return _collisionDetection;
   }
-  bool _isInitialized = false;
 
-  set collisionDetection(CollisionDetection3D<ShapeHitbox3D, B> cd) {
-    cd.addAll(_collisionDetection.items);
+  set collisionDetection(CollisionDetection3D<ShapeHitbox3D, Broadphase3D<ShapeHitbox3D>> cd) {
+
+    if (_isInitialized) {
+      cd.addAll(_collisionDetection.items);
+    }
     _collisionDetection = cd;
+    _isInitialized = true;
   }
 
   @override
   void update(double dt) {
-    collisionDetection.run();
+    if (_isInitialized) {
+      _collisionDetection.run();
+    }
     super.update(dt);
   }
 }

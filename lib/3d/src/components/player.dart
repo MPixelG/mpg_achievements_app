@@ -25,7 +25,7 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
     super.position,
     required super.size,
     super.anchor,
-    super.modelPath = "assets/3D/character/character_animated_v1.glb",
+    required super.modelPath,
     super.name,
     this.controllable = true,
   });

@@ -20,12 +20,14 @@ class ChunkingCollisionDetection3D<B extends Broadphase3D<ShapeHitbox3D>>
   /// They are called with the [intersectionPoints] and instances of each other,
   /// so that they can determine what hitbox (and what
   /// [ShapeHitbox3D.hitboxParent] that they have collided with.
+  //Narrow pahse handler
   @override
   void handleCollision(
       Set<Vector3> intersectionPoints,
       ShapeHitbox3D hitboxA,
       ShapeHitbox3D hitboxB,
       ) {
+    //make sure that ShapeHitBox3D.onCollision calls parent.OnCollision
     hitboxA.onCollision(intersectionPoints, hitboxB);
     hitboxB.onCollision(intersectionPoints, hitboxA);
   }
@@ -64,9 +66,9 @@ class ChunkingCollisionDetection3D<B extends Broadphase3D<ShapeHitbox3D>>
       ShapeHitbox3D hitboxB,
       ) => hitboxA.intersections(hitboxB);
 
+  //Raycasting
 
   static final _temporaryRaycastResult = RaycastResult3D<ShapeHitbox3D>();
-
   static final _temporaryRayAabb = Aabb3();
 
   @override
@@ -78,23 +80,29 @@ class ChunkingCollisionDetection3D<B extends Broadphase3D<ShapeHitbox3D>>
         RaycastResult3D<ShapeHitbox3D>? out,
       }) {
     var finalResult = out?..reset();
+    //creating of boundingBox for Raycast
     _updateRayAabb(ray, maxDistance);
+    //filter ingnorelist
     for (final item in items) {
       if (ignoreHitboxes?.contains(item) ?? false) {
         continue;
       }
+      //custom filter
       if (hitboxFilter != null) {
         if (!hitboxFilter(item)) {
           continue;
         }
       }
+      //aabb check, precise check
       if (!item.aabb.intersectsWithAabb3(_temporaryRayAabb)) {
         continue;
       }
+      //precis location
       final currentResult = item.rayIntersection(
         ray,
         out: _temporaryRaycastResult,
       );
+      //find closest result
       final possiblyFirstResult = !(finalResult?.isActive ?? false);
       if (currentResult != null &&
           (possiblyFirstResult ||
@@ -203,6 +211,7 @@ class ChunkingCollisionDetection3D<B extends Broadphase3D<ShapeHitbox3D>>
     }
   }
 
+
   /// Computes an axis-aligned bounding box for a [ray].
   ///
   /// When [maxDistance] is provided, this will be the bounding box around
@@ -222,7 +231,8 @@ class ChunkingCollisionDetection3D<B extends Broadphase3D<ShapeHitbox3D>>
       y2 = ray.origin.y + ray.direction.y * maxDistance;
       z2 = ray.origin.z + ray.direction.z * maxDistance;
     } else {
-      x2 = ray.direction.x > 0 ? double.infinity : double.negativeInfinity;
+      //of direction = 0, the box should expand to infinity on that axis
+      x2 = ray.direction.x == 0 ? x1 : (ray.direction.x > 0 ? double.infinity : double.negativeInfinity);
       y2 = ray.direction.y > 0 ? double.infinity : double.negativeInfinity;
       z2 = ray.direction.z > 0 ? double.infinity : double.negativeInfinity;
     }

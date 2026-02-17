@@ -23,9 +23,11 @@ mixin ThermionAssetContainer on PositionComponent3d {
       modelPath,
       keepData: true,
     ));
-    _asset = await sourceAsset!.createInstance();
+    //todo in the future a manager could load assets from here withou loading it from disk every time for now I destroy the asset after instantiating itr
+    _asset = sourceAsset!;
     print("asset entity id: ${_asset.entity}");
     thermion?.addToScene(_asset);
+
 
     if (modelScale != 1.0) {
       // Skalierung auf das Entity anwenden (x, y, z)

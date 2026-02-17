@@ -118,7 +118,7 @@ class PixelAdventure3D extends BaseGame
       return Player(
         position: pos,
         size: size,
-
+        modelPath: assetPath,
         name: name ?? 'Unknown',
       );
     });

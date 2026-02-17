@@ -1,14 +1,14 @@
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart' hide Vector3;
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
 import 'package:vector_math/vector_math_64.dart';
 
-/// The [GenericIsoCollisionCallbacks] mixin can be used to get callbacks from the
+/// The [GenericCollisionCallbacks3D] mixin can be used to get callbacks from the
 /// collision detection system, potentially without using the Flame component
 /// system.
-mixin GenericIsoCollisionCallbacks<T> {
+mixin GenericCollisionCallbacks3D<T> {
   Set<T>? _activeCollisions;
 
   /// The objects that the object is currently colliding with.
@@ -52,21 +52,21 @@ mixin GenericIsoCollisionCallbacks<T> {
   /// type check if needed. In other causes this call is redundant in game code.
   bool onComponentTypeCheck(PositionComponent3d other);
 
-  /// Assign your own [IsoCollisionCallbacks] if you want a callback when this
+  /// Assign your own [CollisionCallbacks3D] if you want a callback when this
   /// shape collides with another [T].
-  IsoCollisionCallback<T>? onCollisionCallback;
+  CollisionCallback3D<T>? onCollisionCallback;
 
-  /// Assign your own [IsoCollisionCallbacks] if you want a callback when this
+  /// Assign your own [CollisionCallbacks3D] if you want a callback when this
   /// shape starts to collide with another [T].
-  IsoCollisionCallback<T>? onCollisionStartCallback;
+  CollisionCallback3D<T>? onCollisionStartCallback;
 
-  /// Assign your own [IsoCollisionEndCallback] if you want a callback when this
+  /// Assign your own [CollisionEndCallback3D] if you want a callback when this
   /// shape stops colliding with another [T].
-  IsoCollisionEndCallback<T>? onCollisionEndCallback;
+  CollisionEndCallback3D<T>? onCollisionEndCallback;
 }
 
-mixin IsoCollisionCallbacks on Component
-implements GenericIsoCollisionCallbacks<PositionComponent3d> {
+mixin CollisionCallbacks3D on Component
+implements GenericCollisionCallbacks3D<PositionComponent3d> {
   @override
   Set<PositionComponent3d>? _activeCollisions;
   @override
@@ -105,36 +105,36 @@ implements GenericIsoCollisionCallbacks<PositionComponent3d> {
   bool onComponentTypeCheck(PositionComponent3d other) {
     final myParent = parent;
     final otherParent = other.parent;
-    if (myParent is IsoCollisionCallbacks && otherParent is PositionComponent3d) {
+    if (myParent is CollisionCallbacks3D && otherParent is PositionComponent3d) {
       return myParent.onComponentTypeCheck(otherParent);
     }
 
     return true;
   }
 
-  /// Assign your own [IsoCollisionCallbacks] if you want a callback when this
-  /// shape collides with another [IsoPositionComponent].
+  /// Assign your own [CollisionCallbacks3D] if you want a callback when this
+  /// shape collides with another [PositionComponent3D].
   @override
-  IsoCollisionCallback<PositionComponent3d>? onCollisionCallback;
+  CollisionCallback3D<PositionComponent3d>? onCollisionCallback;
 
-  /// Assign your own [IsoCollisionCallbacks] if you want a callback when this
+  /// Assign your own [CollisionCallbacks3D] if you want a callback when this
   /// shape starts to collide with another [IsoPositionComponent].
   @override
-  IsoCollisionCallback<PositionComponent3d>? onCollisionStartCallback;
+  CollisionCallback3D<PositionComponent3d>? onCollisionStartCallback;
 
-  /// Assign your own [CollisionEndCallback] if you want a callback when this
-  /// shape stops colliding with another [IsoPositionComponent].
+  /// Assign your own [CollisionEndCallback3D] if you want a callback when this
+  /// shape stops colliding with another [PositionComponent3D].
   @override
-  IsoCollisionEndCallback<PositionComponent3d>? onCollisionEndCallback;
+  CollisionEndCallback3D<PositionComponent3d>? onCollisionEndCallback;
 }
 
 /// Can be used used to implement an `onIsoCollisionCallbacks` or an
 /// `onCollisionStartCallback`.
-typedef IsoCollisionCallback<T> =
+typedef CollisionCallback3D<T> =
 void Function(
     Set<Vector3> intersectionPoints,
     T other,
     );
 
 /// Can be used used to implement an `onCollisionEndCallback`.
-typedef IsoCollisionEndCallback<T> = void Function(T other);
+typedef CollisionEndCallback3D<T> = void Function(T other);

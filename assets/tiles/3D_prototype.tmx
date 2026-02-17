@@ -36,7 +36,7 @@
   </object>
   <object id="1" name="Player" type="Player" x="50.5927" y="315.262" width="16.305" height="16.305">
    <properties>
-    <property name="model_path" value="assets/3D/character.glb"/>
+    <property name="model_path" value="assets/3D/character/character_animated_v1.glb"/>
     <property name="y_offset" type="float" value="1"/>
    </properties>
   </object>
