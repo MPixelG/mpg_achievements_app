@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:mpg_achievements_app/3d/src/components/entity.dart';
+import 'package:mpg_achievements_app/3d/src/components/thermion_asset_container.dart';
 import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_character.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';

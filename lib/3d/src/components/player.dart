@@ -14,6 +14,8 @@ import 'package:vector_math/vector_math_64.dart';
 class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
   late KeyboardCharacterController<Player> controller;
   final Vector3 moveInput = Vector3.zero();
+  @override
+  bool get useFixedGameplaySize => true;
 
   bool controllable;
   Player({
