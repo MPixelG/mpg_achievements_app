@@ -27,7 +27,7 @@ class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D, Ther
     size.setFrom(parentComponent.size);
     //set position of hitbox relative to parent
     position.setZero();
-    //set anchor ot parent anchor
+    //set anchor to bottom center for correct postioning
     anchor = Anchor3D.bottomCenter;}
 
   @override
