@@ -1,6 +1,7 @@
 import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/util/viewer_debug_capabilities.dart';
+import 'package:mpg_achievements_app/isometric/src/core/math/iso_anchor.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/ray3.dart';
 import 'package:vector_math/vector_math_64.dart';
 
@@ -27,8 +28,7 @@ class RectangleHitbox3D extends RectangleShapeComponent with ShapeHitbox3D, Ther
     //set position of hitbox relative to parent
     position.setZero();
     //set anchor ot parent anchor
-    anchor = parentComponent.anchor;
-  }
+    anchor = Anchor3D.bottomCenter;}
 
   @override
   RaycastResult3D<ShapeHitbox3D>? rayIntersection(
