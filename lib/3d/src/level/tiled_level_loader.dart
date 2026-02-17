@@ -4,6 +4,8 @@ import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/3d/src/level/tiled_level.dart';
+import 'package:mpg_achievements_app/core/physics/collision_block.dart';
+import 'package:mpg_achievements_app/core/physics/collision_block3D.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 import 'package:vector_math/vector_math_64.dart' as v64;
 
@@ -11,8 +13,8 @@ class LevelLoader {
   final PixelAdventure3D game = PixelAdventure3D.currentInstance;
   final ThermionViewer viewer;
   late final TiledLevel levelData;
-  final double tiledPixelSize = 128.0;
   final double gridScale = 2.0;
+  final double tiledPixelsize = 128.0;
 
 
   LevelLoader({
@@ -21,8 +23,7 @@ class LevelLoader {
   });
 
   void init() {
-    // _spawnObjects();
-    //spawnTiles();
+
   }
 
   //Iterates through tile layers and spawns 3D tile models in Thermion
@@ -77,6 +78,13 @@ class LevelLoader {
           //Filament
           FilamentApp.instance?.setTransform(entityID, matrix);
           print('tile spawn at $xPos $yHeight $zPos ');
+          //create Collisionbox3D
+          final block = CollisionBlock3D(
+            position: Vector3(xPos,yHeight,zPos),
+            size: v64.Vector3(gridScale, gridScale, gridScale),
+          );
+          game.add(block);
+          print('collisionsblock added:$gridScale $position');
         }
       }
     }
@@ -118,8 +126,8 @@ class LevelLoader {
         // Tiled X -> 3D X
         // Tiled Y -> 3D Z (Depth)
         // Layer -> 3D Y (Height)
-        final double xPos = object.x.toDouble()/tiledPixelSize;
-        final double zPos = object.y.toDouble()/tiledPixelSize;
+        final double xPos = object.x.toDouble()/tiledPixelsize;
+        final double zPos = object.y.toDouble()/tiledPixelsize;
         final double yPos = finalY;
 
         final position = v64.Vector3(xPos,yPos,zPos);
