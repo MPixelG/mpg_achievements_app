@@ -1,17 +1,20 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart' show KeyboardHandler;
 import 'package:flutter/services.dart';
 import 'package:mpg_achievements_app/3d/src/components/animated_game_character.dart';
+import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
 import 'package:mpg_achievements_app/3d/src/state_management/models/entity/player_data.dart';
 import 'package:mpg_achievements_app/core/controllers/character_controller.dart';
 import 'package:mpg_achievements_app/core/controllers/control_action_bundle.dart';
 import 'package:mpg_achievements_app/core/controllers/keyboard_character_controller.dart';
+import 'package:mpg_achievements_app/core/physics/hitbox3d/collision_callbacks3D.dart';
 import 'package:mpg_achievements_app/isometric/src/core/math/iso_anchor.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 import 'package:vector_math/vector_math_64.dart';
 
-class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
+class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler, CollisionCallbacks3D {
   late KeyboardCharacterController<Player> controller;
   final Vector3 moveInput = Vector3.zero();
   @override
@@ -89,9 +92,11 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
       controller = KeyboardCharacterController<Player>(buildControlBundle());
       add(controller);
     }
+    hitbox.collisionType = CollisionType.active;
     
     print("animations: ${await getAnimationNames()}");
     return;
+
   }
   
   static const movementSpeed = 0.01;
@@ -124,6 +129,16 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
         ),
       });
 
+  @override
+  void onCollisionStart(Set<Vector3> intersectionPoints, PositionComponent3d other) {
+    super.onCollisionStart(intersectionPoints, other);
+
+    print("BONK! Player hit: ${other.runtimeType}");
+
+    // Simple test: Stop movement on impact
+    // velocity.setZero();
+  }
+
   static const double cameraMoveSpeed = 0.03;
   void applyCameraRelativeMovement(double dt) {
     if (moveInput.length2 == 0) return;
@@ -150,6 +165,8 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler {
 
     return atan2(forwardX, forwardZ);
   }
+
+
 
 
 

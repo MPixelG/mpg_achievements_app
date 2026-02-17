@@ -30,7 +30,7 @@ class CameraTransformNotifier extends ChangeNotifier {
       _position.setFrom(newPos);
       _viewMatrix.setFrom(newViewMatrix);
       _changeCount++;
-      print("Camercc:$_changeCount");
+      //print("Camercc:$_changeCount");
       //no collision bewtween UI rebuild and Notifier update
       Future.microtask(() {
         notifyListeners();
