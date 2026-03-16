@@ -32,4 +32,12 @@ class CollisionBlock3D extends PositionComponent3d
     await enableDebugVisual(thermion!);
     }
 
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    //updates to actual position not (0,0,0)d
+    updateDebugVisual(dt);
+  }
+
  }
