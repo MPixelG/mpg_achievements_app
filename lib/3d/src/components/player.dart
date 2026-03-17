@@ -94,6 +94,7 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler, Col
 
   void _setAnimationState(_AnimState state) {
     if (_currentAnimState == state) return;
+    print("Animation state: $_currentAnimState → $state");
     _currentAnimState = state;
 
     switch (state) {

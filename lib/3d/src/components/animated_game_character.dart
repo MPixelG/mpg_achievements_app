@@ -46,7 +46,7 @@ abstract class AnimatedGameCharacter<TState> extends GameCharacter<TState> {
     // Both of these are on ThermionAsset — wait parameter is only available in FFIasset
     final index = _animationDurations!.keys.toList().indexOf(name);
     if (index == -1) throw Exception("Animation '$name' not found");
-
+    print("Calling playGltfAnimation index=$index on entity=${asset.entity}, loop=$loop");
     await asset.playGltfAnimation(
       index,
       loop: loop,
@@ -55,6 +55,7 @@ abstract class AnimatedGameCharacter<TState> extends GameCharacter<TState> {
       speed: speed,
       crossfade: crossfade,
     );
+    print("AFTER playGltfAnimation — success");
 
     if (!loop) {
       if (currentSeq != _animationSequence) return;

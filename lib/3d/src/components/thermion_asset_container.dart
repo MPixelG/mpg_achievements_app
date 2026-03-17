@@ -1,7 +1,4 @@
 import 'dart:async';
-
-import 'package:mpg_achievements_app/3d/src/components/game_character.dart';
-import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_hitbox3d.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
@@ -9,7 +6,7 @@ import 'package:thermion_flutter/thermion_flutter.dart';
 import '../game.dart';
 
 mixin ThermionAssetContainer on PositionComponent3d {
-  late ThermionAsset _asset;
+  ThermionAsset? _asset;
   int? get entityId => asset.entity;
   String get modelPath;
   //auto adjust to model size -> yesorno
@@ -19,20 +16,25 @@ mixin ThermionAssetContainer on PositionComponent3d {
 
   @override
   FutureOr<void> onLoad() async {
-    final sourceAsset = (await thermion?.loadGltf(
+    final sourceAsset = await thermion?.loadGltf(
       modelPath,
       keepData: true,
-    ));
+    );
     //todo in the future a manager could load assets from here withou loading it from disk every time for now I destroy the asset after instantiating itr
-    _asset = sourceAsset!;
-    print("asset entity id: ${_asset.entity}");
-    thermion?.addToScene(_asset);
 
+    final instance = await sourceAsset!.createInstance();
+    _asset = instance;
+    thermion?.addToScene(_asset!);
+
+    print("asset entity id: ${_asset!.entity}");
+    print("SOURCE entity: ${sourceAsset.entity}");
+    print("INSTANCE entity: ${instance.entity}");
+    print("Same entity? ${sourceAsset.entity == instance.entity}");
 
     if (modelScale != 1.0) {
       // Skalierung auf das Entity anwenden (x, y, z)
       await FilamentApp.instance!.setTransform(
-        _asset.entity,
+        _asset!.entity,
         Matrix4.diagonal3Values(modelScale, modelScale, modelScale),
       );
     }
@@ -45,7 +47,7 @@ mixin ThermionAssetContainer on PositionComponent3d {
 
   Future<void> _updateComponentSizeFromAsset() async {
     //ask for aabb
-    final aabb = await _asset.getBoundingBox();
+    final aabb = await _asset!.getBoundingBox();
     //calculate size normally y is height, but model seems to treat z as up -> chekc Blender
     final rx = aabb.max.x - aabb.min.x;
     final ry = aabb.max.y - aabb.min.y;
@@ -80,7 +82,7 @@ mixin ThermionAssetContainer on PositionComponent3d {
     }
   }
 
-  ThermionAsset get asset => _asset;
+  ThermionAsset get asset => _asset!;
 
   set asset(ThermionAsset newAsset) {
     //? maybe we need to remove and re-add it to the scene if we change it
@@ -92,8 +94,8 @@ mixin ThermionAssetContainer on PositionComponent3d {
   @override
   void onRemove() {
     // clean up
-    thermion?.removeFromScene(_asset);
-    thermion?.destroyAsset(_asset);
+    thermion?.removeFromScene(_asset!);
+    thermion?.destroyAsset(_asset!);
     super.onRemove();
   }
 }

@@ -42,6 +42,7 @@ abstract class GameCharacter<TState> extends Entity<TState>
     hitbox.enableDebugVisual(thermion!);
     await super.onLoad();
     await asset.addAnimationComponent();
+    print("addAnimationComponent called on entity: ${asset.entity}");
   }
 
   @override
