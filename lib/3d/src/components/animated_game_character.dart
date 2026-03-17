@@ -1,5 +1,6 @@
 import 'game_character.dart';
 
+
 abstract class AnimatedGameCharacter<TState> extends GameCharacter<TState> {
   AnimatedGameCharacter({
     super.children,
@@ -26,44 +27,48 @@ abstract class AnimatedGameCharacter<TState> extends GameCharacter<TState> {
     bool reverse = false,
     double speed = 1.0,
     double crossfade = 0.5,
-    double playAmount = 1,
+    double playAmount = 1.0,
   }) async {
-
     assert(
-    playAmount <= 1 && playAmount >= 0,
-    "playAmount must be within the bounds of 0 and 1! currently it is $playAmount",
+      playAmount >= 0 && playAmount <= 1,
+      "playAmount must be within [0, 1], got $playAmount",
     );
-    //prohibit new start of animation if not necessary
+
     if (currentAnimation == name && !restartIfAlreadyPlaying) return;
 
     _animationSequence++;
-    final int currentSeq = _animationSequence; //save current loop
+    final int currentSeq = _animationSequence;
     currentAnimation = name;
 
-    await asset.playGltfAnimationByName(
-      name,
+    // fill cache
+    await _ensureAnimationCache();
+    if (currentSeq != _animationSequence) return;
+    // Both of these are on ThermionAsset — wait parameter is only available in FFIasset
+    final index = _animationDurations!.keys.toList().indexOf(name);
+    if (index == -1) throw Exception("Animation '$name' not found");
+
+    await asset.playGltfAnimation(
+      index,
       loop: loop,
       replaceActive: replaceActive,
       reverse: reverse,
       speed: speed,
       crossfade: crossfade,
     );
-    // get out early if superseded by animation
-    if (currentSeq != _animationSequence) return;
 
     if (!loop) {
-      //get animationDuration from map, helps with duration calls every loop
-      await _ensureAnimationCache();
-      final durationSeconds = _animationDurations![name] ?? 0.0;
-      final ms = (durationSeconds * 1000 * playAmount).toInt();
+      if (currentSeq != _animationSequence) return;
 
-      await Future.delayed(Duration(milliseconds: ms));
+      final durationSecs = _animationDurations![name]!;
+      final ms = (durationSecs * 1000 * playAmount / speed).toInt();
+
+      await Future.delayed(Duration(milliseconds: ms + 16));
 
       if (currentSeq == _animationSequence) currentAnimation = "";
     }
   }
 
-  void stopAnimation(String name) {
+  Future<void> stopAnimation(String name) async {
     asset.stopGltfAnimationByName(name);
     currentAnimation = "";
   }
@@ -76,6 +81,7 @@ abstract class AnimatedGameCharacter<TState> extends GameCharacter<TState> {
       _animationDurations![names[i]] = await asset.getGltfAnimationDuration(i);
     }
   }
+
 
   Future<List<String>> getAnimationNames() => asset.getGltfAnimationNames();
 }

@@ -32,18 +32,20 @@ abstract class GameCharacter<TState> extends Entity<TState>
   }
 
   @override
-  FutureOr<void> onLoad() {
+  Future<void> onLoad() async {
+
     hitbox = RectangleHitbox3D(size: size);
     add(hitbox);
     print("Hitbox");
     print(hitbox.id);
     print(hitbox.size);
     hitbox.enableDebugVisual(thermion!);
-    return super.onLoad();
+    await super.onLoad();
+    await asset.addAnimationComponent();
   }
 
   @override
-  FutureOr<void> onMount() {
+  Future<void> onMount() async {
     // register Thermion-ID (int) -> Entity
     PixelAdventure3D.currentInstance.registerEntity(asset.entity, this);
     print("Registered Entity $name with ID ${asset.entity}");

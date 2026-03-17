@@ -14,13 +14,20 @@ import 'package:mpg_achievements_app/isometric/src/core/math/iso_anchor.dart';
 import 'package:mpg_achievements_app/util/utils.dart';
 import 'package:vector_math/vector_math_64.dart';
 
+
+enum _AnimState { idle, walking, turnLeft, turnRight }
+
+
+
 class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler, CollisionCallbacks3D {
   late KeyboardCharacterController<Player> controller;
   final Vector3 moveInput = Vector3.zero();
+
   @override
   bool get useFixedGameplaySize => true;
 
   bool controllable;
+
   Player({
     super.children,
     super.priority,
@@ -36,21 +43,26 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler, Col
   @override
   PlayerData initState() => PlayerData();
 
+  _AnimState? _currentAnimState;
+
+
   //update is called in the superclass entity first which then calls the tickClient method in the player, the player updates it's postition
   //then the entity class calls it's own tickClient()-method which updates the position of the player
   @override
   void tickClient(double dt) {
-    game.getTransformNotifier(entityId).updateTransform(positionOfAnchor(Anchor3D.topCenter) + Vector3(0,size.y/2,0), newRotZ: rotationZ);
+    game.getTransformNotifier(entityId).updateTransform(
+        positionOfAnchor(Anchor3D.topCenter) + Vector3(0, size.y / 2, 0),
+        newRotZ: rotationZ);
 
-    if(abs(moveInput.z) > 0.2 * dt){
-      playAnimation("walking", loop: true, reverse: moveInput.z.isNegative);
-    } else if(moveInput.x > 0.2) {
-      playAnimation("turnLeft", playAmount: 0.8);
-    }else if(moveInput.x < -0.2) {
-      playAnimation("turnRight", playAmount: 0.8);
+    //no playAnimatoin calls in tickMethod
+    if (abs(moveInput.z) > 0.2 * dt) {
+      _setAnimationState(_AnimState.walking);
+    } else if (moveInput.x > 0.2) {
+      _setAnimationState(_AnimState.turnLeft);
+    } else if (moveInput.x < -0.2) {
+      _setAnimationState(_AnimState.turnRight);
     } else {
-      playAnimation("idle", loop: true);
-      //stopAnimation("walking");
+      _setAnimationState(_AnimState.idle);
     }
 
 
@@ -58,20 +70,16 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler, Col
     //updateDirection();
 
 
-
-
-
-
     //rotationZ = atan2(vz, vx) + pi / 2; // oder -pi/2
     super.tickClient(dt);
   }
 
   Vector3? lastPosition;
-  void updateDirection(){
+
+  void updateDirection() {
     final velocity = position - (lastPosition ?? position);
 
     if (velocity.length2 > 0.0001) {
-
       final dx = velocity.x;
       final dz = velocity.z;
 
@@ -83,23 +91,40 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler, Col
 
     lastPosition = position.clone();
   }
-  
+
+  void _setAnimationState(_AnimState state) {
+    if (_currentAnimState == state) return;
+    _currentAnimState = state;
+
+    switch (state) {
+      case _AnimState.walking:
+        playAnimation("walking", loop: true, reverse: moveInput.z.isNegative);
+      case _AnimState.turnLeft:
+        playAnimation("turnLeft", playAmount: 0.8);
+      case _AnimState.turnRight:
+        playAnimation("turnRight", playAmount: 0.8);
+      case _AnimState.idle:
+        playAnimation("idle", loop: true);
+    }
+  }
+
+
   @override
-  FutureOr<void> onLoad() async {
+  Future<void> onLoad() async {
     await super.onLoad();
 
-    if(controllable) {
+    if (controllable) {
       controller = KeyboardCharacterController<Player>(buildControlBundle());
       add(controller);
     }
     hitbox.collisionType = CollisionType.active;
-    
+
     print("animations: ${await getAnimationNames()}");
     return;
-
   }
-  
+
   static const movementSpeed = 0.01;
+
   ControlActionBundle<Player> buildControlBundle() =>
       ControlActionBundle<Player>({
         ControlAction(
@@ -128,6 +153,7 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler, Col
           run: (p) => p.velocity.y = 1,
         ),
       });
+
 
   @override
   void onCollisionStart(Set<Vector3> intersectionPoints, PositionComponent3d other) {

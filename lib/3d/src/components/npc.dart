@@ -36,7 +36,7 @@ class Npc extends AnimatedGameCharacter<NpcData>{
   }
 
   @override
-  FutureOr<void> onLoad() {
+  Future<void> onLoad() {
     hitbox = RectangleHitbox3D(size: size);
     hitbox.collisionType = CollisionType.active;
     return super.onLoad();
