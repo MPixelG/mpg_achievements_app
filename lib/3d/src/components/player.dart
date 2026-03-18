@@ -55,11 +55,11 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler, Col
         newRotZ: rotationZ);
 
     //no playAnimatoin calls in tickMethod
-    if (abs(moveInput.z) > 0.2 * dt) {
+    if (abs(moveInput.z) > 0.1) {
       _setAnimationState(_AnimState.walking);
-    } else if (moveInput.x > 0.2) {
+    } else if (moveInput.x > 0.1) {
       _setAnimationState(_AnimState.turnLeft);
-    } else if (moveInput.x < -0.2) {
+    } else if (moveInput.x < -0.1) {
       _setAnimationState(_AnimState.turnRight);
     } else {
       _setAnimationState(_AnimState.idle);
@@ -71,6 +71,7 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler, Col
 
 
     //rotationZ = atan2(vz, vx) + pi / 2; // oder -pi/2
+    moveInput.setZero();
     super.tickClient(dt);
   }
 
@@ -99,13 +100,13 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler, Col
 
     switch (state) {
       case _AnimState.walking:
-        playAnimation("walking", loop: true, reverse: moveInput.z.isNegative);
+        playAnimation("walking", loop: true, reverse: moveInput.z.isNegative, crossfade: 0.15,);
       case _AnimState.turnLeft:
-        playAnimation("turnLeft", playAmount: 0.8);
+        playAnimation("turnLeft", playAmount: 0.8, crossfade: 0.1,);
       case _AnimState.turnRight:
-        playAnimation("turnRight", playAmount: 0.8);
+        playAnimation("turnRight", playAmount: 0.8, crossfade: 0.1,);
       case _AnimState.idle:
-        playAnimation("idle", loop: true);
+        playAnimation("idle", loop: true, crossfade: 0.2);
     }
   }
 
@@ -121,6 +122,7 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler, Col
     hitbox.collisionType = CollisionType.active;
 
     print("animations: ${await getAnimationNames()}");
+    await playAnimation("walking", loop: true, crossfade: 0.0);
     return;
   }
 
@@ -183,7 +185,7 @@ class Player extends AnimatedGameCharacter<PlayerData> with KeyboardHandler, Col
             movementSpeed;
     
     //moveInput.scale(pow(1.1, dt).toDouble()); // epilepsy warning
-    moveInput.setZero();
+
   }
 
   double getYawFromRotation(Matrix3 r) {

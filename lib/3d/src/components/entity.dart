@@ -40,7 +40,7 @@ abstract class Entity<TState> extends PositionComponent3d with ThermionAssetCont
   
   void tickClient(double dt) {
     if (entityId != null) {
-      FilamentApp.instance?.setTransform(entityId!, transform.transformMatrix);
+      asset.setTransform(transform.transformMatrix, entity: entityId);
     }
   }
 

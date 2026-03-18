@@ -33,9 +33,8 @@ mixin ThermionAssetContainer on PositionComponent3d {
 
     if (modelScale != 1.0) {
       // Skalierung auf das Entity anwenden (x, y, z)
-      await FilamentApp.instance!.setTransform(
-        _asset!.entity,
-        Matrix4.diagonal3Values(modelScale, modelScale, modelScale),
+      await _asset!.setTransform(
+        Matrix4.diagonal3Values(modelScale, modelScale, modelScale), entity: _asset!.entity
       );
     }
     //adjust component3D to model size

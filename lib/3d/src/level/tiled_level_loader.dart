@@ -76,7 +76,7 @@ class LevelLoader {
           matrix.setTranslation(position);
 
           //Filament
-          FilamentApp.instance?.setTransform(entityID, matrix);
+          FilamentApp.instance!.setTransform(entityID, matrix);
           print('tile spawn at $xPos $yHeight $zPos ');
           //create Collisionbox3D
           final block = CollisionBlock3D(

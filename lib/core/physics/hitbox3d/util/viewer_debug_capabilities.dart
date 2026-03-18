@@ -73,7 +73,7 @@ mixin ThermionDebugVisual on PositionComponent3d {
       //get parent matrix
       worldMatrix = (parent as PositionComponent3d).transformMatrix.clone();
       worldMatrix.multiply(transformMatrix);
-      FilamentApp.instance!.setTransform(_debugAsset!.entity, worldMatrix);
+      _debugAsset!.setTransform(worldMatrix, entity: _debugAsset!.entity,);
     } else {
       return;
     }
