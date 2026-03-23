@@ -5,13 +5,14 @@
   <image source="../3D/prototyping_assets/Pieces/Bee_proxy.png" trans="ff00ff" width="128" height="128"/>
  </tileset>
  <tileset firstgid="3" source="ground_tile.tsx"/>
- <layer id="1" name="ground" width="65" height="67" locked="1">
+ <tileset firstgid="4" source="shrub.tsx"/>
+ <layer id="1" name="ground" width="65" height="67">
   <data encoding="csv">
    <chunk x="0" y="0" width="16" height="16">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-1,1,1,1,3,3,3,3,3,3,0,0,0,0,0,0,
-1,1,1,1,3,3,3,3,3,3,0,0,0,0,0,0,
+1,1,1,1,4,3,4,3,4,4,0,0,0,0,0,0,
+1,1,1,1,3,4,3,4,4,4,0,0,0,0,0,0,
 1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,
 1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,
 1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,

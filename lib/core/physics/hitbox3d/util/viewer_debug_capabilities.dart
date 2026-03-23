@@ -12,6 +12,8 @@ mixin ThermionDebugVisual on PositionComponent3d {
     if (_debugAsset != null) return;
     _viewer = viewer;
 
+    final activeColor = color ?? Vector4(1.0, 0.0, 0.0, 1.0);
+
     //(Wireframe Box)
     // Box relative to Anchor (0,0,0) of component,
     final w = size.x;
@@ -39,11 +41,12 @@ mixin ThermionDebugVisual on PositionComponent3d {
     final colors = Float32List(numVertices * 4);
 
     for (int i = 0; i < numVertices; i++) {
-      colors[i * 4 + 0] = debugColor.r; // R
-      colors[i * 4 + 1] = debugColor.g; // G
-      colors[i * 4 + 2] = debugColor.b; // B
-      colors[i * 4 + 3] = debugColor.a; // A
+      colors[i * 4 + 0] = activeColor.r; // R
+      colors[i * 4 + 1] = activeColor.g; // G
+      colors[i * 4 + 2] = activeColor.b; // B
+      colors[i * 4 + 3] = activeColor.a; // A
     }
+
     //color does not work
     final geometry = Geometry(
       vertices,
@@ -60,8 +63,7 @@ mixin ThermionDebugVisual on PositionComponent3d {
       addToScene: true, //add to scene
     );
 
-
-  }
+    }
 
   //called in update of component
   void updateDebugVisual(double dt) {

@@ -1,4 +1,4 @@
-
+//todo debug hitbox capabilities
 // concrete instance of a tile in the world with coordinates
 class TileInstance {
   final int x; // Absolute X coordinate  can also be negative
