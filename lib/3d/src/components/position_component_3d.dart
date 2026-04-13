@@ -14,6 +14,7 @@ import 'package:vector_math/vector_math_64.dart';
 class PositionComponent3d extends Component with HasGameReference<PixelAdventure3D>, RiverpodComponentMixin implements Anchor3DProvider, Size3DProvider, Position3DProvider, Scale3DProvider, Rotation3DProvider {
   Transform3D transform;
   Anchor3D _anchor;
+  Vector3 velocity = Vector3.zero();
 
 
   PositionComponent3d({
@@ -27,6 +28,7 @@ class PositionComponent3d extends Component with HasGameReference<PixelAdventure
         _anchor = anchor ?? Anchor3D.bottomLeftLeft, super() {
     this.position = position ?? Vector3.zero();
     this.size = size;
+    velocity = velocity;
 
     _size.addListener(_onModifiedSizeOrAnchor);
     _onModifiedSizeOrAnchor();
