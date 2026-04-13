@@ -1,5 +1,6 @@
 import 'package:thermion_dart/thermion_dart.dart' hide Vector3;
-import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart'; // Pfad anpassen
+import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
+import 'package:vector_math/vector_math_64.dart'; // Pfad anpassen
 
 mixin ThermionDebugVisual on PositionComponent3d {
   ThermionAsset? _debugAsset;
@@ -8,7 +9,9 @@ mixin ThermionDebugVisual on PositionComponent3d {
 
   // activate debug visuals
   Future<void> enableDebugVisual(
-    ThermionViewer viewer, {Vector4? color}) async {
+    ThermionViewer viewer, {
+    Vector4? color,
+  }) async {
     if (_debugAsset != null) return;
     _viewer = viewer;
 
@@ -62,8 +65,7 @@ mixin ThermionDebugVisual on PositionComponent3d {
       keepData: false, //data is stored on the GPU
       addToScene: true, //add to scene
     );
-
-    }
+  }
 
   //called in update of component
   void updateDebugVisual(double dt) {
@@ -75,10 +77,14 @@ mixin ThermionDebugVisual on PositionComponent3d {
       //get parent matrix
       worldMatrix = (parent as PositionComponent3d).transformMatrix.clone();
       worldMatrix.multiply(transformMatrix);
-      _debugAsset!.setTransform(worldMatrix, entity: _debugAsset!.entity,);
     } else {
-      return;
+      worldMatrix = transformMatrix.clone();
+      // Offset down by half the height to correct for bottomCenter anchor
+      worldMatrix.translateByVector3(Vector3(0.0,-size.y/2,0.0));
+
     }
+
+    _debugAsset!.setTransform(worldMatrix, entity: _debugAsset!.entity);
   }
 
   //refrsh after resize

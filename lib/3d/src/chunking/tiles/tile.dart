@@ -2,7 +2,7 @@ import 'package:mpg_achievements_app/3d/src/chunking/tiles/tile_data.dart';
 import 'package:mpg_achievements_app/3d/src/chunking/tiles/tile_provider.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 
-class Tile {
+class Tile  {
   late final ThermionAsset asset;
   final Vector3 position;
   
