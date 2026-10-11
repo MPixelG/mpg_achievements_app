@@ -18,7 +18,7 @@ mixin ThermionAssetContainer on PositionComponent3d {
   FutureOr<void> onLoad() async {
     final sourceAsset = await thermion?.loadGltf(
       modelPath,
-      keepData: true,
+      releaseSourceData: false, //formerly keepData: true
     );
     //todo in the future a manager could load assets from here withou loading it from disk every time for now I destroy the asset after instantiating itr
 

@@ -4,6 +4,7 @@ import 'package:mpg_achievements_app/isometric/src/core/math/ray3.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 import 'broadphase/broadphase_3d.dart';
+import 'misc/prospect_pool.dart';
 import 'hitbox3d.dart';
 
 /// [CollisionDetection] is the foundation of the collision detection system in
@@ -17,7 +18,8 @@ T extends Hitbox3D<T>, B extends Broadphase3D<T>> {
   B broadphase;
 
   List<T> get items => broadphase.items;
-  final _lastPotentials = <CollisionProspect<T>>[];
+  final _lastProspectPool = ProspectPool3D<T>();
+  final _currentPotentials = <CollisionProspect<T>>{};
   final collisionsCompletedNotifier = CollisionDetectionCompletionNotifier();
 
   CollisionDetection3D({required this.broadphase});
@@ -38,9 +40,10 @@ T extends Hitbox3D<T>, B extends Broadphase3D<T>> {
   void run() {
     broadphase.update();
     final potentials = broadphase.query();
-    final hashes = Set.unmodifiable(potentials.map((p) => p.hash));
+    _currentPotentials.clear();
 
     for (final potential in potentials) {
+      _currentPotentials.add(potential);
       final itemA = potential.a;
       final itemB = potential.b;
 
@@ -64,12 +67,15 @@ T extends Hitbox3D<T>, B extends Broadphase3D<T>> {
 
     // Handles callbacks for an ended collision that the broadphase didn't
     // report as a potential collision anymore.
-    for (final prospect in _lastPotentials) {
-      if (!hashes.contains(prospect.hash) &&
+    for (final prospect in _lastProspectPool) {
+      if (!_currentPotentials.contains(prospect) &&
           prospect.a.collidingWith(prospect.b)) {
         handleCollisionEnd(prospect.a, prospect.b);
       }
     }
+    _lastProspectPool
+      ..reset()
+      ..acquireAll(potentials);
 
     // Let all listeners know that the collision detection step has completed
     collisionsCompletedNotifier.notifyListeners();

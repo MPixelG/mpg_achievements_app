@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 
 import '../hitbox3d_32.dart';
 import '../misc/aabb_listener_32.dart';
+import '../misc/prospect_pool.dart';
 import 'broadphase_3d_32.dart';
 
 class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implements HitboxAabb3Listener<T>{
@@ -20,6 +21,7 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
   List<T> get items => _hitboxes.values.toList();
 
   final _potentials = <CollisionProspect<T>>{};
+  final _prospectPool = ProspectPool3D<T>();
 
   @override
   void add(T item) {
@@ -83,6 +85,7 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
   Iterable<CollisionProspect<T>> query() {
 
     _potentials.clear();
+    _prospectPool.reset();
     for (final item in _hitboxes.values) {
 
       if(item.collisionType != CollisionType.active) continue;
@@ -99,7 +102,7 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
           if (hitbox != item) {
 
             if (item.id < hitboxId){
-              _potentials.add(CollisionProspect(item, hitbox));
+              _potentials.add(_prospectPool.acquire(item, hitbox));
             }
           }
         }

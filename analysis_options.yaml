@@ -14,6 +14,11 @@ analyzer:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
     - "**/generated/**"
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
   strong-mode:
     implicit-casts: false
     implicit-dynamic: false

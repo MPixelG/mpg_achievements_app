@@ -3,15 +3,27 @@ import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dar
 import 'package:vector_math/vector_math_64.dart'; // Pfad anpassen
 
 mixin ThermionDebugVisual on PositionComponent3d {
+  /// global switch for all debug frames; set to false before the level loads
+  /// to not create any debug geometry at all
+  static bool showDebugVisuals = true;
+
   ThermionAsset? _debugAsset;
   ThermionViewer? _viewer;
   double get modelScale => 0.01;
+
+  // reused every frame to avoid allocations
+  final Matrix4 _worldMatrix = Matrix4.identity();
+  // last matrix sent to thermion, null forces the next update to send
+  Matrix4? _lastSentMatrix;
+  // true while a setTransform call is still being processed by thermion
+  bool _transformPending = false;
 
   // activate debug visuals
   Future<void> enableDebugVisual(
     ThermionViewer viewer, {
     Vector4? color,
   }) async {
+    if (!showDebugVisuals) return;
     if (_debugAsset != null) return;
     _viewer = viewer;
 
@@ -60,31 +72,37 @@ mixin ThermionDebugVisual on PositionComponent3d {
     );
 
     // create asset
-    _debugAsset = await viewer.createGeometry(
-      geometry,
-      keepData: false, //data is stored on the GPU
-      addToScene: true, //add to scene
-    );
+    //keepData/addToScene were removed from the API; data is stored on the GPU
+    //and the asset is added to the scene by default
+    _debugAsset = await viewer.createGeometry(geometry);
   }
 
   //called in update of component
   void updateDebugVisual(double dt) {
     if (_debugAsset == null || _viewer == null) return;
+    // don't queue up calls while thermion is still busy with the last one
+    if (_transformPending) return;
 
-    final Matrix4 worldMatrix;
+    final worldMatrix = _worldMatrix;
 
     if (parent is PositionComponent3d) {
       //get parent matrix
-      worldMatrix = (parent as PositionComponent3d).transformMatrix.clone();
+      worldMatrix.setFrom((parent as PositionComponent3d).transformMatrix);
       worldMatrix.multiply(transformMatrix);
     } else {
-      worldMatrix = transformMatrix.clone();
+      worldMatrix.setFrom(transformMatrix);
       // Offset down by half the height to correct for bottomCenter anchor
-      worldMatrix.translateByVector3(Vector3(0.0,-size.y/2,0.0));
-
+      worldMatrix.translateByDouble(0.0, -size.y / 2, 0.0, 1.0);
     }
 
-    _debugAsset!.setTransform(worldMatrix, entity: _debugAsset!.entity);
+    // static objects (e.g. tiles) don't move, so only send changed transforms
+    if (_lastSentMatrix == worldMatrix) return;
+    (_lastSentMatrix ??= Matrix4.zero()).setFrom(worldMatrix);
+
+    _transformPending = true;
+    _debugAsset!
+        .setTransform(worldMatrix.clone(), entity: _debugAsset!.entity)
+        .whenComplete(() => _transformPending = false);
   }
 
   //refrsh after resize
@@ -102,5 +120,7 @@ mixin ThermionDebugVisual on PositionComponent3d {
       FilamentApp.instance!.destroyAsset(_debugAsset!);
     }
     _debugAsset = null;
+    // a new asset has to receive its transform again
+    _lastSentMatrix = null;
   }
 }
