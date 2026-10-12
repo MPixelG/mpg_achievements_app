@@ -1,14 +1,18 @@
 import 'package:thermion_dart/thermion_dart.dart' hide Vector3;
 import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
-import 'package:vector_math/vector_math_64.dart'; // Pfad anpassen
+
+//global switch for all debug frames
+
+bool showDebugVisuals = true;
 
 mixin ThermionDebugVisual on PositionComponent3d {
-  /// global switch for all debug frames; set to false before the level loads
-  /// to not create any debug geometry at all
-  static bool showDebugVisuals = true;
-
   ThermionAsset? _debugAsset;
   ThermionViewer? _viewer;
+  // remembered so the frame can be recreated when debug visuals are toggled on
+  bool _debugRequested = false;
+  Vector4? _debugColor;
+  // true while createGeometry is running, prevents creating two assets
+  bool _debugCreating = false;
   double get modelScale => 0.01;
 
   // reused every frame to avoid allocations
@@ -23,9 +27,11 @@ mixin ThermionDebugVisual on PositionComponent3d {
     ThermionViewer viewer, {
     Vector4? color,
   }) async {
-    if (!showDebugVisuals) return;
-    if (_debugAsset != null) return;
     _viewer = viewer;
+    _debugRequested = true;
+    _debugColor = color;
+    if (!showDebugVisuals) return;
+    if (_debugAsset != null || _debugCreating) return;
 
     final activeColor = color ?? Vector4(1.0, 0.0, 0.0, 1.0);
 
@@ -74,7 +80,25 @@ mixin ThermionDebugVisual on PositionComponent3d {
     // create asset
     //keepData/addToScene were removed from the API; data is stored on the GPU
     //and the asset is added to the scene by default
-    _debugAsset = await viewer.createGeometry(geometry);
+    _debugCreating = true;
+    try {
+      _debugAsset = await viewer.createGeometry(geometry);
+    } finally {
+      _debugCreating = false;
+    }
+    // debug visuals were switched off while the asset was being created
+    if (!showDebugVisuals) disableDebugVisual();
+  }
+
+  // shows or hides this component's debug frame according to
+  // [showDebugVisuals]; only components that requested a frame get one
+  Future<void> applyDebugVisibility() async {
+    if (!_debugRequested || _viewer == null) return;
+    if (showDebugVisuals) {
+      await enableDebugVisual(_viewer!, color: _debugColor);
+    } else {
+      disableDebugVisual();
+    }
   }
 
   //called in update of component
@@ -111,7 +135,7 @@ mixin ThermionDebugVisual on PositionComponent3d {
 
     disableDebugVisual();
 
-    await enableDebugVisual(_viewer!);
+    await enableDebugVisual(_viewer!, color: _debugColor);
   }
 
   // remove

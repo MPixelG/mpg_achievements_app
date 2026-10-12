@@ -29,9 +29,9 @@ import 'package:thermion_flutter/thermion_flutter.dart' hide KeyEvent, Vector3;
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 import 'package:xml/xml.dart';
 
+import '../../core/physics/hitbox3d/util/viewer_debug_capabilities.dart';
 import 'components/entity.dart';
 import 'level/tiled_level.dart';
-
 
 //DragCallbacks are imported for touch controls
 class PixelAdventure3D extends BaseGame
@@ -41,9 +41,7 @@ class PixelAdventure3D extends BaseGame
         HasCollisionDetection3D,
         ScrollDetector,
         DialogueContainingGame,
-        RiverpodGameMixin
-                {
-
+        RiverpodGameMixin {
   @override
   @Deprecated("This camera is only for 2D!")
   CameraComponent get camera;
@@ -54,13 +52,13 @@ class PixelAdventure3D extends BaseGame
 
   late Player player;
 
-
   //Singleton
   static PixelAdventure3D? _currentInstance;
   static PixelAdventure3D get currentInstance => _currentInstance!;
   PixelAdventure3D({
-    required this.getTransformNotifier, required this.getCameraTransformNotifier
-    }) {
+    required this.getTransformNotifier,
+    required this.getCameraTransformNotifier,
+  }) {
     //sigleton only set when game was initialised
     _currentInstance = this;
   }
@@ -68,7 +66,6 @@ class PixelAdventure3D extends BaseGame
   //Map for entities
   final Map<int, Entity> entityMap = {};
   final Map<String, DialogueCharacter> dCharacterMap = {};
-
 
   //reference to ThermionViewer
   static late ThermionViewer? _3DGameViewer;
@@ -84,24 +81,24 @@ class PixelAdventure3D extends BaseGame
   final TransformNotifierAccessor getTransformNotifier;
   final CameraNotifierAccessor getCameraTransformNotifier;
 
-
   //level attributes
   TiledLevel? _levelData;
   late String levelPath = 'tiles/3D_prototype.tmx';
 
-
   //gameworld -> purely for logic no visuals
   //late final GameWorld gameWorld;
-
 
   //Future is a value that is returned even thought a value of the method is not computed immediately, but later
   //FutureOr works same here either returns a Future or <void>
   @override
   FutureOr<void> onLoad() async {
-
     //Registering factories for different types of entities, they are stored in the _builders-map
-    EntityFactory.register('Npc', (Vector3 pos, Vector3 size, String name,
-        Map<String, dynamic> props) {
+    EntityFactory.register('Npc', (
+      Vector3 pos,
+      Vector3 size,
+      String name,
+      Map<String, dynamic> props,
+    ) {
       final String assetPath = props['model_path'].toString();
 
       return Npc(
@@ -112,8 +109,12 @@ class PixelAdventure3D extends BaseGame
       );
     });
 
-    EntityFactory.register('Player', (Vector3 pos, Vector3 size, String name,
-        Map<String, dynamic> props) {
+    EntityFactory.register('Player', (
+      Vector3 pos,
+      Vector3 size,
+      String name,
+      Map<String, dynamic> props,
+    ) {
       final String assetPath = props['model_path'].toString();
       return Player(
         position: pos,
@@ -126,14 +127,15 @@ class PixelAdventure3D extends BaseGame
     //
     final String tmxContent = await Flame.assets.readFile(levelPath);
     final XmlDocument xmlDoc = XmlDocument.parse(
-        tmxContent); //fails since the asset file is somehow not published to github, it cant find the file
+      tmxContent,
+    ); //fails since the asset file is somehow not published to github, it cant find the file
     _levelData = await TiledLevel.loadXML(
-        xmlDoc, filename: 'tiles/3D_prototype.tmx',
-        fileReader: (String path) async => await Flame.assets.readFile(path));
+      xmlDoc,
+      filename: 'tiles/3D_prototype.tmx',
+      fileReader: (String path) async => await Flame.assets.readFile(path),
+    );
     loadAmbientLighting("assets/3D/default_env_ibl.ktx");
     setSkybox("assets/3D/default_env_skybox.ktx");
-
-
 
     //get Camera
     camera3D = GameCamera<LockedFollowMode>(await thermion!.getActiveCamera());
@@ -147,8 +149,7 @@ class PixelAdventure3D extends BaseGame
     camera3D!.setFollowMode(followMode);
     camera3D!.setFollowEntity(player);
 
-
-   super.onLoad();
+    super.onLoad();
   }
 
   @override
@@ -159,7 +160,6 @@ class PixelAdventure3D extends BaseGame
     super.onMount();
   }
 
-
   @override
   void update(double dt) {
     super.update(dt);
@@ -168,6 +168,7 @@ class PixelAdventure3D extends BaseGame
     //Joystick X (Left/Right) to 3D X (Left/Right)
     if (currentJoystickMoveX == 0 && currentJoystickMoveY == 0) return;
   }
+
   double currentJoystickMoveX = 0;
   double currentJoystickMoveY = 0;
 
@@ -175,39 +176,36 @@ class PixelAdventure3D extends BaseGame
     currentJoystickMoveX = details.x;
     currentJoystickMoveY = details.y;
   }
-  
-  @override
-  Map<String, Widget Function(BuildContext, BaseGame)>? buildOverlayMap() =>
-      {
-        'TextOverlay': (BuildContext context, BaseGame game) =>
-            TextOverlay(
-              game: game,
-              onTextOverlayDone: () {
-                game.overlays.remove("TextOverlay");
-              },
-            ),
-        'DialogueScreen': (BuildContext context, BaseGame game) =>
-            DialogueScreen(
-              game: game,
-              //when Dialogue is finishes screen is removed form map
-              onDialogueFinished: () {
-                game.overlays.remove('DialogueScreen');
-              },
-              yarnFilePath:
-              'assets/yarn/test.yarn', //todo connect to state management and trigger method, make more customizable not static as atm
-            ),
-        'touchControls': (BuildContext context, BaseGame game) =>
-            TouchControls(
-              onJoystickMove: (game as PixelAdventure3D).onJoystickMove,
-            )
-      };
-
 
   @override
-  KeyEventResult onKeyEvent(KeyEvent event,
-      Set<LogicalKeyboardKey> keysPressed) {
+  Map<String, Widget Function(BuildContext, BaseGame)>? buildOverlayMap() => {
+    'TextOverlay': (BuildContext context, BaseGame game) => TextOverlay(
+      game: game,
+      onTextOverlayDone: () {
+        game.overlays.remove("TextOverlay");
+      },
+    ),
+    'DialogueScreen': (BuildContext context, BaseGame game) => DialogueScreen(
+      game: game,
+      //when Dialogue is finishes screen is removed form map
+      onDialogueFinished: () {
+        game.overlays.remove('DialogueScreen');
+      },
+      yarnFilePath:
+          'assets/yarn/test.yarn', //todo connect to state management and trigger method, make more customizable not static as atm
+    ),
+    'touchControls': (BuildContext context, BaseGame game) => TouchControls(
+      onJoystickMove: (game as PixelAdventure3D).onJoystickMove,
+    ),
+  };
 
-    if (keysPressed.contains(LogicalKeyboardKey.f3)) { //toggle debug mode
+  @override
+  KeyEventResult onKeyEvent(
+    KeyEvent event,
+    Set<LogicalKeyboardKey> keysPressed,
+  ) {
+    if (keysPressed.contains(LogicalKeyboardKey.f3)) {
+      //toggle debug mode
       overlays.toggle('editor');
       print("toggled editor visibility to ${overlays.isActive("editor")}");
     }
@@ -216,7 +214,8 @@ class PixelAdventure3D extends BaseGame
     if (keysPressed.contains(LogicalKeyboardKey.keyB)) {
       // A method to toggle the speech bubble
       conversationManager.startConversation(
-          'assets/yarn/speechbubble_test.yarn');
+        'assets/yarn/speechbubble_test.yarn',
+      );
     }
 
     //overlay debug
@@ -246,9 +245,22 @@ class PixelAdventure3D extends BaseGame
       // A method to toggle the speech bubble
       overlays.add('DialogueScreen');
     }
+
+    // toggle filament hitbox lines
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.keyP) {
+      setDebugVisuals(!showDebugVisuals);
+      print("debug ${showDebugVisuals ? "enabled" : "disabled"}");
+    }
     return super.onKeyEvent(event, keysPressed);
   }
 
+  // shows or hides the debug frames of all components that have one
+  void setDebugVisuals(bool show) {
+    showDebugVisuals = show;
+    for (final component in descendants().whereType<ThermionDebugVisual>()) {
+      component.applyDebugVisibility();
+    }
+  }
 
   @override
   DialogueCharacter? findCharacterByName(String name) {
@@ -266,8 +278,10 @@ class PixelAdventure3D extends BaseGame
     await thermion!.loadSkybox(skyboxPath);
   }
 
-  Future<void> loadAmbientLighting(String iblPath,
-      [double intensity = 30000]) async {
+  Future<void> loadAmbientLighting(
+    String iblPath, [
+    double intensity = 30000,
+  ]) async {
     assert(thermion != null, "thermion isn't initialized yet!");
     await thermion?.loadIbl(iblPath, intensity: intensity);
     print("loaded lighting");
@@ -280,20 +294,29 @@ class PixelAdventure3D extends BaseGame
       print(dCharacterMap.keys);
     }
   }
+
   @override
   Future<Vector3?> calculateBubblePosition(Vector3? position) async {
-    final Vector3? bubblePosition =  worldToScreen(worldPosition: position!, viewMatrix: await camera3D!.thermionCamera.getViewMatrix(), projectionMatrix:await camera3D!.thermionCamera.getProjectionMatrix(), screenSize: ref.read(gameProvider).size );
+    final Vector3? bubblePosition = worldToScreen(
+      worldPosition: position!,
+      viewMatrix: await camera3D!.thermionCamera.getViewMatrix(),
+      projectionMatrix: await camera3D!.thermionCamera.getProjectionMatrix(),
+      screenSize: ref.read(gameProvider).size,
+    );
 
-  return bubblePosition;
-
+    return bubblePosition;
   }
 
   @override
   Future<Vector3?> clampedBubblePosition(Vector3? position) async {
-     final Vector3 arrowPosition =  getClampedScreenPos(worldPosition: position!, viewMatrix: await camera3D!.thermionCamera.getViewMatrix(), projectionMatrix: await camera3D!.thermionCamera.getProjectionMatrix(), screenSize: ref.read(gameProvider).size);
+    final Vector3 arrowPosition = getClampedScreenPos(
+      worldPosition: position!,
+      viewMatrix: await camera3D!.thermionCamera.getViewMatrix(),
+      projectionMatrix: await camera3D!.thermionCamera.getProjectionMatrix(),
+      screenSize: ref.read(gameProvider).size,
+    );
 
     return arrowPosition;
-
   }
 
   @override
@@ -303,7 +326,6 @@ class PixelAdventure3D extends BaseGame
   }
 
   Entity? getEntityById(int id) => entityMap[id];
-
 }
 
 ThermionViewer? get thermion => PixelAdventure3D._3DGameViewer;
