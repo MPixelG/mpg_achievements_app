@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpg_achievements_app/3d/src/tools/editor/widgets/window_system/window_type_registry.dart';
 import 'package:mpg_achievements_app/GUI/menuCreator/components/widget_declaration.dart';
 import 'package:mpg_achievements_app/GUI/widgets/nine_patch_widgets.dart';
+import 'package:mpg_achievements_app/core/base_game.dart';
 import 'package:mpg_achievements_app/core/router/router.dart';
 
 import '3d/src/game.dart';
@@ -13,6 +14,9 @@ import '3d/src/tools/editor/widgets/menuBar/menu_action_registry.dart';
 //a global key to access the game widget state from outside the RiverPodAwareGameWidget or services that live outside the game, but when Riverpod ref logic is available use the standard way of accessing the game via ref.read(gameProvider)
 // because our game is of type game you would normally not need a type specifier, but here the RiverpodAwareGameWidget needs it to know which game it is dealing with
 final GlobalKey<RiverpodAwareGameWidgetState<PixelAdventure3D>> gameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState<PixelAdventure3D>>();
+// separate key for the isometric game (GameScreen). The state type has to match the widget's game type exactly,
+// otherwise currentState is null and flame_riverpod crashes; it also avoids both games sharing one GlobalKey
+final GlobalKey<RiverpodAwareGameWidgetState<BaseGame>> isometricGameWidgetKey = GlobalKey<RiverpodAwareGameWidgetState<BaseGame>>();
 
 // must be async because device loads fullScreen and setsLandscape and then at last the joystick
 void main() async {

@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:uuid/uuid.dart';
-import 'package:vector_math/vector_math_64.dart';
 
 var uuid = const Uuid();
 

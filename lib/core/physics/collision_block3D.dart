@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flame/collisions.dart';
-import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
 import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/util/viewer_debug_capabilities.dart';

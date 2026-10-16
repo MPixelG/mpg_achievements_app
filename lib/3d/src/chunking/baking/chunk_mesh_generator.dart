@@ -7,6 +7,7 @@ import 'package:thermion_flutter/thermion_flutter.dart';
 Future<ThermionAsset?> getMeshOfChunk(Chunk chunk) async {
 
   (await (FilamentApp.instance!.renderableManager.createVertexBufferBuilder()..attribute(VertexAttribute.POSITION, 0, VertexAttributeType.BYTE)).build());
+  return null;
   
   
 }

@@ -25,12 +25,12 @@ class MenuActionNode {
     final Iterable<MenuAction> open = actions.where((element) => element.path.startsWith(path));
     final Iterable<MenuAction> openWithoutSelf = open.where((element) => element.path != path);
 
-    final MenuAction? action = open.firstWhere(
+    final MenuAction action = open.firstWhere(
             (element) => element.path == path,
         orElse: () => throw Exception("menu action path is invalid! no action is registered under the path '$path'")
     );
 
-    name = action!.displayName;
+    name = action.displayName;
     icon = action.icon;
     this.action = action.action;
 

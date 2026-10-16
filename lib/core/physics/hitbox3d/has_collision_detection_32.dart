@@ -4,7 +4,7 @@ import 'package:flame/components.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/shape_hitbox3d_32.dart';
 
 import 'broadphase/broadphase_3d_32.dart';
-import 'broadphase/chunking_collision_detection.dart';
+import 'broadphase/chunking_collision_detection_32.dart';
 import 'collision_detection_3d_32.dart';
 import 'hitbox3d_32.dart';
 
@@ -27,8 +27,11 @@ mixin HasCollisionDetection3D<B extends Broadphase3D<ShapeHitbox3D>> on Componen
   bool _isInitialized = false;
 
   set collisionDetection(CollisionDetection3D<ShapeHitbox3D, B> cd) {
-    cd.addAll(_collisionDetection.items);
+    if (_isInitialized) {
+      cd.addAll(_collisionDetection.items);
+    }
     _collisionDetection = cd;
+    _isInitialized = true;
   }
 
   @override

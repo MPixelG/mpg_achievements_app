@@ -4,9 +4,9 @@ import 'dart:math' as math;
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart' as fe;
-import 'package:flame/flame.dart';
 import 'package:flame/input.dart' hide Vector2, Vector3;
 import 'package:flame/palette.dart';
+import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/core/base_game.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/conversation_management.dart';
@@ -15,15 +15,16 @@ import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_containing_gam
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_screen.dart';
 import 'package:mpg_achievements_app/core/dialogue_utils/text_overlay.dart';
 import 'package:mpg_achievements_app/core/music/music_manager.dart';
-import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detection.dart';
+//the isometric game uses the 32 bit hitbox system (IsoPositionComponent), the 3D game the 64 bit one
+import 'package:mpg_achievements_app/core/physics/hitbox3d/has_collision_detection_32.dart';
 import 'package:mpg_achievements_app/core/physics/hitbox3d/iso_collision_callbacks.dart';
+import 'package:mpg_achievements_app/util/utils.dart';
 import 'package:thermion_flutter/thermion_flutter.dart' hide Vector2, Vector3;
 import 'package:vector_math/vector_math_64.dart' as v64;
-import 'package:xml/xml.dart';
 import 'components/camera/advanced_camera.dart';
 import 'core/iso_component.dart';
 import 'core/level/game_world.dart';
-import '../../3d/src/level/tiled_level.dart';
+import 'core/level/isometric/isometric_world.dart';
 
 
 
@@ -35,7 +36,10 @@ class PixelAdventure extends BaseGame
         HasCollisionDetection3D,
         ScrollDetector,
         IsoCollisionCallbacks,
-        DialogueContainingGame {
+        DialogueContainingGame,
+        // required by RiverpodAwareGameWidget in GameScreen and by the
+        // RiverpodComponentMixin of the player and checkpoints
+        RiverpodGameMixin {
   static PixelAdventure? _currentInstance;
   static ThermionViewer? _3DGameViewer;
 
@@ -60,6 +64,7 @@ class PixelAdventure extends BaseGame
   late final GameWorld gameWorld;
   late JoystickComponent joystick;
   late String currentLevel = "Level_9";
+  @override
   final musicManager = MusicManager();
   //bools for game logic
   //needs to go into the overlay_controller later
@@ -75,28 +80,18 @@ class PixelAdventure extends BaseGame
   //FutureOr works same here either returns a Future or <void>
   @override
   FutureOr<void> onLoad() async {
-
-    //test
-    //add overlays
-   // overlays.add('TextOverlay');
-   // overlays.add('DialogueScreen');
     //addJoystick();
     //musicManager.playRandomMusic();
     //musicManager.setVolume(0.4);
-    //final String tmxContent = await Flame.assets.readFile(levelPath);
-    //final XmlDocument xmlDoc = XmlDocument.parse(tmxContent); //fails since the asset file is somehow not published to github, it cant find the file
-    //final FutureOr<TiledLevel> levelData = TiledLevel.loadXML(xmlDoc, filename: '3D_prototype.tmx', fileReader: (String path) async => await Flame.assets.readFile(levelPath));
-    //print('Level');
-    //print(levelData);
-    //super.onLoad();
-    /*Removed for testing 3dThermionViewer, potentially keep the part for later usage in a separate game??
+
     //all images for the game are loaded into cache when the game start -> could take long at a later stage, but here it is fine for moment being
     await images.loadAllImages();
     conversationManager = ConversationManager(game: this);
-    //parse("tiles/$currentLevel.tmx");
 
     //world is loaded after initialising all images
-    final Vector2 tileSize = await getTilesizeOfLevel(currentLevel);
+    //utils works with vector_math_64, flame (since 1.38) with 32 bit vectors
+    final tileSize64 = await getTilesizeOfLevel(currentLevel);
+    final tileSize = fe.Vector2(tileSize64.x, tileSize64.y);
 
     gameWorld = IsometricWorld(
       levelName: currentLevel,
@@ -107,12 +102,10 @@ class PixelAdventure extends BaseGame
     cam.viewfinder.anchor = Anchor.center;
     await addAll([cam, gameWorld]);
 
-
-
     await add(
       _FollowCameraComponent(),
     ); //helper class to follow the player after the world and player are loaded
-    return super.onLoad();*/
+    return super.onLoad();
   }
 
 
@@ -194,6 +187,7 @@ class PixelAdventure extends BaseGame
   @override
   DialogueCharacter? findCharacterByName(String name) {
     npcs[name];
+    return null;
   }
 
   @override

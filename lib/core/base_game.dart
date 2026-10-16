@@ -1,5 +1,4 @@
 import 'package:flame/game.dart';
-import 'package:flame_riverpod/flame_riverpod.dart';
 import 'package:flutter/material.dart' hide AnimationStyle, Image;
 import 'package:mpg_achievements_app/core/dialogue_utils/dialogue_containing_game.dart';
 import 'package:mpg_achievements_app/core/music/music_manager.dart';

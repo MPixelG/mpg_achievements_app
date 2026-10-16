@@ -4,7 +4,6 @@ import 'package:mpg_achievements_app/3d/src/components/player.dart';
 import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:mpg_achievements_app/3d/src/level/entity_factory.dart';
 import 'package:mpg_achievements_app/3d/src/level/tiled_level.dart';
-import 'package:mpg_achievements_app/core/physics/collision_block.dart';
 import 'package:mpg_achievements_app/core/physics/collision_block3D.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 import 'package:vector_math/vector_math_64.dart' as v64;
@@ -26,9 +25,13 @@ class LevelLoader {
 
   }
 
-  //Iterates through tile layers and spawns 3D tile models in Thermion
+  //Iterates through tile layers and spawns 3D tile models in Thermion.
+  //Every model file is loaded only once; each tile that uses it gets its own
+  //instance, which shares geometry and textures with the loaded asset
   Future<void> spawnTiles() async {
-    // Iterate over all layers
+    // 1. Collect the positions of all tiles, grouped by model path
+    final Map<String, List<v64.Vector3>> tilePositionsByModel = {};
+
     for (
       int layerIndex = 0;
       layerIndex < levelData.layers.length;
@@ -42,50 +45,51 @@ class LevelLoader {
       final double yHeight = layerIndex * gridScale;
 
       for (final tile in layer.activeTiles) {
-        // 1. Get the model path associated with this tile GID
+        // Get the model path associated with this tile GID
         final tileInfo = levelData.tilesetData[tile.gid];
-        print(tileInfo);
         // Only spawn if we found a valid model path
-        if (tileInfo != null && tileInfo.modelPath != null) {
-          // 2. Clean up the path (Thermion usually wants paths relative to asset root)
-          // e.g. "assets/tiles/block.glb" -> "tiles/block.glb"
-          final String modelPath = tileInfo.modelPath!;
-          print(modelPath);
+        if (tileInfo == null || tileInfo.modelPath == null) continue;
 
+        // Tiled X -> 3D X
+        // Tiled Y -> 3D Z (Depth)
+        // Layer -> 3D Y (Height)
+        final double xPos = tile.x * 2.0;
+        final double zPos = tile.y * 2.0;
 
+        (tilePositionsByModel[tileInfo.modelPath!] ??= []).add(
+          v64.Vector3(xPos, yHeight, zPos),
+        );
+      }
+    }
 
-          // 3. Load the model or wrapper into the 3D scene
-          final dynamic asset = await viewer.loadGltf(modelPath);
-          
-          print("loaded!");
+    // 2. Load each model once with one pre-allocated instance per tile
+    for (final entry in tilePositionsByModel.entries) {
+      final String modelPath = entry.key;
+      final List<v64.Vector3> positions = entry.value;
 
-          //extract entity ID
-          final entityID = (asset as dynamic).entity;
+      final sourceAsset = await viewer.loadGltf(
+        modelPath,
+        addToScene: false, // only the positioned instances are added
+        initialInstances: positions.length,
+      );
+      print("loaded $modelPath once for ${positions.length} tiles");
 
-          // 4. Position the model
-          // Tiled X -> 3D X
-          // Tiled Y -> 3D Z (Depth)
-          // Layer -> 3D Y (Height)
-          final double xPos = tile.x * 2.0;
-          final double zPos = tile.y * 2.0;
+      for (final position in positions) {
+        // returns the pre-allocated instances one after another
+        final instance = await sourceAsset.createInstance();
 
-          final position = v64.Vector3(xPos, yHeight, zPos);
+        // position first, then add, so it never shows up at the origin
+        final matrix = v64.Matrix4.identity()..setTranslation(position);
+        await instance.setTransform(matrix);
+        await viewer.addToScene(instance);
+        print('tile spawn at ${position.x} ${position.y} ${position.z} ');
 
-          //Create translation Matrix -> is there a better way?
-          final matrix = v64.Matrix4.identity();
-          matrix.setTranslation(position);
-
-          //Filament
-          FilamentApp.instance!.setTransform(entityID, matrix);
-          print('tile spawn at $xPos $yHeight $zPos ');
-          //create Collisionbox3D
-          final block = CollisionBlock3D(
-            position: Vector3(xPos,yHeight,zPos),
-            size: v64.Vector3(gridScale, gridScale, gridScale),
-          );
-          game.add(block);
-          print('collisionsblock added:$gridScale $position');
-        }
+        //create Collisionbox3D
+        final block = CollisionBlock3D(
+          position: position.clone(),
+          size: v64.Vector3(gridScale, gridScale, gridScale),
+        );
+        game.add(block);
       }
     }
   }

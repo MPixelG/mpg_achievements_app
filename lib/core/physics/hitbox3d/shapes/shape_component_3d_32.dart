@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
 import 'package:mpg_achievements_app/isometric/src/core/iso_component.dart';
 // import 'package:mpg_achievements_app/isometric/src/core/iso_component.dart';
 

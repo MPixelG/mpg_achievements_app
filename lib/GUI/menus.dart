@@ -148,7 +148,7 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => RiverpodAwareGameWidget<BaseGame>(
-      key: gameWidgetKey,
+      key: isometricGameWidgetKey,
       game: game,
       overlayBuilderMap: game.buildOverlayMap()
     );

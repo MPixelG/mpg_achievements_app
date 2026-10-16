@@ -385,7 +385,7 @@ Paint calculateDepthPaint(IsometricRenderable renderable, Paint overridePaint) {
     0, 0, 0, 1, 0,
   ]);
   
-  print("depth paint of $renderable: ${footY}");
+  print("depth paint of $renderable: $footY");
 
   return overridePaint;
 }

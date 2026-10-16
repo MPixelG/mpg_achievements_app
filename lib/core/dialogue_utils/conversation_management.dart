@@ -116,14 +116,6 @@ class ConversationManager with DialogueView {
     final characterId = character!.entityId;
     print('found character:$character');
 
-    if (character == null) {
-      print(
-        "Error: Character '$characterName' not found in game.npcs. Cannot show speech bubble.",
-      );
-      _lineCompleter?.complete();
-      return true;
-    }
-
     _removeSpeechBubbleFor(characterName);
 
     final overlayKey =

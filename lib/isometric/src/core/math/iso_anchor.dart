@@ -1,5 +1,4 @@
 
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:vector_math/vector_math_64.dart';

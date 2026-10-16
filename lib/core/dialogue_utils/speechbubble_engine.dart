@@ -226,7 +226,6 @@ class SpeechBubbleState extends ConsumerState<SpeechBubble>
           height: 1.4,
         ),
       ),
-      maxLines: null,
       textDirection: TextDirection.ltr,
     );
 

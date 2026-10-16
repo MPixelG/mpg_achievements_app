@@ -39,7 +39,7 @@ class SlidingCameraMode extends CameraFollowMode {
     moveStep(dt);
     rotationStep(dt);
     if(target != null && (targetCameraPosition == null || targetCameraPosition!.distanceTo(target!.position) > .1)){
-      moveTo(target!.position, time: 1);
+      moveTo(target!.position);
     }
   }
   

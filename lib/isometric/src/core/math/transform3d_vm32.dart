@@ -201,7 +201,7 @@ class Transform3D extends ChangeNotifier {
       transformMatrixSet = true;
     }
     if (_recalculate) {
-      _transformMatrix!.setIdentity();
+      _transformMatrix.setIdentity();
       _transformMatrix.translateByVector3(_position);
       _transformMatrix.rotateZ(_angleRoll);
       _transformMatrix.rotateY(_angleYaw);
