@@ -41,14 +41,16 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
   void remove(T item) {
     _hitboxes.remove(item.id);
 
-    _getChunksOfHitbox(item).forEach((chunk) {
-      _chunks[chunk]!.remove(item.id);
+    // Use the chunks the item was registered in, its current aabb may already
+    // be different (e.g. it moved without notifying us).
+    final registeredChunks = _lastKnownChunks.remove(item.id) ?? const {};
+    for (final chunk in registeredChunks) {
+      _chunks[chunk]?.remove(item.id);
       if (_chunks[chunk]?.isEmpty ?? false) {
         _chunks.remove(chunk);
       }
-    });
+    }
     item.removeAabbListener(this);
-    _lastKnownChunks.remove(item.id);
   }
 
   void updateHitbox(T item) {
@@ -87,28 +89,48 @@ class ChunkingBroadphase3D<T extends Hitbox3D<T>> extends Broadphase3D<T> implem
     _potentials.clear();
     _prospectPool.reset();
     for (final item in _hitboxes.values) {
+      // Only active hitboxes drive the search, passive ones are only found.
+      if (item.collisionType != CollisionType.active) continue;
 
-      if(item.collisionType != CollisionType.active) continue;
-
-      final itemChunks = _getChunksOfHitbox(item);
-
-      // print("${item.id} is currently at ${item.aabb.min} - ${item.aabb.max}");
+      // The chunks are kept up to date by updateHitbox, no need to recompute.
+      final itemChunks = _lastKnownChunks[item.id] ?? const {};
 
       for (final chunk in itemChunks) {
-        final hitboxIdsInChunk = _chunks[chunk]!;
+        final hitboxIdsInChunk = _chunks[chunk];
+        if (hitboxIdsInChunk == null) continue;
 
         for (final hitboxId in hitboxIdsInChunk) {
-          final hitbox = _hitboxes[hitboxId]!;
-          if (hitbox != item) {
+          final other = _hitboxes[hitboxId];
+          if (other == null || identical(other, item)) continue;
 
-            if (item.id < hitboxId){
-              _potentials.add(_prospectPool.acquire(item, hitbox));
-            }
+          if (_shouldPair(item, other)) {
+            _potentials.add(_prospectPool.acquire(item, other));
           }
         }
       }
     }
     return _potentials;
+  }
+
+  // Decides whether visiting [other] from [item] should produce a
+  // [CollisionProspect].
+  //
+  // * [item] is always [CollisionType.active] (the outer loop of [query]
+  //   skips everything else).
+  // * [other] is any hitbox sharing a chunk with [item] (never [item] itself)
+  //   and can be active, passive or inactive.
+  // * Every unordered pair {item, other} must be produced by at least one
+  //   visit, and should be produced by only one, since every acquire uses up
+  //   a pool slot.
+  bool _shouldPair(T item, T other) {
+
+    if(item.collisionType == CollisionType.active){
+      switch (other.collisionType) {
+      case CollisionType.inactive: return false;
+      case CollisionType.passive:  return true;
+      case CollisionType.active:   return item.id < other.id;
+      }
+    } else {return false;}
   }
 
 
