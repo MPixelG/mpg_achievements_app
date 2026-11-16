@@ -5,6 +5,7 @@ import 'package:mpg_achievements_app/3d/src/camera/movement_modes/base_camera_mo
 import 'package:mpg_achievements_app/3d/src/game.dart';
 import 'package:thermion_flutter/thermion_flutter.dart';
 import '../components/position_component_3d.dart';
+import '../components/thermion_transform.dart';
 
 class GameCamera<FollowMode extends CameraFollowMode> extends Component with HasGameReference<PixelAdventure3D>{
   Camera thermionCamera;
@@ -43,11 +44,17 @@ class GameCamera<FollowMode extends CameraFollowMode> extends Component with Has
     followMode = mode;
   }
 
+  // true while the last camera transform is still queued on thermion's render thread
+  bool _transformPending = false;
+
   void updateMatrix(){
-    if (matrixUpdated) {
-      thermionCamera.setTransform(modelMatrix);
-      matrixUpdated = false;
-          }
+    // if a call is still pending, matrixUpdated stays true and the newest
+    // matrix is sent in the next frame
+    if (!matrixUpdated || _transformPending) return;
+    matrixUpdated = false;
+    _transformPending = true;
+    setTransformOnRenderThread(thermionCamera.getEntity(), modelMatrix)
+        .whenComplete(() => _transformPending = false);
   }
 
   void setFollowEntity([CameraFollowable? provider]) {

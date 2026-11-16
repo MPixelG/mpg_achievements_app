@@ -4,6 +4,7 @@ import 'package:mpg_achievements_app/core/physics/hitbox3d/shapes/rectangle_hitb
 import 'package:thermion_flutter/thermion_flutter.dart';
 
 import '../game.dart';
+import 'thermion_transform.dart';
 
 mixin ThermionAssetContainer on PositionComponent3d {
   ThermionAsset? _asset;
@@ -32,8 +33,9 @@ mixin ThermionAssetContainer on PositionComponent3d {
 
     if (modelScale != 1.0) {
       // Skalierung auf das Entity anwenden (x, y, z)
-      await _asset!.setTransform(
-        Matrix4.diagonal3Values(modelScale, modelScale, modelScale), entity: _asset!.entity
+      // render thread variant, the asset is already in the scene here
+      await applyTransform(
+        Matrix4.diagonal3Values(modelScale, modelScale, modelScale),
       );
     }
     //adjust component3D to model size
@@ -81,6 +83,11 @@ mixin ThermionAssetContainer on PositionComponent3d {
   }
 
   ThermionAsset get asset => _asset!;
+
+  /// Sets the local transform of this asset's entity on thermion's render
+  /// thread, see [setTransformOnRenderThread].
+  Future<void> applyTransform(Matrix4 transform) =>
+      setTransformOnRenderThread(asset.entity, transform);
 
   set asset(ThermionAsset newAsset) {
     //? maybe we need to remove and re-add it to the scene if we change it

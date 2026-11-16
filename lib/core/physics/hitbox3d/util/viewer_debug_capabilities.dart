@@ -1,9 +1,10 @@
 import 'package:thermion_dart/thermion_dart.dart' hide Vector3;
 import 'package:mpg_achievements_app/3d/src/components/position_component_3d.dart';
+import 'package:mpg_achievements_app/3d/src/components/thermion_transform.dart';
 
 //global switch for all debug frames
 
-bool showDebugVisuals = true;
+bool showDebugVisuals = false;
 
 mixin ThermionDebugVisual on PositionComponent3d {
   ThermionAsset? _debugAsset;
@@ -124,8 +125,8 @@ mixin ThermionDebugVisual on PositionComponent3d {
     (_lastSentMatrix ??= Matrix4.zero()).setFrom(worldMatrix);
 
     _transformPending = true;
-    _debugAsset!
-        .setTransform(worldMatrix.clone(), entity: _debugAsset!.entity)
+    // the values are copied before the call returns
+    setTransformOnRenderThread(_debugAsset!.entity, worldMatrix)
         .whenComplete(() => _transformPending = false);
   }
 
