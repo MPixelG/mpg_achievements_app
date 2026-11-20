@@ -109,6 +109,7 @@ class _GameScreen3dState extends ConsumerState<GameScreen3d>
       );
       await viewer.setPostProcessing(true);
       await viewer.setRendering(true);
+      FilamentApp.instance!.setTargetFramerate(60);
 
       if (mounted) {
         setState(() {

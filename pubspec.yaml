@@ -52,27 +52,30 @@ dependencies:
   archive: ^4.0.7
   audioplayers: ^6.8.1
 
-  thermion_flutter:
-    git:
-      url: https://github.com/nmfisher/thermion.git
-      path: thermion_flutter/thermion_flutter
-      ref: develop
+  thermion_flutter: ^0.7.0
+    #if develop is needed again
+    #git:
+     # url: https://github.com/nmfisher/thermion.git
+      #path: thermion_flutter/thermion_flutter
+      #ref: develop
   flutter_joystick: ^0.2.2
 
 
+  thermion_dart: ^0.7.0
+    #if develop is needed again
+    #git:
+    # url: https://github.com/nmfisher/thermion.git
+    #path: thermion_dart
+  #ref: develop
+
 
   path: any
-  thermion_dart: any
+  #thermion_dart: any
   meta: any
 dependency_overrides:
   archive: ^4.0.7
 
 
-  thermion_dart:
-    git:
-      url: https://github.com/nmfisher/thermion.git
-      path: thermion_dart
-      ref: develop
 
 dev_dependencies:
   flutter_test:
